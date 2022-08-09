@@ -137,11 +137,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="clog.c" />
+    <ClCompile Include="cmedia_server.cpp" />
+    <ClCompile Include="cnet_type.cpp" />
+    <ClCompile Include="cwebsocket_server.cpp" />
+    <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="cwebsocket_session_mgr.cpp" />
     <ClCompile Include="dtlsv1.x.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="clog.h" />
+    <ClInclude Include="cmedia_server.h" />
+    <ClInclude Include="cnet_define.h" />
+    <ClInclude Include="cnet_type.h" />
+    <ClInclude Include="cnoncopyable.h" />
+    <ClInclude Include="csingleton.h" />
+    <ClInclude Include="cwebsocket_server.h" />
+    <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="cwebsocket_session_mgr.h" />
     <ClInclude Include="dtlsv1.x.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

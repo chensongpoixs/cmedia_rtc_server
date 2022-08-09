@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="server">
+      <UniqueIdentifier>{f89a760f-adbc-4f2f-bf73-ddc6388966f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{72be228e-f7b1-4a28-81d0-4f5bd7ec9f72}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,6 +30,21 @@
     <ClCompile Include="dtlsv1.x.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="cmedia_server.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_server.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_session.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="cnet_type.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_session_mgr.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="clog.h">
@@ -31,6 +52,30 @@
     </ClInclude>
     <ClInclude Include="dtlsv1.x.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_server.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_server.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_session.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_type.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cnoncopyable.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="csingleton.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_define.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_session_mgr.h">
+      <Filter>server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
