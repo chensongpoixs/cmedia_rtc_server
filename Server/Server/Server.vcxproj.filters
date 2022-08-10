@@ -19,6 +19,12 @@
     <Filter Include="util">
       <UniqueIdentifier>{72be228e-f7b1-4a28-81d0-4f5bd7ec9f72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="websocket">
+      <UniqueIdentifier>{720dbde5-ef3c-40d1-9c23-34af6670d3a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{d6d29f20-ac45-47f5-9f2a-884ede23774f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -30,20 +36,32 @@
     <ClCompile Include="dtlsv1.x.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="cmedia_server.cpp">
-      <Filter>server</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebsocket_server.cpp">
-      <Filter>server</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebsocket_session.cpp">
-      <Filter>server</Filter>
-    </ClCompile>
     <ClCompile Include="cnet_type.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="cwebsocket_session_mgr.cpp">
+    <ClCompile Include="cwebsocket_session.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cmedia_server.cpp">
       <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_msg_queue.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_server_mgr.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_msg_reserve.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwan_server.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="cwan_session.cpp">
+      <Filter>server</Filter>
+    </ClCompile>
+    <ClCompile Include="ctime_api.cpp">
+      <Filter>time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,15 +70,6 @@
     </ClInclude>
     <ClInclude Include="dtlsv1.x.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cmedia_server.h">
-      <Filter>server</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebsocket_server.h">
-      <Filter>server</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebsocket_session.h">
-      <Filter>server</Filter>
     </ClInclude>
     <ClInclude Include="cnet_type.h">
       <Filter>util</Filter>
@@ -74,8 +83,35 @@
     <ClInclude Include="cnet_define.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="cwebsocket_session_mgr.h">
+    <ClInclude Include="cwebsocket_session.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_server.h">
       <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_msg_queue.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_server_mgr.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_msg_reserve.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwan_server.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="cwan_session.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="ctime_api.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="ctime_const.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="ctime_elapse.h">
+      <Filter>time</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

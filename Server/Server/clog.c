@@ -17,7 +17,7 @@ purpose:		log
  
 
 
-	static const char* g_ccapture_hook_file_name = "./nvcodeer_demo.log";
+	static const char* g_ccapture_hook_file_name = "./log/cmedia_rtc_server.log";
 
 	static FILE* out_file_log_ptr = NULL;
 	static inline void SHOW(const char* format, va_list args)
