@@ -148,18 +148,52 @@ namespace chen {
 		}
 		m_session_ptr[index].set_used();
 		m_session_ptr[index].set_session_id(session_id);*/
-		WARNING_EX_LOG("session_id = %lu", session_id);
+		//WARNING_EX_LOG("session_id = %lu", session_id);
+		std::map<uint64, cwan_session*>::iterator iter =  m_session_map.find(session_id);
+		if (iter != m_session_map.end())
+		{
+			WARNING_EX_LOG("find session id = %u", session_id);
+			iter->second->init(); // login --->>
+			return;
+		}
+		cwan_session * session_ptr = new cwan_session();
+		if (!session_ptr)
+		{
+			WARNING_EX_LOG("alloc wan session failed !!!");
+			m_websocket_server_ptr->close(session_id);
+			return  ;
+		}
+		session_ptr->init();
+		if (!m_session_map.insert(std::make_pair(session_id, session_ptr)).second)
+		{
+			WARNING_EX_LOG("insert session_id = %u, failed !!!", session_id);
+			m_websocket_server_ptr->close(session_id);
+			delete session_ptr;
+			session_ptr = NULL;
+		}
 	}
 	void cwan_server::on_msg_receive(uint64_t session_id,   const void * p, uint32 size)
 	{
+
+		std::map<uint64, cwan_session*>::iterator iter =  m_session_map.find(session_id);
+		if (iter != m_session_map.end())
+		{
+			iter->second->handler_msg(session_id, p, size);
+		}
+		else
+		{
+			WARNING_EX_LOG("not find session map [session id = %u]", session_id);
+		
+		}
+
 		/*uint32 index = get_session_index(session_id);
 		if (!m_session_ptr[index].is_used())
 		{
 			WARNING_EX_LOG("session_id = %u, not  used !!!", session_id);
 			return;
 		}*/
-		m_websocket_server_ptr->send_msg(session_id, "chensong", 8);
-		WARNING_EX_LOG("session_id = %lu,  [data = %s]  size = %lu", session_id,   p, size);
+		//m_websocket_server_ptr->send_msg(session_id, "chensong", 8);
+		//WARNING_EX_LOG("session_id = %lu,  [data = %s]  size = %lu", session_id,   p, size);
 		
 		//m_session_ptr[index].OnMessage(session_id , msg_id, p, size);
 		/*if (msg_id == C2S_Login  )
@@ -173,6 +207,19 @@ namespace chen {
 	}
 	void cwan_server::on_disconnect(uint64_t session_id)
 	{
+
+		std::map<uint64, cwan_session*>::iterator iter = m_session_map.find(session_id);
+		if (iter != m_session_map.end())
+		{
+			iter->second->disconnect();
+			delete iter->second;
+			m_session_map.erase(iter);
+		}
+		else
+		{
+			WARNING_EX_LOG("not find session map [session id = %u]", session_id);
+
+		}
 		/*uint32 index = get_session_index(session_id);
 		if (!m_session_ptr[index].is_used())
 		{
@@ -180,7 +227,7 @@ namespace chen {
 			return;
 		}
 		m_session_ptr[index].disconnect();*/
-		WARNING_EX_LOG("session_id = %lu", session_id );
+		//WARNING_EX_LOG("session_id = %lu", session_id );
 	}
 
 	void cwan_server::send_msg(uint32 session_id, uint16 msg_id, const void * p, uint32 size)

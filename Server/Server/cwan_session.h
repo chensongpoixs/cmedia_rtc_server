@@ -68,6 +68,7 @@ namespace chen {
 
 		EClientConnectType      m_client_connect_type;
 		uint64					m_client_session;
+		std::list<std::string>  m_room_list; // 加入房间列表
 	//	M_MSG_MAP				m_msg_map;
 
 	};

@@ -12,7 +12,7 @@ purpose:	网络数据的收发
 #include "clog.h"
 
 #include "cwan_server.h"
-
+#include "croom_mgr.h"
 namespace chen {
 	cwan_session::cwan_session()
 		: m_session_id(0)
@@ -56,6 +56,7 @@ namespace chen {
 	{
 		//WARNING_EX_LOG("");
 		m_client_connect_type = EClientConnectNone;
+		m_room_list.clear();
 	}
 	bool cwan_session::is_used()
 	{
@@ -71,6 +72,14 @@ namespace chen {
 	void cwan_session::disconnect()
 	{
 		m_client_connect_type = EClientConnectNone;
+
+
+
+		// 退出房间
+		for (const std::string & room_name : m_room_list)
+		{
+			g_room_mgr.leave_room(m_session_id, room_name);
+		}
 
 		/*if (!g_client_collection_mgr.client_remove_session_collection(m_client_session))
 		{

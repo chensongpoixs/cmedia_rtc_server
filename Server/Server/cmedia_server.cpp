@@ -12,7 +12,7 @@ purpose:		cmedia_server
 #include "cwan_server.h"
 #include "ctime_elapse.h"
 #include "clog.h"
-
+#include "croom_mgr.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -41,6 +41,11 @@ namespace chen {
 	//	ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
 	//	ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
 
+		SYSTEM_LOG("room mgr init ...");
+		if (!g_room_mgr.init())
+		{
+			return false;
+		}
 
 		SYSTEM_LOG("websocket wan server  init ...");
 		if (!g_wan_server.init())
@@ -71,10 +76,8 @@ namespace chen {
 			//	g_game_client.update(uDelta);
 			g_wan_server.update(uDelta);
 
-
-			//g_client_collection_mgr.update(uDelta);
-
-
+ 
+			g_room_mgr.update(uDelta);
 
 
 			uDelta = time_elapse.get_elapse();

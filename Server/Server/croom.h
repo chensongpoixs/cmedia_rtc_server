@@ -18,44 +18,49 @@ namespace chen
 	class croom
 	{
 	private:
-		struct UserInfo
+		struct cuser_info
 		{
-			uint64      sesssion_id;
+			uint64      session_id;
 			std::string username;
-			UserInfo()
-				: sesssion_id(0)
+			cuser_info()
+				: session_id(0)
 				, username(""){}
 		};
 
 
-		typedef std::map<uint64, UserInfo>						CUserInfo_MAP;
+		typedef std::map<uint64, cuser_info>						CUSERINFO_MAP;
 	public:
-		explicit croom(const std::string &room_name);
+		 croom();
 		~croom();
 
 	public:
 
+		bool init(const std::string & room_name);
+
+		bool join_userinfo(uint64 sesssion_id, const std::string & username);
 
 
-		bool add_userinfo(uint64 sesssion_id, const std::string & username);
 
-
-
-		bool remove_userinfo(uint64 session_id);
+		bool leave_userinfo(uint64 session_id);
 
 
 
 
 	private:
 
+		// 房间中广播消息
 
-
+	private:
+		//cnoncopyable(cnoncopyable&&);
+		//croom(const croom&);
+		//cnoncopyable &operator =(cnoncopyable &&);
+		//croom& operator=(const croom&);
 		
 
 	private:
 		std::string					m_room_name;
 		//uint64						m_room_id;
-		CUserInfo_MAP               m_userinfo_map;
+		CUSERINFO_MAP               m_userinfo_map;
 	};
 }
 
