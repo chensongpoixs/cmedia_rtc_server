@@ -98,6 +98,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,8 +137,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="clog.c" />
+    <ClCompile Include="casync_log.cpp" />
+    <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="cdigit2str.cpp" />
+    <ClCompile Include="clog.cpp" />
+    <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
+    <ClCompile Include="croom.cpp" />
     <ClCompile Include="ctime_api.cpp" />
     <ClCompile Include="cwan_server.cpp" />
     <ClCompile Include="cwan_session.cpp" />
@@ -150,9 +156,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="casync_log.h" />
+    <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="clog.h" />
+    <ClInclude Include="clog_color.h" />
+    <ClInclude Include="clog_define.h" />
     <ClInclude Include="cmedia_server.h" />
     <ClInclude Include="cnet_define.h" />
+    <ClInclude Include="croom.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
     <ClInclude Include="ctime_elapse.h" />

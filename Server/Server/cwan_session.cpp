@@ -40,7 +40,7 @@ namespace chen {
 	{
 		//m_client_connect_type = EClientConnectNone;
 	}
-	void cwan_session::OnMessage(uint32 session_id, uint16 msg_id, const void* p, uint32 size)
+	void cwan_session::handler_msg(uint32 session_id , const void* p, uint32 size)
 	{
 		/*M_MSG_MAP::iterator iter = m_msg_map.find(msg_id);
 		if (iter == m_msg_map.end())

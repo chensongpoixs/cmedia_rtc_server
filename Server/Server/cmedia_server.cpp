@@ -11,6 +11,8 @@ purpose:		cmedia_server
 #include "cmedia_server.h"
 #include "cwan_server.h"
 #include "ctime_elapse.h"
+#include "clog.h"
+
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -24,17 +26,33 @@ namespace chen {
 
 	bool cmedia_server::init(const char* log_path, const char* config_file)
 	{
-		//SYSTEM_LOG("wan server  init ...");
+
+
+		printf("LOG init ...");
+		if (!LOG::init(log_path, "media_rtc_server"))
+		{
+			return false;
+		}
+		/*if (!g_cfg.init(config_file))
+		{
+			return false;
+		}*/
+
+	//	ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
+	//	ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
+
+
+		SYSTEM_LOG("websocket wan server  init ...");
 		if (!g_wan_server.init())
 		{
 			return false;
 		}
-		//SYSTEM_LOG("wan server  startup ...");
+		SYSTEM_LOG("websocket wan server  startup ...");
 		if (!g_wan_server.startup())
 		{
 			return false;
 		}
-		//SYSTEM_LOG(" agent server init ok");
+		SYSTEM_LOG(" media rtc server init ok");
 
 		return true;
 	}
@@ -87,10 +105,10 @@ namespace chen {
 		//g_cfg.destroy();
 
 		//1 log
-		//LOG::destroy();
-		//printf("Log Destroy OK!\n");
+		LOG::destroy();
+		printf("Log Destroy OK!\n");
 
-		//printf(" agent server Destroy End\n");
+		printf(" media rtc  server Destroy End\n");
 	}
 
 	void cmedia_server::stop()

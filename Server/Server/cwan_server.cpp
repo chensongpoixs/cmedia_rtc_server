@@ -158,6 +158,7 @@ namespace chen {
 			WARNING_EX_LOG("session_id = %u, not  used !!!", session_id);
 			return;
 		}*/
+		m_websocket_server_ptr->send_msg(session_id, "chensong", 8);
 		WARNING_EX_LOG("session_id = %lu,  [data = %s]  size = %lu", session_id,   p, size);
 		
 		//m_session_ptr[index].OnMessage(session_id , msg_id, p, size);

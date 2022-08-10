@@ -25,12 +25,18 @@
     <Filter Include="time">
       <UniqueIdentifier>{d6d29f20-ac45-47f5-9f2a-884ede23774f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="room">
+      <UniqueIdentifier>{30847938-820a-4c93-a1e2-93c06723431f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{c3cbb629-ff4b-40ed-91fa-b2ab410621ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{5336c143-79d9-427d-8da2-675e266b3f7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="clog.c">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dtlsv1.x.cpp">
@@ -63,11 +69,26 @@
     <ClCompile Include="ctime_api.cpp">
       <Filter>time</Filter>
     </ClCompile>
+    <ClCompile Include="croom.cpp">
+      <Filter>room</Filter>
+    </ClCompile>
+    <ClCompile Include="casync_log.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="clog.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="clog_color.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="cconfig.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="cdigit2str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="clog.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="dtlsv1.x.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -112,6 +133,27 @@
     </ClInclude>
     <ClInclude Include="ctime_elapse.h">
       <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="croom.h">
+      <Filter>room</Filter>
+    </ClInclude>
+    <ClInclude Include="casync_log.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog_color.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="cconfig.h">
+      <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="cdigit2str.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="clog.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog_define.h">
+      <Filter>log</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

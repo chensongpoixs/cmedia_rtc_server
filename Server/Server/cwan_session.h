@@ -38,7 +38,7 @@ namespace chen {
 	public:
 		void update(uint32 uDeltaTime);
 
-		void OnMessage(uint32 session_id, uint16 msg_id, const void* p, uint32 size);
+		void handler_msg(uint32 session_id,   const void* p, uint32 size);
 	public:
 		uint32 get_session_id() const { return m_session_id; }
 		void	set_session_id(uint32 session_id) { m_session_id = session_id; }
