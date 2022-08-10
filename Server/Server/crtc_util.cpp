@@ -10,7 +10,7 @@ purpose:		crtc_util
 
 #include "crtc_util.h"
 #ifdef _WIN32
-#include <ws2ipdef.h>
+//#include <ws2ipdef.h>
 // https://stackoverflow.com/a/24550632/2085408
 #include <intrin.h>
 #define __builtin_popcount __popcnt

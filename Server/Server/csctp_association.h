@@ -25,7 +25,11 @@ namespace chen
 		ESCTP_FAILED,
 		ESCTP_CLOSED
 	};
-
+	enum   EStreamDirection
+	{
+		ESTREAM_INCOMING = 1,
+		ESTREAM_OUTGOING
+	};
 	class csctp_association
 	{
 	public:
@@ -40,10 +44,23 @@ namespace chen
 		uintptr_t get_id() { return m_id; }
 		
 	public:
+		ESCTPSTATE get_state() const { return m_state; }
+		size_t get_sctp_buffered_amount() const { return m_sctp_buffered_amount; }
 
+		void ProcessSctpData(const uint8_t* data, size_t len);
+		 
 	private:
+		void ResetSctpStream(uint16_t streamId, EStreamDirection direction);
+		void AddOutgoingStreams(bool force = false);
 
+	public:
 
+		/* Callbacks fired by usrsctp events. */
+		void OnUsrSctpSendSctpData(void* buffer, size_t len);
+		void OnUsrSctpReceiveSctpData(
+			uint16_t streamId, uint16_t ssn, uint32_t ppid, int flags, const uint8_t* data, size_t len);
+		void OnUsrSctpReceiveSctpNotification(union sctp_notification* notification, size_t len);
+		void OnUsrSctpSentData(uint32_t freeBuffer);
 	private:
 		uintptr_t					m_id;// { 0u };
 		uint16_t					m_os;  // default [1024u]

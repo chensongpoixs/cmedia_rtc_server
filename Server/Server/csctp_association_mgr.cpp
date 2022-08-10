@@ -25,7 +25,7 @@ namespace chen {
 			return -1;
 		}
 		// TODO@chensong 20220810  sctp send data 
-		//sctpAssociation->OnUsrSctpSendSctpData(data, len);
+		sctpAssociation->OnUsrSctpSendSctpData(data, len);
 
 		// NOTE: Must not free data, usrsctp lib does it.
 
