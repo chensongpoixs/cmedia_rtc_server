@@ -37,6 +37,9 @@
     <Filter Include="rtc">
       <UniqueIdentifier>{cb2ccf9d-6215-4b4e-b0c9-b494a70b4801}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sctp">
+      <UniqueIdentifier>{3f2a69c3-bd55-4c79-8dd6-afe1c053b7fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -98,6 +101,15 @@
     </ClCompile>
     <ClCompile Include="cwebrtc_transport.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_util.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="csctp_association.cpp">
+      <Filter>sctp</Filter>
+    </ClCompile>
+    <ClCompile Include="csctp_association_mgr.cpp">
+      <Filter>sctp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +187,15 @@
     </ClInclude>
     <ClInclude Include="cwebrtc_transport.h">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_util.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="csctp_association.h">
+      <Filter>sctp</Filter>
+    </ClInclude>
+    <ClInclude Include="csctp_association_mgr.h">
+      <Filter>sctp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

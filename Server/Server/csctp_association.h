@@ -1,0 +1,64 @@
+﻿/***********************************************************************************************
+created: 		2022-08-10
+
+author:			chensong
+
+purpose:		csctp_association
+
+ 
+************************************************************************************************/
+
+#ifndef _C_SCTP_ASSOCIATION_H_
+#define _C_SCTP_ASSOCIATION_H_
+#include <string>
+#include "cnet_type.h"
+#include <map>
+#include <usrsctp.h>
+namespace chen
+{
+
+	enum  ESCTPSTATE
+	{
+		ESCTP_NEW = 1,
+		ESCTP_CONNECTING,
+		ESCTP_CONNECTED,
+		ESCTP_FAILED,
+		ESCTP_CLOSED
+	};
+
+	class csctp_association
+	{
+	public:
+		csctp_association(uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size);
+			
+		~csctp_association();
+
+
+
+	public:
+		static bool issctp(const uint8_t * data, size_t len);
+		uintptr_t get_id() { return m_id; }
+		
+	public:
+
+	private:
+
+
+	private:
+		uintptr_t					m_id;// { 0u };
+		uint16_t					m_os;  // default [1024u]
+		uint16_t					m_mis; // default [1024u]
+		size_t						m_max_sctp_message_size; // default [262144u]
+		size_t						m_sctp_send_buffer_size; // default [262144u]
+		size_t						m_sctp_buffered_amount; // default [0u]
+		// Allocated by this
+		uint8_t	*					m_message_buffer;
+		ESCTPSTATE					m_state; // default [ESCTP_NEW]
+		struct socket*				m_socket;
+		uint16_t					m_desiredos; // default [0u]
+		size_t						m_message_buffer_len;
+		uint16_t					m_last_ssn_received; // Valid for us since no SCTP I-DATA support.
+	};
+}
+
+#endif // _C_SCTP_ASSOCIATION_H_

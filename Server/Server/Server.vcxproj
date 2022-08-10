@@ -145,6 +145,9 @@
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="croom.cpp" />
     <ClCompile Include="croom_mgr.cpp" />
+    <ClCompile Include="crtc_util.cpp" />
+    <ClCompile Include="csctp_association.cpp" />
+    <ClCompile Include="csctp_association_mgr.cpp" />
     <ClCompile Include="ctime_api.cpp" />
     <ClCompile Include="cwan_server.cpp" />
     <ClCompile Include="cwan_session.cpp" />
@@ -169,6 +172,9 @@
     <ClInclude Include="cnet_define.h" />
     <ClInclude Include="croom.h" />
     <ClInclude Include="croom_mgr.h" />
+    <ClInclude Include="crtc_util.h" />
+    <ClInclude Include="csctp_association.h" />
+    <ClInclude Include="csctp_association_mgr.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
     <ClInclude Include="ctime_elapse.h" />
