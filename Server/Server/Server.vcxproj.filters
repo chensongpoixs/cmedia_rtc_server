@@ -34,6 +34,9 @@
     <Filter Include="config">
       <UniqueIdentifier>{5336c143-79d9-427d-8da2-675e266b3f7b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rtc">
+      <UniqueIdentifier>{cb2ccf9d-6215-4b4e-b0c9-b494a70b4801}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -86,6 +89,15 @@
     </ClCompile>
     <ClCompile Include="cdigit2str.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="croom_mgr.cpp">
+      <Filter>room</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebrtc_mgr.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebrtc_transport.cpp">
+      <Filter>rtc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +166,15 @@
     </ClInclude>
     <ClInclude Include="clog_define.h">
       <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="croom_mgr.h">
+      <Filter>room</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebrtc_mgr.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebrtc_transport.h">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

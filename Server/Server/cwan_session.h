@@ -13,7 +13,7 @@ purpose:	网络数据的收发
 #define _C_WAN_SESSION_H_
 #include "cnoncopyable.h"
 #include "cnet_type.h"
- 
+#include <list>
 namespace chen {
 
 	enum EClientConnectType

@@ -71,14 +71,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Release;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(C_INCLUDE)\josn\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Release;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -102,7 +102,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-gd-x64-1_66.lib;libboost_chrono-vc141-mt-gd-x64-1_66.lib;libboost_container-vc141-mt-gd-x64-1_66.lib;libboost_context-vc141-mt-gd-x64-1_66.lib;libboost_coroutine-vc141-mt-gd-x64-1_66.lib;libboost_date_time-vc141-mt-gd-x64-1_66.lib;libboost_exception-vc141-mt-gd-x64-1_66.lib;libboost_fiber-vc141-mt-gd-x64-1_66.lib;libboost_filesystem-vc141-mt-gd-x64-1_66.lib;libboost_graph-vc141-mt-gd-x64-1_66.lib;libboost_iostreams-vc141-mt-gd-x64-1_66.lib;libboost_locale-vc141-mt-gd-x64-1_66.lib;libboost_log-vc141-mt-gd-x64-1_66.lib;libboost_log_setup-vc141-mt-gd-x64-1_66.lib;libboost_math_c99-vc141-mt-gd-x64-1_66.lib;libboost_math_c99f-vc141-mt-gd-x64-1_66.lib;libboost_math_c99l-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1f-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1l-vc141-mt-gd-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_program_options-vc141-mt-gd-x64-1_66.lib;libboost_python-vc141-mt-gd-x64-1_66.lib;libboost_random-vc141-mt-gd-x64-1_66.lib;libboost_regex-vc141-mt-gd-x64-1_66.lib;libboost_serialization-vc141-mt-gd-x64-1_66.lib;libboost_signals-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-gd-x64-1_66.lib;libboost_system-vc141-mt-gd-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_thread-vc141-mt-gd-x64-1_66.lib;libboost_timer-vc141-mt-gd-x64-1_66.lib;libboost_type_erasure-vc141-mt-gd-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-gd-x64-1_66.lib;libboost_wave-vc141-mt-gd-x64-1_66.lib;libboost_wserialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lib_json.lib;libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-gd-x64-1_66.lib;libboost_chrono-vc141-mt-gd-x64-1_66.lib;libboost_container-vc141-mt-gd-x64-1_66.lib;libboost_context-vc141-mt-gd-x64-1_66.lib;libboost_coroutine-vc141-mt-gd-x64-1_66.lib;libboost_date_time-vc141-mt-gd-x64-1_66.lib;libboost_exception-vc141-mt-gd-x64-1_66.lib;libboost_fiber-vc141-mt-gd-x64-1_66.lib;libboost_filesystem-vc141-mt-gd-x64-1_66.lib;libboost_graph-vc141-mt-gd-x64-1_66.lib;libboost_iostreams-vc141-mt-gd-x64-1_66.lib;libboost_locale-vc141-mt-gd-x64-1_66.lib;libboost_log-vc141-mt-gd-x64-1_66.lib;libboost_log_setup-vc141-mt-gd-x64-1_66.lib;libboost_math_c99-vc141-mt-gd-x64-1_66.lib;libboost_math_c99f-vc141-mt-gd-x64-1_66.lib;libboost_math_c99l-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1f-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1l-vc141-mt-gd-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_program_options-vc141-mt-gd-x64-1_66.lib;libboost_python-vc141-mt-gd-x64-1_66.lib;libboost_random-vc141-mt-gd-x64-1_66.lib;libboost_regex-vc141-mt-gd-x64-1_66.lib;libboost_serialization-vc141-mt-gd-x64-1_66.lib;libboost_signals-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-gd-x64-1_66.lib;libboost_system-vc141-mt-gd-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_thread-vc141-mt-gd-x64-1_66.lib;libboost_timer-vc141-mt-gd-x64-1_66.lib;libboost_type_erasure-vc141-mt-gd-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-gd-x64-1_66.lib;libboost_wave-vc141-mt-gd-x64-1_66.lib;libboost_wserialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,7 +133,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-x64-1_66.lib;libboost_chrono-vc141-mt-x64-1_66.lib;libboost_container-vc141-mt-x64-1_66.lib;libboost_context-vc141-mt-x64-1_66.lib;libboost_coroutine-vc141-mt-x64-1_66.lib;libboost_date_time-vc141-mt-x64-1_66.lib;libboost_exception-vc141-mt-x64-1_66.lib;libboost_fiber-vc141-mt-x64-1_66.lib;libboost_filesystem-vc141-mt-x64-1_66.lib;libboost_graph-vc141-mt-x64-1_66.lib;libboost_iostreams-vc141-mt-x64-1_66.lib;libboost_locale-vc141-mt-x64-1_66.lib;libboost_log-vc141-mt-x64-1_66.lib;libboost_log_setup-vc141-mt-x64-1_66.lib;libboost_math_c99-vc141-mt-x64-1_66.lib;libboost_math_c99f-vc141-mt-x64-1_66.lib;libboost_math_c99l-vc141-mt-x64-1_66.lib;libboost_math_tr1-vc141-mt-x64-1_66.lib;libboost_math_tr1f-vc141-mt-x64-1_66.lib;libboost_math_tr1l-vc141-mt-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-x64-1_66.lib;libboost_program_options-vc141-mt-x64-1_66.lib;libboost_python-vc141-mt-x64-1_66.lib;libboost_random-vc141-mt-x64-1_66.lib;libboost_regex-vc141-mt-x64-1_66.lib;libboost_serialization-vc141-mt-x64-1_66.lib;libboost_signals-vc141-mt-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-x64-1_66.lib;libboost_system-vc141-mt-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-x64-1_66.lib;libboost_thread-vc141-mt-x64-1_66.lib;libboost_timer-vc141-mt-x64-1_66.lib;libboost_type_erasure-vc141-mt-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-x64-1_66.lib;libboost_wave-vc141-mt-x64-1_66.lib;libboost_wserialization-vc141-mt-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lib_json.lib;libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-x64-1_66.lib;libboost_chrono-vc141-mt-x64-1_66.lib;libboost_container-vc141-mt-x64-1_66.lib;libboost_context-vc141-mt-x64-1_66.lib;libboost_coroutine-vc141-mt-x64-1_66.lib;libboost_date_time-vc141-mt-x64-1_66.lib;libboost_exception-vc141-mt-x64-1_66.lib;libboost_fiber-vc141-mt-x64-1_66.lib;libboost_filesystem-vc141-mt-x64-1_66.lib;libboost_graph-vc141-mt-x64-1_66.lib;libboost_iostreams-vc141-mt-x64-1_66.lib;libboost_locale-vc141-mt-x64-1_66.lib;libboost_log-vc141-mt-x64-1_66.lib;libboost_log_setup-vc141-mt-x64-1_66.lib;libboost_math_c99-vc141-mt-x64-1_66.lib;libboost_math_c99f-vc141-mt-x64-1_66.lib;libboost_math_c99l-vc141-mt-x64-1_66.lib;libboost_math_tr1-vc141-mt-x64-1_66.lib;libboost_math_tr1f-vc141-mt-x64-1_66.lib;libboost_math_tr1l-vc141-mt-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-x64-1_66.lib;libboost_program_options-vc141-mt-x64-1_66.lib;libboost_python-vc141-mt-x64-1_66.lib;libboost_random-vc141-mt-x64-1_66.lib;libboost_regex-vc141-mt-x64-1_66.lib;libboost_serialization-vc141-mt-x64-1_66.lib;libboost_signals-vc141-mt-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-x64-1_66.lib;libboost_system-vc141-mt-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-x64-1_66.lib;libboost_thread-vc141-mt-x64-1_66.lib;libboost_timer-vc141-mt-x64-1_66.lib;libboost_type_erasure-vc141-mt-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-x64-1_66.lib;libboost_wave-vc141-mt-x64-1_66.lib;libboost_wserialization-vc141-mt-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -144,9 +144,12 @@
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="croom.cpp" />
+    <ClCompile Include="croom_mgr.cpp" />
     <ClCompile Include="ctime_api.cpp" />
     <ClCompile Include="cwan_server.cpp" />
     <ClCompile Include="cwan_session.cpp" />
+    <ClCompile Include="cwebrtc_mgr.cpp" />
+    <ClCompile Include="cwebrtc_transport.cpp" />
     <ClCompile Include="cwebsocket_msg_reserve.cpp" />
     <ClCompile Include="cnet_type.cpp" />
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
@@ -165,11 +168,14 @@
     <ClInclude Include="cmedia_server.h" />
     <ClInclude Include="cnet_define.h" />
     <ClInclude Include="croom.h" />
+    <ClInclude Include="croom_mgr.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
     <ClInclude Include="ctime_elapse.h" />
     <ClInclude Include="cwan_server.h" />
     <ClInclude Include="cwan_session.h" />
+    <ClInclude Include="cwebrtc_mgr.h" />
+    <ClInclude Include="cwebrtc_transport.h" />
     <ClInclude Include="cwebsocket_msg_reserve.h" />
     <ClInclude Include="cnet_type.h" />
     <ClInclude Include="cnoncopyable.h" />

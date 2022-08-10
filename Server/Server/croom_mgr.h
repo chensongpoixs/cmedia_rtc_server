@@ -40,6 +40,10 @@ namespace chen {
 
 		bool leave_room(uint64 session_id, const std::string & room_name);
 
+
+
+
+
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		croom_mgr(const croom_mgr&);
