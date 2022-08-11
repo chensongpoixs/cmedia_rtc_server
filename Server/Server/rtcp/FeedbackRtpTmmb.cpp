@@ -62,7 +62,7 @@ namespace RTC
 
 			uint32_t compact = (exponent << 26) | (mantissa << 9) | this->overhead;
 
-			Utils::Byte::Set4Bytes(buffer, 4, compact);
+			rtc_byte::set4bytes(buffer, 4, compact);
 
 			return sizeof(Header);
 		}

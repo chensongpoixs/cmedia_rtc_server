@@ -13,7 +13,7 @@
 
 #include "api/transport/network_types.h"
 
-#include "RTC/RTCP/FeedbackRtpTransport.hpp"
+#include "FeedbackRtpTransport.hpp"
 
 #include <absl/types/optional.h>
 #include <stddef.h>
@@ -173,7 +173,7 @@ class TransportFeedbackObserver {
   virtual ~TransportFeedbackObserver() {}
 
   virtual void OnAddPacket(const RtpPacketSendInfo& packet_info) = 0;
-  //virtual void OnTransportFeedback(const RTC::RTCP::FeedbackRtpTransportPacket& feedback) = 0;
+  virtual void OnTransportFeedback(const RTC::RTCP::FeedbackRtpTransportPacket& feedback) = 0;
 };
 
 class PacketFeedbackObserver {
