@@ -8,12 +8,7 @@ purpose:		cnet_msg_queue
 #ifndef _C_MSG_WEBSOCKET_QUEUE_H_
 #define _C_MSG_WEBSOCKET_QUEUE_H_
 #include <mutex>
-#include <boost/beast/core.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include "cnet_define.h"
 namespace chen {
 	class cwebsocket_msg
 	{

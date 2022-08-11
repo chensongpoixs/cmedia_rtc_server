@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="server">
       <UniqueIdentifier>{f89a760f-adbc-4f2f-bf73-ddc6388966f2}</UniqueIdentifier>
     </Filter>
@@ -118,14 +106,11 @@
     <Filter Include="libwebrtc\rtc_base\units">
       <UniqueIdentifier>{c0515b33-e24e-4567-8278-d4431d15fe92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rtcp">
+      <UniqueIdentifier>{a5b88174-8c4b-4f56-9981-2511f2dcafa4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="dtlsv1.x.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="cnet_type.cpp">
       <Filter>util</Filter>
     </ClCompile>
@@ -321,11 +306,93 @@
     <ClCompile Include="libwebrtc\rtc_base\network\sent_packet.cc">
       <Filter>libwebrtc\rtc_base\network</Filter>
     </ClCompile>
+    <ClCompile Include="rtcp\Bye.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\CompoundPacket.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\Feedback.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPs.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsAfb.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsFir.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsLei.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsPli.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsRemb.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsRpsi.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsSli.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsTst.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackPsVbcm.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackRtp.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackRtpEcn.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackRtpNack.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackRtpSrReq.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackRtpTllei.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackRtpTmmb.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\FeedbackRtpTransport.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\Packet.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\ReceiverReport.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\Sdes.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\SenderReport.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\XR.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\XrDelaySinceLastRr.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtcp\XrReceiverReferenceTime.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="SeqManager.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dtlsv1.x.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="cnet_type.h">
       <Filter>util</Filter>
     </ClInclude>
@@ -595,6 +662,93 @@
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h">
       <Filter>libwebrtc\rtc_base\units</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\Bye.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\CompoundPacket.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\Feedback.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackItem.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPs.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsAfb.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsFir.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsLei.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsPli.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsRemb.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsRpsi.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsSli.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsTst.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackPsVbcm.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackRtp.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackRtpEcn.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackRtpNack.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackRtpSrReq.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackRtpTllei.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackRtpTmmb.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\FeedbackRtpTransport.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\Packet.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\ReceiverReport.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\Sdes.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\SenderReport.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\XR.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\XrDelaySinceLastRr.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtcp\XrReceiverReferenceTime.hpp">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="SeqManager.hpp">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

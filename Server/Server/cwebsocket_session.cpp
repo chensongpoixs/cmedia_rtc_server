@@ -9,7 +9,7 @@ purpose:		cwebsocket_session
 #include "cwebsocket_session.h"
 #include "cwebsocket_msg_queue.h"
 #include "cwebsocket_server_mgr.h"
-#include <boost/asio/buffer.hpp>
+
 #include <string>
 #include "clog.h"
 namespace chen {

@@ -8,12 +8,7 @@ purpose:		websocket_server_mgr
 #ifndef _C_WEBSOCKET_SERVER_MGR_H
 #define _C_WEBSOCKET_SERVER_MGR_H
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include "cnet_define.h"
 #include <mutex>
 //#include "cwebsocket_session.h"
 #include "cwebsocket_msg_queue.h"

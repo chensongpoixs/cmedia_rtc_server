@@ -42,14 +42,16 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>
+    </CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>
+    </CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -96,10 +98,12 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>MS_LITTLE_ENDIAN;DEBUG;MS_LOG_TRACE;MS_LOG_FILE_LINE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>libwebrtc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libwebrtc;./;rtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,10 +131,12 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>libwebrtc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libwebrtc;./;rtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,7 +167,6 @@
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
     <ClCompile Include="cwebsocket_session.cpp" />
-    <ClCompile Include="dtlsv1.x.cpp" />
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc" />
     <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc" />
     <ClCompile Include="libwebrtc\api\transport\field_trial_based_config.cc" />
@@ -207,6 +212,34 @@
     <ClCompile Include="libwebrtc\rtc_base\rate_statistics.cc" />
     <ClCompile Include="libwebrtc\system_wrappers\source\field_trial.cc" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="rtcp\Bye.cpp" />
+    <ClCompile Include="rtcp\CompoundPacket.cpp" />
+    <ClCompile Include="rtcp\Feedback.cpp" />
+    <ClCompile Include="rtcp\FeedbackPs.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsAfb.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsFir.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsLei.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsPli.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsRemb.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsRpsi.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsSli.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsTst.cpp" />
+    <ClCompile Include="rtcp\FeedbackPsVbcm.cpp" />
+    <ClCompile Include="rtcp\FeedbackRtp.cpp" />
+    <ClCompile Include="rtcp\FeedbackRtpEcn.cpp" />
+    <ClCompile Include="rtcp\FeedbackRtpNack.cpp" />
+    <ClCompile Include="rtcp\FeedbackRtpSrReq.cpp" />
+    <ClCompile Include="rtcp\FeedbackRtpTllei.cpp" />
+    <ClCompile Include="rtcp\FeedbackRtpTmmb.cpp" />
+    <ClCompile Include="rtcp\FeedbackRtpTransport.cpp" />
+    <ClCompile Include="rtcp\Packet.cpp" />
+    <ClCompile Include="rtcp\ReceiverReport.cpp" />
+    <ClCompile Include="rtcp\Sdes.cpp" />
+    <ClCompile Include="rtcp\SenderReport.cpp" />
+    <ClCompile Include="rtcp\XR.cpp" />
+    <ClCompile Include="rtcp\XrDelaySinceLastRr.cpp" />
+    <ClCompile Include="rtcp\XrReceiverReferenceTime.cpp" />
+    <ClCompile Include="SeqManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="casync_log.h" />
@@ -236,7 +269,6 @@
     <ClInclude Include="cwebsocket_msg_queue.h" />
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
-    <ClInclude Include="dtlsv1.x.h" />
     <ClInclude Include="libwebrtc\api\bitrate_constraints.h" />
     <ClInclude Include="libwebrtc\api\network_state_predictor.h" />
     <ClInclude Include="libwebrtc\api\transport\bitrate_settings.h" />
@@ -300,6 +332,35 @@
     <ClInclude Include="libwebrtc\rtc_base\type_traits.h" />
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h" />
     <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h" />
+    <ClInclude Include="rtcp\Bye.hpp" />
+    <ClInclude Include="rtcp\CompoundPacket.hpp" />
+    <ClInclude Include="rtcp\Feedback.hpp" />
+    <ClInclude Include="rtcp\FeedbackItem.hpp" />
+    <ClInclude Include="rtcp\FeedbackPs.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsAfb.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsFir.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsLei.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsPli.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsRemb.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsRpsi.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsSli.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsTst.hpp" />
+    <ClInclude Include="rtcp\FeedbackPsVbcm.hpp" />
+    <ClInclude Include="rtcp\FeedbackRtp.hpp" />
+    <ClInclude Include="rtcp\FeedbackRtpEcn.hpp" />
+    <ClInclude Include="rtcp\FeedbackRtpNack.hpp" />
+    <ClInclude Include="rtcp\FeedbackRtpSrReq.hpp" />
+    <ClInclude Include="rtcp\FeedbackRtpTllei.hpp" />
+    <ClInclude Include="rtcp\FeedbackRtpTmmb.hpp" />
+    <ClInclude Include="rtcp\FeedbackRtpTransport.hpp" />
+    <ClInclude Include="rtcp\Packet.hpp" />
+    <ClInclude Include="rtcp\ReceiverReport.hpp" />
+    <ClInclude Include="rtcp\Sdes.hpp" />
+    <ClInclude Include="rtcp\SenderReport.hpp" />
+    <ClInclude Include="rtcp\XR.hpp" />
+    <ClInclude Include="rtcp\XrDelaySinceLastRr.hpp" />
+    <ClInclude Include="rtcp\XrReceiverReferenceTime.hpp" />
+    <ClInclude Include="SeqManager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

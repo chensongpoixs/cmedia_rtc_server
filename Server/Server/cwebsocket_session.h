@@ -9,12 +9,7 @@ purpose:		websocket_session
 #ifndef _C_WEBSOCKET_SESSION_H
 #define _C_WEBSOCKET_SESSION_H
 
-#include <boost/beast/core.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
-#include <boost/asio/bind_executor.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/asio/ip/tcp.hpp>
+#include "cnet_define.h"
 #include <mutex>
 //#include "cwebsocket_server_mgr.h"
 namespace chen {
