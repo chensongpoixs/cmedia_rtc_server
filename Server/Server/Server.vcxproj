@@ -148,15 +148,19 @@
   <ItemGroup>
     <ClCompile Include="casync_log.cpp" />
     <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="ccrypto_random.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
+    <ClCompile Include="crate_calculator.cpp" />
+    <ClCompile Include="cuv_util.cpp" />
     <ClCompile Include="croom.cpp" />
     <ClCompile Include="croom_mgr.cpp" />
     <ClCompile Include="crtc_util.cpp" />
     <ClCompile Include="csctp_association.cpp" />
     <ClCompile Include="csctp_association_mgr.cpp" />
+    <ClCompile Include="ctimer.cpp" />
     <ClCompile Include="ctime_api.cpp" />
     <ClCompile Include="cwan_server.cpp" />
     <ClCompile Include="cwan_session.cpp" />
@@ -251,23 +255,32 @@
     <ClCompile Include="RtpHeaderExtensionUri.cpp" />
     <ClCompile Include="RtpPacket.cpp" />
     <ClCompile Include="RtpParameters.cpp" />
+    <ClCompile Include="RtpProbationGenerator.cpp" />
     <ClCompile Include="RtpRtxParameters.cpp" />
     <ClCompile Include="SeqManager.cpp" />
+    <ClCompile Include="TransportCongestionControlClient.cpp" />
+    <ClCompile Include="TransportCongestionControlServer.cpp" />
+    <ClCompile Include="TrendCalculator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BweType.hpp" />
     <ClInclude Include="casync_log.h" />
     <ClInclude Include="cconfig.h" />
+    <ClInclude Include="ccrypto_random.h" />
     <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
     <ClInclude Include="cmedia_server.h" />
     <ClInclude Include="cnet_define.h" />
+    <ClInclude Include="crate_calculator.h" />
+    <ClInclude Include="cuv_util.h" />
     <ClInclude Include="croom.h" />
     <ClInclude Include="croom_mgr.h" />
     <ClInclude Include="crtc_util.h" />
     <ClInclude Include="csctp_association.h" />
     <ClInclude Include="csctp_association_mgr.h" />
+    <ClInclude Include="ctimer.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
     <ClInclude Include="ctime_elapse.h" />
@@ -379,8 +392,12 @@
     <ClInclude Include="RtpDictionaries.hpp" />
     <ClInclude Include="RtpHeaderExtensionIds.hpp" />
     <ClInclude Include="RtpPacket.hpp" />
+    <ClInclude Include="RtpProbationGenerator.hpp" />
     <ClInclude Include="SeqManager.hpp" />
     <ClInclude Include="Tools.hpp" />
+    <ClInclude Include="TransportCongestionControlClient.hpp" />
+    <ClInclude Include="TransportCongestionControlServer.hpp" />
+    <ClInclude Include="TrendCalculator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,4 @@
-/***********************************************************************************************
+ï»¿/***********************************************************************************************
 created: 		2019-04-30
 
 author:			chensong
@@ -76,7 +76,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(bool value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (value)
 		{
 			return *this << '1';
@@ -88,7 +88,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(char value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_data[m_len++] = value;
@@ -97,7 +97,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(signed char value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_data[m_len++] = value;
@@ -107,7 +107,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(unsigned char value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_data[m_len++] = value;
@@ -116,7 +116,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(signed short value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -125,7 +125,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(unsigned short value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -134,7 +134,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(signed int value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -143,7 +143,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(unsigned int value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -152,7 +152,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(signed long value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -161,7 +161,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(unsigned long value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -170,7 +170,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(signed long long value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -179,7 +179,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(unsigned long long value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
@@ -188,7 +188,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(const char * value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			//m_data[m_len++] = value;
@@ -202,7 +202,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(const std::string & value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			//m_data[m_len++] = value;
@@ -218,7 +218,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(float value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			//m_data[m_len++] = value;
@@ -228,7 +228,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(double value)
 	{
-		// TODO: ÔÚ´Ë´¦²åÈë return Óï¾ä
+		// TODO: åœ¨æ­¤å¤„æ’å…¥ return è¯­å¥
 		if (m_len < EBuf_Size)
 		{
 			/*m_data[m_len++] =*/ m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len,value);

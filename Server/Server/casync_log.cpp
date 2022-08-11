@@ -1,4 +1,4 @@
-/***********************************************************************************************
+ï»¿/***********************************************************************************************
 created: 		2018-10-02
 
 author:			chensong
@@ -20,7 +20,7 @@ purpose:		async_log
 #include <unistd.h>
 #include <dirent.h>
 #else
-// ÆäËû²»Ö§³ÖµÄ±àÒëÆ÷ĞèÒª×Ô¼ºÊµÏÖÕâ¸ö·½·¨
+// å…¶ä»–ä¸æ”¯æŒçš„ç¼–è¯‘å™¨éœ€è¦è‡ªå·±å®ç°è¿™ä¸ªæ–¹æ³•
 #error unexpected c complier (msc/gcc), Need to implement this method for demangle
 #endif
 namespace chen {
@@ -118,7 +118,7 @@ namespace chen {
 			mkdir(path.c_str(), 0777);
 		}
 #else
-		// ÆäËû²»Ö§³ÖµÄ±àÒëÆ÷ĞèÒª×Ô¼ºÊµÏÖÕâ¸ö·½·¨
+		// å…¶ä»–ä¸æ”¯æŒçš„ç¼–è¯‘å™¨éœ€è¦è‡ªå·±å®ç°è¿™ä¸ªæ–¹æ³•
 #error unexpected c complier (msc/gcc), Need to implement this method for demangle
 		return false;
 #endif
@@ -182,7 +182,7 @@ namespace chen {
 			return;
 		}
 
-		//µÃµ½Ò»¸öĞÂµÄlog
+		//å¾—åˆ°ä¸€ä¸ªæ–°çš„log
 		clog_item* log_item_ptr = _get_new_buf();
 		if (!log_item_ptr)
 		{
@@ -230,7 +230,7 @@ namespace chen {
 			return;
 		}
 
-		//µÃµ½Ò»¸öĞÂµÄlog
+		//å¾—åˆ°ä¸€ä¸ªæ–°çš„log
 		clog_item* log_item_ptr = _get_new_buf();
 		if (!log_item_ptr)
 		{

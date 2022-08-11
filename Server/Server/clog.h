@@ -1,4 +1,4 @@
-/***********************************************************************************************
+ï»¿/***********************************************************************************************
 created: 		2019-03-02
 
 author:			chensong
@@ -15,8 +15,8 @@ purpose:		log
 #include "cnoncopyable.h"
 #include "casync_log.h"
 #include "clog_define.h"
-
-///>uv_a.lib(util.obj) : error LNK2019: ÎŞ·¨½âÎöµÄÍâ²¿·ûºÅ __imp_GetUserProfileDirectoryW£¬¸Ã·ûºÅÔÚº¯Êı uv__getpwuid_r ÖĞ±»ÒıÓÃ 
+#include <uv.h>
+///>uv_a.lib(util.obj) : error LNK2019: æ— æ³•è§£æçš„å¤–éƒ¨ç¬¦å· __imp_GetUserProfileDirectoryWï¼Œè¯¥ç¬¦å·åœ¨å‡½æ•° uv__getpwuid_r ä¸­è¢«å¼•ç”¨ 
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment (lib,"Advapi32.lib")
 #pragma comment (lib,"Iphlpapi.lib")
@@ -93,7 +93,7 @@ namespace chen {
 
 #endif
 
-	//±ê×¼log ÓĞÊ±¼äÇ°×º
+	//æ ‡å‡†log æœ‰æ—¶é—´å‰ç¼€
 #define LOG_SYSTEM LOG(ELogLevel_System)
 #define LOG_FATAL  LOG(ELogLevel_Fatal, FUNCTION, __LINE__)
 #define LOG_ERROR  LOG(ELogLevel_Error, FUNCTION, __LINE__)

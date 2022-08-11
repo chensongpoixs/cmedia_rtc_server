@@ -1,4 +1,4 @@
-/***********************************************************************************************
+ï»¿/***********************************************************************************************
 created: 		2018-10-02
 
 author:			chensong
@@ -53,7 +53,7 @@ namespace chen
 	private:
 		bool			_init_log();
 	private:
-		//¹¤×÷Ïß³Ì
+		//å·¥ä½œçº¿ç¨‹
 		void			_work_pthread();
 		clog_item*		_get_new_buf();
 		void			_handler_log_item(const clog_item* log_item_ptr);
@@ -69,7 +69,7 @@ namespace chen
 		catomic_bool			m_stoped;
 		std::thread				m_thread;
 		std::mutex				m_lock;
-		ccond					m_condition;    /*ÊÇ·ñÓĞÈÎÎñĞèÒª´¦Àí*/
+		ccond					m_condition;    /*æ˜¯å¦æœ‰ä»»åŠ¡éœ€è¦å¤„ç†*/
 		std::list<clog_item*>	m_log_item;
 		int32_t					m_date_time;
 		std::string				m_path;

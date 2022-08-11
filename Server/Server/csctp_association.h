@@ -14,6 +14,7 @@ purpose:		csctp_association
 #include "cnet_type.h"
 #include <map>
 #include <usrsctp.h>
+#include "cwebrtc_transport.h"
 namespace chen
 {
 
@@ -33,7 +34,7 @@ namespace chen
 	class csctp_association
 	{
 	public:
-		csctp_association(uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size);
+		csctp_association(cwebrtc_transport * transport, uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size);
 			
 		~csctp_association();
 
@@ -44,6 +45,7 @@ namespace chen
 		uintptr_t get_id() { return m_id; }
 		
 	public:
+		void TransportConnected();
 		ESCTPSTATE get_state() const { return m_state; }
 		size_t get_sctp_buffered_amount() const { return m_sctp_buffered_amount; }
 
@@ -62,6 +64,7 @@ namespace chen
 		void OnUsrSctpReceiveSctpNotification(union sctp_notification* notification, size_t len);
 		void OnUsrSctpSentData(uint32_t freeBuffer);
 	private:
+		cwebrtc_transport *			m_webrtc_transport_ptr;
 		uintptr_t					m_id;// { 0u };
 		uint16_t					m_os;  // default [1024u]
 		uint16_t					m_mis; // default [1024u]

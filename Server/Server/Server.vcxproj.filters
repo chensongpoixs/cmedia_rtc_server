@@ -28,84 +28,6 @@
     <Filter Include="sctp">
       <UniqueIdentifier>{3f2a69c3-bd55-4c79-8dd6-afe1c053b7fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="libwebrtc">
-      <UniqueIdentifier>{a0224bec-dd2d-4b2d-958f-fe2afcb39bb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\api">
-      <UniqueIdentifier>{161ddd9b-defc-4ed4-9db7-44bd34ce67d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\call">
-      <UniqueIdentifier>{cb5c0420-fc40-4e64-98c7-8ad8fe5686d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules">
-      <UniqueIdentifier>{43bfa9f7-22e9-4493-839f-5a6d5e00b6ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\rtc_base">
-      <UniqueIdentifier>{44fc9369-06b8-4a46-b13b-806055b0e0e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\system_wrappers">
-      <UniqueIdentifier>{2136c2db-32b7-40ff-846c-c606234c72f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\api\transport">
-      <UniqueIdentifier>{2ec67219-30ee-45c3-8be7-d92890c54b69}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\api\units">
-      <UniqueIdentifier>{a01569d7-7008-443b-a247-90ba08adb7f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\bitrate_controller">
-      <UniqueIdentifier>{069ba47b-6810-45e2-95f0-21171413038e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\congestion_controller">
-      <UniqueIdentifier>{6063955d-618e-4d65-b73b-c3ab89805ae9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
-      <UniqueIdentifier>{8a4d697a-f9a6-4eab-b2c6-387e3ac59d71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\congestion_controller\rtp">
-      <UniqueIdentifier>{9af1b45f-36cb-4ba1-825d-a0cb818b6a9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\include">
-      <UniqueIdentifier>{eaa86ccd-8f9d-4408-abd3-0bb59be8bd3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\pacing">
-      <UniqueIdentifier>{5d4b6989-a9e6-4fda-a0d1-48c31a55bc87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
-      <UniqueIdentifier>{f9354750-8d24-44e0-b04b-eaf8e05c56b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\remote_bitrate_estimator\include">
-      <UniqueIdentifier>{cbdadddb-69be-42f1-a88c-5c5f4e4518d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\rtp_rtcp">
-      <UniqueIdentifier>{c8fecb25-91e2-467d-9d73-8fb25c74a8f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\rtp_rtcp\include">
-      <UniqueIdentifier>{189e6c24-664b-4426-9353-64656fe40d12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\rtp_rtcp\source">
-      <UniqueIdentifier>{1247614d-063f-4450-96cb-9f04f912cd8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\modules\rtp_rtcp\source\rtp_packet">
-      <UniqueIdentifier>{4e572b47-d774-42fb-b796-f974ff2c31a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\system_wrappers\source">
-      <UniqueIdentifier>{05a7f283-f5bb-4af9-97c0-8a7a8e683bb5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\rtc_base\experiments">
-      <UniqueIdentifier>{dd6dd8a9-f236-43eb-886f-db75b59a3d6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\rtc_base\network">
-      <UniqueIdentifier>{fa851e9d-b35c-4f0f-82d6-7708b273e053}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\rtc_base\numerics">
-      <UniqueIdentifier>{2c38986e-f2c4-4c11-8e8e-924bea775e07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\rtc_base\system">
-      <UniqueIdentifier>{551c7490-94f7-4f3c-b4eb-68567285ba58}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libwebrtc\rtc_base\units">
-      <UniqueIdentifier>{c0515b33-e24e-4567-8278-d4431d15fe92}</UniqueIdentifier>
-    </Filter>
     <Filter Include="rtcp">
       <UniqueIdentifier>{a5b88174-8c4b-4f56-9981-2511f2dcafa4}</UniqueIdentifier>
     </Filter>
@@ -114,6 +36,90 @@
     </Filter>
     <Filter Include="rtp">
       <UniqueIdentifier>{d122d46a-1df8-41af-82c0-6471bc099e0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc">
+      <UniqueIdentifier>{a0224bec-dd2d-4b2d-958f-fe2afcb39bb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\api">
+      <UniqueIdentifier>{161ddd9b-defc-4ed4-9db7-44bd34ce67d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\api\transport">
+      <UniqueIdentifier>{2ec67219-30ee-45c3-8be7-d92890c54b69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\api\units">
+      <UniqueIdentifier>{a01569d7-7008-443b-a247-90ba08adb7f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\call">
+      <UniqueIdentifier>{cb5c0420-fc40-4e64-98c7-8ad8fe5686d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules">
+      <UniqueIdentifier>{43bfa9f7-22e9-4493-839f-5a6d5e00b6ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\bitrate_controller">
+      <UniqueIdentifier>{069ba47b-6810-45e2-95f0-21171413038e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\congestion_controller">
+      <UniqueIdentifier>{6063955d-618e-4d65-b73b-c3ab89805ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{8a4d697a-f9a6-4eab-b2c6-387e3ac59d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\congestion_controller\rtp">
+      <UniqueIdentifier>{9af1b45f-36cb-4ba1-825d-a0cb818b6a9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\include">
+      <UniqueIdentifier>{eaa86ccd-8f9d-4408-abd3-0bb59be8bd3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\pacing">
+      <UniqueIdentifier>{5d4b6989-a9e6-4fda-a0d1-48c31a55bc87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{f9354750-8d24-44e0-b04b-eaf8e05c56b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\remote_bitrate_estimator\include">
+      <UniqueIdentifier>{cbdadddb-69be-42f1-a88c-5c5f4e4518d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\rtp_rtcp">
+      <UniqueIdentifier>{c8fecb25-91e2-467d-9d73-8fb25c74a8f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\rtp_rtcp\include">
+      <UniqueIdentifier>{189e6c24-664b-4426-9353-64656fe40d12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\rtp_rtcp\source">
+      <UniqueIdentifier>{1247614d-063f-4450-96cb-9f04f912cd8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\modules\rtp_rtcp\source\rtp_packet">
+      <UniqueIdentifier>{4e572b47-d774-42fb-b796-f974ff2c31a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\rtc_base">
+      <UniqueIdentifier>{44fc9369-06b8-4a46-b13b-806055b0e0e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\rtc_base\experiments">
+      <UniqueIdentifier>{dd6dd8a9-f236-43eb-886f-db75b59a3d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\rtc_base\network">
+      <UniqueIdentifier>{fa851e9d-b35c-4f0f-82d6-7708b273e053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\rtc_base\numerics">
+      <UniqueIdentifier>{2c38986e-f2c4-4c11-8e8e-924bea775e07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\rtc_base\system">
+      <UniqueIdentifier>{551c7490-94f7-4f3c-b4eb-68567285ba58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\rtc_base\units">
+      <UniqueIdentifier>{c0515b33-e24e-4567-8278-d4431d15fe92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\system_wrappers">
+      <UniqueIdentifier>{2136c2db-32b7-40ff-846c-c606234c72f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc\system_wrappers\source">
+      <UniqueIdentifier>{05a7f283-f5bb-4af9-97c0-8a7a8e683bb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="timer">
+      <UniqueIdentifier>{a7829fe6-b6a8-4447-afda-80931e4ca9d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uv_util">
+      <UniqueIdentifier>{f290d998-3745-4b92-8f65-bfdbb4954baa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -175,136 +181,136 @@
       <Filter>sctp</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc">
-      <Filter>libwebrtc\api</Filter>
+      <Filter>webrtc\api</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\units\data_rate.cc">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\units\data_size.cc">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\units\frequency.cc">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\units\time_delta.cc">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\units\timestamp.cc">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\transport\field_trial_based_config.cc">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\transport\goog_cc_factory.cc">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\transport\network_types.cc">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\call\rtp_transport_controller_send.cc">
-      <Filter>libwebrtc\call</Filter>
+      <Filter>webrtc\call</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\bitrate_controller\loss_based_bandwidth_estimation.cc">
-      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+      <Filter>webrtc\modules\bitrate_controller</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\bitrate_controller\send_side_bandwidth_estimation.cc">
-      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+      <Filter>webrtc\modules\bitrate_controller</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\acknowledged_bitrate_estimator.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\alr_detector.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\bitrate_estimator.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\congestion_window_pushback_controller.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\delay_based_bwe.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\goog_cc_network_control.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\link_capacity_estimator.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\median_slope_estimator.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\probe_bitrate_estimator.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\probe_controller.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\trendline_estimator.cc">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\control_handler.cc">
-      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+      <Filter>webrtc\modules\congestion_controller\rtp</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\send_time_history.cc">
-      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+      <Filter>webrtc\modules\congestion_controller\rtp</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\transport_feedback_adapter.cc">
-      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+      <Filter>webrtc\modules\congestion_controller\rtp</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\pacing\bitrate_prober.cc">
-      <Filter>libwebrtc\modules\pacing</Filter>
+      <Filter>webrtc\modules\pacing</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\pacing\interval_budget.cc">
-      <Filter>libwebrtc\modules\pacing</Filter>
+      <Filter>webrtc\modules\pacing</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\pacing\paced_sender.cc">
-      <Filter>libwebrtc\modules\pacing</Filter>
+      <Filter>webrtc\modules\pacing</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\aimd_rate_control.cc">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\bwe_defines.cc">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\inter_arrival.cc">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\overuse_detector.cc">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\overuse_estimator.cc">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\remote_bitrate_estimator_abs_send_time.cc">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\modules\rtp_rtcp\include\rtp_rtcp_defines.cc">
-      <Filter>libwebrtc\modules\rtp_rtcp\include</Filter>
+      <Filter>webrtc\modules\rtp_rtcp\include</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\system_wrappers\source\field_trial.cc">
-      <Filter>libwebrtc\system_wrappers\source</Filter>
+      <Filter>webrtc\system_wrappers\source</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\rtc_base\rate_statistics.cc">
-      <Filter>libwebrtc\rtc_base</Filter>
+      <Filter>webrtc\rtc_base</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\rtc_base\experiments\alr_experiment.cc">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\rtc_base\experiments\field_trial_parser.cc">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\rtc_base\experiments\field_trial_units.cc">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\rtc_base\experiments\rate_control_settings.cc">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\rtc_base\network\sent_packet.cc">
-      <Filter>libwebrtc\rtc_base\network</Filter>
+      <Filter>webrtc\rtc_base\network</Filter>
     </ClCompile>
     <ClCompile Include="rtcp\Bye.cpp">
       <Filter>rtcp</Filter>
@@ -436,6 +442,30 @@
     <ClCompile Include="RtpRtxParameters.cpp">
       <Filter>rtp</Filter>
     </ClCompile>
+    <ClCompile Include="ctimer.cpp">
+      <Filter>timer</Filter>
+    </ClCompile>
+    <ClCompile Include="cuv_util.cpp">
+      <Filter>uv_util</Filter>
+    </ClCompile>
+    <ClCompile Include="crate_calculator.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportCongestionControlClient.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportCongestionControlServer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpProbationGenerator.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="ccrypto_random.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="TrendCalculator.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -514,193 +544,193 @@
       <Filter>sctp</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\media_helpers.h">
-      <Filter>libwebrtc</Filter>
+      <Filter>webrtc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\bitrate_constraints.h">
-      <Filter>libwebrtc\api</Filter>
+      <Filter>webrtc\api</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\network_state_predictor.h">
-      <Filter>libwebrtc\api</Filter>
+      <Filter>webrtc\api</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\units\data_rate.h">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\units\data_size.h">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\units\frequency.h">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\units\time_delta.h">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\units\timestamp.h">
-      <Filter>libwebrtc\api\units</Filter>
+      <Filter>webrtc\api\units</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\transport\bitrate_settings.h">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\transport\field_trial_based_config.h">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\transport\goog_cc_factory.h">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\transport\network_control.h">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\transport\network_types.h">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\api\transport\webrtc_key_value_config.h">
-      <Filter>libwebrtc\api\transport</Filter>
+      <Filter>webrtc\api\transport</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\call\rtp_transport_controller_send.h">
-      <Filter>libwebrtc\call</Filter>
+      <Filter>webrtc\call</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\call\rtp_transport_controller_send_interface.h">
-      <Filter>libwebrtc\call</Filter>
+      <Filter>webrtc\call</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\bitrate_controller\loss_based_bandwidth_estimation.h">
-      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+      <Filter>webrtc\modules\bitrate_controller</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\bitrate_controller\send_side_bandwidth_estimation.h">
-      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+      <Filter>webrtc\modules\bitrate_controller</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\acknowledged_bitrate_estimator.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\alr_detector.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\bitrate_estimator.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\congestion_window_pushback_controller.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\delay_based_bwe.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\delay_increase_detector_interface.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\goog_cc_network_control.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\link_capacity_estimator.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\median_slope_estimator.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\probe_bitrate_estimator.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\probe_controller.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\trendline_estimator.h">
-      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+      <Filter>webrtc\modules\congestion_controller\goog_cc</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\control_handler.h">
-      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+      <Filter>webrtc\modules\congestion_controller\rtp</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\send_time_history.h">
-      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+      <Filter>webrtc\modules\congestion_controller\rtp</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\transport_feedback_adapter.h">
-      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+      <Filter>webrtc\modules\congestion_controller\rtp</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\include\module_common_types_public.h">
-      <Filter>libwebrtc\modules\include</Filter>
+      <Filter>webrtc\modules\include</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\pacing\bitrate_prober.h">
-      <Filter>libwebrtc\modules\pacing</Filter>
+      <Filter>webrtc\modules\pacing</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\pacing\interval_budget.h">
-      <Filter>libwebrtc\modules\pacing</Filter>
+      <Filter>webrtc\modules\pacing</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\pacing\paced_sender.h">
-      <Filter>libwebrtc\modules\pacing</Filter>
+      <Filter>webrtc\modules\pacing</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\pacing\packet_router.h">
-      <Filter>libwebrtc\modules\pacing</Filter>
+      <Filter>webrtc\modules\pacing</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\aimd_rate_control.h">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\inter_arrival.h">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\overuse_detector.h">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\overuse_estimator.h">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\remote_bitrate_estimator_abs_send_time.h">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\include\bwe_defines.h">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator\include</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator\include</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\include\remote_bitrate_estimator.h">
-      <Filter>libwebrtc\modules\remote_bitrate_estimator\include</Filter>
+      <Filter>webrtc\modules\remote_bitrate_estimator\include</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\rtp_rtcp\include\rtp_rtcp_defines.h">
-      <Filter>libwebrtc\modules\rtp_rtcp\include</Filter>
+      <Filter>webrtc\modules\rtp_rtcp\include</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\modules\rtp_rtcp\source\rtp_packet\transport_feedback.h">
-      <Filter>libwebrtc\modules\rtp_rtcp\source\rtp_packet</Filter>
+      <Filter>webrtc\modules\rtp_rtcp\source\rtp_packet</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h">
-      <Filter>libwebrtc\system_wrappers\source</Filter>
+      <Filter>webrtc\system_wrappers\source</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\constructor_magic.h">
-      <Filter>libwebrtc\rtc_base</Filter>
+      <Filter>webrtc\rtc_base</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\rate_statistics.h">
-      <Filter>libwebrtc\rtc_base</Filter>
+      <Filter>webrtc\rtc_base</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\type_traits.h">
-      <Filter>libwebrtc\rtc_base</Filter>
+      <Filter>webrtc\rtc_base</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\experiments\alr_experiment.h">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\experiments\field_trial_parser.h">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\experiments\field_trial_units.h">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\experiments\rate_control_settings.h">
-      <Filter>libwebrtc\rtc_base\experiments</Filter>
+      <Filter>webrtc\rtc_base\experiments</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\network\sent_packet.h">
-      <Filter>libwebrtc\rtc_base\network</Filter>
+      <Filter>webrtc\rtc_base\network</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\numerics\percentile_filter.h">
-      <Filter>libwebrtc\rtc_base\numerics</Filter>
+      <Filter>webrtc\rtc_base\numerics</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\numerics\safe_compare.h">
-      <Filter>libwebrtc\rtc_base\numerics</Filter>
+      <Filter>webrtc\rtc_base\numerics</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\numerics\safe_conversions.h">
-      <Filter>libwebrtc\rtc_base\numerics</Filter>
+      <Filter>webrtc\rtc_base\numerics</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\numerics\safe_conversions_impl.h">
-      <Filter>libwebrtc\rtc_base\numerics</Filter>
+      <Filter>webrtc\rtc_base\numerics</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\numerics\safe_minmax.h">
-      <Filter>libwebrtc\rtc_base\numerics</Filter>
+      <Filter>webrtc\rtc_base\numerics</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\system\unused.h">
-      <Filter>libwebrtc\rtc_base\system</Filter>
+      <Filter>webrtc\rtc_base\system</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h">
-      <Filter>libwebrtc\rtc_base\units</Filter>
+      <Filter>webrtc\rtc_base\units</Filter>
     </ClInclude>
     <ClInclude Include="rtcp\Bye.hpp">
       <Filter>rtcp</Filter>
@@ -815,6 +845,33 @@
     </ClInclude>
     <ClInclude Include="RtpHeaderExtensionIds.hpp">
       <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="ctimer.h">
+      <Filter>timer</Filter>
+    </ClInclude>
+    <ClInclude Include="cuv_util.h">
+      <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="crate_calculator.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportCongestionControlClient.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportCongestionControlServer.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="BweType.hpp">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpProbationGenerator.hpp">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="ccrypto_random.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="TrendCalculator.hpp">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

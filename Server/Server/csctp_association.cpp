@@ -102,8 +102,9 @@ namespace chen {
 		return 1;
 	}
 
-	csctp_association::csctp_association(uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size)
-		: m_id(0u)
+	csctp_association::csctp_association(cwebrtc_transport * transport, uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size)
+		: m_webrtc_transport_ptr(transport)
+		, m_id(0u)
 		, m_os(os)
 		, m_mis(mis)
 		, m_max_sctp_message_size(max_sctp_message_size)
@@ -287,6 +288,64 @@ namespace chen {
 			(rtc_byte::get2bytes(data, 2) == 5000)
 			);
 		// clang-format on
+	}
+	void csctp_association::TransportConnected()
+	{
+		// Just run the SCTP stack if our state is 'new'.
+		if (m_state != ESCTPSTATE::ESCTP_NEW)
+		{
+			return;
+		}
+
+		try
+		{
+			int ret;
+			struct sockaddr_conn rconn; // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+			std::memset(&rconn, 0, sizeof(rconn));
+			rconn.sconn_family = AF_CONN;
+			rconn.sconn_port = htons(5000);
+			rconn.sconn_addr = reinterpret_cast<void*>(m_id);
+#ifdef HAVE_SCONN_LEN
+			rconn.sconn_len = sizeof(rconn);
+#endif
+
+			ret = usrsctp_connect(m_socket, reinterpret_cast<struct sockaddr*>(&rconn), sizeof(rconn));
+
+			if (ret < 0 && errno != EINPROGRESS)
+			{
+				ERROR_EX_LOG("usrsctp_connect() failed: %s", std::strerror(errno));
+			}
+
+			// Disable MTU discovery.
+			sctp_paddrparams peerAddrParams; // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+			std::memset(&peerAddrParams, 0, sizeof(peerAddrParams));
+			std::memcpy(&peerAddrParams.spp_address, &rconn, sizeof(rconn));
+			peerAddrParams.spp_flags = SPP_PMTUD_DISABLE;
+
+			// The MTU value provided specifies the space available for chunks in the
+			// packet, so let's subtract the SCTP header size.
+			peerAddrParams.spp_pathmtu = SctpMtu - sizeof(struct sctp_common_header);
+
+			ret = usrsctp_setsockopt(
+				m_socket, IPPROTO_SCTP, SCTP_PEER_ADDR_PARAMS, &peerAddrParams, sizeof(peerAddrParams));
+
+			if (ret < 0)
+			{
+				ERROR_EX_LOG("usrsctp_setsockopt(SCTP_PEER_ADDR_PARAMS) failed: %s", std::strerror(errno));
+			}
+
+			// Announce connecting state.
+			m_state = ESCTPSTATE::ESCTP_CONNECTING;
+			
+			m_webrtc_transport_ptr->OnSctpAssociationConnecting(this);
+		}
+		catch (.../*const MediaSoupError&*/ /*error*/)
+		{
+			m_state = ESCTPSTATE::ESCTP_FAILED;
+			m_webrtc_transport_ptr->OnSctpAssociationFailed(this);
+		}
 	}
 	void csctp_association::ProcessSctpData(const uint8_t * data, size_t len)
 	{
