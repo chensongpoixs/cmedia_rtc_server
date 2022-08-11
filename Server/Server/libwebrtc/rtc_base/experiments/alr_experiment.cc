@@ -14,11 +14,14 @@
 #include "rtc_base/experiments/alr_experiment.h"
 #include "api/transport/field_trial_based_config.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <inttypes.h>
 #include <stdio.h>
 #include <string>
+#include "clog.h"
+
+using namespace chen;
 
 namespace webrtc {
 
@@ -78,10 +81,9 @@ AlrExperimentSettings::CreateFromFieldTrial(
              &settings.alr_stop_budget_level_percent,
              &settings.group_id) == 6) {
     ret.emplace(settings);
-    MS_DEBUG_TAG(bwe, "Using ALR experiment settings: "
+    DEBUG_EX_LOG("bwe, Using ALR experiment settings: "
                       "pacing factor: %f"
-                      ", max pacer queue length:%" PRIi64
-                     ", ALR bandwidth usage percent: %d"
+                      ", max pacer queue length:%lli, ALR bandwidth usage percent: %d"
                      ", ALR start budget level percent: %d"
                      ", ALR end budget level percent: %d"
                      ", ALR experiment group ID: %d",
@@ -92,7 +94,7 @@ AlrExperimentSettings::CreateFromFieldTrial(
                      settings.alr_stop_budget_level_percent,
                      settings.group_id);
   } else {
-    MS_DEBUG_TAG(bwe, "Failed to parse ALR experiment: %s", experiment_name);
+	  DEBUG_EX_LOG("bwe, Failed to parse ALR experiment: %s", experiment_name);
   }
 
   return ret;

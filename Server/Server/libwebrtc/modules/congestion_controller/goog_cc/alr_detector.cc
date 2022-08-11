@@ -14,12 +14,16 @@
 #include "modules/congestion_controller/goog_cc/alr_detector.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
-#include "DepLibUV.hpp"
-#include "Logger.hpp"
+//#include "DepLibUV.hpp"
+//#include "Logger.hpp"
 
 #include <absl/memory/memory.h>
 #include <cstdint>
 #include <cstdio>
+#include "clog.h"
+#include <uv.h>
+
+using namespace chen;
 
 namespace webrtc {
 
@@ -85,7 +89,7 @@ void AlrDetector::OnBytesSent(size_t bytes_sent, int64_t send_time_ms) {
   bool state_changed = false;
   if (alr_budget_.budget_ratio() > start_budget_level_ratio_ &&
       !alr_started_time_ms_) {
-    alr_started_time_ms_.emplace(DepLibUV::GetTimeMsInt64());
+    alr_started_time_ms_.emplace(static_cast<uint64_t>(uv_hrtime() / 1000000u));
     state_changed = true;
   } else if (alr_budget_.budget_ratio() < stop_budget_level_ratio_ &&
              alr_started_time_ms_) {
@@ -94,7 +98,9 @@ void AlrDetector::OnBytesSent(size_t bytes_sent, int64_t send_time_ms) {
   }
 
   if (state_changed)
-    MS_DEBUG_DEV("state changed");
+  {
+	  DEBUG_EX_LOG("state changed");
+  }
 }
 
 void AlrDetector::SetEstimatedBitrate(int bitrate_bps) {

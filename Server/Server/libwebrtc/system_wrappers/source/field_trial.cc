@@ -12,13 +12,14 @@
 
 #include "system_wrappers/source/field_trial.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <absl/strings/string_view.h>
 #include <stddef.h>
 #include <map>
 #include <string>
-
+#include "clog.h"
+using namespace chen;
 // Simple field trial implementation, which allows client to
 // specify desired flags in InitFieldTrialsFromString.
 namespace webrtc {
@@ -104,14 +105,15 @@ std::string FindFullName(const std::string& name) {
 #endif  // WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT
 
 // Optionally initialize field trial from a string.
-void InitFieldTrialsFromString(const char* trials_string) {
-  MS_DEBUG_TAG(bwe, "Setting field trial string: %s", trials_string);
+void InitFieldTrialsFromString(const char* trials_string)
+{
+  DEBUG_EX_LOG("bwe, Setting field trial string: %s", trials_string);
 #ifndef WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT
   if (trials_string) {
     // RTC_DCHECK(FieldTrialsStringIsValid(trials_string))
         // << "Invalid field trials string:" << trials_string;
-    MS_ASSERT(
-      FieldTrialsStringIsValid(trials_string), "invalid field trials string: '%s'", trials_string);
+   /* MS_ASSERT(
+      FieldTrialsStringIsValid(trials_string), "invalid field trials string: '%s'", trials_string);*/
   };
 #endif  // WEBRTC_EXCLUDE_FIELD_TRIAL_DEFAULT
   trials_init_string = trials_string;

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::GoogCcNetworkController"
+//#define MS_CLASS "webrtc::GoogCcNetworkController"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
@@ -18,7 +18,7 @@
 #include "modules/congestion_controller/goog_cc/probe_controller.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <absl/memory/memory.h>
 #include <inttypes.h>
@@ -30,7 +30,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "clog.h"
 
+using namespace chen;
 namespace webrtc {
 namespace {
 // From RTCPSender video report interval.
@@ -251,7 +253,7 @@ NetworkControlUpdate GoogCcNetworkController::OnProcessInterval(
 NetworkControlUpdate GoogCcNetworkController::OnRemoteBitrateReport(
     RemoteBitrateReport msg) {
   if (packet_feedback_only_) {
-    MS_ERROR("Received REMB for packet feedback only GoogCC");
+    ERROR_EX_LOG("Received REMB for packet feedback only GoogCC");
     return NetworkControlUpdate();
   }
   bandwidth_estimation_->UpdateReceiverEstimate(msg.receive_time,
@@ -371,13 +373,13 @@ void GoogCcNetworkController::ClampConstraints() {
   if (use_min_allocatable_as_lower_bound_)
     min_data_rate_ = std::max(min_data_rate_, min_total_allocated_bitrate_);
   if (max_data_rate_ < min_data_rate_) {
-    MS_ERROR(
+    ERROR_EX_LOG(
       "max bitrate smaller than min bitrate [max_data_rate_:%" PRIi64 ", min_data_rate_:%" PRIi64 "]",
       max_data_rate_.bps(), min_data_rate_.bps());
     max_data_rate_ = min_data_rate_;
   }
   if (starting_rate_ && starting_rate_ < min_data_rate_) {
-    MS_ERROR(
+	  ERROR_EX_LOG(
       "start bitrate smaller than min bitrate [starting_rate_:%" PRIi64 ", min_data_rate_:%" PRIi64 "]",
       starting_rate_->bps(), min_data_rate_.bps());
     starting_rate_ = min_data_rate_;
@@ -392,7 +394,7 @@ std::vector<ProbeClusterConfig> GoogCcNetworkController::ResetConstraints(
   starting_rate_ = new_constraints.starting_rate;
   ClampConstraints();
 
-  MS_DEBUG_DEV(
+  DEBUG_EX_LOG(
     "calling bandwidth_estimation_->SetBitrates() [max_data_rate_.bps_or(-1):%" PRIi64 "]",
     max_data_rate_.bps_or(-1));
 
@@ -691,7 +693,7 @@ void GoogCcNetworkController::MaybeTriggerOnNetworkChanged(
                                          probes.begin(), probes.end());
     update->pacer_config = GetPacingRates(at_time);
 
-    MS_DEBUG_DEV("bwe [at_time:%" PRIu64", pushback_target_bps:%lld, estimate_bps:%lld]",
+    DEBUG_EX_LOG("bwe [at_time:%lli, pushback_target_bps:%lld, estimate_bps:%lld]",
                  at_time.ms(),
                  last_pushback_target_rate_.bps(),
                  last_raw_target_rate_.bps());

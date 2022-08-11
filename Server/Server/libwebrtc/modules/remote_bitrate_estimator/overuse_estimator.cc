@@ -8,17 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::OveruseEstimator"
+//#define MS_CLASS "webrtc::OveruseEstimator"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/remote_bitrate_estimator/overuse_estimator.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <math.h>
 #include <string.h>
 #include <algorithm>
+
+#include "clog.h"
+
+using namespace chen;
 
 namespace webrtc {
 
@@ -108,11 +112,11 @@ void OveruseEstimator::Update(int64_t t_delta,
       E_[0][0] + E_[1][1] >= 0 &&
       E_[0][0] * E_[1][1] - E_[0][1] * E_[1][0] >= 0 && E_[0][0] >= 0;
 
-  MS_ASSERT(positive_semi_definite, "positive_semi_definite is not true");
+ // MS_ASSERT(positive_semi_definite, "positive_semi_definite is not true");
 
-  if (!positive_semi_definite) {
-    MS_ERROR("The over-use estimator's covariance matrix is no longer "
-           "semi-definite.");
+  if (!positive_semi_definite) 
+  {
+    ERROR_EX_LOG("The over-use estimator's covariance matrix is no longer  semi-definite.");
   }
 
   slope_ = slope_ + K[0] * residual;

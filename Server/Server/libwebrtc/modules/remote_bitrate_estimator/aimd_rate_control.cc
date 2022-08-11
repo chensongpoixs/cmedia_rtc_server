@@ -19,14 +19,17 @@
 #include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/numerics/safe_minmax.h"
 
-#include "Logger.hpp"
-#include "MediaSoupErrors.hpp"
+//#include "Logger.hpp"
+//#include "MediaSoupErrors.hpp"
 
 #include <inttypes.h>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <string>
+#include "clog.h"
+
+using namespace chen;
 
 namespace webrtc {
 namespace {
@@ -49,15 +52,15 @@ double ReadBackoffFactor(const WebRtcKeyValueConfig& key_value_config) {
       sscanf(experiment_string.c_str(), "Enabled-%lf", &backoff_factor);
   if (parsed_values == 1) {
     if (backoff_factor >= 1.0) {
-      MS_WARN_TAG(bwe, "Back-off factor must be less than 1.");
+      WARNING_EX_LOG("bwe, Back-off factor must be less than 1.");
     } else if (backoff_factor <= 0.0) {
-      MS_WARN_TAG(bwe, "Back-off factor must be greater than 0.");
+		WARNING_EX_LOG("bwe, Back-off factor must be greater than 0.");
     } else {
       return backoff_factor;
     }
   }
 
-  MS_WARN_TAG(bwe, "Failed to parse parameters for AimdRateControl experiment from field trial string. Using default.");
+  WARNING_EX_LOG("bwe, Failed to parse parameters for AimdRateControl experiment from field trial string. Using default.");
 
   return kDefaultBackoffFactor;
 }
@@ -104,10 +107,10 @@ AimdRateControl::AimdRateControl(const WebRtcKeyValueConfig* key_value_config,
   ParseFieldTrial({&initial_backoff_interval_, &low_throughput_threshold_},
                   key_value_config->Lookup("WebRTC-BweAimdRateControlConfig"));
   if (initial_backoff_interval_) {
-    MS_DEBUG_TAG(bwe, "Using aimd rate control with initial back-off interval: %s",
+    DEBUG_EX_LOG("bwe, Using aimd rate control with initial back-off interval: %s",
                      ToString(*initial_backoff_interval_).c_str());
   }
-  MS_DEBUG_TAG(bwe, "Using aimd rate control with back off factor: %f ", beta_);
+  DEBUG_EX_LOG("bwe, Using aimd rate control with back off factor: %f ", beta_);
   ParseFieldTrial(
       {&capacity_deviation_ratio_threshold_, &capacity_limit_deviation_factor_},
       key_value_config->Lookup("WebRTC-Bwe-AimdRateControl-NetworkState"));
@@ -122,7 +125,7 @@ void AimdRateControl::SetStartBitrate(DataRate start_bitrate) {
 }
 
 void AimdRateControl::SetMinBitrate(DataRate min_bitrate) {
-  MS_DEBUG_DEV("[min_bitrate:%" PRIi64 "]", min_bitrate.bps());
+  DEBUG_EX_LOG("[min_bitrate:%" PRIi64 "]", min_bitrate.bps());
 
   min_configured_bitrate_ = min_bitrate;
   current_bitrate_ = std::max(min_bitrate, current_bitrate_);
@@ -365,7 +368,7 @@ DataRate AimdRateControl::ChangeBitrate(DataRate new_bitrate,
       break;
 
     default:
-      MS_THROW_ERROR("unknown rate control state");
+      ERROR_EX_LOG("unknown rate control state");
   }
   return ClampBitrate(new_bitrate, estimated_throughput);
 }
@@ -436,7 +439,7 @@ void AimdRateControl::ChangeState(const RateControlInput& input,
       rate_control_state_ = kRcHold;
       break;
     default:
-      MS_THROW_ERROR("unknown input.bw_state");
+      ERROR_EX_LOG("unknown input.bw_state");
   }
 }
 

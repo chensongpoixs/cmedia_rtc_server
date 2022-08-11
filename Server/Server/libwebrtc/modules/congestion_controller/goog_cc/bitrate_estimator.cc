@@ -8,18 +8,22 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::BitrateEstimator"
+//#define MS_CLASS "webrtc::BitrateEstimator"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/congestion_controller/goog_cc/bitrate_estimator.h"
 #include "api/units/data_rate.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <stdio.h>
 #include <algorithm>
 #include <cmath>
 #include <string>
+
+#include "clog.h"
+
+using namespace chen;
 
 namespace webrtc {
 
@@ -123,9 +127,7 @@ void BitrateEstimator::Update(Timestamp at_time, DataSize amount, bool in_alr) {
 
 
   bitrate_estimate_var_ = sample_var * pred_bitrate_estimate_var / (sample_var + pred_bitrate_estimate_var);
-  MS_DEBUG_DEV(
-    "acknowledged_bitrate %" PRIu64", %f",
-    at_time.ms(), bitrate_estimate_kbps_ * 1000);
+  DEBUG_EX_LOG( "acknowledged_bitrate %lli, %f", at_time.ms(), bitrate_estimate_kbps_ * 1000);
 }
 
 float BitrateEstimator::UpdateWindow(int64_t now_ms,

@@ -8,16 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::ProbeBitrateEstimator"
+//#define MS_CLASS "webrtc::ProbeBitrateEstimator"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <absl/memory/memory.h>
 #include <algorithm>
+
+
+#include "clog.h"
+
+using namespace chen;
 
 namespace webrtc {
 namespace {
@@ -64,7 +69,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
   int cluster_id = packet_feedback.sent_packet.pacing_info.probe_cluster_id;
 
   //RTC_DCHECK_NE(cluster_id, PacedPacketInfo::kNotAProbe);
-  MS_ASSERT(cluster_id != PacedPacketInfo::kNotAProbe, "cluster_id == kNotAProbe");
+  //MS_ASSERT(cluster_id != PacedPacketInfo::kNotAProbe, "cluster_id == kNotAProbe");
 
   EraseOldClusters(packet_feedback.receive_time);
 
@@ -91,12 +96,12 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
       // packet_feedback.sent_packet.pacing_info.probe_cluster_min_probes, 0);
   // RTC_DCHECK_GT(packet_feedback.sent_packet.pacing_info.probe_cluster_min_bytes,
                 // 0);
-  MS_ASSERT(
+  /*MS_ASSERT(
     packet_feedback.sent_packet.pacing_info.probe_cluster_min_probes > 0,
     "probe_cluster_min_probes must be > 0");
   MS_ASSERT(
     packet_feedback.sent_packet.pacing_info.probe_cluster_min_bytes > 0,
-    "probe_cluster_min_bytes must be > 0");
+    "probe_cluster_min_bytes must be > 0");*/
 
   int min_probes =
       packet_feedback.sent_packet.pacing_info.probe_cluster_min_probes *
@@ -131,7 +136,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
   if (send_interval <= TimeDelta::Zero() || send_interval > kMaxProbeInterval ||
       receive_interval <= TimeDelta::Zero() ||
       receive_interval > kMaxProbeInterval) {
-    MS_WARN_DEV(
+    WARNING_EX_LOG(
       "probing unsuccessful, invalid send/receive interval"
       " [cluster id:%d]"
       " [send interval:%s]"
@@ -158,7 +163,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
 
   double ratio = receive_rate / send_rate;
   if (ratio > kMaxValidRatio) {
-    MS_WARN_DEV(
+	  WARNING_EX_LOG(
       "probing unsuccessful, receive/send ratio too high"
       " [cluster id:%d, send:%s / %s = %s]"
       " [receive:%s / %s = %s]"
@@ -179,7 +184,7 @@ absl::optional<DataRate> ProbeBitrateEstimator::HandleProbeAndEstimateBitrate(
     return absl::nullopt;
   }
 
-  MS_DEBUG_DEV(
+  DEBUG_EX_LOG(
     "probing successful"
     " [cluster id:%d]"
     " [send:%s / %s = %s]"

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::SendSideBandwidthEstimation"
+//#define MS_CLASS "webrtc::SendSideBandwidthEstimation"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/bitrate_controller/send_side_bandwidth_estimation.h"

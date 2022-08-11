@@ -8,18 +8,20 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::FieldTrialParser"
+//#define MS_CLASS "webrtc::FieldTrialParser"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "rtc_base/experiments/field_trial_parser.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <algorithm>
 #include <map>
 #include <type_traits>
 #include <utility>
+#include "clog.h"
 
+using namespace chen;
 namespace webrtc {
 namespace {
 
@@ -75,16 +77,16 @@ void ParseFieldTrial(
     auto field = field_map.find(key);
     if (field != field_map.end()) {
       if (!field->second->Parse(std::move(opt_value))) {
-        MS_WARN_TAG(bwe, "Failed to read field with key: '%s' in trial: \"%s\"",
+        WARNING_EX_LOG("bwe,  Failed to read field with key: '%s' in trial: \"%s\"",
            key.c_str(), trial_string.c_str());
       }
     } else if (!opt_value && keyless_field && !key.empty()) {
       if (!keyless_field->Parse(key)) {
-        MS_WARN_TAG(bwe, "Failed to read empty key field with value: '%s' in trial: \"%s\"",
+		  WARNING_EX_LOG("bwe,  Failed to read empty key field with value: '%s' in trial: \"%s\"",
            key.c_str(), trial_string.c_str());
       }
     } else {
-      MS_DEBUG_TAG(bwe, "No field with key: '%s' (found in trial: \"%s\")", key.c_str(), trial_string.c_str());
+      DEBUG_EX_LOG("bwe, No field with key: '%s' (found in trial: \"%s\")", key.c_str(), trial_string.c_str());
     }
   }
 
