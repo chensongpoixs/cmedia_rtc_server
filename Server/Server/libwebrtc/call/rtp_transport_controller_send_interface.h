@@ -19,7 +19,7 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 // #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 
-#include "RTC/RtpPacket.hpp"
+#include "RtpPacket.hpp"
 
 #include <absl/types/optional.h>
 #include <stddef.h>

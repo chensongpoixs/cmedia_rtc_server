@@ -56,6 +56,18 @@ namespace chen {
 	{
 		size_t countsetbits(const uint16_t mask);
 	}
+
+
+	namespace rtc_time
+	{
+		struct Ntp
+		{
+			uint32_t seconds;
+			uint32_t fractions;
+		};
+
+		uint32_t TimeMsToAbsSendTime(uint64_t ms);
+	}
 }
 
 #endif //_C_RTC_UTIL_H_

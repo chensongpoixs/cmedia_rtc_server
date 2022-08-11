@@ -20,7 +20,7 @@
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/rate_statistics.h"
 
-#include "RTC/RtpPacket.hpp"
+#include "RtpPacket.hpp"
 
 #include <stddef.h>
 #include <stdint.h>

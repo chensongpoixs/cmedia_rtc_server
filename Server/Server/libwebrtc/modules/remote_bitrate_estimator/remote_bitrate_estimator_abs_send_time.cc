@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::RemoteBitrateEstimatorAbsSendTime"
+//#define MS_CLASS "webrtc::RemoteBitrateEstimatorAbsSendTime"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
@@ -16,12 +16,14 @@
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "rtc_base/constructor_magic.h"
 
-#include "Logger.hpp"
-#include "DepLibUV.hpp"
+//#include "Logger.hpp"
+//#include "DepLibUV.hpp"
 
 #include <math.h>
 #include <algorithm>
-
+#include "clog.h"
+#include <uv.h>
+using namespace chen;
 namespace webrtc {
 namespace {
 absl::optional<DataRate> OptionalRateFromOptionalBps(
@@ -95,7 +97,7 @@ RemoteBitrateEstimatorAbsSendTime::RemoteBitrateEstimatorAbsSendTime(
       last_update_ms_(-1),
       uma_recorded_(false),
       remote_rate_(&field_trials_) {
-  MS_DEBUG_TAG(bwe, "RemoteBitrateEstimatorAbsSendTime: Instantiating.");
+  DEBUG_EX_LOG("bwe, RemoteBitrateEstimatorAbsSendTime: Instantiating.");
 }
 
 void RemoteBitrateEstimatorAbsSendTime::ComputeClusters(
@@ -191,7 +193,7 @@ RemoteBitrateEstimatorAbsSendTime::ProcessClusters(int64_t now_ms) {
     // Make sure that a probe sent on a lower bitrate than our estimate can't
     // reduce the estimate.
     if (IsBitrateImproving(probe_bitrate_bps)) {
-      MS_DEBUG_DEV(
+      DEBUG_EX_LOG(
           "probe successful, sent at %d bps, received at %d bps "
           "mean send delta:%fms, mean recv delta:%f ms, "
           "num probes:%d",
@@ -226,7 +228,7 @@ bool RemoteBitrateEstimatorAbsSendTime::IsBitrateImproving(
 void RemoteBitrateEstimatorAbsSendTime::IncomingPacket(
     int64_t arrival_time_ms, size_t payload_size, const RTC::RtpPacket& packet, const uint32_t send_time_24bits)
 {
-  MS_TRACE();
+ // MS_TRACE();
 
   IncomingPacketInfo(arrival_time_ms, send_time_24bits, payload_size, packet.GetSsrc());
 }
@@ -236,7 +238,7 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacketInfo(
     uint32_t send_time_24bits,
     size_t payload_size,
     uint32_t ssrc) {
-  MS_ASSERT(send_time_24bits < (1ul << 24), "invalid sendTime24bits value");
+  //MS_ASSERT(send_time_24bits < (1ul << 24), "invalid sendTime24bits value");
 
   if (!uma_recorded_) {
     uma_recorded_ = true;
@@ -247,7 +249,7 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacketInfo(
   uint32_t timestamp = send_time_24bits << kAbsSendTimeInterArrivalUpshift;
   int64_t send_time_ms = static_cast<int64_t>(timestamp) * kTimestampToMs;
 
-  int64_t now_ms = DepLibUV::GetTimeMsInt64();
+  int64_t now_ms = static_cast<uint64_t>(uv_hrtime() / 1000000u);
   // TODO(holmer): SSRCs are only needed for REMB, should be broken out from
   // here.
 
@@ -293,10 +295,9 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacketInfo(
           send_delta_ms = send_time_ms - probes_.back().send_time_ms;
           recv_delta_ms = arrival_time_ms - probes_.back().recv_time_ms;
         }
-        MS_DEBUG_DEV(
-            "probe packet received [send time:%" PRId64
-            "ms, recv "
-            "time:%" PRId64 "ms, send delta:%dms, recv delta:%d ms]",
+        DEBUG_EX_LOG(
+            "probe packet received [send time:%llu ms, recv "
+            "time:%llu ms, send delta:%dms, recv delta:%d ms]",
             send_time_ms,
             arrival_time_ms,
             send_delta_ms,

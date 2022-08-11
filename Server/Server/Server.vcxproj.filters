@@ -109,6 +109,12 @@
     <Filter Include="rtcp">
       <UniqueIdentifier>{a5b88174-8c4b-4f56-9981-2511f2dcafa4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="codec">
+      <UniqueIdentifier>{f97dffcd-ea96-4658-a0f9-ed372197718d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtp">
+      <UniqueIdentifier>{d122d46a-1df8-41af-82c0-6471bc099e0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -158,12 +164,6 @@
     </ClCompile>
     <ClCompile Include="croom_mgr.cpp">
       <Filter>room</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebrtc_mgr.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebrtc_transport.cpp">
-      <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="crtc_util.cpp">
       <Filter>rtc</Filter>
@@ -387,10 +387,55 @@
     <ClCompile Include="rtcp\XrReceiverReferenceTime.cpp">
       <Filter>rtcp</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="H264.cpp">
+      <Filter>codec</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpPacket.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
     <ClCompile Include="SeqManager.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebrtc_mgr.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="cwebrtc_transport.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="Parameters.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="Media.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtcpFeedback.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtcpParameters.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpCodecMimeType.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpCodecParameters.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpEncodingParameters.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpHeaderExtensionParameters.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpHeaderExtensionUri.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpParameters.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpRtxParameters.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -458,12 +503,6 @@
     </ClInclude>
     <ClInclude Include="croom_mgr.h">
       <Filter>room</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebrtc_mgr.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebrtc_transport.h">
-      <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="crtc_util.h">
       <Filter>rtc</Filter>
@@ -747,8 +786,35 @@
     <ClInclude Include="rtcp\XrReceiverReferenceTime.hpp">
       <Filter>rtcp</Filter>
     </ClInclude>
+    <ClInclude Include="H264.hpp">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadDescriptorHandler.hpp">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools.hpp">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpPacket.hpp">
+      <Filter>rtp</Filter>
+    </ClInclude>
     <ClInclude Include="SeqManager.hpp">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebrtc_mgr.h">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebrtc_transport.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="Parameters.hpp">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpDictionaries.hpp">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpHeaderExtensionIds.hpp">
+      <Filter>rtp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

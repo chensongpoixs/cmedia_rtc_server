@@ -15,6 +15,15 @@ purpose:		log
 #include "cnoncopyable.h"
 #include "casync_log.h"
 #include "clog_define.h"
+
+///>uv_a.lib(util.obj) : error LNK2019: 无法解析的外部符号 __imp_GetUserProfileDirectoryW，该符号在函数 uv__getpwuid_r 中被引用 
+#pragma comment(lib,"ws2_32.lib")
+#pragma comment (lib,"Advapi32.lib")
+#pragma comment (lib,"Iphlpapi.lib")
+#pragma comment(lib, "Psapi.lib")
+#pragma comment(lib, "user32.lib")
+#pragma comment(lib, "userenv.lib")
+ 
 namespace chen {
 
 	class clog : private cnoncopyable

@@ -8,17 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::SendTimeHistory"
+//#define MS_CLASS "webrtc::SendTimeHistory"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/congestion_controller/rtp/send_time_history.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
-#include "Logger.hpp"
+//#include "Logger.hpp"
 
 #include <algorithm>
 #include <utility>
-
+#include "clog.h"
+using namespace chen;
 namespace webrtc {
 
 SendTimeHistory::SendTimeHistory(int64_t packet_age_limit_ms)
@@ -48,7 +49,7 @@ void SendTimeHistory::AddNewPacket(PacketFeedback packet) {
 
 void SendTimeHistory::AddUntracked(size_t packet_size, int64_t send_time_ms) {
   if (send_time_ms < last_send_time_ms_) {
-    MS_WARN_TAG(bwe, "ignoring untracked data for out of order packet");
+    WARNING_EX_LOG("bwe, ignoring untracked data for out of order packet");
   }
   pending_untracked_size_ += packet_size;
   last_untracked_send_time_ms_ =
@@ -68,9 +69,7 @@ SendTimeHistory::Status SendTimeHistory::OnSentPacket(uint16_t sequence_number,
     AddPacketBytes(it->second);
   if (pending_untracked_size_ > 0) {
     if (send_time_ms < last_untracked_send_time_ms_) {
-      MS_WARN_TAG(bwe,
-          "appending acknowledged data for out of order packet."
-          " (Diff:%" PRIi64 " ms)",
+		WARNING_EX_LOG("bwe, appending acknowledged data for out of order packet.  (Diff:%llu ms)",
           last_untracked_send_time_ms_ - send_time_ms);
     }
     it->second.unacknowledged_data += pending_untracked_size_;

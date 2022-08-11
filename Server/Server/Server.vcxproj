@@ -167,6 +167,7 @@
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
     <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="H264.cpp" />
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc" />
     <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc" />
     <ClCompile Include="libwebrtc\api\transport\field_trial_based_config.cc" />
@@ -212,6 +213,10 @@
     <ClCompile Include="libwebrtc\rtc_base\rate_statistics.cc" />
     <ClCompile Include="libwebrtc\system_wrappers\source\field_trial.cc" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Media.cpp" />
+    <ClCompile Include="Parameters.cpp" />
+    <ClCompile Include="RtcpFeedback.cpp" />
+    <ClCompile Include="RtcpParameters.cpp" />
     <ClCompile Include="rtcp\Bye.cpp" />
     <ClCompile Include="rtcp\CompoundPacket.cpp" />
     <ClCompile Include="rtcp\Feedback.cpp" />
@@ -239,6 +244,14 @@
     <ClCompile Include="rtcp\XR.cpp" />
     <ClCompile Include="rtcp\XrDelaySinceLastRr.cpp" />
     <ClCompile Include="rtcp\XrReceiverReferenceTime.cpp" />
+    <ClCompile Include="RtpCodecMimeType.cpp" />
+    <ClCompile Include="RtpCodecParameters.cpp" />
+    <ClCompile Include="RtpEncodingParameters.cpp" />
+    <ClCompile Include="RtpHeaderExtensionParameters.cpp" />
+    <ClCompile Include="RtpHeaderExtensionUri.cpp" />
+    <ClCompile Include="RtpPacket.cpp" />
+    <ClCompile Include="RtpParameters.cpp" />
+    <ClCompile Include="RtpRtxParameters.cpp" />
     <ClCompile Include="SeqManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +282,7 @@
     <ClInclude Include="cwebsocket_msg_queue.h" />
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="H264.hpp" />
     <ClInclude Include="libwebrtc\api\bitrate_constraints.h" />
     <ClInclude Include="libwebrtc\api\network_state_predictor.h" />
     <ClInclude Include="libwebrtc\api\transport\bitrate_settings.h" />
@@ -332,6 +346,8 @@
     <ClInclude Include="libwebrtc\rtc_base\type_traits.h" />
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h" />
     <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h" />
+    <ClInclude Include="Parameters.hpp" />
+    <ClInclude Include="PayloadDescriptorHandler.hpp" />
     <ClInclude Include="rtcp\Bye.hpp" />
     <ClInclude Include="rtcp\CompoundPacket.hpp" />
     <ClInclude Include="rtcp\Feedback.hpp" />
@@ -360,7 +376,11 @@
     <ClInclude Include="rtcp\XR.hpp" />
     <ClInclude Include="rtcp\XrDelaySinceLastRr.hpp" />
     <ClInclude Include="rtcp\XrReceiverReferenceTime.hpp" />
+    <ClInclude Include="RtpDictionaries.hpp" />
+    <ClInclude Include="RtpHeaderExtensionIds.hpp" />
+    <ClInclude Include="RtpPacket.hpp" />
     <ClInclude Include="SeqManager.hpp" />
+    <ClInclude Include="Tools.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

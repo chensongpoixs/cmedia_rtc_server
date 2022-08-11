@@ -8,22 +8,25 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::TransportFeedbackAdapter"
+//#define MS_CLASS "webrtc::TransportFeedbackAdapter"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/congestion_controller/rtp/transport_feedback_adapter.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "system_wrappers/source/field_trial.h"
-#include "mediasoup_helpers.h"
+#include "media_helpers.h"
 
-#include "Logger.hpp"
-#include "RTC/RTCP/FeedbackRtpTransport.hpp"
+//#include "Logger.hpp"
+#include "FeedbackRtpTransport.hpp"
 
 #include <stdlib.h>
 #include <algorithm>
 #include <cmath>
 #include <utility>
+#include "clog.h"
+
+using namespace chen;
 
 namespace webrtc {
 namespace {
@@ -147,7 +150,7 @@ TransportFeedbackAdapter::ProcessTransportFeedback(
   for (const PacketFeedback& rtp_feedback : feedback_vector) {
     if (rtp_feedback.send_time_ms != PacketFeedback::kNoSendTime) {
       auto feedback = NetworkPacketFeedbackFromRtpPacketFeedback(rtp_feedback);
-      MS_DEBUG_DEV("feedback received for RTP packet: [seq_num: %" PRIi64 ", send_time:%" PRIi64 ", size: %lld, feedback.receive_time:%" PRIi64,
+      DEBUG_EX_LOG("feedback received for RTP packet: [seq_num: %llu, send_time:%llu, size: %lld, feedback.receive_time:%" PRIi64,
           feedback.sent_packet.sequence_number,
           feedback.sent_packet.send_time.ms(),
           feedback.sent_packet.size.bytes(),
@@ -155,7 +158,7 @@ TransportFeedbackAdapter::ProcessTransportFeedback(
 
       msg.packet_feedbacks.push_back(feedback);
     } else if (rtp_feedback.arrival_time_ms == PacketFeedback::kNotReceived) {
-      MS_DEBUG_DEV("--- rtp_feedback.arrival_time_ms == PacketFeedback::kNotReceived ---");
+      DEBUG_EX_LOG("--- rtp_feedback.arrival_time_ms == PacketFeedback::kNotReceived ---");
       msg.sendless_arrival_times.push_back(Timestamp::PlusInfinity());
     } else {
       msg.sendless_arrival_times.push_back(
@@ -172,7 +175,7 @@ TransportFeedbackAdapter::ProcessTransportFeedback(
   msg.prior_in_flight = prior_in_flight;
   msg.data_in_flight = GetOutstandingData();
 
-  MS_DEBUG_DEV("prior_in_flight:%lld, data_in_flight:%lld", msg.prior_in_flight.bytes(), msg.data_in_flight.bytes());
+  DEBUG_EX_LOG("prior_in_flight:%lld, data_in_flight:%lld", msg.prior_in_flight.bytes(), msg.data_in_flight.bytes());
   return msg;
 }
 
@@ -190,14 +193,14 @@ std::vector<PacketFeedback> TransportFeedbackAdapter::GetPacketFeedbackVector(
     current_offset_ms_ = feedback_time.ms();
   } else {
     current_offset_ms_ +=
-      mediasoup_helpers::FeedbackRtpTransport::GetBaseDeltaUs(&feedback, last_timestamp_us_) / 1000;
+      media_helpers::FeedbackRtpTransport::GetBaseDeltaUs(&feedback, last_timestamp_us_) / 1000;
   }
   last_timestamp_us_ =
-    mediasoup_helpers::FeedbackRtpTransport::GetBaseTimeUs(&feedback);
+    media_helpers::FeedbackRtpTransport::GetBaseTimeUs(&feedback);
 
   std::vector<PacketFeedback> packet_feedback_vector;
   if (feedback.GetPacketStatusCount() == 0) {
-    MS_WARN_DEV("empty transport feedback packet received");
+    WARNING_EX_LOG("empty transport feedback packet received");
     return packet_feedback_vector;
   }
   packet_feedback_vector.reserve(feedback.GetPacketStatusCount());
@@ -206,7 +209,7 @@ std::vector<PacketFeedback> TransportFeedbackAdapter::GetPacketFeedbackVector(
     int64_t offset_us = 0;
     int64_t timestamp_ms = 0;
     uint16_t seq_num = feedback.GetBaseSequenceNumber();
-    for (const auto& packet : mediasoup_helpers::FeedbackRtpTransport::GetReceivedPackets(&feedback)) {
+    for (const auto& packet : media_helpers::FeedbackRtpTransport::GetReceivedPackets(&feedback)) {
       // Insert into the vector those unreceived packets which precede this
       // iteration's received packet.
       for (; seq_num != packet.sequence_number(); ++seq_num) {
@@ -235,7 +238,7 @@ std::vector<PacketFeedback> TransportFeedbackAdapter::GetPacketFeedbackVector(
     }
 
     if (failed_lookups > 0) {
-      MS_WARN_DEV("failed to lookup send time for %zu"
+      WARNING_EX_LOG("failed to lookup send time for %zu"
                   " packet%s, send time history too small?",
                   failed_lookups,
                   (failed_lookups > 1 ? "s" : ""));

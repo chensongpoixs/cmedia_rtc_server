@@ -19,15 +19,17 @@
 #include "system_wrappers/source/field_trial.h"
 #include "modules/congestion_controller/goog_cc/goog_cc_network_control.h"
 
-#include "DepLibUV.hpp"
-#include "Logger.hpp"
-#include "RTC/RTCP/FeedbackRtpTransport.hpp"
+//#include "DepLibUV.hpp"
+//#include "Logger.hpp"
+#include "FeedbackRtpTransport.hpp"
 
 #include <absl/memory/memory.h>
 #include <absl/types/optional.h>
 #include <utility>
 #include <vector>
-
+#include "clog.h"
+#include <uv.h>
+using namespace chen;
 namespace webrtc {
 namespace {
 static const size_t kMaxOverheadBytes = 500;
@@ -36,7 +38,7 @@ TargetRateConstraints ConvertConstraints(int min_bitrate_bps,
                                          int max_bitrate_bps,
                                          int start_bitrate_bps) {
   TargetRateConstraints msg;
-  msg.at_time = Timestamp::ms(DepLibUV::GetTimeMsInt64());
+  msg.at_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
   msg.min_data_rate =
       min_bitrate_bps >= 0 ? DataRate::bps(min_bitrate_bps) : DataRate::Zero();
   msg.max_data_rate = max_bitrate_bps > 0 ? DataRate::bps(max_bitrate_bps)
@@ -63,7 +65,7 @@ RtpTransportControllerSend::RtpTransportControllerSend(
       observer_(nullptr),
       controller_factory_override_(controller_factory),
       process_interval_(controller_factory_override_->GetProcessInterval()),
-      last_report_block_time_(Timestamp::ms(DepLibUV::GetTimeMsInt64())),
+      last_report_block_time_(Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u))),
       send_side_bwe_with_overhead_(
           webrtc::field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")),
       transport_overhead_bytes_per_packet_(0),
@@ -72,7 +74,7 @@ RtpTransportControllerSend::RtpTransportControllerSend(
   initial_config_.key_value_config = &trial_based_config_;
 
   // RTC_DCHECK(bitrate_config.start_bitrate_bps > 0);
-  MS_ASSERT(bitrate_config.start_bitrate_bps > 0, "start bitrate must be > 0");
+ // MS_ASSERT(bitrate_config.start_bitrate_bps > 0, "start bitrate must be > 0");
 
   pacer_.SetPacingRates(bitrate_config.start_bitrate_bps, 0);
 }
@@ -87,7 +89,7 @@ void RtpTransportControllerSend::UpdateControlState() {
 
   // We won't create control_handler_ until we have an observers.
   // RTC_DCHECK(observer_ != nullptr);
-  MS_ASSERT(observer_ != nullptr, "no observer");
+ // MS_ASSERT(observer_ != nullptr, "no observer");
 
   observer_->OnTargetTransferRate(*update);
 }
@@ -136,7 +138,7 @@ void RtpTransportControllerSend::RegisterTargetTransferRateObserver(
     TargetTransferRateObserver* observer) {
 
     // RTC_DCHECK(observer_ == nullptr);
-    MS_ASSERT(observer_ == nullptr, "observer already set");
+   // MS_ASSERT(observer_ == nullptr, "observer already set");
 
     observer_ = observer;
     observer_->OnStartRateUpdate(*initial_config_.constraints.starting_rate);
@@ -144,10 +146,10 @@ void RtpTransportControllerSend::RegisterTargetTransferRateObserver(
 }
 
 void RtpTransportControllerSend::OnNetworkAvailability(bool network_available) {
-  MS_DEBUG_DEV("<<<<< network_available:%s", network_available ? "true" : "false");
+  DEBUG_EX_LOG("<<<<< network_available:%s", network_available ? "true" : "false");
 
   NetworkAvailability msg;
-  msg.at_time = Timestamp::ms(DepLibUV::GetTimeMsInt64());
+  msg.at_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
   msg.network_available = network_available;
 
   if (network_available_ == msg.network_available)
@@ -176,7 +178,7 @@ void RtpTransportControllerSend::EnablePeriodicAlrProbing(bool enable) {
 
 void RtpTransportControllerSend::OnSentPacket(
     const rtc::SentPacket& sent_packet, size_t size) {
-  MS_DEBUG_DEV("<<<<< size:%zu", size);
+  DEBUG_EX_LOG("<<<<< size:%zu", size);
 
   absl::optional<SentPacket> packet_msg =
       transport_feedback_adapter_.ProcessSentPacket(sent_packet);
@@ -188,19 +190,19 @@ void RtpTransportControllerSend::OnSentPacket(
 
 void RtpTransportControllerSend::OnTransportOverheadChanged(
     size_t transport_overhead_bytes_per_packet) {
-  MS_DEBUG_DEV("<<<<< transport_overhead_bytes_per_packet:%zu", transport_overhead_bytes_per_packet);
+  DEBUG_EX_LOG("<<<<< transport_overhead_bytes_per_packet:%zu", transport_overhead_bytes_per_packet);
 
   if (transport_overhead_bytes_per_packet >= kMaxOverheadBytes) {
-    MS_ERROR("transport overhead exceeds: %zu", kMaxOverheadBytes);
+    ERROR_EX_LOG("transport overhead exceeds: %zu", kMaxOverheadBytes);
     return;
   }
 }
 
 void RtpTransportControllerSend::OnReceivedEstimatedBitrate(uint32_t bitrate) {
-  MS_DEBUG_DEV("<<<<< bitrate:%zu", bitrate);
+  DEBUG_EX_LOG("<<<<< bitrate:%zu", bitrate);
 
   RemoteBitrateReport msg;
-  msg.receive_time = Timestamp::ms(DepLibUV::GetTimeMsInt64());
+  msg.receive_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
   msg.bandwidth = DataRate::bps(bitrate);
 
   PostUpdates(controller_->OnRemoteBitrateReport(msg));
@@ -210,7 +212,7 @@ void RtpTransportControllerSend::OnReceivedRtcpReceiverReport(
     const ReportBlockList& report_blocks,
     int64_t rtt_ms,
     int64_t now_ms) {
-  MS_DEBUG_DEV("<<<<< rtt_ms:%" PRIi64, rtt_ms);
+  DEBUG_EX_LOG("<<<<< rtt_ms:%" PRIi64, rtt_ms);
 
   OnReceivedRtcpReceiverReportBlocks(report_blocks, now_ms);
 
@@ -228,16 +230,16 @@ void RtpTransportControllerSend::OnAddPacket(
       packet_info,
       send_side_bwe_with_overhead_ ? transport_overhead_bytes_per_packet_.load()
                                    : 0,
-      Timestamp::ms(DepLibUV::GetTimeMsInt64()));
+      Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u)));
 }
 
 void RtpTransportControllerSend::OnTransportFeedback(
     const RTC::RTCP::FeedbackRtpTransportPacket& feedback) {
-  MS_DEBUG_DEV("<<<<<");
+  DEBUG_EX_LOG("<<<<<");
 
   absl::optional<TransportPacketsFeedback> feedback_msg =
       transport_feedback_adapter_.ProcessTransportFeedback(
-          feedback, Timestamp::ms(DepLibUV::GetTimeMsInt64()));
+          feedback, Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u)));
   if (feedback_msg)
 	{
 		// 最终通过RtpTransportControllerSend将feedback转发到GoogCcNetworkController进行码率预估后
@@ -249,7 +251,7 @@ void RtpTransportControllerSend::OnTransportFeedback(
 
 void RtpTransportControllerSend::OnRemoteNetworkEstimate(
     NetworkStateEstimate estimate) {
-  estimate.update_time = Timestamp::ms(DepLibUV::GetTimeMsInt64());
+  estimate.update_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
   controller_->OnNetworkStateEstimate(estimate);
 }
 
@@ -265,12 +267,12 @@ void RtpTransportControllerSend::Process()
 void RtpTransportControllerSend::MaybeCreateControllers() {
   // RTC_DCHECK(!controller_);
   // RTC_DCHECK(!control_handler_);
-  MS_ASSERT(!controller_, "controller already set");
-  MS_ASSERT(!control_handler_, "controller handler already set");
+ // MS_ASSERT(!controller_, "controller already set");
+ // MS_ASSERT(!control_handler_, "controller handler already set");
 
   control_handler_ = absl::make_unique<CongestionControlHandler>();
 
-  initial_config_.constraints.at_time = Timestamp::ms(DepLibUV::GetTimeMsInt64());
+  initial_config_.constraints.at_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
 	// 创建GoogCcNetworkController
   controller_ = controller_factory_override_->Create(initial_config_);
   process_interval_ = controller_factory_override_->GetProcessInterval();
@@ -279,13 +281,13 @@ void RtpTransportControllerSend::MaybeCreateControllers() {
 }
 
 void RtpTransportControllerSend::UpdateControllerWithTimeInterval() {
-  MS_DEBUG_DEV("<<<<<");
+  DEBUG_EX_LOG("<<<<<");
 
   // RTC_DCHECK(controller_);
-  MS_ASSERT(controller_, "controller not set");
+ // MS_ASSERT(controller_, "controller not set");
 
   ProcessInterval msg;
-  msg.at_time = Timestamp::ms(DepLibUV::GetTimeMsInt64());
+  msg.at_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
 	// 对码率进行检测和更新，将结果转发给pacer
 	/**
 	 * 调用GoogCcNetworkController::OnProcessInterval()做间隔的码率检测和更新
@@ -296,9 +298,9 @@ void RtpTransportControllerSend::UpdateControllerWithTimeInterval() {
 }
 
 void RtpTransportControllerSend::UpdateStreamsConfig() {
-  MS_DEBUG_DEV("<<<<<");
+  DEBUG_EX_LOG("<<<<<");
 
-  streams_config_.at_time = Timestamp::ms(DepLibUV::GetTimeMsInt64());
+  streams_config_.at_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
   if (controller_)
     PostUpdates(controller_->OnStreamsConfig(streams_config_));
 }

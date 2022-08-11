@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#define MS_CLASS "webrtc::PacedSender"
+//#define MS_CLASS "webrtc::PacedSender"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "modules/pacing/paced_sender.h"
@@ -17,14 +17,16 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "system_wrappers/source/field_trial.h" // webrtc::field_trial.
 
-#include "DepLibUV.hpp"
-#include "Logger.hpp"
-#include "RTC/RtpPacket.hpp"
+//#include "DepLibUV.hpp"
+//#include "Logger.hpp"
+#include "RtpPacket.hpp"
 
 #include <absl/memory/memory.h>
 #include <algorithm>
 #include <utility>
-
+#include "clog.h"
+#include <uv.h>
+using namespace chen;
 namespace webrtc {
 namespace {
 // Time limit in milliseconds between packet bursts.
@@ -53,7 +55,7 @@ PacedSender::PacedSender(PacketRouter* packet_router,
       prober_(*field_trials_),
       probing_send_failure_(false),
       pacing_bitrate_kbps_(0),
-      time_last_process_us_(DepLibUV::GetTimeUsInt64()),
+      time_last_process_us_(static_cast<uint64_t>(uv_hrtime() / 1000000u)),
       first_sent_packet_ms_(-1),
       packet_counter_(0),
       account_for_audio_(false) {
@@ -64,21 +66,21 @@ PacedSender::PacedSender(PacketRouter* packet_router,
 
 void PacedSender::CreateProbeCluster(int bitrate_bps, int cluster_id) {
   // TODO: REMOVE
-   MS_DEBUG_DEV("---- bitrate_bps:%d, cluster_id:%d", bitrate_bps, cluster_id);
+   DEBUG_EX_LOG("---- bitrate_bps:%d, cluster_id:%d", bitrate_bps, cluster_id);
 
-  prober_.CreateProbeCluster(bitrate_bps, DepLibUV::GetTimeMsInt64(), cluster_id);
+  prober_.CreateProbeCluster(bitrate_bps, static_cast<uint64_t>(uv_hrtime() / 1000000u), cluster_id);
 }
 
 void PacedSender::Pause() {
   if (!paused_)
-    MS_DEBUG_DEV("paused");
+    DEBUG_EX_LOG("paused");
 
   paused_ = true;
 }
 
 void PacedSender::Resume() {
   if (paused_)
-    MS_DEBUG_DEV("resumed");
+    DEBUG_EX_LOG("resumed");
 
   paused_ = false;
 }
@@ -99,7 +101,7 @@ bool PacedSender::Congested() const {
 
 void PacedSender::SetProbingEnabled(bool enabled) {
   // RTC_CHECK_EQ(0, packet_counter_);
-  MS_ASSERT(packet_counter_ == 0, "packet counter must be 0");
+  //MS_ASSERT(packet_counter_ == 0, "packet counter must be 0");
 
   prober_.SetEnabled(enabled);
 }
@@ -107,7 +109,7 @@ void PacedSender::SetProbingEnabled(bool enabled) {
 void PacedSender::SetPacingRates(uint32_t pacing_rate_bps,
                                  uint32_t padding_rate_bps) {
   // RTC_DCHECK(pacing_rate_bps > 0);
-  MS_ASSERT(pacing_rate_bps > 0, "pacing rate must be > 0");
+  //MS_ASSERT(pacing_rate_bps > 0, "pacing rate must be > 0");
 
   pacing_bitrate_kbps_ = pacing_rate_bps / 1000;
   padding_budget_.set_target_rate_kbps(padding_rate_bps / 1000);
@@ -121,7 +123,7 @@ void PacedSender::SetPacingRates(uint32_t pacing_rate_bps,
 void PacedSender::InsertPacket(size_t bytes) {
   // RTC_DCHECK(pacing_bitrate_kbps_ > 0)
   //     << "SetPacingRate must be called before InsertPacket.";
-  MS_ASSERT(pacing_bitrate_kbps_ > 0, "SetPacingRates() must be called before InsertPacket()");
+  //MS_ASSERT(pacing_bitrate_kbps_ > 0, "SetPacingRates() must be called before InsertPacket()");
 
   prober_.OnIncomingPacket(bytes);
 
@@ -138,7 +140,7 @@ void PacedSender::SetAccountForAudioPackets(bool account_for_audio) {
 
 int64_t PacedSender::TimeUntilNextProcess() {
   int64_t elapsed_time_us =
-      DepLibUV::GetTimeUsInt64() - time_last_process_us_;
+	  static_cast<uint64_t>(uv_hrtime() / 1000000u) - time_last_process_us_;
   int64_t elapsed_time_ms = (elapsed_time_us + 500) / 1000;
   // When paused we wake up every 500 ms to send a padding packet to ensure
   // we won't get stuck in the paused state due to no feedback being received.
@@ -146,7 +148,7 @@ int64_t PacedSender::TimeUntilNextProcess() {
     return std::max<int64_t>(kPausedProcessIntervalMs - elapsed_time_ms, 0);
 
   if (prober_.IsProbing()) {
-    int64_t ret = prober_.TimeUntilNextProbe(DepLibUV::GetTimeMsInt64());
+    int64_t ret = prober_.TimeUntilNextProbe(static_cast<uint64_t>(uv_hrtime() / 1000000u));
     if (ret > 0 || (ret == 0 && !probing_send_failure_))
       return ret;
   }
@@ -157,8 +159,8 @@ int64_t PacedSender::UpdateTimeAndGetElapsedMs(int64_t now_us) {
   int64_t elapsed_time_ms = (now_us - time_last_process_us_ + 500) / 1000;
   time_last_process_us_ = now_us;
   if (elapsed_time_ms > kMaxElapsedTimeMs) {
-    MS_WARN_TAG(bwe, "elapsed time (%" PRIi64 " ms) longer than expected,"
-                     " limiting to %" PRIi64 " ms",
+    WARNING_EX_LOG("bwe, elapsed time (%llu ms) longer than expected,"
+                     " limiting to %llu ms",
                         elapsed_time_ms,
                         kMaxElapsedTimeMs);
     elapsed_time_ms = kMaxElapsedTimeMs;
@@ -167,7 +169,7 @@ int64_t PacedSender::UpdateTimeAndGetElapsedMs(int64_t now_us) {
 }
 
 void PacedSender::Process() {
-  int64_t now_us = DepLibUV::GetTimeUsInt64();
+  int64_t now_us = static_cast<uint64_t>(uv_hrtime() / 1000000u);
   int64_t elapsed_time_ms = UpdateTimeAndGetElapsedMs(now_us);
 
   if (paused_)
@@ -221,7 +223,7 @@ void PacedSender::Process() {
 
   if (bytes_sent != 0)
   {
-    auto now = DepLibUV::GetTimeUsInt64();
+    auto now = static_cast<uint64_t>(uv_hrtime() / 1000000u);
 
     OnPaddingSent(now, bytes_sent);
     prober_.ProbeSent((now + 500) / 1000, bytes_sent);
@@ -256,7 +258,7 @@ size_t PacedSender::PaddingBytesToAdd(
 
 void PacedSender::OnPacketSent(size_t size) {
   if (first_sent_packet_ms_ == -1)
-    first_sent_packet_ms_ = DepLibUV::GetTimeMsInt64();
+    first_sent_packet_ms_ = static_cast<uint64_t>(uv_hrtime() / 1000000u);
 
   // Update media bytes sent.
   UpdateBudgetWithBytesSent(size);

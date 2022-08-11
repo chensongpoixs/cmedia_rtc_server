@@ -14,7 +14,7 @@
 #include "api/transport/network_types.h"
 #include "rtc_base/constructor_magic.h"
 
-#include "RTC/RtpPacket.hpp"
+#include "RtpPacket.hpp"
 
 #include <stddef.h>
 #include <stdint.h>

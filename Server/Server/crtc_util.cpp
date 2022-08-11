@@ -109,4 +109,12 @@ namespace chen {
 			return static_cast<size_t>(__builtin_popcount(mask));
 		}
 	}
+
+	namespace rtc_time
+	{
+		uint32_t TimeMsToAbsSendTime(uint64_t ms)
+		{
+			return static_cast<uint32_t>(((ms << 18) + 500) / 1000) & 0x00FFFFFF;
+		}
+	}
 }

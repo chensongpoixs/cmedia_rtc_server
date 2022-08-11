@@ -18,7 +18,7 @@
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
-#include "RTC/RtpPacket.hpp"
+#include "RtpPacket.hpp"
 
 namespace webrtc {
 namespace rtcp {
