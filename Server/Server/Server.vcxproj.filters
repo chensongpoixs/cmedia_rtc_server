@@ -121,6 +121,9 @@
     <Filter Include="uv_util">
       <UniqueIdentifier>{f290d998-3745-4b92-8f65-bfdbb4954baa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="srtp">
+      <UniqueIdentifier>{d4d8a06c-72d9-433e-99c8-557cea608a58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -465,6 +468,15 @@
     </ClCompile>
     <ClCompile Include="TrendCalculator.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="csrtp_session.cpp">
+      <Filter>srtp</Filter>
+    </ClCompile>
+    <ClCompile Include="StunPacket.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cuv_ip.cpp">
+      <Filter>uv_util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -872,6 +884,15 @@
     </ClInclude>
     <ClInclude Include="TrendCalculator.hpp">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="csrtp_session.h">
+      <Filter>srtp</Filter>
+    </ClInclude>
+    <ClInclude Include="StunPacket.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cuv_ip.h">
+      <Filter>uv_util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

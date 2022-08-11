@@ -32,6 +32,9 @@ typedef SSIZE_T ssize_t;
 #include <netinet/in.h> // sockaddr_in, sockaddr_in6
 #include <sys/socket.h> // struct sockaddr, struct sockaddr_storage, AF_INET, AF_INET6
 #endif
+
+
+#include <mutex>
 namespace chen
 {
 	typedef signed char		int8;
@@ -57,7 +60,8 @@ namespace chen
 
 #endif
 
-
+	typedef std::mutex							clock_type;
+	typedef std::lock_guard<clock_type>			clock_guard;
 
 }
 
