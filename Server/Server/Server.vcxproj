@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}</ProjectGuid>
     <RootNamespace>Server</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -71,14 +71,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(C_INCLUDE)\abseil-cpp\lib\x64\debug;$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\josn\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Release;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\josn\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Release;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -98,11 +98,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MS_LITTLE_ENDIAN;DEBUG;MS_LOG_TRACE;MS_LOG_FILE_LINE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>libwebrtc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>lib_json.lib;libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-gd-x64-1_66.lib;libboost_chrono-vc141-mt-gd-x64-1_66.lib;libboost_container-vc141-mt-gd-x64-1_66.lib;libboost_context-vc141-mt-gd-x64-1_66.lib;libboost_coroutine-vc141-mt-gd-x64-1_66.lib;libboost_date_time-vc141-mt-gd-x64-1_66.lib;libboost_exception-vc141-mt-gd-x64-1_66.lib;libboost_fiber-vc141-mt-gd-x64-1_66.lib;libboost_filesystem-vc141-mt-gd-x64-1_66.lib;libboost_graph-vc141-mt-gd-x64-1_66.lib;libboost_iostreams-vc141-mt-gd-x64-1_66.lib;libboost_locale-vc141-mt-gd-x64-1_66.lib;libboost_log-vc141-mt-gd-x64-1_66.lib;libboost_log_setup-vc141-mt-gd-x64-1_66.lib;libboost_math_c99-vc141-mt-gd-x64-1_66.lib;libboost_math_c99f-vc141-mt-gd-x64-1_66.lib;libboost_math_c99l-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1f-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1l-vc141-mt-gd-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_program_options-vc141-mt-gd-x64-1_66.lib;libboost_python-vc141-mt-gd-x64-1_66.lib;libboost_random-vc141-mt-gd-x64-1_66.lib;libboost_regex-vc141-mt-gd-x64-1_66.lib;libboost_serialization-vc141-mt-gd-x64-1_66.lib;libboost_signals-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-gd-x64-1_66.lib;libboost_system-vc141-mt-gd-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_thread-vc141-mt-gd-x64-1_66.lib;libboost_timer-vc141-mt-gd-x64-1_66.lib;libboost_type_erasure-vc141-mt-gd-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-gd-x64-1_66.lib;libboost_wave-vc141-mt-gd-x64-1_66.lib;libboost_wserialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>absl_bad_optional_access.lib;absl_bad_variant_access.lib;absl_base.lib;absl_demangle_internal.lib;absl_dynamic_annotations.lib;absl_failure_signal_handler.lib;absl_hash.lib;absl_int128.lib;absl_internal_bad_any_cast_impl.lib;absl_internal_city.lib;absl_internal_civil_time.lib;absl_internal_debugging_internal.lib;absl_internal_examine_stack.lib;absl_internal_hashtablez_sampler.lib;absl_internal_malloc_internal.lib;absl_internal_spinlock_wait.lib;absl_internal_strings_internal.lib;absl_internal_str_format_internal.lib;absl_internal_throw_delegate.lib;absl_internal_time_zone.lib;absl_leak_check.lib;absl_leak_check_disable.lib;absl_optional.lib;absl_raw_hash_set.lib;absl_stacktrace.lib;absl_strings.lib;absl_symbolize.lib;absl_synchronization.lib;absl_time.lib;lib_json.lib;libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-gd-x64-1_66.lib;libboost_chrono-vc141-mt-gd-x64-1_66.lib;libboost_container-vc141-mt-gd-x64-1_66.lib;libboost_context-vc141-mt-gd-x64-1_66.lib;libboost_coroutine-vc141-mt-gd-x64-1_66.lib;libboost_date_time-vc141-mt-gd-x64-1_66.lib;libboost_exception-vc141-mt-gd-x64-1_66.lib;libboost_fiber-vc141-mt-gd-x64-1_66.lib;libboost_filesystem-vc141-mt-gd-x64-1_66.lib;libboost_graph-vc141-mt-gd-x64-1_66.lib;libboost_iostreams-vc141-mt-gd-x64-1_66.lib;libboost_locale-vc141-mt-gd-x64-1_66.lib;libboost_log-vc141-mt-gd-x64-1_66.lib;libboost_log_setup-vc141-mt-gd-x64-1_66.lib;libboost_math_c99-vc141-mt-gd-x64-1_66.lib;libboost_math_c99f-vc141-mt-gd-x64-1_66.lib;libboost_math_c99l-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1f-vc141-mt-gd-x64-1_66.lib;libboost_math_tr1l-vc141-mt-gd-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_program_options-vc141-mt-gd-x64-1_66.lib;libboost_python-vc141-mt-gd-x64-1_66.lib;libboost_random-vc141-mt-gd-x64-1_66.lib;libboost_regex-vc141-mt-gd-x64-1_66.lib;libboost_serialization-vc141-mt-gd-x64-1_66.lib;libboost_signals-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-gd-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-gd-x64-1_66.lib;libboost_system-vc141-mt-gd-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-gd-x64-1_66.lib;libboost_thread-vc141-mt-gd-x64-1_66.lib;libboost_timer-vc141-mt-gd-x64-1_66.lib;libboost_type_erasure-vc141-mt-gd-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-gd-x64-1_66.lib;libboost_wave-vc141-mt-gd-x64-1_66.lib;libboost_wserialization-vc141-mt-gd-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,12 +129,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>libwebrtc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>lib_json.lib;libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-x64-1_66.lib;libboost_chrono-vc141-mt-x64-1_66.lib;libboost_container-vc141-mt-x64-1_66.lib;libboost_context-vc141-mt-x64-1_66.lib;libboost_coroutine-vc141-mt-x64-1_66.lib;libboost_date_time-vc141-mt-x64-1_66.lib;libboost_exception-vc141-mt-x64-1_66.lib;libboost_fiber-vc141-mt-x64-1_66.lib;libboost_filesystem-vc141-mt-x64-1_66.lib;libboost_graph-vc141-mt-x64-1_66.lib;libboost_iostreams-vc141-mt-x64-1_66.lib;libboost_locale-vc141-mt-x64-1_66.lib;libboost_log-vc141-mt-x64-1_66.lib;libboost_log_setup-vc141-mt-x64-1_66.lib;libboost_math_c99-vc141-mt-x64-1_66.lib;libboost_math_c99f-vc141-mt-x64-1_66.lib;libboost_math_c99l-vc141-mt-x64-1_66.lib;libboost_math_tr1-vc141-mt-x64-1_66.lib;libboost_math_tr1f-vc141-mt-x64-1_66.lib;libboost_math_tr1l-vc141-mt-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-x64-1_66.lib;libboost_program_options-vc141-mt-x64-1_66.lib;libboost_python-vc141-mt-x64-1_66.lib;libboost_random-vc141-mt-x64-1_66.lib;libboost_regex-vc141-mt-x64-1_66.lib;libboost_serialization-vc141-mt-x64-1_66.lib;libboost_signals-vc141-mt-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-x64-1_66.lib;libboost_system-vc141-mt-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-x64-1_66.lib;libboost_thread-vc141-mt-x64-1_66.lib;libboost_timer-vc141-mt-x64-1_66.lib;libboost_type_erasure-vc141-mt-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-x64-1_66.lib;libboost_wave-vc141-mt-x64-1_66.lib;libboost_wserialization-vc141-mt-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>absl_bad_optional_access.lib;absl_bad_variant_access.lib;absl_base.lib;absl_demangle_internal.lib;absl_dynamic_annotations.lib;absl_failure_signal_handler.lib;absl_hash.lib;absl_int128.lib;absl_internal_bad_any_cast_impl.lib;absl_internal_city.lib;absl_internal_civil_time.lib;absl_internal_debugging_internal.lib;absl_internal_examine_stack.lib;absl_internal_hashtablez_sampler.lib;absl_internal_malloc_internal.lib;absl_internal_spinlock_wait.lib;absl_internal_strings_internal.lib;absl_internal_str_format_internal.lib;absl_internal_throw_delegate.lib;absl_internal_time_zone.lib;absl_leak_check.lib;absl_leak_check_disable.lib;absl_optional.lib;absl_raw_hash_set.lib;absl_stacktrace.lib;absl_strings.lib;absl_symbolize.lib;absl_synchronization.lib;absl_time.lib;lib_json.lib;libssl.lib;libcrypto.lib;usrsctp.lib;uv_a.lib;libboost_atomic-vc141-mt-x64-1_66.lib;libboost_chrono-vc141-mt-x64-1_66.lib;libboost_container-vc141-mt-x64-1_66.lib;libboost_context-vc141-mt-x64-1_66.lib;libboost_coroutine-vc141-mt-x64-1_66.lib;libboost_date_time-vc141-mt-x64-1_66.lib;libboost_exception-vc141-mt-x64-1_66.lib;libboost_fiber-vc141-mt-x64-1_66.lib;libboost_filesystem-vc141-mt-x64-1_66.lib;libboost_graph-vc141-mt-x64-1_66.lib;libboost_iostreams-vc141-mt-x64-1_66.lib;libboost_locale-vc141-mt-x64-1_66.lib;libboost_log-vc141-mt-x64-1_66.lib;libboost_log_setup-vc141-mt-x64-1_66.lib;libboost_math_c99-vc141-mt-x64-1_66.lib;libboost_math_c99f-vc141-mt-x64-1_66.lib;libboost_math_c99l-vc141-mt-x64-1_66.lib;libboost_math_tr1-vc141-mt-x64-1_66.lib;libboost_math_tr1f-vc141-mt-x64-1_66.lib;libboost_math_tr1l-vc141-mt-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-x64-1_66.lib;libboost_program_options-vc141-mt-x64-1_66.lib;libboost_python-vc141-mt-x64-1_66.lib;libboost_random-vc141-mt-x64-1_66.lib;libboost_regex-vc141-mt-x64-1_66.lib;libboost_serialization-vc141-mt-x64-1_66.lib;libboost_signals-vc141-mt-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-x64-1_66.lib;libboost_system-vc141-mt-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-x64-1_66.lib;libboost_thread-vc141-mt-x64-1_66.lib;libboost_timer-vc141-mt-x64-1_66.lib;libboost_type_erasure-vc141-mt-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-x64-1_66.lib;libboost_wave-vc141-mt-x64-1_66.lib;libboost_wserialization-vc141-mt-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -159,6 +162,50 @@
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
     <ClCompile Include="cwebsocket_session.cpp" />
     <ClCompile Include="dtlsv1.x.cpp" />
+    <ClCompile Include="libwebrtc\api\network_state_predictor.cc" />
+    <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc" />
+    <ClCompile Include="libwebrtc\api\transport\field_trial_based_config.cc" />
+    <ClCompile Include="libwebrtc\api\transport\goog_cc_factory.cc" />
+    <ClCompile Include="libwebrtc\api\transport\network_types.cc" />
+    <ClCompile Include="libwebrtc\api\units\data_rate.cc" />
+    <ClCompile Include="libwebrtc\api\units\data_size.cc" />
+    <ClCompile Include="libwebrtc\api\units\frequency.cc" />
+    <ClCompile Include="libwebrtc\api\units\timestamp.cc" />
+    <ClCompile Include="libwebrtc\api\units\time_delta.cc" />
+    <ClCompile Include="libwebrtc\call\rtp_transport_controller_send.cc" />
+    <ClCompile Include="libwebrtc\modules\bitrate_controller\loss_based_bandwidth_estimation.cc" />
+    <ClCompile Include="libwebrtc\modules\bitrate_controller\send_side_bandwidth_estimation.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\acknowledged_bitrate_estimator.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\alr_detector.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\bitrate_estimator.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\congestion_window_pushback_controller.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\delay_based_bwe.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\goog_cc_network_control.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\link_capacity_estimator.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\median_slope_estimator.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\probe_bitrate_estimator.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\probe_controller.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\trendline_estimator.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\control_handler.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\send_time_history.cc" />
+    <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\transport_feedback_adapter.cc" />
+    <ClCompile Include="libwebrtc\modules\pacing\bitrate_prober.cc" />
+    <ClCompile Include="libwebrtc\modules\pacing\interval_budget.cc" />
+    <ClCompile Include="libwebrtc\modules\pacing\paced_sender.cc" />
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\aimd_rate_control.cc" />
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\bwe_defines.cc" />
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\inter_arrival.cc" />
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\overuse_detector.cc" />
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\overuse_estimator.cc" />
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\remote_bitrate_estimator_abs_send_time.cc" />
+    <ClCompile Include="libwebrtc\modules\rtp_rtcp\include\rtp_rtcp_defines.cc" />
+    <ClCompile Include="libwebrtc\rtc_base\experiments\alr_experiment.cc" />
+    <ClCompile Include="libwebrtc\rtc_base\experiments\field_trial_parser.cc" />
+    <ClCompile Include="libwebrtc\rtc_base\experiments\field_trial_units.cc" />
+    <ClCompile Include="libwebrtc\rtc_base\experiments\rate_control_settings.cc" />
+    <ClCompile Include="libwebrtc\rtc_base\network\sent_packet.cc" />
+    <ClCompile Include="libwebrtc\rtc_base\rate_statistics.cc" />
+    <ClCompile Include="libwebrtc\system_wrappers\source\field_trial.cc" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +237,69 @@
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
     <ClInclude Include="dtlsv1.x.h" />
+    <ClInclude Include="libwebrtc\api\bitrate_constraints.h" />
+    <ClInclude Include="libwebrtc\api\network_state_predictor.h" />
+    <ClInclude Include="libwebrtc\api\transport\bitrate_settings.h" />
+    <ClInclude Include="libwebrtc\api\transport\field_trial_based_config.h" />
+    <ClInclude Include="libwebrtc\api\transport\goog_cc_factory.h" />
+    <ClInclude Include="libwebrtc\api\transport\network_control.h" />
+    <ClInclude Include="libwebrtc\api\transport\network_types.h" />
+    <ClInclude Include="libwebrtc\api\transport\webrtc_key_value_config.h" />
+    <ClInclude Include="libwebrtc\api\units\data_rate.h" />
+    <ClInclude Include="libwebrtc\api\units\data_size.h" />
+    <ClInclude Include="libwebrtc\api\units\frequency.h" />
+    <ClInclude Include="libwebrtc\api\units\timestamp.h" />
+    <ClInclude Include="libwebrtc\api\units\time_delta.h" />
+    <ClInclude Include="libwebrtc\call\rtp_transport_controller_send.h" />
+    <ClInclude Include="libwebrtc\call\rtp_transport_controller_send_interface.h" />
+    <ClInclude Include="libwebrtc\media_helpers.h" />
+    <ClInclude Include="libwebrtc\modules\bitrate_controller\loss_based_bandwidth_estimation.h" />
+    <ClInclude Include="libwebrtc\modules\bitrate_controller\send_side_bandwidth_estimation.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\acknowledged_bitrate_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\alr_detector.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\bitrate_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\congestion_window_pushback_controller.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\delay_based_bwe.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\delay_increase_detector_interface.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\goog_cc_network_control.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\link_capacity_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\median_slope_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\probe_bitrate_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\probe_controller.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\trendline_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\control_handler.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\send_time_history.h" />
+    <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\transport_feedback_adapter.h" />
+    <ClInclude Include="libwebrtc\modules\include\module_common_types_public.h" />
+    <ClInclude Include="libwebrtc\modules\pacing\bitrate_prober.h" />
+    <ClInclude Include="libwebrtc\modules\pacing\interval_budget.h" />
+    <ClInclude Include="libwebrtc\modules\pacing\paced_sender.h" />
+    <ClInclude Include="libwebrtc\modules\pacing\packet_router.h" />
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\aimd_rate_control.h" />
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\include\bwe_defines.h" />
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\include\remote_bitrate_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\inter_arrival.h" />
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\overuse_detector.h" />
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\overuse_estimator.h" />
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\remote_bitrate_estimator_abs_send_time.h" />
+    <ClInclude Include="libwebrtc\modules\rtp_rtcp\include\rtp_rtcp_defines.h" />
+    <ClInclude Include="libwebrtc\modules\rtp_rtcp\source\rtp_packet\transport_feedback.h" />
+    <ClInclude Include="libwebrtc\rtc_base\constructor_magic.h" />
+    <ClInclude Include="libwebrtc\rtc_base\experiments\alr_experiment.h" />
+    <ClInclude Include="libwebrtc\rtc_base\experiments\field_trial_parser.h" />
+    <ClInclude Include="libwebrtc\rtc_base\experiments\field_trial_units.h" />
+    <ClInclude Include="libwebrtc\rtc_base\experiments\rate_control_settings.h" />
+    <ClInclude Include="libwebrtc\rtc_base\network\sent_packet.h" />
+    <ClInclude Include="libwebrtc\rtc_base\numerics\percentile_filter.h" />
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_compare.h" />
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_conversions.h" />
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_conversions_impl.h" />
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_minmax.h" />
+    <ClInclude Include="libwebrtc\rtc_base\rate_statistics.h" />
+    <ClInclude Include="libwebrtc\rtc_base\system\unused.h" />
+    <ClInclude Include="libwebrtc\rtc_base\type_traits.h" />
+    <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h" />
+    <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
