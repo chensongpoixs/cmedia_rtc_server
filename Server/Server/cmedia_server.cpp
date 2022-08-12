@@ -13,6 +13,7 @@ purpose:		cmedia_server
 #include "ctime_elapse.h"
 #include "clog.h"
 #include "croom_mgr.h"
+#include "cmsg_dispatch.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -39,7 +40,12 @@ namespace chen {
 		}*/
 
 	//	ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
-	//	ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
+		//ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
+		SYSTEM_LOG("dispatch init ...");
+		if (!g_msg_dispatch.init())
+		{
+			return false;
+		}
 
 		SYSTEM_LOG("room mgr init ...");
 		if (!g_room_mgr.init())
@@ -91,21 +97,24 @@ namespace chen {
 		//SYSTEM_LOG("Leave main loop");
 
 		return true;
-		return true;
+		 
 	}
 
 	void cmedia_server::destroy()
 	{
 		g_wan_server.shutdown();
 		g_wan_server.destroy();
-		//SYSTEM_LOG("g_wan_server Destroy OK!");
+		SYSTEM_LOG("g_wan_server Destroy OK!");
 
 		//g_client_collection_mgr.destroy();
 		//SYSTEM_LOG("g_client_collection_mgr Destroy OK !!!");
 
 		//g_cloud_render_agent_mgr.destroy();
-		//SYSTEM_LOG(" thrift agent destroy OK !!!");
+		//SYSTEM_LOG("  destroy OK !!!");
 		//g_cfg.destroy();
+
+		g_msg_dispatch.destroy();
+		SYSTEM_LOG("msg dispath destroy OK !!!");
 
 		//1 log
 		LOG::destroy();

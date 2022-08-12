@@ -10,7 +10,8 @@ purpose:	网络数据的收发
 #include "cwan_session.h"
 
 #include "clog.h"
-
+#include "cmsg_dispatch.h"
+#include <json/json.h>
 #include "cwan_server.h"
 #include "croom_mgr.h"
 namespace chen {
@@ -40,8 +41,42 @@ namespace chen {
 	{
 		//m_client_connect_type = EClientConnectNone;
 	}
-	void cwan_session::handler_msg(uint32 session_id , const void* p, uint32 size)
+	void cwan_session::handler_msg(uint64_t session_id , const void* p, uint32 size)
 	{
+		// 1. 登录状态判断
+
+		if (!m_json_reader.parse((const char *)p, (const char *)p + size, m_json_response))
+		{
+			ERROR_EX_LOG("parse json failed !!! [session_id = %llu][json = %s]", session_id, p);
+			return;
+		}
+		if (!m_json_response.isMember("cmd"))
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find cmd type !!!", session_id);
+			return;
+		}
+		// TODO@chensong 20220812 管理的比较漏
+		const std::string cmd = m_json_response["cmd"].asString();
+		// "create_webrtc"
+		if ("create_webrtc" == cmd)
+		{
+
+			g_global_webrtc_mgr.handler_create_webrtc(session_id, m_json_response);
+		}
+		else if ("destroy_webrtc" == cmd)
+		{
+			g_global_webrtc_mgr.handler_destroy_webrtc(session_id, m_json_response);
+		}
+		else
+		{
+			g_global_webrtc_mgr.handler_webrtc(session_id, m_json_response);
+			
+
+		}
+		// "destroy_webrtc"
+
+
+		//cmsg_handler* handler =  g_msg_dispatch.get_msg_handler();
 		/*M_MSG_MAP::iterator iter = m_msg_map.find(msg_id);
 		if (iter == m_msg_map.end())
 		{

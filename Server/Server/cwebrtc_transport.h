@@ -58,50 +58,50 @@ namespace chen
 		void CloseProducersAndConsumers();
 	public:
 
-		bool handler_connect(Json::Value & value);
-		bool handler_restart_ice(Json::Value & value);
-		bool handler_info(Json::Value & value);
-		bool handler_get_stats(Json::Value & value);
-		bool handler_set_max_incoming_bitrate(Json::Value& value);
-		bool handler_set_max_outgoing_bitrate(Json::Value& value);
-		bool handler_produce(Json::Value & value);
-		bool handler_consume(Json::Value& value);
-		bool handler_produce_data(Json::Value & value);
-		bool handler_consume_data(Json::Value& value);
-		bool handler_enable_trace_event(Json::Value & value);
-		bool handler_produce_close(Json::Value & value);
-		bool handler_consumer_close(Json::Value& value);
+		bool handler_connect(uint64 session_id, Json::Value & value);
+		bool handler_restart_ice(uint64 session_id, Json::Value & value);
+		bool handler_info(uint64 session_id, Json::Value & value);
+		bool handler_get_stats(uint64 session_id, Json::Value & value);
+		bool handler_set_max_incoming_bitrate(uint64 session_id, Json::Value& value);
+		bool handler_set_max_outgoing_bitrate(uint64 session_id, Json::Value& value);
+		bool handler_produce(uint64 session_id, Json::Value & value);
+		bool handler_consume(uint64 session_id, Json::Value& value);
+		bool handler_produce_data(uint64 session_id, Json::Value & value);
+		bool handler_consume_data(uint64 session_id, Json::Value& value);
+		bool handler_enable_trace_event(uint64 session_id, Json::Value & value);
+		bool handler_produce_close(uint64 session_id, Json::Value & value);
+		bool handler_consumer_close(uint64 session_id, Json::Value& value);
 
 		/////////////////////produce info /////////////////////////
-		bool handler_produce_info(Json::Value & value);
-		bool handler_produce_get_stats(Json::Value & value);
-		bool handler_produce_pause(Json::Value& value);
-		bool handler_produce_resume(Json::Value& value);
-		bool handler_produce_enable_trace_event(Json::Value & value);
+		bool handler_produce_info(uint64 session_id, Json::Value & value);
+		bool handler_produce_get_stats(uint64 session_id, Json::Value & value);
+		bool handler_produce_pause(uint64 session_id, Json::Value& value);
+		bool handler_produce_resume(uint64 session_id, Json::Value& value);
+		bool handler_produce_enable_trace_event(uint64 session_id, Json::Value & value);
 
 		/////////////////////consumer info////////////////////////////////
-		bool handler_consumer_info(Json::Value& value);
-		bool handler_consumer_get_stats(Json::Value & value);
-		bool handler_consumer_pause(Json::Value& value);
-		bool handler_consumer_resume(Json::Value& value);
-		bool handler_consumer_set_preferred_layers(Json::Value & value);
-		bool handler_consumer_set_priority(Json::Value& value);
-		bool handler_consumer_request_key_frame(Json::Value & value);
-		bool handler_consumer_enable_trace_event(Json::Value & value);
+		bool handler_consumer_info(uint64 session_id, Json::Value& value);
+		bool handler_consumer_get_stats(uint64 session_id, Json::Value & value);
+		bool handler_consumer_pause(uint64 session_id, Json::Value& value);
+		bool handler_consumer_resume(uint64 session_id, Json::Value& value);
+		bool handler_consumer_set_preferred_layers(uint64 session_id, Json::Value & value);
+		bool handler_consumer_set_priority(uint64 session_id, Json::Value& value);
+		bool handler_consumer_request_key_frame(uint64 session_id, Json::Value & value);
+		bool handler_consumer_enable_trace_event(uint64 session_id, Json::Value & value);
 
 		///////////////////////////////////////////////////////////
-		bool handler_data_producer_close(Json::Value& value);
-		bool handler_data_consumer_close(Json::Value& value);
+		bool handler_data_producer_close(uint64 session_id, Json::Value& value);
+		bool handler_data_consumer_close(uint64 session_id, Json::Value& value);
 
-		bool handler_data_producer_info(Json::Value& value);
-		bool handler_data_producer_get_stats(Json::Value & value);
+		bool handler_data_producer_info(uint64 session_id, Json::Value& value);
+		bool handler_data_producer_get_stats(uint64 session_id, Json::Value & value);
 
 
-		bool handler_data_consumer_info(Json::Value & value);
-		bool handler_data_consumer_get_stats(Json::Value & value);
+		bool handler_data_consumer_info(uint64 session_id, Json::Value & value);
+		bool handler_data_consumer_get_stats(uint64 session_id, Json::Value & value);
 
-		bool handler_data_consumer_get_buffered_amount(Json::Value& value);
-		bool handler_data_consumer_set_buffered_amount_low_threshold(Json::Value& value);
+		bool handler_data_consumer_get_buffered_amount(uint64 session_id, Json::Value& value);
+		bool handler_data_consumer_set_buffered_amount_low_threshold(uint64 session_id, Json::Value& value);
 
 
 

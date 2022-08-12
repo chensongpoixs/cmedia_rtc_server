@@ -14,6 +14,7 @@ purpose:	网络数据的收发
 #include "cnoncopyable.h"
 #include "cnet_type.h"
 #include <list>
+#include <json/json.h>
 namespace chen {
 
 	enum EClientConnectType
@@ -38,10 +39,10 @@ namespace chen {
 	public:
 		void update(uint32 uDeltaTime);
 
-		void handler_msg(uint32 session_id,   const void* p, uint32 size);
+		void handler_msg(uint64_t session_id,   const void* p, uint32 size);
 	public:
 		uint32 get_session_id() const { return m_session_id; }
-		void	set_session_id(uint32 session_id) { m_session_id = session_id; }
+		void	set_session_id(uint64_t session_id) { m_session_id = session_id; }
 		void	close();
 	public:
 
@@ -64,12 +65,14 @@ namespace chen {
 		cwan_session& operator=(const cwan_session&);
 	
 	private:
-		uint32					m_session_id; //会话id
+		uint64_t					m_session_id; //会话id
 
 		EClientConnectType      m_client_connect_type;
 		uint64					m_client_session;
 		std::list<std::string>  m_room_list; // 加入房间列表
 	//	M_MSG_MAP				m_msg_map;
+		Json::Reader							m_json_reader;					// json解析
+		Json::Value								m_json_response;
 
 	};
 }//namespace chen

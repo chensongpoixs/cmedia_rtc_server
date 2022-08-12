@@ -124,6 +124,9 @@
     <Filter Include="srtp">
       <UniqueIdentifier>{d4d8a06c-72d9-433e-99c8-557cea608a58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dispatch">
+      <UniqueIdentifier>{b6f186fc-a22c-4529-af01-6b6562f70d3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -501,6 +504,9 @@
     </ClCompile>
     <ClCompile Include="cwebrtc_transprot_handler.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cmsg_dispatch.cpp">
+      <Filter>dispatch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -938,6 +944,9 @@
     </ClInclude>
     <ClInclude Include="IceCandidate.hpp">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsg_dispatch.h">
+      <Filter>dispatch</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -153,6 +153,7 @@
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
+    <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="crate_calculator.cpp" />
     <ClCompile Include="csrtp_session.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
@@ -283,6 +284,7 @@
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
     <ClInclude Include="cmedia_server.h" />
+    <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnet_define.h" />
     <ClInclude Include="crate_calculator.h" />
     <ClInclude Include="csrtp_session.h" />
