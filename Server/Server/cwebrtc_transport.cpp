@@ -9,7 +9,7 @@ purpose:		cwebrtc_transport
 #include "cwebrtc_transport.h"
 #include "ctimer.h"
 #include "clog.h"
-
+#include "csctp_association.h"
 #include "ccrypto_random.h"
 #include "BweType.hpp"
  
@@ -34,6 +34,8 @@ namespace chen {
 		, m_tcc_server_ptr(NULL)
 	/*	, m_rtcp_timer_ptr(NULL)*/
 		, m_recvRtpHeaderExtensionIds()  
+		, m_recvTransmission()
+		, m_sendTransmission()
 		, m_recvRtxTransmission(1000u)
 		, m_sendRtxTransmission(1000u)
 		, m_sendProbationTransmission(100u)

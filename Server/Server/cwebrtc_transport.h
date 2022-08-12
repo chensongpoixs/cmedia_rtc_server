@@ -12,7 +12,7 @@ purpose:		cwebrtc_transport
 #include "cnet_type.h"
 #include <map>
 #include <json/json.h>
-#include "csctp_association.h"
+//#include "csctp_association.h"
 #include "ctimer.h"
 #include "RtpHeaderExtensionIds.hpp"
 #include "crate_calculator.h"
@@ -20,6 +20,7 @@ purpose:		cwebrtc_transport
 #include "TransportCongestionControlServer.hpp"
 namespace chen
 {
+	class csctp_association;
 	class cwebrtc_transport : public ctimer
 	{
 	public:
@@ -119,6 +120,10 @@ namespace chen
 
 
 		//////////////////////////
+
+		RateCalculator							m_recvTransmission;
+		RateCalculator							m_sendTransmission;
+
 		 // 这个两个暂时没有使用到
 		//RtpDataCounter							m_recvRtpTransmission; 
 		//RtpDataCounter							m_sendRtpTransmission;

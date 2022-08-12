@@ -16,6 +16,7 @@ purpose:		net_types
 #include <memory>     // std::addressof()
 #ifdef _WIN32
 #include <winsock2.h>
+#include <ws2def.h>
 // https://stackoverflow.com/a/27443191/2085408
 #undef max
 #undef min
@@ -33,8 +34,12 @@ typedef SSIZE_T ssize_t;
 #include <sys/socket.h> // struct sockaddr, struct sockaddr_storage, AF_INET, AF_INET6
 #endif
 
-
+#include <uv.h>
+#include <string>
 #include <mutex>
+
+//#include "cnet_define.h"
+
 namespace chen
 {
 	typedef signed char		int8;

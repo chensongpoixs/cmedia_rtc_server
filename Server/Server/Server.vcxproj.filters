@@ -478,6 +478,15 @@
     <ClCompile Include="cuv_ip.cpp">
       <Filter>uv_util</Filter>
     </ClCompile>
+    <ClCompile Include="cudp_socket_handler.cpp">
+      <Filter>uv_util</Filter>
+    </ClCompile>
+    <ClCompile Include="cudp_socket.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="PortManager.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -893,6 +902,15 @@
     </ClInclude>
     <ClInclude Include="cuv_ip.h">
       <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="cudp_socket_handler.h">
+      <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="cudp_socket.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="PortManager.hpp">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
