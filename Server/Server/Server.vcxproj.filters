@@ -490,6 +490,12 @@
     <ClCompile Include="DtlsTransport.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="TransportTuple.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="IceServer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -916,6 +922,12 @@
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="DtlsTransport.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportTuple.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="IceServer.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>

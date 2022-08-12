@@ -177,6 +177,7 @@
     <ClCompile Include="cwebsocket_session.cpp" />
     <ClCompile Include="DtlsTransport.cpp" />
     <ClCompile Include="H264.cpp" />
+    <ClCompile Include="IceServer.cpp" />
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc" />
     <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc" />
     <ClCompile Include="libwebrtc\api\transport\field_trial_based_config.cc" />
@@ -267,6 +268,7 @@
     <ClCompile Include="StunPacket.cpp" />
     <ClCompile Include="TransportCongestionControlClient.cpp" />
     <ClCompile Include="TransportCongestionControlServer.cpp" />
+    <ClCompile Include="TransportTuple.cpp" />
     <ClCompile Include="TrendCalculator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -308,6 +310,7 @@
     <ClInclude Include="cwebsocket_session.h" />
     <ClInclude Include="DtlsTransport.hpp" />
     <ClInclude Include="H264.hpp" />
+    <ClInclude Include="IceServer.hpp" />
     <ClInclude Include="libwebrtc\api\bitrate_constraints.h" />
     <ClInclude Include="libwebrtc\api\network_state_predictor.h" />
     <ClInclude Include="libwebrtc\api\transport\bitrate_settings.h" />
@@ -411,6 +414,7 @@
     <ClInclude Include="Tools.hpp" />
     <ClInclude Include="TransportCongestionControlClient.hpp" />
     <ClInclude Include="TransportCongestionControlServer.hpp" />
+    <ClInclude Include="TransportTuple.hpp" />
     <ClInclude Include="TrendCalculator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
