@@ -13,7 +13,10 @@ purpose:		csrtp_session
 namespace chen {
 	static clock_type   g_srtp_global_sync_mutex;
 	static size_t		g_srtp_global_instances = 0;
+	/* Static. */
 
+	static constexpr size_t EncryptBufferSize{ 65536 };
+	thread_local static uint8_t EncryptBuffer[EncryptBufferSize];
 	// clang-format off
 	std::vector<const char*> g_srtp_global_errors =
 	{
@@ -156,5 +159,87 @@ namespace chen {
 	const char * csrtp_session::GetErrorString(srtp_err_status_t code)
 	{
 		return g_srtp_global_errors .at(code);
+	}
+	bool csrtp_session::EncryptRtp(const uint8_t ** data, size_t * len)
+	{
+		// Ensure that the resulting SRTP packet fits into the encrypt buffer.
+		if (*len + SRTP_MAX_TRAILER_LEN > EncryptBufferSize)
+		{
+			WARNING_EX_LOG("srtp, cannot encrypt RTP packet, size too big (%zu bytes)", *len);
+
+			return false;
+		}
+
+		std::memcpy(EncryptBuffer, *data, *len);
+
+		srtp_err_status_t err =
+			srtp_protect(m_session, static_cast<void*>(EncryptBuffer), reinterpret_cast<int*>(len));
+
+		if ( IsError(err))
+		{
+			WARNING_EX_LOG("srtp, srtp_protect() failed: %s", GetErrorString(err));
+
+			return false;
+		}
+
+		// Update the given data pointer.
+		*data = (const uint8_t*)EncryptBuffer;
+
+		return true;
+	}
+	bool csrtp_session::DecryptSrtp(uint8_t * data, size_t * len)
+	{
+		srtp_err_status_t err =
+			srtp_unprotect(m_session, static_cast<void*>(data), reinterpret_cast<int*>(len));
+
+		if ( IsError(err))
+		{
+			DEBUG_EX_LOG("srtp, srtp_unprotect() failed: %s",  GetErrorString(err));
+
+			return false;
+		}
+
+		return true;
+	}
+	bool csrtp_session::EncryptRtcp(const uint8_t ** data, size_t * len)
+	{
+		// Ensure that the resulting SRTCP packet fits into the encrypt buffer.
+		if (*len + SRTP_MAX_TRAILER_LEN > EncryptBufferSize)
+		{
+			WARNING_EX_LOG("srtp, cannot encrypt RTCP packet, size too big (%zu bytes)", *len);
+
+			return false;
+		}
+
+		std::memcpy(EncryptBuffer, *data, *len);
+
+		srtp_err_status_t err = srtp_protect_rtcp(
+			m_session, static_cast<void*>(EncryptBuffer), reinterpret_cast<int*>(len));
+
+		if ( IsError(err))
+		{
+			WARNING_EX_LOG("srtp, srtp_protect_rtcp() failed: %s",  GetErrorString(err));
+
+			return false;
+		}
+
+		// Update the given data pointer.
+		*data = (const uint8_t*)EncryptBuffer;
+
+		return true;
+	}
+	bool csrtp_session::DecryptSrtcp(uint8_t * data, size_t * len)
+	{
+		srtp_err_status_t err =
+			srtp_unprotect_rtcp(m_session, static_cast<void*>(data), reinterpret_cast<int*>(len));
+
+		if ( IsError(err))
+		{
+			DEBUG_EX_LOG("srtp,  srtp_unprotect_rtcp() failed: %s", GetErrorString(err));
+
+			return false;
+		}
+
+		return true;
 	}
 }

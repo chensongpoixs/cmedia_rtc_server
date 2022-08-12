@@ -170,6 +170,7 @@
     <ClCompile Include="cwan_session.cpp" />
     <ClCompile Include="cwebrtc_mgr.cpp" />
     <ClCompile Include="cwebrtc_transport.cpp" />
+    <ClCompile Include="cwebrtc_transprot_handler.cpp" />
     <ClCompile Include="cwebsocket_msg_reserve.cpp" />
     <ClCompile Include="cnet_type.cpp" />
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
@@ -177,6 +178,7 @@
     <ClCompile Include="cwebsocket_session.cpp" />
     <ClCompile Include="DtlsTransport.cpp" />
     <ClCompile Include="H264.cpp" />
+    <ClCompile Include="IceCandidate.cpp" />
     <ClCompile Include="IceServer.cpp" />
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc" />
     <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc" />
@@ -310,6 +312,7 @@
     <ClInclude Include="cwebsocket_session.h" />
     <ClInclude Include="DtlsTransport.hpp" />
     <ClInclude Include="H264.hpp" />
+    <ClInclude Include="IceCandidate.hpp" />
     <ClInclude Include="IceServer.hpp" />
     <ClInclude Include="libwebrtc\api\bitrate_constraints.h" />
     <ClInclude Include="libwebrtc\api\network_state_predictor.h" />

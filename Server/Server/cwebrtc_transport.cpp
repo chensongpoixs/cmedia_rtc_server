@@ -23,8 +23,28 @@ purpose:		cwebrtc_transport
 #include "XrDelaySinceLastRr.hpp"
 #include "SenderReport.hpp"
 #include "CompoundPacket.hpp"
+#include "csrtp_session.h"
 
 namespace chen {
+
+
+	/* Static. */
+
+	static constexpr uint16_t IceCandidateDefaultLocalPriority{ 10000 };
+	// We just provide "host" candidates so type preference is fixed.
+	static constexpr uint16_t IceTypePreference{ 64 };
+	// We do not support non rtcp-mux so component is always 1.
+	static constexpr uint16_t IceComponent{ 1 };
+
+	static inline uint32_t generateIceCandidatePriority(uint16_t localPreference)
+	{
+		//MS_TRACE();
+
+		return std::pow(2, 24) * IceTypePreference + std::pow(2, 8) * localPreference +
+			std::pow(2, 0) * (256 - IceComponent);
+	}
+
+
 	cwebrtc_transport::cwebrtc_transport()
 		: ctimer()
 		, m_id("")
@@ -40,7 +60,26 @@ namespace chen {
 		, m_sendRtxTransmission(1000u)
 		, m_sendProbationTransmission(100u)
 		, m_initialAvailableOutgoingBitrate(600000u)
+		, m_ice_server_ptr(NULL)
+		, m_udp_sockets_map()
+		, m_dtls_transport_ptr(NULL)
+		, m_srtp_recv_session_ptr(NULL)
+		, m_srtp_send_session_ptr(NULL)
+		, m_connect_called(false)
+		, m_ice_canidates()
+		, m_dtlsRole(RTC::DtlsTransport::Role::AUTO)
 	{
+
+		//m_ice_server_ptr;
+		//m_udp_sockets_map;
+		//m_dtls_transport;
+		//m_srtp_recv_session_ptr;
+		//m_srtp_send_session_ptr;
+		//m_connect_called;
+		//m_ice_canidates;
+		//m_dtlsRole;// { RTC::DtlsTransport::Role::AUTO };
+
+
 	}
 	cwebrtc_transport::~cwebrtc_transport()
 	{
@@ -67,6 +106,188 @@ namespace chen {
 			return false;
 		}
 
+
+		///////////////////////////WEBRTC init///////////////////////////////////////
+
+
+		uint16 port = 0;
+		std::vector<ListenIp> listenIps;
+
+		ListenIp listenip;
+		listenip.announcedIp = "0.0.0.0";
+		listenip.ip = "0.0.0.0";
+		listenIps.push_back(listenip);
+
+		try
+		{
+			uint16_t iceLocalPreferenceDecrement{ 0 };
+
+			m_ice_canidates.reserve(listenIps.size());
+
+			for (std::vector<ListenIp>::iterator iter = listenIps.begin(); iter != listenIps.end(); ++iter)
+			{
+				// ICE 优先级    就是 从是先开始连接
+				uint16_t iceLocalPreference = IceCandidateDefaultLocalPriority - iceLocalPreferenceDecrement;
+
+				//if (preferUdp)
+					iceLocalPreference += 1000;
+
+				uint32_t icePriority = generateIceCandidatePriority(iceLocalPreference);
+
+				// This may throw.
+				/*RTC::UdpSocket*/ cudp_socket* udpSocket;
+				// TODO@chensong 这边port 是使用同一个端口吗？？？
+				if (port != 0)
+				{
+					udpSocket = new cudp_socket(this, iter->ip, port);
+				}
+				else
+				{
+					udpSocket = new cudp_socket(this, iter->ip);
+				}
+
+				m_udp_sockets_map[udpSocket] = iter->announcedIp;
+
+				if (iter->announcedIp.empty())
+				{
+					m_ice_canidates.emplace_back(udpSocket, icePriority);
+				}
+				else
+				{
+					m_ice_canidates.emplace_back(udpSocket, icePriority, iter->announcedIp);
+				}
+
+
+				// Decrement initial ICE local preference for next IP.
+				iceLocalPreferenceDecrement += 100;
+			}
+			/*
+						WebRTC  ICE  协议协商 流程图
+
+
+  |     client      |                协议                      |   mediasoup   |
+  |                 |            1. 交换SDP信息                |               |
+  |                 |            客户端发送SDP                 |               |
+  |   一、SDP       |            -------------->               |               |
+  |                 |    2. 发送SDP中含有用户名和密码          |               |
+  |                 |            <------------                 |               |
+  |————————————————————————————————————————————————————————————————————————————|
+  |                 |      1. 验证客户端用户名和密码           |               |
+  |                 |                                          |               | |
+  |                 |              request BINDING             |               |
+  |                 |           ------------------>            |               |
+  |   二、STUN      |               REQUEST                    |               |
+  |                 |           <-----------------             |               |
+  |                 |                                          |               |
+  |                 |                                          |               |
+  |                 |                                          |               |
+  |                 |                                          |               |
+  |————————————————————————————————————————————————————————————————————————————|
+  |                 |                                          |               |
+  |                 |                                          |               |
+  |                 |             交换数字签名                 |               |
+  |                 |          流程 需要四次握手               |               |
+  |                 |                                          |               |
+  |                 |               hello                      |               |
+  |                 |            ------------>                 |               |
+  |   三、DTLS      |               hello                      |               |
+  |                 |            <------------                 |               |
+  |                 |               数字签名                   |               |
+  |                 |           ------------->                 |               |
+  |                 |               数字签名                   |               |
+  |                 |           <-------------                 |               |
+  |                 |              fflush                      |               |
+  |                 |           ------------->                 |               |
+  |—————————————————————————————————————————————————————————————————————————————|																	  |
+  |                 |                                          |               |
+  |                 |                                          |               |
+  |                 |               rtp data                   |               |
+  |                 |           ------------->                 |               |
+  |   四、Media Data|                                          |               |
+  |                 |              rtcp 反馈数据               |               |
+  |                 |           <-------------                 |               |
+  |                 |                                          |               |
+
+
+
+
+
+一、 STUN 															  |				  |
+
+
+   BINDING
+
+
+   REQUEST
+
+
+
+
+   INDICATION
+
+
+
+   SUCCESS_RESPONSE
+
+
+
+   ERROR_RESPONSE
+*/
+
+				// Create a ICE server.  这边创建ICE 协商    STURN 服务器操作  验证用户合法性   
+				// 1. 验证用户名（16）
+				// 2. 验证密码 （32）
+			m_ice_server_ptr = new RTC::IceServer(this, s_crypto_random.GetRandomString(16), s_crypto_random.GetRandomString(16));
+			if (!m_ice_server_ptr)
+			{
+				ERROR_EX_LOG("alloc ice server failed !!!");
+				return false;
+			}
+			m_dtls_transport_ptr = new RTC::DtlsTransport(this);
+			if (!m_dtls_transport_ptr)
+			{
+				ERROR_EX_LOG("alloc dtls transport !!!");
+				return false;
+			}
+		}
+		catch (const std::exception& e)
+		{
+			// Must delete everything since the destructor won't be called.
+
+			if (m_dtls_transport_ptr)
+			{
+				delete m_dtls_transport_ptr;
+				m_dtls_transport_ptr = nullptr;
+			}
+			if (m_ice_server_ptr)
+			{
+
+				delete m_ice_server_ptr;
+				m_ice_server_ptr = nullptr;
+			}
+			for (auto& kv : m_udp_sockets_map)
+			{
+				auto* udpSocket = kv.first;
+
+				delete udpSocket;
+			}
+			m_udp_sockets_map.clear();
+
+			/*for (auto& kv : this->tcpServers)
+			{
+				auto* tcpServer = kv.first;
+
+				delete tcpServer;
+			}
+			this->tcpServers.clear();*/
+
+			//this->iceCandidates.clear();
+			m_ice_canidates.clear();
+			return false;
+			//throw;
+		}
+
+
 		return true;
 	}
 	void cwebrtc_transport::destroy()
@@ -92,6 +313,66 @@ namespace chen {
 		}
 
 	}
+
+	void cwebrtc_transport::CloseProducersAndConsumers()
+	{
+		// This method is called by the Router and must notify him about all Producers
+		// and Consumers that we are gonna close.
+		//
+		// The caller is supposed to delete this Transport instance after calling
+		// this method.
+
+		// Close all Producers.
+		//for (auto& kv : this->mapProducers)
+		//{
+		//	auto* producer = kv.second;
+
+		//	// Notify the listener.
+		//	this->listener->OnTransportProducerClosed(this, producer);
+
+		//	delete producer;
+		//}
+		//this->mapProducers.clear();
+
+		// Delete all Consumers.
+		//for (auto& kv : this->mapConsumers)
+		//{
+		//	auto* consumer = kv.second;
+
+		//	// Notify the listener.
+		//	this->listener->OnTransportConsumerClosed(this, consumer);
+
+		//	delete consumer;
+		//}
+		/*this->mapConsumers.clear();
+		this->mapSsrcConsumer.clear();
+		this->mapRtxSsrcConsumer.clear();*/
+
+		// Delete all DataProducers.
+		//for (auto& kv : this->mapDataProducers)
+		//{
+		//	auto* dataProducer = kv.second;
+
+		//	// Notify the listener.
+		//	this->listener->OnTransportDataProducerClosed(this, dataProducer);
+
+		//	delete dataProducer;
+		//}
+		//this->mapDataProducers.clear();
+
+		// Delete all DataConsumers.
+		//for (auto& kv : this->mapDataConsumers)
+		//{
+		//	auto* dataConsumer = kv.second;
+
+		//	// Notify the listener.
+		//	this->listener->OnTransportDataConsumerClosed(this, dataConsumer);
+
+		//	delete dataConsumer;
+		//}
+		//this->mapDataConsumers.clear();
+	}
+	
 	void cwebrtc_transport::Connected()
 	{
 		// Tell all Consumers.
@@ -386,8 +667,8 @@ namespace chen {
 	{
 		DEBUG_EX_LOG("outgoing available bitrate:%u"  , bitrates.availableBitrate);
 		// TODO@chensong 20220811 
-		//DistributeAvailableOutgoingBitrate();
-		//ComputeOutgoingDesiredBitrate();
+		DistributeAvailableOutgoingBitrate();
+		ComputeOutgoingDesiredBitrate();
 
 		// May emit 'trace' event.
 		//EmitTraceEventBweType(bitrates); 
@@ -409,7 +690,7 @@ namespace chen {
 
 			// May emit 'trace' event
 			// TODO@chensong 
-			//EmitTraceEventProbationType(packet);
+			EmitTraceEventProbationType(packet);
 
 			webrtc::RtpPacketSendInfo packetInfo;
 
@@ -446,22 +727,22 @@ namespace chen {
 			SendRtpPacket(nullptr, packet, cb);
 #else
 			// TODO@chensong 20220811
-			 /*const  auto* cb = new onSendCallback([m_tcc_client_ptr, &packetInfo](bool sent) {
+			onSendCallback*  cb = new onSendCallback([tccClient, &packetInfo](bool sent) {
 				if (sent)
 				{
-					m_tcc_client_ptr->PacketSent(packetInfo, uv_util::GetTimeMsInt64());
+					tccClient->PacketSent(packetInfo, uv_util::GetTimeMsInt64());
 				}
-			});*/
+			});
 
-			//SendRtpPacket(nullptr, packet, cb);
+			SendRtpPacket(nullptr, packet, cb);
 #endif
 		}
 		else
 		{
 			// May emit 'trace' event.
-			//EmitTraceEventProbationType(packet);
+			EmitTraceEventProbationType(packet);
 
-			//SendRtpPacket(nullptr, packet);
+			SendRtpPacket(nullptr, packet);
 		}
 
 		m_sendProbationTransmission.Update(packet);
@@ -476,7 +757,7 @@ namespace chen {
 	{
 		packet->Serialize(RTC::RTCP::Buffer);
 		// TODO@chensong 20220811 
-		//SendRtcpPacket(packet);
+		SendRtcpPacket(packet);
 	}
 	void cwebrtc_transport::OnTimer()
 	{
@@ -486,7 +767,7 @@ namespace chen {
 			auto interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
 			uint64_t nowMs = uv_util::GetTimeMs();
 			// TODO@chensong 20220811 
-		//	SendRtcp(nowMs);
+			SendRtcp(nowMs);
 
 			// Recalculate next RTCP interval.
 			//if (!this->mapConsumers.empty())
@@ -521,6 +802,216 @@ namespace chen {
 
 			/*this->rtcpTimer->*/Start(interval);
 		}
+	}
+	void cwebrtc_transport::OnIceServerSendStunPacket(const RTC::IceServer * iceServer, const RTC::StunPacket * packet, RTC::TransportTuple * tuple)
+	{
+		// Send the STUN response over the same transport tuple.
+		tuple->Send(packet->GetData(), packet->GetSize());
+
+		// Increase send transmission.
+		/*RTC::Transport::*/DataSent(packet->GetSize());
+	}
+	void cwebrtc_transport::OnIceServerSelectedTuple(const RTC::IceServer * iceServer, RTC::TransportTuple * tuple)
+	{
+		/*
+		 * RFC 5245 section 11.2 "Receiving Media":
+		 *
+		 * ICE implementations MUST be prepared to receive media on each component
+		 * on any candidates provided for that component.
+		 */
+
+		DEBUG_EX_LOG("ice, ICE selected tuple");
+
+		// Notify the Node WebRtcTransport.
+		///*json data = json::object();
+
+		//this->iceServer->GetSelectedTuple()->FillJson(data["iceSelectedTuple"]);
+		//DEBUG_EX_LOG("data = %s", data.dump().c_str());
+		//Channel::ChannelNotifier::Emit(this->id, "iceselectedtuplechange", data);*/
+	}
+	void cwebrtc_transport::OnIceServerConnected(const RTC::IceServer * iceServer)
+	{
+		DEBUG_EX_LOG("ice, ICE connected");
+
+		// Notify the Node WebRtcTransport.
+		/*json data = json::object();
+
+		data["iceState"] = "connected";
+
+		Channel::ChannelNotifier::Emit(this->id, "icestatechange", data);*/
+
+		// If ready, run the DTLS handler.
+		MayRunDtlsTransport();
+
+		// If DTLS was already connected, notify the parent class.
+		if (m_dtls_transport_ptr->GetState() == RTC::DtlsTransport::DtlsState::CONNECTED)
+		{
+			/*RTC::Transport::*/Connected();
+		}
+
+		//DEBUG_EX_LOG("data = %s", data.dump().c_str());
+	}
+	void cwebrtc_transport::OnIceServerCompleted(const RTC::IceServer * iceServer)
+	{
+		DEBUG_EX_LOG("ice, ICE completed");
+
+		// Notify the Node WebRtcTransport.
+		/*json data = json::object();
+
+		data["iceState"] = "completed";
+
+		Channel::ChannelNotifier::Emit(this->id, "icestatechange", data);*/
+
+		// If ready, run the DTLS handler.
+		MayRunDtlsTransport();
+
+		// If DTLS was already connected, notify the parent class.
+		if (m_dtls_transport_ptr->GetState() == RTC::DtlsTransport::DtlsState::CONNECTED)
+		{
+			/*RTC::Transport::*/Connected();
+		}
+		//DEBUG_EX_LOG("data = %s", data.dump().c_str());
+	}
+	void cwebrtc_transport::OnIceServerDisconnected(const RTC::IceServer * iceServer)
+	{
+		DEBUG_EX_LOG("ice, ICE disconnected");
+
+		// Notify the Node WebRtcTransport.
+		/*json data = json::object();
+
+		data["iceState"] = "disconnected";
+
+		Channel::ChannelNotifier::Emit(this->id, "icestatechange", data);*/
+
+		// If DTLS was already connected, notify the parent class.
+		if (m_dtls_transport_ptr->GetState() == RTC::DtlsTransport::DtlsState::CONNECTED)
+		{
+			/*RTC::Transport::*/Disconnected();
+		}
+	}
+	//TODO@chensong 2022-04-17 底层发送到上层 
+	void cwebrtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	{
+		RTC::TransportTuple tuple(socket, remoteAddr);
+
+		OnPacketReceived(&tuple, data, len);
+	}
+	void cwebrtc_transport::OnDtlsTransportConnecting(const RTC::DtlsTransport * dtlsTransport)
+	{
+		DEBUG_EX_LOG("dtls, DTLS connecting");
+
+		// Notify the Node WebRtcTransport.
+		/*json data = json::object();
+
+		data["dtlsState"] = "connecting";
+		DEBUG_EX_LOG("data = %s", data.dump().c_str());
+		Channel::ChannelNotifier::Emit(this->id, "dtlsstatechange", data);*/
+	}
+	void cwebrtc_transport::OnDtlsTransportConnected(const RTC::DtlsTransport * dtlsTransport, ECRYPTO_SUITE srtpCryptoSuite, uint8_t * srtpLocalKey, size_t srtpLocalKeyLen, uint8_t * srtpRemoteKey, size_t srtpRemoteKeyLen, std::string & remoteCert)
+	{
+		DEBUG_EX_LOG("dtls, DTLS connected");
+
+		// Close it if it was already set and update it.
+		if (m_srtp_send_session_ptr)
+		{
+			delete m_srtp_send_session_ptr;
+			m_srtp_send_session_ptr = NULL;
+		}
+		/*delete this->srtpSendSession;
+		this->srtpSendSession = nullptr;*/
+		if (m_srtp_recv_session_ptr)
+		{
+			delete m_srtp_recv_session_ptr;
+			m_srtp_recv_session_ptr = NULL;
+		}
+		/*delete this->srtpRecvSession;
+		this->srtpRecvSession = nullptr;*/
+
+		try
+		{
+			m_srtp_send_session_ptr = new csrtp_session(EOUTBOUND, srtpCryptoSuite, srtpLocalKey, srtpLocalKeyLen);
+		}
+		catch (...)
+		{
+			ERROR_EX_LOG("error creating SRTP sending session:  " );
+		}
+
+		try
+		{
+			m_srtp_recv_session_ptr = new csrtp_session( EINBOUND, srtpCryptoSuite, srtpRemoteKey, srtpRemoteKeyLen);
+
+			// Notify the Node WebRtcTransport.
+			/*json data = json::object();
+
+			data["dtlsState"] = "connected";
+			data["dtlsRemoteCert"] = remoteCert;
+
+			Channel::ChannelNotifier::Emit(this->id, "dtlsstatechange", data);
+			DEBUG_EX_LOG("data = %s", data.dump().c_str());*/
+			// Tell the parent class.
+			/*RTC::Transport::*/Connected();
+		}
+		catch (...)
+		{
+			ERROR_EX_LOG("error creating SRTP receiving session:  " );
+
+			if (m_srtp_send_session_ptr)
+			{
+				delete m_srtp_send_session_ptr;
+				m_srtp_send_session_ptr = NULL;
+			}
+		}
+	}
+	void cwebrtc_transport::OnDtlsTransportFailed(const RTC::DtlsTransport * dtlsTransport)
+	{
+		WARNING_EX_LOG("dtls, DTLS failed");
+
+		// Notify the Node WebRtcTransport.
+		/*json data = json::object();
+
+		data["dtlsState"] = "failed";
+		DEBUG_EX_LOG("data = %s", data.dump().c_str());
+		Channel::ChannelNotifier::Emit(this->id, "dtlsstatechange", data);*/
+	}
+	void cwebrtc_transport::OnDtlsTransportClosed(const RTC::DtlsTransport * dtlsTransport)
+	{
+		WARNING_EX_LOG("dtls, DTLS remotely closed");
+
+		// Notify the Node WebRtcTransport.
+		/*json data = json::object();
+
+		data["dtlsState"] = "closed";
+		DEBUG_EX_LOG("data = %s", data.dump().c_str());
+		Channel::ChannelNotifier::Emit(this->id, "dtlsstatechange", data);*/
+
+		// Tell the parent class.
+		/*RTC::Transport::*/Disconnected();
+	}
+	void cwebrtc_transport::OnDtlsTransportSendData(const RTC::DtlsTransport * dtlsTransport, const uint8_t * data, size_t len)
+	{
+		if (!m_ice_server_ptr->GetSelectedTuple())
+		{
+			WARNING_EX_LOG("dtls, no selected tuple set, cannot send DTLS packet");
+
+			return;
+		}
+		//<<<<<<< HEAD
+		//		DEBUG_EX_LOG("len = %lu", len);
+		//=======
+		DEBUG_EX_LOG("len = %lu", len);
+
+		// TODO@chensong 20220522     
+		//TLSv1.3 发送 Server Hello、 Certificate、Certificate Status、 Server key Exchange、 Server Hello Done
+//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+		m_ice_server_ptr->GetSelectedTuple()->Send(data, len);
+
+		// Increase send transmission.
+		/*RTC::Transport::*/DataSent(len);
+	}
+	void cwebrtc_transport::OnDtlsTransportApplicationDataReceived(const RTC::DtlsTransport * dtlsTransport, const uint8_t * data, size_t len)
+	{
+		// Pass it to the parent transport.
+		/*RTC::Transport::*/ReceiveSctpData(data, len);
 	}
 	void cwebrtc_transport::HandleRtcpPacket(RTC::RTCP::Packet * packet)
 	{
@@ -1055,5 +1546,409 @@ namespace chen {
 		}
 
 		Channel::ChannelNotifier::Emit(this->id, "trace", data);*/
+	}
+	bool cwebrtc_transport::IsConnected() const
+	{
+		// clang-format off
+		return (
+			(
+				m_ice_server_ptr->GetState() == RTC::IceServer::IceState::CONNECTED ||
+				m_ice_server_ptr->GetState() == RTC::IceServer::IceState::COMPLETED
+				) &&
+			 m_dtls_transport_ptr->GetState() == RTC::DtlsTransport::DtlsState::CONNECTED
+			);
+		// clang-format on
+	}
+	void cwebrtc_transport::MayRunDtlsTransport()
+	{
+		// Do nothing if we have the same local DTLS role as the DTLS transport.
+		// NOTE: local role in DTLS transport can be NONE, but not ours.
+		if (/*this->dtlsTransport->*/ m_dtls_transport_ptr-> GetLocalRole() == m_dtlsRole)
+		{
+			return;
+		}
+
+		// Check our local DTLS role.
+		switch (m_dtlsRole)
+		{
+			// If still 'auto' then transition to 'server' if ICE is 'connected' or
+			// 'completed'.
+		case RTC::DtlsTransport::Role::AUTO:
+		{
+			// clang-format off
+			if (
+				/*this->iceServer->*/m_ice_server_ptr-> GetState() == RTC::IceServer::IceState::CONNECTED ||
+				m_ice_server_ptr->GetState() == RTC::IceServer::IceState::COMPLETED
+				)
+				// clang-format on
+			{
+				DEBUG_EX_LOG("dtls, transition from DTLS local role 'auto' to 'server' and running DTLS transport");
+
+				m_dtlsRole = RTC::DtlsTransport::Role::SERVER;
+				/*this->dtlsTransport->*/m_dtls_transport_ptr-> Run(RTC::DtlsTransport::Role::SERVER);
+			}
+
+			break;
+		}
+
+		// 'client' is only set if a 'connect' request was previously called with
+		// remote DTLS role 'server'.
+		//
+		// If 'client' then wait for ICE to be 'completed' (got USE-CANDIDATE).
+		//
+		// NOTE: This is the theory, however let's be more flexible as told here:
+		//   https://bugs.chromium.org/p/webrtc/issues/detail?id=3661
+		case RTC::DtlsTransport::Role::CLIENT:
+		{
+			// clang-format off
+			if (
+				/*this->iceServer*/ m_ice_server_ptr->GetState() == RTC::IceServer::IceState::CONNECTED ||
+				/*this->iceServer*/ m_ice_server_ptr->GetState() == RTC::IceServer::IceState::COMPLETED
+				)
+				// clang-format on
+			{
+				DEBUG_EX_LOG("dtls, running DTLS transport in local role 'client'");
+
+				/*this->dtlsTransport*/m_dtls_transport_ptr ->Run(RTC::DtlsTransport::Role::CLIENT);
+			}
+
+			break;
+		}
+
+		// If 'server' then run the DTLS transport if ICE is 'connected' (not yet
+		// USE-CANDIDATE) or 'completed'.
+		case RTC::DtlsTransport::Role::SERVER:
+		{
+			// clang-format off
+			if (
+				/*this->iceServer*/ m_ice_server_ptr->GetState() == RTC::IceServer::IceState::CONNECTED ||
+				/*this->iceServer*/ m_ice_server_ptr->GetState() == RTC::IceServer::IceState::COMPLETED
+				)
+				// clang-format on
+			{
+				DEBUG_EX_LOG("dtls, running DTLS transport in local role 'server'");
+
+				m_dtls_transport_ptr->Run(RTC::DtlsTransport::Role::SERVER);
+			}
+
+			break;
+		}
+
+		case RTC::DtlsTransport::Role::NONE:
+		{
+			ERROR_EX_LOG("local DTLS role not set");
+		}
+		}
+	}
+	void cwebrtc_transport::SendRtpPacket(void * consumer, RTC::RtpPacket * packet, onSendCallback * cb)
+	{
+		if (!IsConnected())
+		{
+			if (cb)
+			{
+				(*cb)(false);
+				delete cb;
+			}
+
+			return;
+		}
+
+		// Ensure there is sending SRTP session.
+		if (!m_srtp_send_session_ptr)
+		{
+			WARNING_EX_LOG("ignoring RTP packet due to non sending SRTP session");
+
+			if (cb)
+			{
+				(*cb)(false);
+				delete cb;
+			}
+
+			return;
+		}
+
+		const uint8_t* data = packet->GetData();
+		size_t len = packet->GetSize();
+
+		if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+		{
+			if (cb)
+			{
+				(*cb)(false);
+				delete cb;
+			}
+
+			return;
+		}
+
+		m_ice_server_ptr->GetSelectedTuple()->Send(data, len, cb);
+
+		// Increase send transmission.
+		/*RTC::Transport::*/DataSent(len);
+	}
+	void cwebrtc_transport::SendRtcpPacket(RTC::RTCP::Packet * packet)
+	{
+		if (!IsConnected())
+		{
+			return;
+		}
+
+		const uint8_t* data = packet->GetData();
+		size_t len = packet->GetSize();
+
+		// Ensure there is sending SRTP session.
+		if (/*!this->srtpSendSession*/ !m_srtp_send_session_ptr)
+		{
+			WARNING_EX_LOG("ignoring RTCP packet due to non sending SRTP session");
+
+			return;
+		}
+
+		if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
+		{
+			return;
+		}
+
+		m_ice_server_ptr->GetSelectedTuple()->Send(data, len);
+
+		// Increase send transmission.
+		/*RTC::Transport::*/DataSent(len);
+	}
+	void cwebrtc_transport::SendRtcpCompoundPacket(RTC::RTCP::CompoundPacket * packet)
+	{
+		if (!IsConnected())
+		{
+			return;
+		}
+
+		const uint8_t* data = packet->GetData();
+		size_t len = packet->GetSize();
+		//DEBUG_EX_LOG("len = %lu", len);
+		// Ensure there is sending SRTP session.
+		if (!m_srtp_send_session_ptr)
+		{
+			WARNING_EX_LOG("rtcp, ignoring RTCP compound packet due to non sending SRTP session");
+
+			return;
+		}
+
+		if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
+		{
+			return;
+		}
+
+		m_ice_server_ptr->GetSelectedTuple()->Send(data, len);
+
+		// Increase send transmission.
+		/*RTC::Transport::*/DataSent(len);
+	}
+	/*void cwebrtc_transport::SendRtcpCompoundPacket(RTC::RTCP::CompoundPacket * packet)
+	{
+	}*/
+	void cwebrtc_transport::SendSctpData(const uint8_t * data, size_t len)
+	{
+		// clang-format on
+		if (!IsConnected())
+		{
+			WARNING_EX_LOG("sctp, DTLS not connected, cannot send SCTP data");
+
+			return;
+		}
+
+		m_dtls_transport_ptr->SendApplicationData(data, len);
+	}
+	void cwebrtc_transport::RecvStreamClosed(uint32_t ssrc)
+	{
+		if (m_srtp_recv_session_ptr)
+		{
+			m_srtp_recv_session_ptr->RemoveStream(ssrc);
+		}
+	}
+	void cwebrtc_transport::SendStreamClosed(uint32_t ssrc)
+	{
+		if (m_srtp_send_session_ptr)
+		{
+			m_srtp_send_session_ptr->RemoveStream(ssrc);
+		}
+	}
+	// TODO@chensong 处理底层协议 RTCP/RTP/STUN/ICE
+	void cwebrtc_transport::OnPacketReceived(RTC::TransportTuple * tuple, const uint8_t * data, size_t len)
+	{
+		// Increase receive transmission.
+		/*RTC::Transport::*/DataReceived(len);
+
+		
+		if (RTC::StunPacket::IsStun(data, len))// Check if it's STUN.
+		{ 
+			OnStunDataReceived(tuple, data, len);
+		} 
+		else if (RTC::RTCP::Packet::IsRtcp(data, len))// Check if it's RTCP.
+		{ 
+			OnRtcpDataReceived(tuple, data, len);
+		} 
+		else if (RTC::RtpPacket::IsRtp(data, len))// Check if it's RTP.
+		{ 
+			OnRtpDataReceived(tuple, data, len);
+		} 
+		else if (RTC::DtlsTransport::IsDtls(data, len))// Check if it's DTLS.
+		{ 
+			OnDtlsDataReceived(tuple, data, len);
+		}
+		else
+		{ 
+			WARNING_EX_LOG("ignoring received packet of unknown type");
+		}
+	}
+	void cwebrtc_transport::OnStunDataReceived(RTC::TransportTuple * tuple, const uint8_t * data, size_t len)
+	{
+		RTC::StunPacket* packet = RTC::StunPacket::Parse(data, len);
+
+		if (!packet)
+		{
+			WARNING_EX_LOG("ignoring wrong STUN packet received");
+
+			return;
+		}
+		//DEBUG_EX_ID_LOG("[]");
+		// Pass it to the IceServer.
+		m_ice_server_ptr->ProcessStunPacket(packet, tuple);
+
+		delete packet;
+	}
+	void cwebrtc_transport::OnDtlsDataReceived(const RTC::TransportTuple * tuple, const uint8_t * data, size_t len)
+	{
+		// Ensure it comes from a valid tuple.
+		if (!m_ice_server_ptr->IsValidTuple(tuple))
+		{
+			WARNING_EX_LOG("dtls, ignoring DTLS data coming from an invalid tuple");
+
+			return;
+		}
+
+		// Trick for clients performing aggressive ICE regardless we are ICE-Lite.
+		m_ice_server_ptr->ForceSelectedTuple(tuple);
+
+		// Check that DTLS status is 'connecting' or 'connected'.
+		if (
+			m_dtls_transport_ptr->GetState() == RTC::DtlsTransport::DtlsState::CONNECTING ||
+			m_dtls_transport_ptr->GetState() == RTC::DtlsTransport::DtlsState::CONNECTED)
+		{
+			DEBUG_EX_LOG("DTLS data received, passing it to the DTLS transport");
+			// 这边修改dtls 连接状态 了
+			m_dtls_transport_ptr->ProcessDtlsData(data, len);
+		}
+		else
+		{
+			WARNING_EX_LOG("dtls, Transport is not 'connecting' or 'connected', ignoring received DTLS data");
+
+			return;
+		}
+	}
+	void cwebrtc_transport::OnRtpDataReceived(RTC::TransportTuple * tuple, const uint8_t * data, size_t len)
+	{
+		// Ensure DTLS is connected.
+		if (m_dtls_transport_ptr->GetState() != RTC::DtlsTransport::DtlsState::CONNECTED)
+		{
+			DEBUG_EX_LOG("dtls, rtp, ignoring RTP packet while DTLS not connected");
+
+			return;
+		}
+
+		// Ensure there is receiving SRTP session.
+		if (!m_srtp_recv_session_ptr)
+		{
+			DEBUG_EX_LOG("srtp, ignoring RTP packet due to non receiving SRTP session");
+
+			return;
+		}
+
+		// Ensure it comes from a valid tuple.
+		if (!m_ice_server_ptr->IsValidTuple(tuple))
+		{
+			WARNING_EX_LOG("rtp, ignoring RTP packet coming from an invalid tuple");
+
+			return;
+		}
+
+		// Decrypt the SRTP packet.
+		if (!m_srtp_recv_session_ptr->DecryptSrtp(const_cast<uint8_t*>(data), &len))
+		{
+			RTC::RtpPacket* packet = RTC::RtpPacket::Parse(data, len);
+
+			if (!packet)
+			{
+				WARNING_EX_LOG(" srtp, DecryptSrtp() failed due to an invalid RTP packet");
+			}
+			else
+			{
+				WARNING_EX_LOG(" srtp, DecryptSrtp() failed [ssrc:%u, payloadType:%hhu, seq:%hu]",
+					packet->GetSsrc(),
+					packet->GetPayloadType(),
+					packet->GetSequenceNumber());
+
+				delete packet;
+			}
+
+			return;
+		}
+
+		RTC::RtpPacket* packet = RTC::RtpPacket::Parse(data, len);
+
+		if (!packet)
+		{
+			WARNING_EX_LOG("rtp, received data is not a valid RTP packet");
+
+			return;
+		}
+
+		// Trick for clients performing aggressive ICE regardless we are ICE-Lite.
+		m_ice_server_ptr->ForceSelectedTuple(tuple);
+
+		// Pass the packet to the parent transport.
+		/*RTC::Transport::*/ReceiveRtpPacket(packet);
+	}
+	void cwebrtc_transport::OnRtcpDataReceived(RTC::TransportTuple * tuple, const uint8_t * data, size_t len)
+	{
+		// Ensure DTLS is connected.
+		if ( m_dtls_transport_ptr->GetState() != RTC::DtlsTransport::DtlsState::CONNECTED)
+		{
+			DEBUG_EX_LOG("dtls, rtcp, ignoring RTCP packet while DTLS not connected");
+
+			return;
+		}
+
+		// Ensure there is receiving SRTP session.
+		if (!m_srtp_recv_session_ptr)
+		{
+			DEBUG_EX_LOG("srtp, ignoring RTCP packet due to non receiving SRTP session");
+
+			return;
+		}
+
+		// Ensure it comes from a valid tuple.
+		if (!m_ice_server_ptr->IsValidTuple(tuple))
+		{
+			WARNING_EX_LOG("rtcp, ignoring RTCP packet coming from an invalid tuple");
+
+			return;
+		}
+
+		// Decrypt the SRTCP packet.
+		if (!m_srtp_recv_session_ptr->DecryptSrtcp(const_cast<uint8_t*>(data), &len))
+		{
+			return;
+		}
+
+		RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
+
+		if (!packet)
+		{
+			WARNING_EX_LOG("rtcp, received data is not a valid RTCP compound or single packet");
+
+			return;
+		}
+
+		// Pass the packet to the parent transport.
+		/*RTC::Transport::*/ReceiveRtcpPacket(packet);
 	}
 }

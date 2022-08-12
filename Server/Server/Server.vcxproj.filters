@@ -496,6 +496,12 @@
     <ClCompile Include="IceServer.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="IceCandidate.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebrtc_transprot_handler.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -928,6 +934,9 @@
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="IceServer.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="IceCandidate.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
