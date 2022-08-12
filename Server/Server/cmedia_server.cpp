@@ -14,10 +14,13 @@ purpose:		cmedia_server
 #include "clog.h"
 #include "croom_mgr.h"
 #include "cmsg_dispatch.h"
+#include "cuv_util.h"
 namespace chen {
 	cmedia_server g_media_server;
 
-	cmedia_server::cmedia_server() : m_stop(false)
+	cmedia_server::cmedia_server() 
+		: ctimer()
+		, m_stop(false)
 	{
 	}
 
@@ -47,6 +50,15 @@ namespace chen {
 			return false;
 		}
 
+		SYSTEM_LOG("uv init ...");
+
+		if (!uv_util::init())
+		{
+			return false;
+		}
+		uv_util::print_version();
+
+
 		SYSTEM_LOG("room mgr init ...");
 		if (!g_room_mgr.init())
 		{
@@ -63,6 +75,15 @@ namespace chen {
 		{
 			return false;
 		}
+		SYSTEM_LOG("timer init ...");
+		if (!ctimer::init())
+		{
+			return false;
+		}
+		SYSTEM_LOG("timer startup  ...");
+
+		ctimer::Start(1u, 100u);
+
 		SYSTEM_LOG(" media rtc server init ok");
 
 		return true;
@@ -70,29 +91,33 @@ namespace chen {
 
 	bool cmedia_server::Loop()
 	{
-		static const uint32 TICK_TIME = 100;
-		//启动内网并等待初始化完成
+		SYSTEM_LOG("starting libuv loop");
+		//DepLibUV::RunLoop();
+		uv_util::run_loop();
+		SYSTEM_LOG("libuv loop ended");
+		//static const uint32 TICK_TIME = 100;
+		////启动内网并等待初始化完成
 
-		ctime_elapse time_elapse;
-		uint32 uDelta = 0;
-		while (!m_stop)
-		{
-			uDelta += time_elapse.get_elapse();
+		//ctime_elapse time_elapse;
+		//uint32 uDelta = 0;
+		//while (!m_stop)
+		//{
+		//	uDelta += time_elapse.get_elapse();
 
-			//	g_game_client.update(uDelta);
-			g_wan_server.update(uDelta);
+		//	//	g_game_client.update(uDelta);
+		//	g_wan_server.update(uDelta);
 
  
-			g_room_mgr.update(uDelta);
+		//	g_room_mgr.update(uDelta);
 
 
-			uDelta = time_elapse.get_elapse();
+		//	uDelta = time_elapse.get_elapse();
 
-			if (uDelta < TICK_TIME)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
-			}
-		}
+		//	if (uDelta < TICK_TIME)
+		//	{
+		//		std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
+		//	}
+		//}
 
 		//SYSTEM_LOG("Leave main loop");
 
@@ -106,6 +131,8 @@ namespace chen {
 		g_wan_server.destroy();
 		SYSTEM_LOG("g_wan_server Destroy OK!");
 
+		uv_util::destroy();
+		SYSTEM_LOG("uv destroy OK !!!");
 		//g_client_collection_mgr.destroy();
 		//SYSTEM_LOG("g_client_collection_mgr Destroy OK !!!");
 
@@ -125,7 +152,37 @@ namespace chen {
 
 	void cmedia_server::stop()
 	{
+		Stop();
 		m_stop = true;
+	}
+
+	void cmedia_server::OnTimer()
+	{
+		static const uint32 TICK_TIME = 100;
+		////启动内网并等待初始化完成
+		DEBUG_EX_LOG("   %llu ms", uv_util::GetTimeMsInt64());
+		//ctime_elapse time_elapse;
+		//uint32 uDelta = 0;
+		if (!m_stop)
+		{
+			//uDelta += time_elapse.get_elapse();
+
+			//	g_game_client.update(uDelta);
+			g_wan_server.update(TICK_TIME);
+
+
+			g_room_mgr.update(TICK_TIME);
+
+
+			//uDelta = time_elapse.get_elapse();
+
+			/*if (uDelta < TICK_TIME)
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
+			}*/
+		}
+
+		//SYSTEM_LOG("Leave main loop");
 	}
 
 }

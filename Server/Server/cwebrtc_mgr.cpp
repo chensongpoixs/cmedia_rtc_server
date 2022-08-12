@@ -103,7 +103,7 @@ namespace chen {
 			{
 				WARNING_EX_LOG("not find [cmd = %s]type ", cmd.c_str());
 				// reply 客户端错误信息
-				return;
+				return false;
 			}
 			++handler_ptr->handle_count;
 			if (iter->second)
