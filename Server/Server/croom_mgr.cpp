@@ -21,7 +21,7 @@ namespace chen {
 	}
 	bool croom_mgr::init()
 	{
-		return false;
+		return true;
 	}
 	void croom_mgr::update(uint32 uDeltaTime)
 	{

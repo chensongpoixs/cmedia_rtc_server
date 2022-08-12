@@ -487,6 +487,9 @@
     <ClCompile Include="PortManager.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="DtlsTransport.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -910,6 +913,9 @@
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="PortManager.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="DtlsTransport.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>

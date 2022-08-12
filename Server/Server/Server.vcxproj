@@ -73,14 +73,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\libsrtp2\lib\x64\debug;$(C_INCLUDE)\abseil-cpp\lib\x64\debug;$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(C_INCLUDE)\libsrtp2\lib\x64\debug;$(C_INCLUDE)\abseil-cpp\lib\x64\debug;$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\openssl_1.1.0\lib;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\OpenSSL-Win64\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\libsrtp2\lib\x64\release;$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\josn\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Release;$(C_INCLUDE)\OpenSSL-Win64\lib;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(C_INCLUDE)\libsrtp2\lib\x64\release;$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\josn\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Release;$(C_INCLUDE)\openssl_1.1.0\lib;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -175,6 +175,7 @@
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
     <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="DtlsTransport.cpp" />
     <ClCompile Include="H264.cpp" />
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc" />
     <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc" />
@@ -305,6 +306,7 @@
     <ClInclude Include="cwebsocket_msg_queue.h" />
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="DtlsTransport.hpp" />
     <ClInclude Include="H264.hpp" />
     <ClInclude Include="libwebrtc\api\bitrate_constraints.h" />
     <ClInclude Include="libwebrtc\api\network_state_predictor.h" />

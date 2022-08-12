@@ -9,10 +9,11 @@ purpose:		ccrypto_random
 
 #ifndef _C_CRYPTO_RANDOM_H_
 #define _C_CRYPTO_RANDOM_H_
-#include "cnet_type.h"
+//#include "cnet_type.h"
 #include "csingleton.h"
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
+#include <string>
 namespace chen {
 	class ccrypto_random
 	{
