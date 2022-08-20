@@ -1,11 +1,11 @@
-/********************************************************************
+ï»¿/********************************************************************
 created:	2019-05-07
 
 author:		chensong
 
-level:		ÍøÂç²ã
+level:		ç½‘ç»œå±‚
 
-purpose:	ÍøÂçÊı¾İµÄÊÕ·¢
+purpose:	ç½‘ç»œæ•°æ®çš„æ”¶å‘
 *********************************************************************/
 #include "cwan_session.h"
 
@@ -43,27 +43,27 @@ namespace chen {
 	}
 	void cwan_session::handler_msg(uint64_t session_id , const void* p, uint32 size)
 	{
-		// 1. µÇÂ¼×´Ì¬ÅĞ¶Ï
+		// 1. ç™»å½•çŠ¶æ€åˆ¤æ–­
 
 		if (!m_json_reader.parse((const char *)p, (const char *)p + size, m_json_response))
 		{
 			ERROR_EX_LOG("parse json failed !!! [session_id = %llu][json = %s]", session_id, p);
 			return;
 		}
-		if (!m_json_response.isMember("cmd"))
+		if (!m_json_response.isMember("msg_id"))
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find cmd type !!!", session_id);
 			return;
 		}
-		// TODO@chensong 20220812 ¹ÜÀíµÄ±È½ÏÂ©
-		const std::string cmd = m_json_response["cmd"].asString();
+		// TODO@chensong 20220812 ç®¡ç†çš„æ¯”è¾ƒæ¼
+		const uint32 msg_id = m_json_response["msg_id"].asUInt();
 		// "create_webrtc"
-		if ("create_webrtc" == cmd)
+		if ( C2S_create_room == msg_id)
 		{
 
 			g_global_webrtc_mgr.handler_create_webrtc(session_id, m_json_response);
 		}
-		else if ("destroy_webrtc" == cmd)
+		else if (C2S_destroy_room == msg_id)
 		{
 			g_global_webrtc_mgr.handler_destroy_webrtc(session_id, m_json_response);
 		}
@@ -110,7 +110,7 @@ namespace chen {
 
 
 
-		// ÍË³ö·¿¼ä
+		// é€€å‡ºæˆ¿é—´
 		for (const std::string & room_name : m_room_list)
 		{
 			g_room_mgr.leave_room(m_session_id, room_name);

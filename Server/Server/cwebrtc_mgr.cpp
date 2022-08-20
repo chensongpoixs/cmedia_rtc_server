@@ -92,16 +92,16 @@ namespace chen {
 			ERROR_EX_LOG("not find type transport_id [value = %s]", value.asString().c_str());
 			return false;
 		}
-		const std::string cmd = value["cmd"].asString();
+		const uint16 msg_id = value["msg_id"].asUInt();
 		const std::string transport_id = value["transport_id"].asString();
 
 		std::unordered_map<std::string, cwebrtc_transport*>::iterator iter =  m_webrtc_transport_map.find(transport_id);
 		if (iter != m_webrtc_transport_map.end())
 		{
-			cmsg_handler* handler_ptr = g_msg_dispatch.get_msg_handler(cmd);
+			cmsg_handler* handler_ptr = g_msg_dispatch.get_msg_handler(msg_id);
 			if (!handler_ptr)
 			{
-				WARNING_EX_LOG("not find [cmd = %s]type ", cmd.c_str());
+				WARNING_EX_LOG("not find [msg_id = %u]type ", msg_id);
 				// reply 客户端错误信息
 				return false;
 			}

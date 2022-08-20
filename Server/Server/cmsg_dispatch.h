@@ -13,7 +13,7 @@
 #include "cwebrtc_transport.h"
 #include <json/json.h>
 #include <unordered_map>
-//#include "cmsg_base_id.h"
+#include "cmsg_base_id.h"
 namespace chen {
 	//typedef void (cwebrtc_mgr::*handler_webrtc_type)(Json::Value & value);
 	typedef bool (cwebrtc_transport::*handler_type)(uint64 session_id, Json::Value & value);
@@ -42,14 +42,14 @@ namespace chen {
 		bool init();
 		void destroy();
 
-		cmsg_handler* get_msg_handler(const  std::string & msg_key);
+		cmsg_handler* get_msg_handler(uint16 msg_id);
 
 	private:
-		void _register_msg_handler(const  std::string & msg_key, const std::string& msg_name, handler_type handler);
+		void _register_msg_handler(uint16 msg_id, const std::string& msg_name, handler_type handler);
 		//void _register_webrtc_transport_msg_handler(uint16 msg_id, const std::string& msg_name, handler_type handler);
 	private:
-		//cmsg_handler		m_msg_handler[Msg_Client_Max];
-		std::unordered_map<std::string, cmsg_handler*>    m_msg_handler_map;
+		cmsg_handler		m_msg_handler[Msg_Client_Max];
+		
 	};
  
 #pragma pack(pop)
