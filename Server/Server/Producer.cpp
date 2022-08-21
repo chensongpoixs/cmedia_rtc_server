@@ -20,8 +20,74 @@ namespace RTC
 	/* Instance methods. */
 
 	Producer::Producer(const std::string& id, RTC::Producer::Listener* listener, Json::Value& data)
-	  : id(id), listener(listener)
+		: id(id)
+		, listener(listener)
 	{
+		if (!data.isMember("kind") && !data["kind"].isString())
+		{
+			ERROR_EX_LOG("not find kind or kind not is type string !!!");
+			return;
+			//assert()
+		}
+		kind =  RTC::Media::GetKind(data["kind"].asCString()) ;
+		if (this->kind == RTC::Media::Kind::ALL)
+		{
+			ERROR_EX_LOG("invalid empty kind");
+			return;
+		}
+		if (!data.isMember("rtpParameters") && !data["rtpParameters"].isObject())
+		{
+			ERROR_EX_LOG("rtpParameters not find or type not is object !!!");
+			return;
+		}
+
+
+		// This may throw.
+		this->rtpParameters = RTC::RtpParameters(data["rtpParameters"]);
+
+
+		// Evaluate type.
+		this->type = RTC::RtpParameters::GetType(this->rtpParameters);
+
+		// Reserve a slot in rtpStreamByEncodingIdx and rtpStreamsScores vectors
+		// for each RTP stream.
+		this->rtpStreamByEncodingIdx.resize(this->rtpParameters.encodings.size(), nullptr);
+		this->rtpStreamScores.resize(this->rtpParameters.encodings.size(), 0u);
+
+
+		auto& encoding = this->rtpParameters.encodings[0];
+		auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
+
+		if (!RTC::Codecs::Tools::IsValidTypeForCodec(this->type, mediaCodec->mimeType))
+		{
+			ERROR_EX_LOG(
+				"%s codec not supported for %s",
+				mediaCodec->mimeType.ToString().c_str(),
+				RTC::RtpParameters::GetTypeString(this->type).c_str());
+		}
+
+		if (!data.isMember("rtpMapping") || !data["rtpMapping"].isArray())
+		{
+			ERROR_EX_LOG("missing rtpMapping");
+			return;
+		}
+		const Json::Value arrayObj = data["rtpMapping"];
+		for (size_t i = 0; i < arrayObj.size(); ++i)
+		{
+			//if (arrayObj[i].isObject())
+			//{
+			//	ERROR_EX_LOG("not is Object !!!");
+			//	return;
+			//}
+			//if (
+			//	 !arrayObj[i].isMember("payloadType") || !arrayObj[i]["payloadType"].isUInt()
+			//	)
+			//	// clang-format on
+			//{
+			//	ERROR_EX_LOG("wrong entry in rtpMapping.codecs (missing payloadType)");
+			//}
+
+		}
 		//MS_TRACE();
 		/*
 		{

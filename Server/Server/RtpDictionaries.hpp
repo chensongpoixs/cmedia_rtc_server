@@ -8,7 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
+#include <json/json.h>
 //using json = nlohmann::json;
 
 namespace RTC
@@ -152,7 +152,7 @@ namespace RTC
 	{
 	public:
 		RtcpFeedback() = default;
-		//explicit RtcpFeedback(json& data);
+		explicit RtcpFeedback(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
 
@@ -165,7 +165,7 @@ namespace RTC
 	{
 	public:
 		RtpCodecParameters() = default;
-		//explicit RtpCodecParameters(json& data);
+		explicit RtpCodecParameters(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
 
@@ -185,9 +185,9 @@ namespace RTC
 	{
 	public:
 		RtpRtxParameters() = default;
-		/*explicit RtpRtxParameters(json& data);
+		explicit RtpRtxParameters(Json::Value& data);
 
-		void FillJson(json& jsonObject) const;*/
+		//void FillJson(json& jsonObject) const;*/
 
 	public:
 		uint32_t ssrc{ 0u };
@@ -197,9 +197,9 @@ namespace RTC
 	{
 	public:
 		RtpEncodingParameters() = default;
-		/*explicit RtpEncodingParameters(json& data);
+		explicit RtpEncodingParameters(Json::Value& data);
 
-		void FillJson(json& jsonObject) const;*/
+		//void FillJson(json& jsonObject) const;*/
 
 	public:
 		uint32_t ssrc{ 0u };
@@ -221,7 +221,7 @@ namespace RTC
 	{
 	public:
 		RtpHeaderExtensionParameters() = default;
-		//explicit RtpHeaderExtensionParameters(json& data);
+		explicit RtpHeaderExtensionParameters(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
 
@@ -237,7 +237,7 @@ namespace RTC
 	{
 	public:
 		RtcpParameters() = default;
-		//explicit RtcpParameters(json& data);
+		explicit RtcpParameters(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
 
@@ -271,9 +271,9 @@ namespace RTC
 
 	public:
 		RtpParameters() = default;
-		/*explicit RtpParameters(json& data);
+		explicit RtpParameters(Json::Value& data);
 
-		void FillJson(json& jsonObject) const;*/
+		//void FillJson(json& jsonObject) const;*/
 		const RTC::RtpCodecParameters* GetCodecForEncoding(RtpEncodingParameters& encoding) const;
 		const RTC::RtpCodecParameters* GetRtxCodecForEncoding(RtpEncodingParameters& encoding) const;
 

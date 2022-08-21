@@ -12,30 +12,32 @@ namespace RTC
 {
 	/* Instance methods. */
 
-	//RtcpFeedback::RtcpFeedback(json& data)
-	//{
-	//	//MS_TRACE();
+	RtcpFeedback::RtcpFeedback(Json::Value& data)
+	{
+		//MS_TRACE();
 
-	//	if (!data.is_object())
-	//	{
-	//		ERROR_EX_LOG("data is not an object");
-	//	}
+		if (!data.isObject())
+		{
+			ERROR_EX_LOG("data is not an object");
+		}
 
-	//	auto jsonTypeIt      = data.find("type");
-	//	auto jsonParameterIt = data.find("parameter");
+		/*auto jsonTypeIt      = data.find("type");
+		auto jsonParameterIt = data.find("parameter");*/
 
-	//	// type is mandatory.
-	//	if (jsonTypeIt == data.end() || !jsonTypeIt->is_string())
-	//	{
-	//		ERROR_EX_LOG("missing type");
-	//	}
+		// type is mandatory.
+		if (!data.isMember("type") || !data["type"].isString()/*jsonTypeIt == data.end() || !jsonTypeIt->is_string()*/)
+		{
+			ERROR_EX_LOG("missing type");
+		}
 
-	//	this->type = jsonTypeIt->get<std::string>();
+		this->type = data["type"].asCString() /*jsonTypeIt->get<std::string>()*/;
 
-	//	// parameter is optional.
-	//	if (jsonParameterIt != data.end() && jsonParameterIt->is_string())
-	//		this->parameter = jsonParameterIt->get<std::string>();
-	//}
+		// parameter is optional.
+		if (!data.isMember("parameter") || !data["parameter"].isString()/*jsonParameterIt != data.end() && jsonParameterIt->is_string()*/)
+		{
+			this->parameter = data["parameter"].asCString(); //jsonParameterIt->get<std::string>();
+		}
+	}
 
 	//void RtcpFeedback::FillJson(json& jsonObject) const
 	//{

@@ -8,7 +8,7 @@
 #include <vector>
 #include "cnet_type.h"
 //using json = nlohmann::json;
-
+#include <json/json.h>
 namespace RTC
 {
 	class Parameters
@@ -62,8 +62,8 @@ namespace RTC
 		};
 
 	public:
-		/*void FillJson(json& jsonObject) const;
-		void Set(json& data);*/
+		//void FillJson(json& jsonObject) const;
+		void Set(Json::Value& data); 
 		bool HasBoolean(const std::string& key) const;
 		bool HasInteger(const std::string& key) const;
 		bool HasPositiveInteger(const std::string& key) const;

@@ -69,6 +69,7 @@ namespace chen {
 		, m_ice_canidates()
 		, m_dtlsRole(RTC::DtlsTransport::Role::AUTO)
 		, m_traceEventTypes()
+		, m_mapProducers()
 	{
 
 		//m_ice_server_ptr;

@@ -26,6 +26,7 @@ purpose:		cwebrtc_transport
 #include "IceCandidate.hpp"
 #include "CompoundPacket.hpp"
 #include <json/json.h>
+#include "Producer.hpp"
 namespace chen
 {
 	class csctp_association;
@@ -300,6 +301,7 @@ namespace chen
 		RTC::DtlsTransport::Role							m_dtlsRole;// { RTC::DtlsTransport::Role::AUTO };
 
 		struct TraceEventTypes								m_traceEventTypes;
+		std::unordered_map<std::string, RTC::Producer*>		m_mapProducers;
 };
 }
 

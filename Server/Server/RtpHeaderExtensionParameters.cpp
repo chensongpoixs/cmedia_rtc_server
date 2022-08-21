@@ -5,53 +5,66 @@
 //#include "MediaSoupErrors.hpp"
 //#include "Utils.hpp"
 #include "RtpDictionaries.hpp"
-
+#include "clog.h"
 namespace RTC
 {
 	/* Instance methods. */
 
-	//RtpHeaderExtensionParameters::RtpHeaderExtensionParameters(json& data)
-	//{
-	//	MS_TRACE();
+	using namespace chen;
+	RtpHeaderExtensionParameters::RtpHeaderExtensionParameters(Json::Value& data)
+	{
+		//MS_TRACE();
 
-	//	if (!data.is_object())
-	//		MS_THROW_TYPE_ERROR("data is not an object");
+		if (!data.isObject())
+		{
+			ERROR_EX_LOG("data is not an object");
+		}
 
-	//	auto jsonUriIt        = data.find("uri");
-	//	auto jsonIdIt         = data.find("id");
-	//	auto jsonEncryptIt    = data.find("encrypt");
-	//	auto jsonParametersIt = data.find("parameters");
+		/*auto jsonUriIt        = data.find("uri");
+		auto jsonIdIt         = data.find("id");
+		auto jsonEncryptIt    = data.find("encrypt");
+		auto jsonParametersIt = data.find("parameters");*/
 
-	//	// uri is mandatory.
-	//	if (jsonUriIt == data.end() || !jsonUriIt->is_string())
-	//		MS_THROW_TYPE_ERROR("missing uri");
+		// uri is mandatory.
+		if (!data.isMember("uri") || !data["uri"].isString() /*jsonUriIt == data.end() || !jsonUriIt->is_string()*/)
+			ERROR_EX_LOG("missing uri");
 
-	//	this->uri = jsonUriIt->get<std::string>();
+		this->uri = data["uri"].asCString(); //jsonUriIt->get<std::string>();
 
-	//	if (this->uri.empty())
-	//		MS_THROW_TYPE_ERROR("empty uri");
+		if (this->uri.empty())
+		{
+			ERROR_EX_LOG("empty uri");
+		}
 
-	//	// Get the type.
-	//	this->type = RTC::RtpHeaderExtensionUri::GetType(this->uri);
+		// Get the type.
+		this->type = RTC::RtpHeaderExtensionUri::GetType(this->uri);
 
-	//	// id is mandatory.
-	//	if (jsonIdIt == data.end() || !Utils::Json::IsPositiveInteger(*jsonIdIt))
-	//		MS_THROW_TYPE_ERROR("missing id");
+		// id is mandatory.
+		if (!data.isMember("id") || !data["id"].isUInt()/*jsonIdIt == data.end() || !Utils::Json::IsPositiveInteger(*jsonIdIt)*/)
+		{
+			ERROR_EX_LOG("missing id");
+		}
 
-	//	this->id = jsonIdIt->get<uint8_t>();
+		this->id = data["id"].asUInt(); //jsonIdIt->get<uint8_t>();
 
-	//	// Don't allow id 0.
-	//	if (this->id == 0u)
-	//		MS_THROW_TYPE_ERROR("invalid id 0");
+		// Don't allow id 0.
+		if (this->id == 0u)
+		{
+			ERROR_EX_LOG("invalid id 0");
+		}
 
-	//	// encrypt is optional.
-	//	if (jsonEncryptIt != data.end() && jsonEncryptIt->is_boolean())
-	//		this->encrypt = jsonEncryptIt->get<bool>();
+		// encrypt is optional.
+		if (!data.isMember("encrypt") || !data["encrypt"].isBool()/*jsonEncryptIt != data.end() && jsonEncryptIt->is_boolean()*/)
+		{
+			this->encrypt = data["encrypt"].asBool();//jsonEncryptIt->get<bool>();
+		}
 
-	//	// parameters is optional.
-	//	if (jsonParametersIt != data.end() && jsonParametersIt->is_object())
-	//		this->parameters.Set(*jsonParametersIt);
-	//}
+		// parameters is optional.
+		if (!data.isMember("parameters") || !data["parameters"].isObject()/*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
+		{
+			this->parameters.Set(data["parameters"]);
+		}
+	}
 
 	//void RtpHeaderExtensionParameters::FillJson(json& jsonObject) const
 	//{

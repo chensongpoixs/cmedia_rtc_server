@@ -14,6 +14,9 @@ purpose:		cwebrtc_transport_handler
 #include <iterator>                                              // std::ostream_iterator
 #include <map>                                                   // std::multimap
 #include <sstream>                                               // std::ostringstream
+#include "ccrypto_random.h"
+
+
 namespace chen {
 
 
@@ -45,6 +48,7 @@ namespace chen {
 	}
 	bool cwebrtc_transport::handler_produce(uint64 session_id, Json::Value & value)
 	{
+		std::string produceId = s_crypto_random.GetRandomString(20);
 		return true;
 	}
 	bool cwebrtc_transport::handler_consume(uint64 session_id, Json::Value& value)

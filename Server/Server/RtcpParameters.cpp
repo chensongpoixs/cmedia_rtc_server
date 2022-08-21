@@ -8,44 +8,44 @@
 
 #include "crtc_util.h"
 #include "clog.h"
-using namespace chen;
 
 namespace RTC
 {
 	/* Instance methods. */
+	using namespace chen;
 
-	//RtcpParameters::RtcpParameters(json& data)
-	//{
-	//	//MS_TRACE();
+	RtcpParameters::RtcpParameters(Json::Value& data)
+	{
+		//MS_TRACE();
 
-	//	if (!data.is_object())
-	//	{
-	//		ERROR_EX_LOG("data is not an object");
-	//	}
+		if (!data.isObject())
+		{
+			ERROR_EX_LOG("data is not an object");
+		}
 
-	//	auto jsonCnameIt       = data.find("cname");
-	//	auto jsonSsrcIt        = data.find("ssrc");
-	//	auto jsonRedicedSizeIt = data.find("reducedSize");
+		/*auto jsonCnameIt       = data.find("cname");
+		auto jsonSsrcIt        = data.find("ssrc");
+		auto jsonRedicedSizeIt = data.find("reducedSize");*/
 
-	//	// cname is optional.
-	//	if (jsonCnameIt != data.end() && jsonCnameIt->is_string())
-	//		this->cname = jsonCnameIt->get<std::string>();
+		// cname is optional.
+		if (data.isMember("cname") && data["cname"].isString()/*jsonCnameIt != data.end() && jsonCnameIt->is_string()*/)
+			this->cname = data["cname"].asCString();// jsonCnameIt->get<std::string>();
 
-	//	// ssrc is optional.
-	//	// clang-format off
-	//	if (
-	//		jsonSsrcIt != data.end() &&
-	//		Utils::Json::IsPositiveInteger(*jsonSsrcIt)
-	//	)
-	//	// clang-format on
-	//	{
-	//		this->ssrc = jsonSsrcIt->get<uint32_t>();
-	//	}
+		// ssrc is optional.
+		// clang-format off
+		if ( data.isMember("ssrc") && data["ssrc"].isUInt()
+			/*jsonSsrcIt != data.end() &&
+			Utils::Json::IsPositiveInteger(*jsonSsrcIt)*/
+		)
+		// clang-format on
+		{
+			this->ssrc = data["ssrc"].asUInt();////jsonSsrcIt->get<uint32_t>();
+		}
 
-	//	// reducedSize is optional.
-	//	if (jsonRedicedSizeIt != data.end() && jsonRedicedSizeIt->is_boolean())
-	//		this->reducedSize = jsonRedicedSizeIt->get<bool>();
-	//}
+		// reducedSize is optional.
+		if (data.isMember("reducedSize") && data["reducedSize"].isBool() /*jsonRedicedSizeIt != data.end() && jsonRedicedSizeIt->is_boolean()*/)
+			this->reducedSize = data["reducedSize"].asBool(); //jsonRedicedSizeIt->get<bool>();
+	}
 
 	//void RtcpParameters::FillJson(json& jsonObject) const
 	//{
