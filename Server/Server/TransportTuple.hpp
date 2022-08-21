@@ -11,6 +11,7 @@
 #include "cuv_ip.h"
 #include "cuv_util.h"
 #include "clog.h"
+#include <json/json.h>
 //using json = nlohmann::json;
 
 namespace RTC
@@ -53,7 +54,7 @@ namespace RTC
 
 	public:
 		//void FillJson(json& jsonObject) const;
-
+		void reply(Json::Value & value) const;
 		void Dump() const;
 
 		void StoreUdpRemoteAddress()

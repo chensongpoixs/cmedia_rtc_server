@@ -1,22 +1,23 @@
 #ifndef MS_RTC_RTP_STREAM_HPP
 #define MS_RTC_RTP_STREAM_HPP
 
-#include "common.hpp"
-#include "DepLibUV.hpp"
-#include "RTC/RTCP/FeedbackPsFir.hpp"
-#include "RTC/RTCP/FeedbackPsPli.hpp"
-#include "RTC/RTCP/FeedbackRtpNack.hpp"
-#include "RTC/RTCP/Packet.hpp"
-#include "RTC/RTCP/ReceiverReport.hpp"
-#include "RTC/RTCP/Sdes.hpp"
-#include "RTC/RTCP/SenderReport.hpp"
-#include "RTC/RtpDictionaries.hpp"
-#include "RTC/RtxStream.hpp"
-#include <nlohmann/json.hpp>
+//#include "common.hpp"
+//#include "DepLibUV.hpp"
+#include "FeedbackPsFir.hpp"
+#include "FeedbackPsPli.hpp"
+#include "FeedbackRtpNack.hpp"
+#include "Packet.hpp"
+#include "ReceiverReport.hpp"
+#include "Sdes.hpp"
+#include "SenderReport.hpp"
+#include "RtpDictionaries.hpp"
+#include "RtxStream.hpp"
+#include "cuv_util.h"
+//#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
-using json = nlohmann::json;
+//using json = nlohmann::json;
 
 namespace RTC
 {
@@ -35,7 +36,7 @@ namespace RTC
 	public:
 		struct Params
 		{
-			void FillJson(json& jsonObject) const;
+			//void FillJson(json& jsonObject) const;
 
 			size_t encodingIdx{ 0u };
 			uint32_t ssrc{ 0u };
@@ -59,8 +60,8 @@ namespace RTC
 		RtpStream(RTC::RtpStream::Listener* listener, RTC::RtpStream::Params& params, uint8_t initialScore);
 		virtual ~RtpStream();
 
-		void FillJson(json& jsonObject) const;
-		virtual void FillJsonStats(json& jsonObject);
+	//	void FillJson(json& jsonObject) const;
+		//virtual void FillJsonStats(json& jsonObject);
 		uint32_t GetEncodingIdx() const
 		{
 			return this->params.encodingIdx;
@@ -156,7 +157,7 @@ namespace RTC
 		}
 		uint64_t GetActiveMs() const
 		{
-			return DepLibUV::GetTimeMs() - this->activeSinceMs;
+			return uv_util::GetTimeMs() - this->activeSinceMs;
 		}
 
 	protected:

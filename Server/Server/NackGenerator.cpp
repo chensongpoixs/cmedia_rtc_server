@@ -1,17 +1,18 @@
-#define MS_CLASS "RTC::NackGenerator"
+//#define MS_CLASS "RTC::NackGenerator"
 // #define MS_LOG_DEV_LEVEL 3
 
-#include "RTC/NackGenerator.hpp"
-#include "DepLibUV.hpp"
-#include "Logger.hpp"
+#include "NackGenerator.hpp"
+//#include "DepLibUV.hpp"
+//#include "Logger.hpp"
 #include <iterator> // std::ostream_iterator
 #include <sstream>  // std::ostringstream
 #include <utility>  // std::make_pair()
-
+#include "cuv_util.h"
+#include <cassert>
 namespace RTC
 {
 	/* Static. */
-
+	using namespace chen;
 	constexpr size_t MaxPacketAge{ 10000u };
 	constexpr size_t MaxNackPackets{ 1000u };
 	constexpr uint32_t DefaultRtt{ 100u };
@@ -20,26 +21,31 @@ namespace RTC
 
 	/* Instance methods. */
 
-	NackGenerator::NackGenerator(Listener* listener) : listener(listener), rtt(DefaultRtt)
+	NackGenerator::NackGenerator(Listener* listener) 
+		: chen::ctimer()
+		, listener(listener)
+		, rtt(DefaultRtt)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		// Set the timer.
-		this->timer = new Timer(this);
+		//this->timer = new Timer(this);
+		chen::ctimer::init();
 	}
 
 	NackGenerator::~NackGenerator()
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		// Close the timer.
-		delete this->timer;
+		destroy();
+		//delete this->timer;
 	}
 
 	// Returns true if this is a found nacked packet. False otherwise.
 	bool NackGenerator::ReceivePacket(RTC::RtpPacket* packet, bool isRecovered)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		uint16_t seq    = packet->GetSequenceNumber();
 		bool isKeyFrame = packet->IsKeyFrame();
@@ -68,8 +74,8 @@ namespace RTC
 			// It was a nacked packet.
 			if (it != this->nackList.end())
 			{
-				MS_DEBUG_DEV(
-				  "NACKed packet received [ssrc:%" PRIu32 ", seq:%" PRIu16 ", recovered:%s]",
+				DEBUG_EX_LOG(
+				  "NACKed packet received [ssrc:%u, seq:%hu, recovered:%s]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber(),
 				  isRecovered ? "true" : "false");
@@ -82,8 +88,8 @@ namespace RTC
 			// Out of order packet or already handled NACKed packet.
 			if (!isRecovered)
 			{
-				MS_WARN_DEV(
-				  "ignoring older packet not present in the NACK list [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+				WARNING_EX_LOG(
+				  "ignoring older packet not present in the NACK list [ssrc:%u, seq:%hu]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 			}
@@ -132,7 +138,7 @@ namespace RTC
 
 		// This is important. Otherwise the running timer (filter:TIME) would be
 		// interrupted and NACKs would never been sent more than once for each seq.
-		if (!this->timer->IsActive())
+		if (!/*this->timer->*/IsActive())
 			MayRunTimer();
 
 		return false;
@@ -140,7 +146,7 @@ namespace RTC
 
 	void NackGenerator::AddPacketsToNackList(uint16_t seqStart, uint16_t seqEnd)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		// Remove old packets.
 		auto it = this->nackList.lower_bound(seqEnd - MaxPacketAge);
@@ -165,8 +171,7 @@ namespace RTC
 
 			if (this->nackList.size() + numNewNacks > MaxNackPackets)
 			{
-				MS_WARN_TAG(
-				  rtx, "NACK list full, clearing it and requesting a key frame [seqEnd:%" PRIu16 "]", seqEnd);
+				WARNING_EX_LOG("rtx, NACK list full, clearing it and requesting a key frame [seqEnd:%hu]", seqEnd);
 
 				this->nackList.clear();
 				this->listener->OnNackGeneratorKeyFrameRequired();
@@ -177,7 +182,7 @@ namespace RTC
 
 		for (uint16_t seq = seqStart; seq != seqEnd; ++seq)
 		{
-			MS_ASSERT(this->nackList.find(seq) == this->nackList.end(), "packet already in the NACK list");
+			assert(this->nackList.find(seq) == this->nackList.end(), "packet already in the NACK list");
 
 			// Do not send NACK for packets that are already recovered by RTX.
 			if (this->recoveredList.find(seq) != this->recoveredList.end())
@@ -189,7 +194,7 @@ namespace RTC
 
 	bool NackGenerator::RemoveNackItemsUntilKeyFrame()
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		while (!this->keyFrameList.empty())
 		{
@@ -214,9 +219,9 @@ namespace RTC
 
 	std::vector<uint16_t> NackGenerator::GetNackBatch(NackFilter filter)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
-		uint64_t nowMs = DepLibUV::GetTimeMs();
+		uint64_t nowMs = uv_util::GetTimeMs();
 		std::vector<uint16_t> nackBatch;
 
 		auto it = this->nackList.begin();
@@ -243,10 +248,7 @@ namespace RTC
 
 				if (nackInfo.retries >= MaxNackRetries)
 				{
-					MS_WARN_TAG(
-					  rtx,
-					  "sequence number removed from the NACK list due to max retries [filter:seq, seq:%" PRIu16
-					  "]",
+					WARNING_EX_LOG(" rtx, sequence number removed from the NACK list due to max retries [filter:seq, seq:%hu]",
 					  seq);
 
 					it = this->nackList.erase(it);
@@ -267,10 +269,7 @@ namespace RTC
 
 				if (nackInfo.retries >= MaxNackRetries)
 				{
-					MS_WARN_TAG(
-					  rtx,
-					  "sequence number removed from the NACK list due to max retries [filter:time, seq:%" PRIu16
-					  "]",
+					WARNING_EX_LOG("rtx, sequence number removed from the NACK list due to max retries [filter:time, seq:%hu]",
 					  seq);
 
 					it = this->nackList.erase(it);
@@ -306,7 +305,7 @@ namespace RTC
 
 	void NackGenerator::Reset()
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		this->nackList.clear();
 		this->keyFrameList.clear();
@@ -316,15 +315,17 @@ namespace RTC
 		this->lastSeq = 0u;
 	}
 
-	inline void NackGenerator::MayRunTimer() const
+	inline void NackGenerator::MayRunTimer() 
 	{
 		if (!this->nackList.empty())
-			this->timer->Start(TimerInterval);
+		{
+			/*this->timer->*/ Start(TimerInterval);
+		}
 	}
 
-	inline void NackGenerator::OnTimer(Timer* /*timer*/)
+	inline void NackGenerator::OnTimer(/*Timer**/ /*timer*/)
 	{
-		MS_TRACE();
+	//	MS_TRACE();
 
 		std::vector<uint16_t> nackBatch = GetNackBatch(NackFilter::TIME);
 

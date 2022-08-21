@@ -1,17 +1,20 @@
 #ifndef MS_RTC_RTX_STREAM_HPP
 #define MS_RTC_RTX_STREAM_HPP
 
-#include "common.hpp"
-#include "DepLibUV.hpp"
-#include "RTC/RTCP/Packet.hpp"
-#include "RTC/RTCP/ReceiverReport.hpp"
-#include "RTC/RTCP/SenderReport.hpp"
-#include "RTC/RtpDictionaries.hpp"
-#include "RTC/RtpPacket.hpp"
-#include <nlohmann/json.hpp>
+//#include "common.hpp"
+//#include "DepLibUV.hpp"
+#include "Packet.hpp"
+
+#include "ReceiverReport.hpp"
+#include "SenderReport.hpp"
+#include "RtpDictionaries.hpp"
+#include "RtpPacket.hpp"
+#include "cuv_ip.h"
+#include "crtc_util.h"
+//#include <nlohmann/json.hpp>
 #include <string>
 
-using json = nlohmann::json;
+//using json = nlohmann::json;
 
 namespace RTC
 {
@@ -20,7 +23,7 @@ namespace RTC
 	public:
 		struct Params
 		{
-			void FillJson(json& jsonObject) const;
+			//void FillJson(json& jsonObject) const;
 
 			uint32_t ssrc{ 0 };
 			uint8_t payloadType{ 0 };
@@ -34,7 +37,7 @@ namespace RTC
 		explicit RtxStream(RTC::RtxStream::Params& params);
 		virtual ~RtxStream();
 
-		void FillJson(json& jsonObject) const;
+	//	void FillJson(json& jsonObject) const;
 		uint32_t GetSsrc() const
 		{
 			return this->params.ssrc;

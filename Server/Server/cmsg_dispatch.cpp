@@ -23,7 +23,7 @@ namespace chen {
 		_register_msg_handler(C2S_rtc_set_max_incoming_bitrate,			"webrtc_set_max_incoming_bitrate",		&cwebrtc_transport::handler_set_max_incoming_bitrate);
 		_register_msg_handler(C2S_rtc_set_max_outgoing_bitrate,			"webrtc_set_max_outgoing_bitrate",		&cwebrtc_transport::handler_set_max_outgoing_bitrate);
 		_register_msg_handler(C2S_rtc_produce,			"webrtc_produce",		&cwebrtc_transport::handler_produce);
-		_register_msg_handler(C2S_rtc_consume",			"webrtc_consume",		&cwebrtc_transport::handler_consume);
+		_register_msg_handler(C2S_rtc_consume,			"webrtc_consume",		&cwebrtc_transport::handler_consume);
 		_register_msg_handler(C2S_rtc_produce_data,			"webrtc_produce_data",		&cwebrtc_transport::handler_produce_data);
 		_register_msg_handler(C2S_rtc_consume_data,			"webrtc_consume_data",		&cwebrtc_transport::handler_consume_data);
 		_register_msg_handler(C2S_rtc_enable_trace_event,			"webrtc_enable_trace_event",		&cwebrtc_transport::handler_enable_trace_event);

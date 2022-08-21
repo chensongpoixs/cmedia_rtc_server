@@ -22,7 +22,7 @@ namespace chen {
 	{
 	public:
 		ctimer();
-		~ctimer();
+		virtual ~ctimer();
 	public:
 		bool init();
 		

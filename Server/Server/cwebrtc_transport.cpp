@@ -68,6 +68,7 @@ namespace chen {
 		, m_connect_called(false)
 		, m_ice_canidates()
 		, m_dtlsRole(RTC::DtlsTransport::Role::AUTO)
+		, m_traceEventTypes()
 	{
 
 		//m_ice_server_ptr;
@@ -1951,4 +1952,5 @@ namespace chen {
 		// Pass the packet to the parent transport.
 		/*RTC::Transport::*/ReceiveRtcpPacket(packet);
 	}
+	
 }

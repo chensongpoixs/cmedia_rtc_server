@@ -65,7 +65,13 @@ namespace chen {
 			uint32_t seconds;
 			uint32_t fractions;
 		};
+		   Ntp TimeMs2Ntp(uint64_t ms);
 
+		  uint64_t Ntp2TimeMs( Ntp ntp);
+
+		  bool IsNewerTimestamp(uint32_t timestamp, uint32_t prevTimestamp);
+
+		    uint32_t LatestTimestamp(uint32_t timestamp1, uint32_t timestamp2);
 		uint32_t TimeMsToAbsSendTime(uint64_t ms);
 	}
 }

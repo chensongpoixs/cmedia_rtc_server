@@ -1,10 +1,10 @@
-#define MS_CLASS "RTC::RtxStream"
+//#define MS_CLASS "RTC::RtxStream"
 // #define MS_LOG_DEV_LEVEL 3
 
-#include "RTC/RtxStream.hpp"
-#include "Logger.hpp"
-#include "RTC/SeqManager.hpp"
-
+#include "RtxStream.hpp"
+//#include "Logger.hpp"
+#include "SeqManager.hpp"
+#include "cuv_util.h"
 namespace RTC
 {
 	/* Static. */
@@ -17,28 +17,28 @@ namespace RTC
 
 	RtxStream::RtxStream(RTC::RtxStream::Params& params) : params(params)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
-		MS_ASSERT(
-		  params.mimeType.subtype == RTC::RtpCodecMimeType::Subtype::RTX, "mimeType.subtype is not RTX");
+		//MS_ASSERT(
+		 // params.mimeType.subtype == RTC::RtpCodecMimeType::Subtype::RTX, "mimeType.subtype is not RTX");
 	}
 
 	RtxStream::~RtxStream()
 	{
-		MS_TRACE();
+		//MS_TRACE();
 	}
 
-	void RtxStream::FillJson(json& jsonObject) const
-	{
-		MS_TRACE();
+	//void RtxStream::FillJson(json& jsonObject) const
+	//{
+	//	MS_TRACE();
 
-		// Add params.
-		this->params.FillJson(jsonObject["params"]);
-	}
+	//	// Add params.
+	//	this->params.FillJson(jsonObject["params"]);
+	//}
 
 	bool RtxStream::ReceivePacket(RTC::RtpPacket* packet)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		uint16_t seq = packet->GetSequenceNumber();
 
@@ -50,15 +50,13 @@ namespace RTC
 			this->started     = true;
 			this->maxSeq      = seq - 1;
 			this->maxPacketTs = packet->GetTimestamp();
-			this->maxPacketMs = DepLibUV::GetTimeMs();
+			this->maxPacketMs = chen::uv_util::GetTimeMs();
 		}
 
 		// If not a valid packet ignore it.
 		if (!UpdateSeq(packet))
 		{
-			MS_WARN_TAG(
-			  rtx,
-			  "invalid packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+			WARNING_EX_LOG( "rtx invalid packet [ssrc:%u, seq:%hu]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber());
 
@@ -69,7 +67,7 @@ namespace RTC
 		if (RTC::SeqManager<uint32_t>::IsSeqHigherThan(packet->GetTimestamp(), this->maxPacketTs))
 		{
 			this->maxPacketTs = packet->GetTimestamp();
-			this->maxPacketMs = DepLibUV::GetTimeMs();
+			this->maxPacketMs = chen::uv_util::GetTimeMs();
 		}
 
 		// Increase packet count.
@@ -80,7 +78,7 @@ namespace RTC
 
 	RTC::RTCP::ReceiverReport* RtxStream::GetRtcpReceiverReport()
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		auto* report = new RTC::RTCP::ReceiverReport();
 
@@ -126,7 +124,7 @@ namespace RTC
 		if (this->lastSrReceived != 0)
 		{
 			// Get delay in milliseconds.
-			auto delayMs = static_cast<uint32_t>(DepLibUV::GetTimeMs() - this->lastSrReceived);
+			auto delayMs = static_cast<uint32_t>(chen::uv_util::GetTimeMs() - this->lastSrReceived);
 			// Express delay in units of 1/65536 seconds.
 			uint32_t dlsr = (delayMs / 1000) << 16;
 
@@ -146,16 +144,16 @@ namespace RTC
 
 	void RtxStream::ReceiveRtcpSenderReport(RTC::RTCP::SenderReport* report)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
-		this->lastSrReceived  = DepLibUV::GetTimeMs();
+		this->lastSrReceived  = chen::uv_util::GetTimeMs();
 		this->lastSrTimestamp = report->GetNtpSec() << 16;
 		this->lastSrTimestamp += report->GetNtpFrac() >> 16;
 	}
 
 	bool RtxStream::UpdateSeq(RTC::RtpPacket* packet)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		uint16_t seq    = packet->GetSequenceNumber();
 		uint16_t udelta = seq - this->maxSeq;
@@ -185,22 +183,18 @@ namespace RTC
 			{
 				// Two sequential packets. Assume that the other side restarted without
 				// telling us so just re-sync (i.e., pretend this was the first packet).
-				MS_WARN_TAG(
-				  rtx,
-				  "too bad sequence number, re-syncing RTP [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+				WARNING_EX_LOG(" rtx too bad sequence number, re-syncing RTP [ssrc:%u, seq:%hu]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
 				InitSeq(seq);
 
 				this->maxPacketTs = packet->GetTimestamp();
-				this->maxPacketMs = DepLibUV::GetTimeMs();
+				this->maxPacketMs = chen::uv_util::GetTimeMs();
 			}
 			else
 			{
-				MS_WARN_TAG(
-				  rtx,
-				  "bad sequence number, ignoring packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+				WARNING_EX_LOG("rtx bad sequence number, ignoring packet [ssrc:%u, seq:%hu]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
@@ -223,7 +217,7 @@ namespace RTC
 
 	inline void RtxStream::InitSeq(uint16_t seq)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		// Initialize/reset RTP counters.
 		this->baseSeq = seq;
@@ -231,7 +225,7 @@ namespace RTC
 		this->badSeq  = RtpSeqMod + 1; // So seq == badSeq is false.
 	}
 
-	void RtxStream::Params::FillJson(json& jsonObject) const
+	/*void RtxStream::Params::FillJson(json& jsonObject) const
 	{
 		MS_TRACE();
 
@@ -244,5 +238,5 @@ namespace RTC
 			jsonObject["rrid"] = this->rrid;
 
 		jsonObject["cname"] = this->cname;
-	}
+	}*/
 } // namespace RTC

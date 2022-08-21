@@ -181,6 +181,7 @@
     <ClCompile Include="H264.cpp" />
     <ClCompile Include="IceCandidate.cpp" />
     <ClCompile Include="IceServer.cpp" />
+    <ClCompile Include="KeyFrameRequestManager.cpp" />
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc" />
     <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc" />
     <ClCompile Include="libwebrtc\api\transport\field_trial_based_config.cc" />
@@ -227,8 +228,10 @@
     <ClCompile Include="libwebrtc\system_wrappers\source\field_trial.cc" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Media.cpp" />
+    <ClCompile Include="NackGenerator.cpp" />
     <ClCompile Include="Parameters.cpp" />
     <ClCompile Include="PortManager.cpp" />
+    <ClCompile Include="Producer.cpp" />
     <ClCompile Include="RtcpFeedback.cpp" />
     <ClCompile Include="RtcpParameters.cpp" />
     <ClCompile Include="rtcp\Bye.cpp" />
@@ -267,6 +270,9 @@
     <ClCompile Include="RtpParameters.cpp" />
     <ClCompile Include="RtpProbationGenerator.cpp" />
     <ClCompile Include="RtpRtxParameters.cpp" />
+    <ClCompile Include="RtpStream.cpp" />
+    <ClCompile Include="RtpStreamRecv.cpp" />
+    <ClCompile Include="RtxStream.cpp" />
     <ClCompile Include="SeqManager.cpp" />
     <ClCompile Include="StunPacket.cpp" />
     <ClCompile Include="TransportCongestionControlClient.cpp" />
@@ -284,6 +290,7 @@
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
     <ClInclude Include="cmedia_server.h" />
+    <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnet_define.h" />
     <ClInclude Include="crate_calculator.h" />
@@ -316,6 +323,7 @@
     <ClInclude Include="H264.hpp" />
     <ClInclude Include="IceCandidate.hpp" />
     <ClInclude Include="IceServer.hpp" />
+    <ClInclude Include="KeyFrameRequestManager.hpp" />
     <ClInclude Include="libwebrtc\api\bitrate_constraints.h" />
     <ClInclude Include="libwebrtc\api\network_state_predictor.h" />
     <ClInclude Include="libwebrtc\api\transport\bitrate_settings.h" />
@@ -379,9 +387,11 @@
     <ClInclude Include="libwebrtc\rtc_base\type_traits.h" />
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h" />
     <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h" />
+    <ClInclude Include="NackGenerator.hpp" />
     <ClInclude Include="Parameters.hpp" />
     <ClInclude Include="PayloadDescriptorHandler.hpp" />
     <ClInclude Include="PortManager.hpp" />
+    <ClInclude Include="Producer.hpp" />
     <ClInclude Include="rtcp\Bye.hpp" />
     <ClInclude Include="rtcp\CompoundPacket.hpp" />
     <ClInclude Include="rtcp\Feedback.hpp" />
@@ -414,6 +424,9 @@
     <ClInclude Include="RtpHeaderExtensionIds.hpp" />
     <ClInclude Include="RtpPacket.hpp" />
     <ClInclude Include="RtpProbationGenerator.hpp" />
+    <ClInclude Include="RtpStream.hpp" />
+    <ClInclude Include="RtpStreamRecv.hpp" />
+    <ClInclude Include="RtxStream.hpp" />
     <ClInclude Include="SeqManager.hpp" />
     <ClInclude Include="StunPacket.hpp" />
     <ClInclude Include="Tools.hpp" />

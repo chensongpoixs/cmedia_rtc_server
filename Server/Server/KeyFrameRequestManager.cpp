@@ -1,28 +1,31 @@
-#define MS_CLASS "KeyFrameRequestManager"
+//#define MS_CLASS "KeyFrameRequestManager"
 // #define MS_LOG_DEV_LEVEL 3
 
-#include "RTC/KeyFrameRequestManager.hpp"
-#include "Logger.hpp"
-
+#include "KeyFrameRequestManager.hpp"
+//#include "Logger.hpp"
+#include "clog.h"
 static constexpr uint32_t KeyFrameRetransmissionWaitTime{ 1000 };
 
 /* PendingKeyFrameInfo methods. */
 
 RTC::PendingKeyFrameInfo::PendingKeyFrameInfo(PendingKeyFrameInfo::Listener* listener, uint32_t ssrc)
-  : listener(listener), ssrc(ssrc)
+  : chen::ctimer()
+  , listener(listener)
+  , ssrc(ssrc)
 {
-	MS_TRACE();
+	//MS_TRACE();
 
-	this->timer = new Timer(this);
-	this->timer->Start(KeyFrameRetransmissionWaitTime);
+	//this->timer = new Timer(this);
+	chen::ctimer::init();
+	/*this->timer->*/Start(KeyFrameRetransmissionWaitTime);
 }
 
 RTC::PendingKeyFrameInfo::~PendingKeyFrameInfo()
 {
-	MS_TRACE();
+	//MS_TRACE();
 
-	this->timer->Stop();
-	delete this->timer;
+	/*this->timer->*/Stop();
+	//delete this->timer;
 }
 
 inline void RTC::PendingKeyFrameInfo::OnTimer(/*Timer* timer*/)
@@ -37,20 +40,22 @@ inline void RTC::PendingKeyFrameInfo::OnTimer(/*Timer* timer*/)
 
 RTC::KeyFrameRequestDelayer::KeyFrameRequestDelayer(
   KeyFrameRequestDelayer::Listener* listener, uint32_t ssrc, uint32_t delay)
-  : listener(listener), ssrc(ssrc)
+  : chen::ctimer()
+  , listener(listener)
+  , ssrc(ssrc)
 {
-	MS_TRACE();
-
-	this->timer = new Timer(this);
-	this->timer->Start(delay);
+	//MS_TRACE();
+	chen::ctimer::init();
+	//this->timer = new Timer(this);
+	/*this->timer->*/Start(delay);
 }
 
 RTC::KeyFrameRequestDelayer::~KeyFrameRequestDelayer()
 {
-	MS_TRACE();
+//	MS_TRACE();
 
-	this->timer->Stop();
-	delete this->timer;
+	/*this->timer->*/Stop();
+	//delete this->timer;
 }
 
 inline void RTC::KeyFrameRequestDelayer::OnTimer(/*Timer* timer*/)
@@ -67,12 +72,12 @@ RTC::KeyFrameRequestManager::KeyFrameRequestManager(
   KeyFrameRequestManager::Listener* listener, uint32_t keyFrameRequestDelay)
   : listener(listener), keyFrameRequestDelay(keyFrameRequestDelay)
 {
-	MS_TRACE();
+	//MS_TRACE();
 }
 
 RTC::KeyFrameRequestManager::~KeyFrameRequestManager()
 {
-	MS_TRACE();
+	//MS_TRACE();
 
 	for (auto& kv : this->mapSsrcPendingKeyFrameInfo)
 	{
@@ -90,19 +95,20 @@ RTC::KeyFrameRequestManager::~KeyFrameRequestManager()
 	}
 	this->mapSsrcKeyFrameRequestDelayer.clear();
 }
-
+using namespace chen;
 void RTC::KeyFrameRequestManager::KeyFrameNeeded(uint32_t ssrc)
 {
-	MS_TRACE();
+	//MS_TRACE();
 
 	if (this->keyFrameRequestDelay > 0u)
 	{
 		auto it = this->mapSsrcKeyFrameRequestDelayer.find(ssrc);
-
+		
 		// There is a delayer for the given ssrc, so enable it and return.
 		if (it != this->mapSsrcKeyFrameRequestDelayer.end())
 		{
-			MS_DEBUG_DEV("there is a delayer for the given ssrc, enabling it and returning");
+			
+			DEBUG_EX_LOG("there is a delayer for the given ssrc, enabling it and returning");
 
 			auto* keyFrameRequestDelayer = it->second;
 
@@ -113,7 +119,7 @@ void RTC::KeyFrameRequestManager::KeyFrameNeeded(uint32_t ssrc)
 		// Otherwise create a delayer (not yet enabled) and continue.
 		else
 		{
-			MS_DEBUG_DEV("creating a delayer for the given ssrc");
+			DEBUG_EX_LOG("creating a delayer for the given ssrc");
 
 			this->mapSsrcKeyFrameRequestDelayer[ssrc] =
 			  new KeyFrameRequestDelayer(this, ssrc, this->keyFrameRequestDelay);
@@ -140,7 +146,7 @@ void RTC::KeyFrameRequestManager::KeyFrameNeeded(uint32_t ssrc)
 
 void RTC::KeyFrameRequestManager::ForceKeyFrameNeeded(uint32_t ssrc)
 {
-	MS_TRACE();
+	//MS_TRACE();
 
 	if (this->keyFrameRequestDelay > 0u)
 	{
@@ -179,7 +185,7 @@ void RTC::KeyFrameRequestManager::ForceKeyFrameNeeded(uint32_t ssrc)
 
 void RTC::KeyFrameRequestManager::KeyFrameReceived(uint32_t ssrc)
 {
-	MS_TRACE();
+	//MS_TRACE();
 
 	auto it = this->mapSsrcPendingKeyFrameInfo.find(ssrc);
 
@@ -196,12 +202,12 @@ void RTC::KeyFrameRequestManager::KeyFrameReceived(uint32_t ssrc)
 
 inline void RTC::KeyFrameRequestManager::OnKeyFrameRequestTimeout(PendingKeyFrameInfo* pendingKeyFrameInfo)
 {
-	MS_TRACE();
+	//MS_TRACE();
 
 	auto it = this->mapSsrcPendingKeyFrameInfo.find(pendingKeyFrameInfo->GetSsrc());
 
-	MS_ASSERT(
-	  it != this->mapSsrcPendingKeyFrameInfo.end(), "PendingKeyFrameInfo not present in the map");
+	//MS_ASSERT(
+	//  it != this->mapSsrcPendingKeyFrameInfo.end(), "PendingKeyFrameInfo not present in the map");
 
 	if (!pendingKeyFrameInfo->GetRetryOnTimeout())
 	{
@@ -216,7 +222,7 @@ inline void RTC::KeyFrameRequestManager::OnKeyFrameRequestTimeout(PendingKeyFram
 	pendingKeyFrameInfo->SetRetryOnTimeout(false);
 	pendingKeyFrameInfo->Restart();
 
-	MS_DEBUG_DEV("requesting key frame on timeout");
+	DEBUG_EX_LOG("requesting key frame on timeout");
 
 	this->listener->OnKeyFrameNeeded(this, pendingKeyFrameInfo->GetSsrc());
 }
@@ -224,12 +230,12 @@ inline void RTC::KeyFrameRequestManager::OnKeyFrameRequestTimeout(PendingKeyFram
 inline void RTC::KeyFrameRequestManager::OnKeyFrameDelayTimeout(
   KeyFrameRequestDelayer* keyFrameRequestDelayer)
 {
-	MS_TRACE();
+	//MS_TRACE();
 
 	auto it = this->mapSsrcKeyFrameRequestDelayer.find(keyFrameRequestDelayer->GetSsrc());
 
-	MS_ASSERT(
-	  it != this->mapSsrcKeyFrameRequestDelayer.end(), "KeyFrameRequestDelayer not present in the map");
+//	MS_ASSERT(
+//	  it != this->mapSsrcKeyFrameRequestDelayer.end(), "KeyFrameRequestDelayer not present in the map");
 
 	auto ssrc              = keyFrameRequestDelayer->GetSsrc();
 	auto keyFrameRequested = keyFrameRequestDelayer->GetKeyFrameRequested();
@@ -241,7 +247,7 @@ inline void RTC::KeyFrameRequestManager::OnKeyFrameDelayTimeout(
 	// Ask for a new key frame as normal if needed.
 	if (keyFrameRequested)
 	{
-		MS_DEBUG_DEV("requesting key frame after delay timeout");
+		DEBUG_EX_LOG("requesting key frame after delay timeout");
 
 		KeyFrameNeeded(ssrc);
 	}

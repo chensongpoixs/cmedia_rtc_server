@@ -1,18 +1,21 @@
 #ifndef MS_RTC_RTP_STREAM_RECV_HPP
 #define MS_RTC_RTP_STREAM_RECV_HPP
 
-#include "RTC/NackGenerator.hpp"
-#include "RTC/RTCP/XrDelaySinceLastRr.hpp"
-#include "RTC/RateCalculator.hpp"
-#include "RTC/RtpStream.hpp"
-#include "handles/Timer.hpp"
+#include "NackGenerator.hpp"
+#include "XrDelaySinceLastRr.hpp"
+//#include "RateCalculator.hpp"
+#include "crate_calculator.h"
+#include "RtpStream.hpp"
+//#include "handles/Timer.hpp"
 #include <vector>
+#include "ctimer.h"
 
 namespace RTC
 {
 	class RtpStreamRecv : public RTC::RtpStream,
-	                      public RTC::NackGenerator::Listener,
-	                      public Timer::Listener
+		public RTC::NackGenerator::Listener
+		, public chen::ctimer
+	                      //public Timer::Listener
 	{
 	public:
 		class Listener : public RTC::RtpStream::Listener
@@ -38,14 +41,14 @@ namespace RTC
 			size_t GetBytes() const;
 
 		private:
-			std::vector<std::vector<RTC::RtpDataCounter>> spatialLayerCounters;
+			std::vector<std::vector<chen::RtpDataCounter>> spatialLayerCounters;
 		};
 
 	public:
 		RtpStreamRecv(RTC::RtpStreamRecv::Listener* listener, RTC::RtpStream::Params& params);
 		~RtpStreamRecv();
 
-		void FillJsonStats(json& jsonObject) override;
+		//void FillJsonStats(json& jsonObject) override;
 		bool ReceivePacket(RTC::RtpPacket* packet) override;
 		bool ReceiveRtxPacket(RTC::RtpPacket* packet);
 		RTC::RTCP::ReceiverReport* GetRtcpReceiverReport();
@@ -79,8 +82,8 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer. */
 	protected:
-		void OnTimer(Timer* timer) override;
-
+		//void OnTimer(Timer* timer) override;
+		void OnTimer() override;
 		/* Pure virtual methods inherited from RTC::NackGenerator. */
 	protected:
 		void OnNackGeneratorNackRequired(const std::vector<uint16_t>& seqNumbers) override;
@@ -101,10 +104,10 @@ namespace RTC
 		uint8_t firSeqNumber{ 0u };
 		uint32_t reportedPacketLost{ 0u };
 		std::unique_ptr<RTC::NackGenerator> nackGenerator;
-		Timer* inactivityCheckPeriodicTimer{ nullptr };
+		//Timer* inactivityCheckPeriodicTimer{ nullptr };
 		bool inactive{ false };
 		TransmissionCounter transmissionCounter;      // Valid media + valid RTX.
-		RTC::RtpDataCounter mediaTransmissionCounter; // Just valid media.
+		chen::RtpDataCounter mediaTransmissionCounter; // Just valid media.
 	};
 } // namespace RTC
 

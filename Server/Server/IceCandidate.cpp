@@ -44,6 +44,52 @@ namespace RTC
 	//			break;
 	//	}
 
+	void IceCandidate::reply(Json::Value & value)
+	{
+		// Add foundation.
+		value["iceCandidates"]["foundation"] = this->foundation;
+
+		// Add priority.
+		value["iceCandidates"]["priority"] = this->priority;
+
+		// Add ip.
+		value["iceCandidates"]["ip"] = this->ip;
+
+		// Add protocol.
+		switch (this->protocol)
+		{
+		case Protocol::UDP:
+			value["iceCandidates"]["protocol"] = "udp";
+			break;
+
+		case Protocol::TCP:
+			value["iceCandidates"]["protocol"] = "tcp";
+			break;
+		}
+
+		// Add port.
+		value["iceCandidates"]["port"] = this->port;
+
+		// Add type.
+		switch (this->type)
+		{
+		case CandidateType::HOST:
+			value["iceCandidates"]["type"] = "host";
+			break;
+		}
+
+		// Add tcpType.
+		if (this->protocol == Protocol::TCP)
+		{
+			switch (this->tcpType)
+			{
+			case TcpCandidateType::PASSIVE:
+				value["iceCandidates"]["tcpType"] = "passive";
+				break;
+			}
+		}
+	}
+
 	//	// Add tcpType.
 	//	if (this->protocol == Protocol::TCP)
 	//	{

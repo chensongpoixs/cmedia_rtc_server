@@ -40,6 +40,14 @@ namespace chen
 			std::string ip;
 			std::string announcedIp;
 		};
+		struct TraceEventTypes
+		{
+			bool probation ;
+			bool bwe ;
+			TraceEventTypes()
+				: probation(false)
+				, bwe(false) {}
+		};
 	public:
 	protected:
 		typedef  std::function<void(bool sent)>								onSendCallback ;
@@ -103,7 +111,8 @@ namespace chen
 		bool handler_data_consumer_get_buffered_amount(uint64 session_id, Json::Value& value);
 		bool handler_data_consumer_set_buffered_amount_low_threshold(uint64 session_id, Json::Value& value);
 
-
+	public:
+		void reply_info();
 
 	public:
 		// Must be called from the subclass.
@@ -240,6 +249,8 @@ namespace chen
 		void OnRtpDataReceived(RTC::TransportTuple* tuple, const uint8_t* data, size_t len);
 		void OnRtcpDataReceived(RTC::TransportTuple* tuple, const uint8_t* data, size_t len);
 
+	private:
+		void reply_rtc_info(Json::Value& value);
 
 	private:
 		///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,6 +298,8 @@ namespace chen
 		bool												m_connect_called;
 		std::vector<RTC::IceCandidate>						m_ice_canidates;
 		RTC::DtlsTransport::Role							m_dtlsRole;// { RTC::DtlsTransport::Role::AUTO };
+
+		struct TraceEventTypes								m_traceEventTypes;
 };
 }
 

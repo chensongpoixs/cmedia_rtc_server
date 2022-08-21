@@ -351,6 +351,30 @@ namespace chen {
 	{
 		usrsctp_conninput(reinterpret_cast<void*>(m_id), data, len, 0);
 	}
+	void csctp_association::reply(Json::Value & value)
+	{
+		// Add port (always 5000). 
+		// TODO@chensong     20220821
+		value["sctpParameters"]["port"] = 5000;
+
+		// Add OS
+		value["sctpParameters"]["OS"] = m_os;
+
+		// Add MIS.
+		value["sctpParameters"]["MIS"] = m_mis;
+
+		// Add maxMessageSize.
+		value["sctpParameters"]["maxMessageSize"] = m_max_sctp_message_size; //this->maxSctpMessageSize;
+
+		// Add sendBufferSize.
+		value["sctpParameters"]["sendBufferSize"] = m_sctp_send_buffer_size;// //this->sctpSendBufferSize;
+
+		// Add sctpBufferedAmountLowThreshold.
+		value["sctpParameters"]["sctpBufferedAmount"] = m_sctp_buffered_amount;////this->sctpBufferedAmount;
+
+		// Add isDataChannel.
+		// value["sctpParameters"]["isDataChannel"] = this->isDataChannel;
+	}
 	void csctp_association::ResetSctpStream(uint16_t streamId, EStreamDirection direction)
 	{
 		// Do nothing if an outgoing stream that could not be allocated by us.

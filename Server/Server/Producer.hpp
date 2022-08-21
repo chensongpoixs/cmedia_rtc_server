@@ -1,23 +1,23 @@
 #ifndef MS_RTC_PRODUCER_HPP
 #define MS_RTC_PRODUCER_HPP
 
-#include "common.hpp"
-#include "Channel/ChannelRequest.hpp"
-#include "RTC/KeyFrameRequestManager.hpp"
-#include "RTC/RTCP/CompoundPacket.hpp"
-#include "RTC/RTCP/Packet.hpp"
-#include "RTC/RTCP/SenderReport.hpp"
-#include "RTC/RTCP/XrDelaySinceLastRr.hpp"
-#include "RTC/RtpDictionaries.hpp"
-#include "RTC/RtpHeaderExtensionIds.hpp"
-#include "RTC/RtpPacket.hpp"
-#include "RTC/RtpStreamRecv.hpp"
+//#include "common.hpp"
+//#include "Channel/ChannelRequest.hpp"
+#include "KeyFrameRequestManager.hpp"
+#include "CompoundPacket.hpp"
+#include "Packet.hpp"
+#include "SenderReport.hpp"
+#include "XrDelaySinceLastRr.hpp"
+#include "RtpDictionaries.hpp"
+#include "RtpHeaderExtensionIds.hpp"
+#include "RtpPacket.hpp"
+#include "RtpStreamRecv.hpp"
 #include <map>
-#include <nlohmann/json.hpp>
+//#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-
-using json = nlohmann::json;
+#include <json/json.h>
+//using json = nlohmann::json;
 
 namespace RTC
 {
@@ -86,13 +86,13 @@ namespace RTC
 		};
 
 	public:
-		Producer(const std::string& id, RTC::Producer::Listener* listener, json& data);
+		Producer(const std::string& id, RTC::Producer::Listener* listener, Json::Value& data);
 		virtual ~Producer();
 
 	public:
-		void FillJson(json& jsonObject) const;
-		void FillJsonStats(json& jsonArray) const;
-		void HandleRequest(Channel::ChannelRequest* request);
+		//void FillJson(json& jsonObject) const;
+		//void FillJsonStats(json& jsonArray) const;
+		//void HandleRequest(Channel::ChannelRequest* request);
 		RTC::Media::Kind GetKind() const
 		{
 			return this->kind;

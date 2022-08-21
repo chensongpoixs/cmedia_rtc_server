@@ -112,6 +112,48 @@ namespace chen {
 
 	namespace rtc_time
 	{
+		// Seconds from Jan 1, 1900 to Jan 1, 1970.
+		static const  uint32_t UnixNtpOffset{ 0x83AA7E80 };
+		// NTP fractional unit.
+		static const uint64_t NtpFractionalUnit{ 1LL << 32 };
+		   Ntp TimeMs2Ntp(uint64_t ms)
+		{
+			 Ntp ntp; // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+			ntp.seconds = ms / 1000;
+			ntp.fractions =
+				static_cast<uint32_t>((static_cast<double>(ms % 1000) / 1000) * NtpFractionalUnit);
+
+			return ntp;
+		}
+
+		  uint64_t Ntp2TimeMs(Ntp ntp)
+		{
+			// clang-format off
+			return (
+				static_cast<uint64_t>(ntp.seconds) * 1000 +
+				static_cast<uint64_t>(std::round((static_cast<double>(ntp.fractions) * 1000) / NtpFractionalUnit))
+				);
+			// clang-format on
+		}
+
+		  bool IsNewerTimestamp(uint32_t timestamp, uint32_t prevTimestamp)
+		{
+			// Distinguish between elements that are exactly 0x80000000 apart.
+			// If t1>t2 and |t1-t2| = 0x80000000: IsNewer(t1,t2)=true,
+			// IsNewer(t2,t1)=false
+			// rather than having IsNewer(t1,t2) = IsNewer(t2,t1) = false.
+			if (static_cast<uint32_t>(timestamp - prevTimestamp) == 0x80000000)
+				return timestamp > prevTimestamp;
+
+			return timestamp != prevTimestamp &&
+				static_cast<uint32_t>(timestamp - prevTimestamp) < 0x80000000;
+		}
+
+		  uint32_t LatestTimestamp(uint32_t timestamp1, uint32_t timestamp2)
+		{
+			return IsNewerTimestamp(timestamp1, timestamp2) ? timestamp1 : timestamp2;
+		}
 		uint32_t TimeMsToAbsSendTime(uint64_t ms)
 		{
 			return static_cast<uint32_t>(((ms << 18) + 500) / 1000) & 0x00FFFFFF;

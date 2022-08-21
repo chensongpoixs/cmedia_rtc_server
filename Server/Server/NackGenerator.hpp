@@ -1,17 +1,18 @@
 #ifndef MS_RTC_NACK_GENERATOR_HPP
 #define MS_RTC_NACK_GENERATOR_HPP
 
-#include "common.hpp"
-#include "RTC/RtpPacket.hpp"
-#include "RTC/SeqManager.hpp"
-#include "handles/Timer.hpp"
+//#include "common.hpp"
+#include "RtpPacket.hpp"
+#include "SeqManager.hpp"
+//#include "handles/Timer.hpp"
+#include "ctimer.h"
 #include <map>
 #include <set>
 #include <vector>
 
 namespace RTC
 {
-	class NackGenerator : public Timer::Listener
+	class NackGenerator : chen::ctimer // public Timer::Listener
 	{
 	public:
 		class Listener
@@ -63,17 +64,17 @@ namespace RTC
 		void AddPacketsToNackList(uint16_t seqStart, uint16_t seqEnd);
 		bool RemoveNackItemsUntilKeyFrame();
 		std::vector<uint16_t> GetNackBatch(NackFilter filter);
-		void MayRunTimer() const;
+		void MayRunTimer() ;
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
-		void OnTimer(Timer* timer) override;
+		void OnTimer(/*Timer* timer*/) override;
 
 	private:
 		// Passed by argument.
 		Listener* listener{ nullptr };
 		// Allocated by this.
-		Timer* timer{ nullptr };
+		//Timer* timer{ nullptr };
 		// Others.
 		std::map<uint16_t, NackInfo, RTC::SeqManager<uint16_t>::SeqLowerThan> nackList;
 		std::set<uint16_t, RTC::SeqManager<uint16_t>::SeqLowerThan> keyFrameList;

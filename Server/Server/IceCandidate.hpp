@@ -1,4 +1,4 @@
-#ifndef MS_RTC_ICE_CANDIDATE_HPP
+﻿#ifndef MS_RTC_ICE_CANDIDATE_HPP
 #define MS_RTC_ICE_CANDIDATE_HPP
 
 //#include "common.hpp"
@@ -11,6 +11,8 @@
 
 #include <string>
 #include "cudp_socket.h"
+
+#include <json/json.h>
 
 namespace RTC
 {
@@ -63,7 +65,7 @@ namespace RTC
 		}*/
 
 		//void FillJson(json& jsonObject) const;
-
+		void reply(Json::Value& value);
 	private:
 		// Others.
 		std::string foundation;

@@ -1,11 +1,11 @@
-/********************************************************************
+ï»¿/********************************************************************
 created:	2019-05-07
 
 author:		chensong
 
-level:		ÍøÂç²ã
+level:		ç½‘ç»œå±‚
 
-purpose:	ÍøÂçÊı¾İµÄÊÕ·¢
+purpose:	ç½‘ç»œæ•°æ®çš„æ”¶å‘
 *********************************************************************/
 
 
@@ -65,13 +65,13 @@ namespace chen {
 		cwan_session& operator=(const cwan_session&);
 	
 	private:
-		uint64_t					m_session_id; //»á»°id
+		uint64_t					m_session_id; //ä¼šè¯id
 
 		EClientConnectType      m_client_connect_type;
 		uint64					m_client_session;
-		std::list<std::string>  m_room_list; // ¼ÓÈë·¿¼äÁĞ±í
+		std::list<std::string>  m_room_list; // åŠ å…¥æˆ¿é—´åˆ—è¡¨
 	//	M_MSG_MAP				m_msg_map;
-		Json::Reader							m_json_reader;					// json½âÎö
+		Json::Reader							m_json_reader;					// jsonè§£æ
 		Json::Value								m_json_response;
 
 	};

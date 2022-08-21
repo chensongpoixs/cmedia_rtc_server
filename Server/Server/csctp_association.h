@@ -15,6 +15,7 @@ purpose:		csctp_association
 #include <map>
 #include <usrsctp.h>
 #include "cwebrtc_transport.h"
+#include <json/json.h>
 namespace chen
 {
 
@@ -50,7 +51,10 @@ namespace chen
 		size_t get_sctp_buffered_amount() const { return m_sctp_buffered_amount; }
 
 		void ProcessSctpData(const uint8_t* data, size_t len);
-		 
+
+	public:
+		/// Json
+		void reply(Json::Value& value);
 	private:
 		void ResetSctpStream(uint16_t streamId, EStreamDirection direction);
 		void AddOutgoingStreams(bool force = false);

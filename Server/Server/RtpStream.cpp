@@ -1,9 +1,9 @@
-#define MS_CLASS "RTC::RtpStream"
+//#define MS_CLASS "RTC::RtpStream"
 // #define MS_LOG_DEV_LEVEL 3
 
-#include "RTC/RtpStream.hpp"
-#include "Logger.hpp"
-#include "RTC/SeqManager.hpp"
+#include "RtpStream.hpp"
+//#include "Logger.hpp"
+#include "SeqManager.hpp"
 
 namespace RTC
 {
@@ -18,34 +18,34 @@ namespace RTC
 
 	RtpStream::RtpStream(
 	  RTC::RtpStream::Listener* listener, RTC::RtpStream::Params& params, uint8_t initialScore)
-	  : listener(listener), params(params), score(initialScore), activeSinceMs(DepLibUV::GetTimeMs())
+	  : listener(listener), params(params), score(initialScore), activeSinceMs(chen::uv_util::GetTimeMs())
 	{
-		MS_TRACE();
+		//MS_TRACE();
 	}
 
 	RtpStream::~RtpStream()
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		delete this->rtxStream;
 	}
 
-	void RtpStream::FillJson(json& jsonObject) const
-	{
-		MS_TRACE();
+	//void RtpStream::FillJson(json& jsonObject) const
+	//{
+	//	MS_TRACE();
 
-		// Add params.
-		this->params.FillJson(jsonObject["params"]);
+	//	// Add params.
+	//	this->params.FillJson(jsonObject["params"]);
 
-		// Add score.
-		jsonObject["score"] = this->score;
+	//	// Add score.
+	//	jsonObject["score"] = this->score;
 
-		// Add rtxStream.
-		if (HasRtx())
-			this->rtxStream->FillJson(jsonObject["rtxStream"]);
-	}
+	//	// Add rtxStream.
+	//	if (HasRtx())
+	//		this->rtxStream->FillJson(jsonObject["rtxStream"]);
+	//}
 
-	void RtpStream::FillJsonStats(json& jsonObject)
+	/*void RtpStream::FillJsonStats(json& jsonObject)
 	{
 		MS_TRACE();
 
@@ -77,11 +77,11 @@ namespace RTC
 
 		if (this->hasRtt)
 			jsonObject["roundTripTime"] = this->rtt;
-	}
+	}*/
 
 	void RtpStream::SetRtx(uint8_t payloadType, uint32_t ssrc)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		this->params.rtxPayloadType = payloadType;
 		this->params.rtxSsrc        = ssrc;
@@ -111,7 +111,7 @@ namespace RTC
 
 	bool RtpStream::ReceivePacket(RTC::RtpPacket* packet)
 	{
-		MS_TRACE();
+		// MS_TRACE();
 
 		uint16_t seq = packet->GetSequenceNumber();
 
@@ -123,15 +123,13 @@ namespace RTC
 			this->started     = true;
 			this->maxSeq      = seq - 1;
 			this->maxPacketTs = packet->GetTimestamp();
-			this->maxPacketMs = DepLibUV::GetTimeMs();
+			this->maxPacketMs = chen::uv_util::GetTimeMs();
 		}
 
 		// If not a valid packet ignore it.
 		if (!UpdateSeq(packet))
 		{
-			MS_WARN_TAG(
-			  rtp,
-			  "invalid packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+			WARNING_EX_LOG("rtp, invalid packet [ssrc:%u, seq:%hu]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber());
 
@@ -142,7 +140,7 @@ namespace RTC
 		if (RTC::SeqManager<uint32_t>::IsSeqHigherThan(packet->GetTimestamp(), this->maxPacketTs))
 		{
 			this->maxPacketTs = packet->GetTimestamp();
-			this->maxPacketMs = DepLibUV::GetTimeMs();
+			this->maxPacketMs = chen::uv_util::GetTimeMs();
 		}
 
 		return true;
@@ -150,7 +148,7 @@ namespace RTC
 
 	void RtpStream::ResetScore(uint8_t score, bool notify)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		this->scores.clear();
 
@@ -162,7 +160,7 @@ namespace RTC
 
 			// If previous score was 0 (and new one is not 0) then update activeSinceMs.
 			if (previousScore == 0u)
-				this->activeSinceMs = DepLibUV::GetTimeMs();
+				this->activeSinceMs = chen::uv_util::GetTimeMs();
 
 			// Notify the listener.
 			if (notify)
@@ -172,7 +170,7 @@ namespace RTC
 
 	bool RtpStream::UpdateSeq(RTC::RtpPacket* packet)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		uint16_t seq    = packet->GetSequenceNumber();
 		uint16_t udelta = seq - this->maxSeq;
@@ -202,22 +200,18 @@ namespace RTC
 			{
 				// Two sequential packets. Assume that the other side restarted without
 				// telling us so just re-sync (i.e., pretend this was the first packet).
-				MS_WARN_TAG(
-				  rtp,
-				  "too bad sequence number, re-syncing RTP [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+				WARNING_EX_LOG("rtp, too bad sequence number, re-syncing RTP [ssrc:%u, seq:%hu]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
 				InitSeq(seq);
 
 				this->maxPacketTs = packet->GetTimestamp();
-				this->maxPacketMs = DepLibUV::GetTimeMs();
+				this->maxPacketMs = chen::uv_util::GetTimeMs();
 			}
 			else
 			{
-				MS_WARN_TAG(
-				  rtp,
-				  "bad sequence number, ignoring packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+				WARNING_EX_LOG("rtp, bad sequence number, ignoring packet [ssrc:%u, seq:%hu]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
@@ -240,7 +234,7 @@ namespace RTC
 
 	void RtpStream::UpdateScore(uint8_t score)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		// Add the score into the histogram.
 		if (this->scores.size() == ScoreHistogramLength)
@@ -283,17 +277,14 @@ namespace RTC
 		// Call the listener if the global score has changed.
 		if (this->score != previousScore)
 		{
-			MS_DEBUG_TAG(
-			  score,
-			  "[added score:%" PRIu8 ", previous computed score:%" PRIu8 ", new computed score:%" PRIu8
-			  "] (calling listener)",
+			DEBUG_EX_LOG("score, [added score:%hhu, previous computed score:%hhu, new computed score:%hhu] (calling listener)",
 			  score,
 			  previousScore,
 			  this->score);
 
 			// If previous score was 0 (and new one is not 0) then update activeSinceMs.
 			if (previousScore == 0u)
-				this->activeSinceMs = DepLibUV::GetTimeMs();
+				this->activeSinceMs = chen::uv_util::GetTimeMs();
 
 			this->listener->OnRtpStreamScore(this, this->score, previousScore);
 		}
@@ -313,21 +304,21 @@ namespace RTC
 
 	void RtpStream::PacketRetransmitted(RTC::RtpPacket* /*packet*/)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		this->packetsRetransmitted++;
 	}
 
 	void RtpStream::PacketRepaired(RTC::RtpPacket* /*packet*/)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		this->packetsRepaired++;
 	}
 
 	inline void RtpStream::InitSeq(uint16_t seq)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
 		// Initialize/reset RTP counters.
 		this->baseSeq = seq;
@@ -335,7 +326,7 @@ namespace RTC
 		this->badSeq  = RtpSeqMod + 1; // So seq == badSeq is false.
 	}
 
-	void RtpStream::Params::FillJson(json& jsonObject) const
+	/*void RtpStream::Params::FillJson(json& jsonObject) const
 	{
 		MS_TRACE();
 
@@ -363,5 +354,5 @@ namespace RTC
 		jsonObject["useDtx"]         = this->useDtx;
 		jsonObject["spatialLayers"]  = this->spatialLayers;
 		jsonObject["temporalLayers"] = this->temporalLayers;
-	}
+	}*/
 } // namespace RTC
