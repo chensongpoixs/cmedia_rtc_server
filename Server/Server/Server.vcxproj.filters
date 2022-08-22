@@ -529,6 +529,9 @@
     <ClCompile Include="KeyFrameRequestManager.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="RtpListener.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -988,6 +991,9 @@
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="KeyFrameRequestManager.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpListener.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>

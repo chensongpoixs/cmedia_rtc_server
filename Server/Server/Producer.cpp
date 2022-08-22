@@ -71,9 +71,11 @@ namespace RTC
 			ERROR_EX_LOG("missing rtpMapping");
 			return;
 		}
-		const Json::Value arrayObj = data["rtpMapping"];
+		const Json::Value arrayObj = data["rtpMapping"]["codecs"];
 		for (size_t i = 0; i < arrayObj.size(); ++i)
 		{
+			//arrayObj.isMember("payloadType")
+			rtpMapping.codecs[arrayObj["payloadType"].asUInt()] = arrayObj["mappedPayloadType"].asUInt();
 			//if (arrayObj[i].isObject())
 			//{
 			//	ERROR_EX_LOG("not is Object !!!");
@@ -88,6 +90,135 @@ namespace RTC
 			//}
 
 		}
+
+		if (!data["rtpMapping"].isMember("encodings") || !data["rtpMapping"]["encodings"].isArray())
+		{
+			ERROR_EX_LOG("missing rtpMapping.encodings");
+			return;
+		}
+		this->rtpMapping.encodings.reserve(data["rtpMapping"]["encodings"].size());
+		
+		for (size_t i = 0; i < data["rtpMapping"]["encodings"].size(); ++i)
+		{
+			RtpEncodingMapping rtpEncode;
+			if (!data["rtpMapping"]["encodings"].isMember("ssrc") || 
+				!data["rtpMapping"]["encodings"]["ssrc"].isUInt())
+			{
+				rtpEncode.ssrc = data["rtpMapping"]["encodings"]["ssrc"].asUInt();
+			}
+			if (!data["rtpMapping"]["encodings"].isMember("rid") ||
+				!data["rtpMapping"]["encodings"]["rid"].isString())
+			{
+				rtpEncode.rid = data["rtpMapping"]["encodings"]["rid"].asCString();
+			}
+
+			if (!data["rtpMapping"]["encodings"].isMember("mappedSsrc") ||
+				!data["rtpMapping"]["encodings"]["mappedSsrc"].isUInt())
+			{
+				rtpEncode.mappedSsrc = data["rtpMapping"]["encodings"]["mappedSsrc"].asUInt();
+			}
+		}
+
+		if (data.isMember("paused")  &&data["paused"].isBool())
+		{
+			paused = data["paused"].asBool();
+		}
+
+		// The number of encodings in rtpParameters must match the number of encodings
+		// in rtpMapping.
+		if (this->rtpParameters.encodings.size() != this->rtpMapping.encodings.size())
+		{
+			ERROR_EX_LOG("rtpParameters.encodings size does not match rtpMapping.encodings size");
+			return;
+		}
+
+
+		// Fill RTP header extension ids.
+		// This may throw.
+		for (auto& exten : this->rtpParameters.headerExtensions)
+		{
+			if (exten.id == 0u)
+			{
+				ERROR_EX_LOG("RTP extension id cannot be 0");
+			}
+
+			if (this->rtpHeaderExtensionIds.mid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::MID)
+			{
+				this->rtpHeaderExtensionIds.mid = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.rid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::RTP_STREAM_ID)
+			{
+				this->rtpHeaderExtensionIds.rid = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.rrid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::REPAIRED_RTP_STREAM_ID)
+			{
+				this->rtpHeaderExtensionIds.rrid = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.absSendTime == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::ABS_SEND_TIME)
+			{
+				this->rtpHeaderExtensionIds.absSendTime = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.transportWideCc01 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TRANSPORT_WIDE_CC_01)
+			{
+				this->rtpHeaderExtensionIds.transportWideCc01 = exten.id;
+			}
+
+			// NOTE: Remove this once framemarking draft becomes RFC.
+			if (this->rtpHeaderExtensionIds.frameMarking07 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING_07)
+			{
+				this->rtpHeaderExtensionIds.frameMarking07 = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.frameMarking == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING)
+			{
+				this->rtpHeaderExtensionIds.frameMarking = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.ssrcAudioLevel == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::SSRC_AUDIO_LEVEL)
+			{
+				this->rtpHeaderExtensionIds.ssrcAudioLevel = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.videoOrientation == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::VIDEO_ORIENTATION)
+			{
+				this->rtpHeaderExtensionIds.videoOrientation = exten.id;
+			}
+
+			if (this->rtpHeaderExtensionIds.toffset == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TOFFSET)
+			{
+				this->rtpHeaderExtensionIds.toffset = exten.id;
+			}
+		}
+
+
+		// Set the RTCP report generation interval.
+		if (this->kind == RTC::Media::Kind::AUDIO)
+			this->maxRtcpInterval = RTC::RTCP::MaxAudioIntervalMs;
+		else
+			this->maxRtcpInterval = RTC::RTCP::MaxVideoIntervalMs;
+
+		// Create a KeyFrameRequestManager.
+		if (this->kind == RTC::Media::Kind::VIDEO)
+		{
+			//auto jsonKeyFrameRequestDelayIt = data.find("keyFrameRequestDelay");
+			uint32_t keyFrameRequestDelay = 0u;
+
+			// clang-format off
+			if (
+				data.isMember("keyFrameRequestDelay") && data["keyFrameRequestDelay"].isUInt64()
+				)
+				// clang-format on
+			{
+				keyFrameRequestDelay = data["keyFrameRequestDelay"].asUInt();// jsonKeyFrameRequestDelayIt->get<uint32_t>();
+			}
+
+			this->keyFrameRequestManager = new RTC::KeyFrameRequestManager(this, keyFrameRequestDelay);
+		}
+
 		//MS_TRACE();
 		/*
 		{

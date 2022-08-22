@@ -27,6 +27,8 @@ purpose:		cwebrtc_transport
 #include "CompoundPacket.hpp"
 #include <json/json.h>
 #include "Producer.hpp"
+#include "RtpListener.hpp"
+
 namespace chen
 {
 	class csctp_association;
@@ -34,6 +36,8 @@ namespace chen
 							, public RTC::IceServer::Listener
 							, public cudp_socket::Listener
 							, public RTC::DtlsTransport::Listener
+							, public RTC::Producer::Listener
+							, public RTC::TransportCongestionControlServer::Listener
 	{
 	private:
 		struct ListenIp
@@ -302,6 +306,9 @@ namespace chen
 
 		struct TraceEventTypes								m_traceEventTypes;
 		std::unordered_map<std::string, RTC::Producer*>		m_mapProducers;
+		RTC::RtpListener									m_rtpListener;
+		uint32_t											m_maxIncomingBitrate{ 0u };
+		uint32_t											m_maxOutgoingBitrate{ 0u };
 };
 }
 

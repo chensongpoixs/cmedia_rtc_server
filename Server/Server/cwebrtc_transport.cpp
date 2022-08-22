@@ -70,6 +70,9 @@ namespace chen {
 		, m_dtlsRole(RTC::DtlsTransport::Role::AUTO)
 		, m_traceEventTypes()
 		, m_mapProducers()
+		, m_rtpListener()
+		, m_maxIncomingBitrate(0u)
+		, m_maxOutgoingBitrate(0u)
 	{
 
 		//m_ice_server_ptr;

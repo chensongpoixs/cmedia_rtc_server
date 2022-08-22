@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}</ProjectGuid>
     <RootNamespace>Server</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -266,6 +266,7 @@
     <ClCompile Include="RtpEncodingParameters.cpp" />
     <ClCompile Include="RtpHeaderExtensionParameters.cpp" />
     <ClCompile Include="RtpHeaderExtensionUri.cpp" />
+    <ClCompile Include="RtpListener.cpp" />
     <ClCompile Include="RtpPacket.cpp" />
     <ClCompile Include="RtpParameters.cpp" />
     <ClCompile Include="RtpProbationGenerator.cpp" />
@@ -422,6 +423,7 @@
     <ClInclude Include="rtcp\XrReceiverReferenceTime.hpp" />
     <ClInclude Include="RtpDictionaries.hpp" />
     <ClInclude Include="RtpHeaderExtensionIds.hpp" />
+    <ClInclude Include="RtpListener.hpp" />
     <ClInclude Include="RtpPacket.hpp" />
     <ClInclude Include="RtpProbationGenerator.hpp" />
     <ClInclude Include="RtpStream.hpp" />

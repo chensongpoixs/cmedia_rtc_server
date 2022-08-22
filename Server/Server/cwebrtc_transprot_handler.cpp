@@ -16,7 +16,7 @@ purpose:		cwebrtc_transport_handler
 #include <sstream>                                               // std::ostringstream
 #include "ccrypto_random.h"
 
-
+#include "Producer.hpp"
 namespace chen {
 
 
@@ -48,7 +48,144 @@ namespace chen {
 	}
 	bool cwebrtc_transport::handler_produce(uint64 session_id, Json::Value & value)
 	{
-		std::string produceId = s_crypto_random.GetRandomString(20);
+		std::string producerId = s_crypto_random.GetRandomString(20);
+
+		RTC::Producer * producer_ptr = new RTC::Producer(producerId, this, value);
+		try
+		{
+			m_rtpListener.AddProducer(producer_ptr);
+		}
+		catch (const std::exception&)
+		{
+			delete producer_ptr;
+			ERROR_EX_LOG("rtplistener add produce failed !!!");
+			return false;
+		}
+
+		if (!m_mapProducers.insert(std::make_pair(producerId, producer_ptr)).second)
+		{
+			ERROR_EX_LOG("map producers install failed !!! %s", producerId.c_str());
+			return false;
+		}
+		NORMAL_EX_LOG("Producer created [producerId:%s]", producerId.c_str());
+
+
+		// Take the transport related RTP header extensions of the Producer and
+				// add them to the Transport.
+				// NOTE: Producer::GetRtpHeaderExtensionIds() returns the original
+				// header extension ids of the Producer (and not their mapped values).
+		const auto& producerRtpHeaderExtensionIds = producer_ptr->GetRtpHeaderExtensionIds();
+
+		if (producerRtpHeaderExtensionIds.mid != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.mid = producerRtpHeaderExtensionIds.mid;
+		}
+
+		if (producerRtpHeaderExtensionIds.rid != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.rid = producerRtpHeaderExtensionIds.rid;
+		}
+
+		if (producerRtpHeaderExtensionIds.rrid != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.rrid = producerRtpHeaderExtensionIds.rrid;
+		}
+
+		if (producerRtpHeaderExtensionIds.absSendTime != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.absSendTime = producerRtpHeaderExtensionIds.absSendTime;
+		}
+
+		if (producerRtpHeaderExtensionIds.transportWideCc01 != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.transportWideCc01 =
+				producerRtpHeaderExtensionIds.transportWideCc01;
+		}
+
+
+
+
+
+		// Create status response.
+		/*json data = json::object();
+
+		data["type"] = RTC::RtpParameters::GetTypeString(producer->GetType());
+
+		request->Accept(data);*/
+
+		// Check if TransportCongestionControlServer or REMB server must be
+		// created.
+		const auto& rtpHeaderExtensionIds = producer_ptr->GetRtpHeaderExtensionIds();
+		const auto& codecs = producer_ptr->GetRtpParameters().codecs;
+
+		// Set TransportCongestionControlServer.
+		if (!this->m_tcc_server_ptr)
+		{
+			bool createTccServer{ false };
+			RTC::BweType bweType;
+
+			// Use transport-cc if:
+			// - there is transport-wide-cc-01 RTP header extension, and
+			// - there is "transport-cc" in codecs RTCP feedback.
+			//
+			// clang-format off
+			if (
+				rtpHeaderExtensionIds.transportWideCc01 != 0u &&
+				std::any_of(
+					codecs.begin(), codecs.end(), [](const RTC::RtpCodecParameters& codec)
+			{
+				return std::any_of(
+					codec.rtcpFeedback.begin(), codec.rtcpFeedback.end(), [](const RTC::RtcpFeedback& fb)
+				{
+					return fb.type == "transport-cc";
+				});
+			})
+				)
+				// clang-format on
+			{
+				NORMAL_EX_LOG("bwe, enabling TransportCongestionControlServer with transport-cc");
+
+				createTccServer = true;
+				bweType = RTC::BweType::TRANSPORT_CC;
+			}
+			// Use REMB if:
+			// - there is abs-send-time RTP header extension, and
+			// - there is "remb" in codecs RTCP feedback.
+			//
+			// clang-format off
+			else if (
+				rtpHeaderExtensionIds.absSendTime != 0u &&
+				std::any_of(
+					codecs.begin(), codecs.end(), [](const RTC::RtpCodecParameters& codec)
+			{
+				return std::any_of(
+					codec.rtcpFeedback.begin(), codec.rtcpFeedback.end(), [](const RTC::RtcpFeedback& fb)
+				{
+					return fb.type == "goog-remb";
+				});
+			})
+				)
+				// clang-format on
+			{
+				NORMAL_EX_LOG("bwe, enabling TransportCongestionControlServer with REMB");
+
+				createTccServer = true;
+				bweType = RTC::BweType::REMB;
+			}
+
+			if (createTccServer)
+			{
+				this->m_tcc_server_ptr = new RTC::TransportCongestionControlServer(this, bweType, RTC::MtuSize);
+
+				if (this->m_maxIncomingBitrate != 0u)
+					this->m_tcc_server_ptr->SetMaxIncomingBitrate(this->m_maxIncomingBitrate);
+
+				if (IsConnected())
+					this->m_tcc_server_ptr->TransportConnected();
+			}
+		}
+
+
 		return true;
 	}
 	bool cwebrtc_transport::handler_consume(uint64 session_id, Json::Value& value)
