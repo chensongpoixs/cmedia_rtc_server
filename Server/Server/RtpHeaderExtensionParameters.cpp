@@ -27,13 +27,17 @@ namespace RTC
 
 		// uri is mandatory.
 		if (!data.isMember("uri") || !data["uri"].isString() /*jsonUriIt == data.end() || !jsonUriIt->is_string()*/)
+		{
 			ERROR_EX_LOG("missing uri");
+			return;
+		}
 
 		this->uri = data["uri"].asCString(); //jsonUriIt->get<std::string>();
 
 		if (this->uri.empty())
 		{
 			ERROR_EX_LOG("empty uri");
+			return;
 		}
 
 		// Get the type.
@@ -43,6 +47,7 @@ namespace RTC
 		if (!data.isMember("id") || !data["id"].isUInt()/*jsonIdIt == data.end() || !Utils::Json::IsPositiveInteger(*jsonIdIt)*/)
 		{
 			ERROR_EX_LOG("missing id");
+			return;
 		}
 
 		this->id = data["id"].asUInt(); //jsonIdIt->get<uint8_t>();
@@ -51,16 +56,17 @@ namespace RTC
 		if (this->id == 0u)
 		{
 			ERROR_EX_LOG("invalid id 0");
+			return;
 		}
 
 		// encrypt is optional.
-		if (!data.isMember("encrypt") || !data["encrypt"].isBool()/*jsonEncryptIt != data.end() && jsonEncryptIt->is_boolean()*/)
+		if ( data.isMember("encrypt")&&data["encrypt"].isBool()/*jsonEncryptIt != data.end() && jsonEncryptIt->is_boolean()*/)
 		{
 			this->encrypt = data["encrypt"].asBool();//jsonEncryptIt->get<bool>();
 		}
 
 		// parameters is optional.
-		if (!data.isMember("parameters") || !data["parameters"].isObject()/*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
+		if ( data.isMember("parameters") &&data["parameters"].isObject()/*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
 		{
 			this->parameters.Set(data["parameters"]);
 		}

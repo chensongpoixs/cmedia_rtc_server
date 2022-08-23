@@ -44,7 +44,9 @@ namespace RTC
 
 		// reducedSize is optional.
 		if (data.isMember("reducedSize") && data["reducedSize"].isBool() /*jsonRedicedSizeIt != data.end() && jsonRedicedSizeIt->is_boolean()*/)
+		{
 			this->reducedSize = data["reducedSize"].asBool(); //jsonRedicedSizeIt->get<bool>();
+		}
 	}
 
 	//void RtcpParameters::FillJson(json& jsonObject) const

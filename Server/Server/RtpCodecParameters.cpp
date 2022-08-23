@@ -66,7 +66,7 @@ namespace RTC
 
 		// channels is optional.
 		// clang-format off
-		if (! data.isMember("channels") || !data["channels"].isUInt()
+		if ( data.isMember("channels") &&data["channels"].isUInt()
 			/*jsonChannelsIt != data.end() &&
 			Utils::Json::IsPositiveInteger(*jsonChannelsIt)*/
 		)
@@ -76,21 +76,22 @@ namespace RTC
 		}
 
 		// parameters is optional.
-		if (!data.isMember("parameters") || !data["parameters"].isObject() /*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
+		if ( data.isMember("parameters") &&data["parameters"].isObject() /*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
 		{
 			this->parameters.Set(data["parameters"]);
 		}
 
 		// rtcpFeedback is optional.
-		if (!data.isMember("rtcpFeedback") || !data["rtcpFeedback"].isArray() /*jsonRtcpFeedbackIt != data.end() && jsonRtcpFeedbackIt->is_array()*/)
+		if ( data.isMember("rtcpFeedback") && !data["rtcpFeedback"].isArray() /*jsonRtcpFeedbackIt != data.end() && jsonRtcpFeedbackIt->is_array()*/)
 		{
-			this->rtcpFeedback.reserve(data["rtcpFeedback"].asLargestUInt()/*jsonRtcpFeedbackIt->size()*/);
+			this->rtcpFeedback.reserve(data["rtcpFeedback"].size()/*jsonRtcpFeedbackIt->size()*/);
 
 			//for (auto& entry : *jsonRtcpFeedbackIt)
-			for (size_t i = 0; i < data["rtcpFeedback"].asLargestUInt(); ++i)
+			const Json::Value rtcpFeebackValue = data["rtcpFeedback"];
+			for (auto it : rtcpFeebackValue)
 			{
 				// This may throw due the constructor of RTC::RtcpFeedback.
-				this->rtcpFeedback.emplace_back(RtcpFeedback(data["rtcpFeedback"]));
+				this->rtcpFeedback.emplace_back(RtcpFeedback(it));
 			}
 		}
 

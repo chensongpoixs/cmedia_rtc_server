@@ -120,11 +120,11 @@ namespace RTC
 			ERROR_EX_LOG("missing codecs");
 		}
 
-		this->codecs.reserve(data["codecs"].asLargestUInt()/*jsonCodecsIt->size()*/);
-		for (size_t i = 0; i < data["codecs"].asLargestUInt(); ++i)
+		this->codecs.reserve(data["codecs"].size()/*jsonCodecsIt->size()*/);
+		for (auto iter : data["codecs"])
 		{
 
-			codecs.push_back(RtpCodecParameters(data["codecs"]));
+			codecs.push_back(RtpCodecParameters(iter));
 		}
 		//for (auto& entry : *jsonCodecsIt)
 		//{
@@ -135,16 +135,20 @@ namespace RTC
 		if (this->codecs.empty())
 		{
 			ERROR_EX_LOG("empty codecs");
+			return;
 		}
 
 		// encodings is mandatory.
 		if (!data.isMember("encodings") || !data["encodings"].isArray() /*jsonEncodingsIt == data.end() || !jsonEncodingsIt->is_array()*/)
-			ERROR_EX_LOG("missing encodings");
-
-		this->encodings.reserve(data["encodings"].asLargestUInt());
-		for (size_t i = 0; i < data["encodings"].asLargestUInt(); ++i)
 		{
-			this->encodings.emplace_back(data["encodings"]);
+			ERROR_EX_LOG("missing encodings");
+			return;
+		}
+		const Json::Value & rtpParameter_encodings = data["encodings"];
+		this->encodings.reserve(rtpParameter_encodings.size());
+		for (auto iter : rtpParameter_encodings)
+		{
+			this->encodings.emplace_back(RtpEncodingParameters(iter));
 		}
 		//for (auto& entry : *jsonEncodingsIt)
 		//{
@@ -160,12 +164,13 @@ namespace RTC
 		// headerExtensions is optional.
 		if (!data.isMember("headerExtensions") || !data["headerExtensions"].isArray()/*jsonHeaderExtensionsIt != data.end() && jsonHeaderExtensionsIt->is_array()*/)
 		{
-			this->headerExtensions.reserve(data["headerExtensions"].size());
+			const Json::Value & headerExtensionsValue = data["headerExtensions"];
+			this->headerExtensions.reserve(headerExtensionsValue.size());
 
-			for (size_t i = 0; i < data["headerExtensions"].size(); ++i)
+			for (auto iter : headerExtensionsValue)
 			{
 				// This may throw due the constructor of RTC::RtpHeaderExtensionParameters.
-				this->headerExtensions.emplace_back(data["headerExtensions"]);
+				this->headerExtensions.emplace_back(iter);
 			}
 		}
 

@@ -15,6 +15,10 @@
 #include <iterator> // std::ostream_iterator
 #include <sstream>  // std::ostringstream
 #include <cassert>
+#include <vector>
+#include <algorithm>
+
+
 namespace RTC
 {
 	/* Instance methods. */
@@ -29,10 +33,10 @@ namespace RTC
 			return;
 			//assert()
 		}
-		kind =  RTC::Media::GetKind(data["kind"].asCString()) ;
-		if (this->kind == RTC::Media::Kind::ALL)
+		
+		if (!data.isMember("rtpMapping") || !data["rtpMapping"].isArray())
 		{
-			ERROR_EX_LOG("invalid empty kind");
+			ERROR_EX_LOG("missing rtpMapping");
 			return;
 		}
 		if (!data.isMember("rtpParameters") && !data["rtpParameters"].isObject())
@@ -40,6 +44,92 @@ namespace RTC
 			ERROR_EX_LOG("rtpParameters not find or type not is object !!!");
 			return;
 		}
+
+		kind =  RTC::Media::GetKind(data["kind"].asCString()) ;
+		if (this->kind == RTC::Media::Kind::ALL)
+		{
+			ERROR_EX_LOG("invalid empty kind");
+			return;
+		}
+		if (data.isMember("paused") && data["paused"].isBool())
+		{
+			paused = data["paused"].asBool();
+		}
+
+
+
+		//////////////////////////rtpMapping///////////////////////////
+
+		const Json::Value & rtpMappingValue = data["rtpMapping"];
+		if (!rtpMappingValue.isMember("codecs") || !rtpMappingValue["codecs"].isArray())
+		{
+			ERROR_EX_LOG("invalid empty rtpMapping.codecs");
+			return;
+		}
+		if (!rtpMappingValue.isMember("encodings") || !rtpMappingValue["encodings"].isArray())
+		{
+			ERROR_EX_LOG("invalid empty rtpMapping.encodings");
+			return;
+		}
+		const Json::Value & rtpMapping_Codecs = rtpMappingValue["codecs"];
+
+		for (auto it : rtpMapping_Codecs)
+		{
+			if (!it.isMember("payloadType") || !it["payloadType"].isUInt())
+			{
+				WARNING_EX_LOG("invalid empty rtpMapping.codecs.payloadType");
+				continue;;
+			}
+			if (!it.isMember("mappedPayloadType") || !it["mappedPayloadType"].isUInt())
+			{
+				WARNING_EX_LOG("invalid empty rtpMapping.codecs.mappedPayloadType");
+				continue;;
+			}
+			rtpMapping.codecs[it["payloadType"].asUInt()] = it["mappedPayloadType"].asUInt();
+		}
+		const Json::Value & rtpMapping_encodings = rtpMappingValue["encodings"];
+		 
+		//this->rtpMapping.encodings.reserve(rtpMapping_encodings.size());
+
+		for (auto iter : rtpMapping_encodings)
+		{
+			RtpEncodingMapping rtpEncode;
+			if (!iter.isMember("ssrc") ||
+				!iter["ssrc"].isUInt())
+			{
+				WARNING_EX_LOG("invalid empty rtpMapping.encodings.ssrc");
+				continue;;
+			}
+			if (!iter.isMember("rid") ||
+				!iter["rid"].isString())
+			{
+				WARNING_EX_LOG("invalid empty rtpMapping.encodings.rid");
+				continue;;
+			}
+
+			if (!iter.isMember("mappedSsrc") ||
+				!iter["mappedSsrc"].isUInt())
+			{
+				WARNING_EX_LOG("invalid empty rtpMapping.encodings.mappedSsrc");
+				continue;;
+			}
+			//rtpMapping.encodings.emplace_back();
+			rtpEncode.rid = iter["rid"].asCString();
+			rtpEncode.mappedSsrc = iter["mappedSsrc"].asUInt();
+			rtpEncode.ssrc = iter["ssrc"].asUInt();
+			rtpMapping.encodings.push_back(rtpEncode);
+		}
+
+
+
+		// The number of encodings in rtpParameters must match the number of encodings
+		// in rtpMapping.
+		if (this->rtpParameters.encodings.size() != this->rtpMapping.encodings.size())
+		{
+			ERROR_EX_LOG("rtpParameters.encodings size does not match rtpMapping.encodings size");
+			return;
+		}
+		////////////////////////////////////////////////////
 
 
 		// This may throw.
@@ -65,73 +155,7 @@ namespace RTC
 				mediaCodec->mimeType.ToString().c_str(),
 				RTC::RtpParameters::GetTypeString(this->type).c_str());
 		}
-
-		if (!data.isMember("rtpMapping") || !data["rtpMapping"].isArray())
-		{
-			ERROR_EX_LOG("missing rtpMapping");
-			return;
-		}
-		const Json::Value arrayObj = data["rtpMapping"]["codecs"];
-		for (size_t i = 0; i < arrayObj.size(); ++i)
-		{
-			//arrayObj.isMember("payloadType")
-			rtpMapping.codecs[arrayObj["payloadType"].asUInt()] = arrayObj["mappedPayloadType"].asUInt();
-			//if (arrayObj[i].isObject())
-			//{
-			//	ERROR_EX_LOG("not is Object !!!");
-			//	return;
-			//}
-			//if (
-			//	 !arrayObj[i].isMember("payloadType") || !arrayObj[i]["payloadType"].isUInt()
-			//	)
-			//	// clang-format on
-			//{
-			//	ERROR_EX_LOG("wrong entry in rtpMapping.codecs (missing payloadType)");
-			//}
-
-		}
-
-		if (!data["rtpMapping"].isMember("encodings") || !data["rtpMapping"]["encodings"].isArray())
-		{
-			ERROR_EX_LOG("missing rtpMapping.encodings");
-			return;
-		}
-		this->rtpMapping.encodings.reserve(data["rtpMapping"]["encodings"].size());
-		
-		for (size_t i = 0; i < data["rtpMapping"]["encodings"].size(); ++i)
-		{
-			RtpEncodingMapping rtpEncode;
-			if (!data["rtpMapping"]["encodings"].isMember("ssrc") || 
-				!data["rtpMapping"]["encodings"]["ssrc"].isUInt())
-			{
-				rtpEncode.ssrc = data["rtpMapping"]["encodings"]["ssrc"].asUInt();
-			}
-			if (!data["rtpMapping"]["encodings"].isMember("rid") ||
-				!data["rtpMapping"]["encodings"]["rid"].isString())
-			{
-				rtpEncode.rid = data["rtpMapping"]["encodings"]["rid"].asCString();
-			}
-
-			if (!data["rtpMapping"]["encodings"].isMember("mappedSsrc") ||
-				!data["rtpMapping"]["encodings"]["mappedSsrc"].isUInt())
-			{
-				rtpEncode.mappedSsrc = data["rtpMapping"]["encodings"]["mappedSsrc"].asUInt();
-			}
-		}
-
-		if (data.isMember("paused")  &&data["paused"].isBool())
-		{
-			paused = data["paused"].asBool();
-		}
-
-		// The number of encodings in rtpParameters must match the number of encodings
-		// in rtpMapping.
-		if (this->rtpParameters.encodings.size() != this->rtpMapping.encodings.size())
-		{
-			ERROR_EX_LOG("rtpParameters.encodings size does not match rtpMapping.encodings size");
-			return;
-		}
-
+		 
 
 		// Fill RTP header extension ids.
 		// This may throw.
@@ -197,9 +221,13 @@ namespace RTC
 
 		// Set the RTCP report generation interval.
 		if (this->kind == RTC::Media::Kind::AUDIO)
+		{
 			this->maxRtcpInterval = RTC::RTCP::MaxAudioIntervalMs;
+		}
 		else
+		{
 			this->maxRtcpInterval = RTC::RTCP::MaxVideoIntervalMs;
+		}
 
 		// Create a KeyFrameRequestManager.
 		if (this->kind == RTC::Media::Kind::VIDEO)
@@ -219,454 +247,7 @@ namespace RTC
 			this->keyFrameRequestManager = new RTC::KeyFrameRequestManager(this, keyFrameRequestDelay);
 		}
 
-		//MS_TRACE();
-		/*
-		{
-					"kind":"video",
-					"paused":false,
-					"rtpMapping":{
-					"codecs":[
-					{
-						"mappedPayloadType":101,
-						"payloadType":108
-					},
-					{
-						"mappedPayloadType":102,
-						"payloadType":109
-					}
-					],
-					"encodings":[
-					{
-						"mappedSsrc":806764358,
-						"rid":"r0",
-						"scalabilityMode":"S1T3"
-					},
-					{
-						"mappedSsrc":806764359,
-						"rid":"r1",
-						"scalabilityMode":"S1T3"
-					},
-					{
-						"mappedSsrc":806764360,
-						"rid":"r2",
-						"scalabilityMode":"S1T3"
-					}
-					]
-					},
-					"rtpParameters":{
-						"codecs":[
-						{
-						"clockRate":90000,
-						"mimeType":"video/H264",
-						"parameters":{
-						"level-asymmetry-allowed":1,
-						"packetization-mode":1,
-						"profile-level-id":"42e01f"
-					},
-						"payloadType":108,
-					"rtcpFeedback":[
-					{
-						"parameter":"",
-						"type":"goog-remb"
-					},
-					{
-						"parameter":"",
-						"type":"transport-cc"
-					},
-					{
-						"parameter":"fir",
-						"type":"ccm"
-					},
-					{
-						"parameter":"",
-						"type":"nack"
-					},
-					{
-						"parameter":"pli",
-						"type":"nack"
-					}
-					]
-					},
-					{
-						"clockRate":90000,
-						"mimeType":"video/rtx",
-						"parameters":{
-						"apt":108
-						},
-						"payloadType":109,
-						"rtcpFeedback":[
-
-					]
-					}
-					],
-					"encodings":[
-					{
-						"active":true,
-						"dtx":false,
-						"maxBitrate":500000,
-						"rid":"r0",
-						"scalabilityMode":"S1T3",
-						"scaleResolutionDownBy":4
-					},
-					{
-						"active":true,
-						"dtx":false,
-						"maxBitrate":1000000,
-						"rid":"r1",
-						"scalabilityMode":"S1T3",
-						"scaleResolutionDownBy":2
-					},
-					{
-						"active":true,
-						"dtx":false,
-						"maxBitrate":5000000,
-						"rid":"r2",
-						"scalabilityMode":"S1T3",
-						"scaleResolutionDownBy":1
-					}
-					],
-					"headerExtensions":[
-					{
-						"encrypt":false,
-						"id":4,
-						"parameters":{
-
-						},
-						"uri":"urn:ietf:params:rtp-hdrext:sdes:mid"
-					},
-					{
-						"encrypt":false,
-						"id":10,
-						"parameters":{
-
-						},
-						"uri":"urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id"
-					},
-					{
-						"encrypt":false,
-						"id":11,
-						"parameters":{
-
-						},
-						"uri":"urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id"
-					},
-					{
-						"encrypt":false,
-						"id":2,
-						"parameters":{
-
-						},
-					"uri":"http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
-					},
-					{
-						"encrypt":false,
-						"id":3,
-						"parameters":{
-
-						},
-					"uri":"http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
-					},
-					{
-						"encrypt":false,
-						"id":13,
-						"parameters":{
-
-						},
-						"uri":"urn:3gpp:video-orientation"
-					},
-					{
-						"encrypt":false,
-						"id":14,
-						"parameters":{
-
-						},
-					"uri":"urn:ietf:params:rtp-hdrext:toffset"
-					}
-						],
-						"mid":"2",
-						"rtcp":{
-						"cname":"UgYi3789TL6C/8Zx",
-						"reducedSize":true
-						}
-					}
-				}
-		
-		*/
-		//auto jsonKindIt = data.find("kind");
-
-		//if (jsonKindIt == data.end() || !jsonKindIt->is_string())
-		//{
-		//	MS_THROW_TYPE_ERROR("missing kind");
-		//}
-
-		//// This may throw.
-		//this->kind = RTC::Media::GetKind(jsonKindIt->get<std::string>());
-
-		//if (this->kind == RTC::Media::Kind::ALL)
-		//{
-		//	MS_THROW_TYPE_ERROR("invalid empty kind");
-		//}
-
-		//auto jsonRtpParametersIt = data.find("rtpParameters");
-
-		//if (jsonRtpParametersIt == data.end() || !jsonRtpParametersIt->is_object())
-		//{
-		//	MS_THROW_TYPE_ERROR("missing rtpParameters");
-		//}
-
-		//// This may throw.
-		//this->rtpParameters = RTC::RtpParameters(*jsonRtpParametersIt);
-
-		//// Evaluate type.
-		//this->type = RTC::RtpParameters::GetType(this->rtpParameters);
-
-		//// Reserve a slot in rtpStreamByEncodingIdx and rtpStreamsScores vectors
-		//// for each RTP stream.
-		//this->rtpStreamByEncodingIdx.resize(this->rtpParameters.encodings.size(), nullptr);
-		//this->rtpStreamScores.resize(this->rtpParameters.encodings.size(), 0u);
-
-		//auto& encoding   = this->rtpParameters.encodings[0];
-		//auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
-
-		//if (!RTC::Codecs::Tools::IsValidTypeForCodec(this->type, mediaCodec->mimeType))
-		//{
-		//	MS_THROW_TYPE_ERROR(
-		//	  "%s codec not supported for %s",
-		//	  mediaCodec->mimeType.ToString().c_str(),
-		//	  RTC::RtpParameters::GetTypeString(this->type).c_str());
-		//}
-
-		//auto jsonRtpMappingIt = data.find("rtpMapping");
-
-		//if (jsonRtpMappingIt == data.end() || !jsonRtpMappingIt->is_object())
-		//{
-		//	MS_THROW_TYPE_ERROR("missing rtpMapping");
-		//}
-
-		//auto jsonCodecsIt = jsonRtpMappingIt->find("codecs");
-
-		//if (jsonCodecsIt == jsonRtpMappingIt->end() || !jsonCodecsIt->is_array())
-		//{
-		//	MS_THROW_TYPE_ERROR("missing rtpMapping.codecs");
-		//}
-
-		//for (auto& codec : *jsonCodecsIt)
-		//{
-		//	if (!codec.is_object())
-		//	{
-		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.codecs (not an object)");
-		//	}
-
-		//	auto jsonPayloadTypeIt = codec.find("payloadType");
-
-		//	// clang-format off
-		//	if (
-		//		jsonPayloadTypeIt == codec.end() ||
-		//		!Utils::Json::IsPositiveInteger(*jsonPayloadTypeIt)
-		//	)
-		//	// clang-format on
-		//	{
-		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.codecs (missing payloadType)");
-		//	}
-
-		//	auto jsonMappedPayloadTypeIt = codec.find("mappedPayloadType");
-
-		//	// clang-format off
-		//	if (
-		//		jsonMappedPayloadTypeIt == codec.end() ||
-		//		!Utils::Json::IsPositiveInteger(*jsonMappedPayloadTypeIt)
-		//	)
-		//	// clang-format on
-		//	{
-		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.codecs (missing mappedPayloadType)");
-		//	}
-
-		//	this->rtpMapping.codecs[jsonPayloadTypeIt->get<uint8_t>()] =
-		//	  jsonMappedPayloadTypeIt->get<uint8_t>();
-		//}
-
-		//auto jsonEncodingsIt = jsonRtpMappingIt->find("encodings");
-
-		//if (jsonEncodingsIt == jsonRtpMappingIt->end() || !jsonEncodingsIt->is_array())
-		//{
-		//	MS_THROW_TYPE_ERROR("missing rtpMapping.encodings");
-		//}
-
-		//this->rtpMapping.encodings.reserve(jsonEncodingsIt->size());
-
-		//for (auto& encoding : *jsonEncodingsIt)
-		//{
-		//	if (!encoding.is_object())
-		//	{
-		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.encodings");
-		//	}
-
-		//	this->rtpMapping.encodings.emplace_back();
-
-		//	auto& encodingMapping = this->rtpMapping.encodings.back();
-
-		//	// ssrc is optional.
-		//	auto jsonSsrcIt = encoding.find("ssrc");
-
-		//	// clang-format off
-		//	if (
-		//		jsonSsrcIt != encoding.end() &&
-		//		Utils::Json::IsPositiveInteger(*jsonSsrcIt)
-		//	)
-		//	// clang-format on
-		//	{
-		//		encodingMapping.ssrc = jsonSsrcIt->get<uint32_t>();
-		//	}
-
-		//	// rid is optional.
-		//	auto jsonRidIt = encoding.find("rid");
-
-		//	if (jsonRidIt != encoding.end() && jsonRidIt->is_string())
-		//	{
-		//		encodingMapping.rid = jsonRidIt->get<std::string>();
-		//	}
-
-		//	// However ssrc or rid must be present (if more than 1 encoding).
-		//	// clang-format off
-		//	if (
-		//		jsonEncodingsIt->size() > 1 &&
-		//		jsonSsrcIt == encoding.end() &&
-		//		jsonRidIt == encoding.end()
-		//	)
-		//	// clang-format on
-		//	{
-		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.encodings (missing ssrc or rid)");
-		//	}
-
-		//	// If there is no mid and a single encoding, ssrc or rid must be present.
-		//	// clang-format off
-		//	if (
-		//		this->rtpParameters.mid.empty() &&
-		//		jsonEncodingsIt->size() == 1 &&
-		//		jsonSsrcIt == encoding.end() &&
-		//		jsonRidIt == encoding.end()
-		//	)
-		//	// clang-format on
-		//	{
-		//		MS_THROW_TYPE_ERROR(
-		//		  "wrong entry in rtpMapping.encodings (missing ssrc or rid, or rtpParameters.mid)");
-		//	}
-
-		//	// mappedSsrc is mandatory.
-		//	auto jsonMappedSsrcIt = encoding.find("mappedSsrc");
-
-		//	// clang-format off
-		//	if (
-		//		jsonMappedSsrcIt == encoding.end() ||
-		//		!Utils::Json::IsPositiveInteger(*jsonMappedSsrcIt)
-		//	)
-		//	// clang-format on
-		//	{
-		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.encodings (missing mappedSsrc)");
-		//	}
-
-		//	encodingMapping.mappedSsrc = jsonMappedSsrcIt->get<uint32_t>();
-		//}
-
-		//auto jsonPausedIt = data.find("paused");
-
-		//if (jsonPausedIt != data.end() && jsonPausedIt->is_boolean())
-		//{
-		//	this->paused = jsonPausedIt->get<bool>();
-		//}
-
-		//// The number of encodings in rtpParameters must match the number of encodings
-		//// in rtpMapping.
-		//if (this->rtpParameters.encodings.size() != this->rtpMapping.encodings.size())
-		//{
-		//	MS_THROW_TYPE_ERROR("rtpParameters.encodings size does not match rtpMapping.encodings size");
-		//}
-
-		//// Fill RTP header extension ids.
-		//// This may throw.
-		//for (auto& exten : this->rtpParameters.headerExtensions)
-		//{
-		//	if (exten.id == 0u)
-		//	{
-		//		MS_THROW_TYPE_ERROR("RTP extension id cannot be 0");
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.mid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::MID)
-		//	{
-		//		this->rtpHeaderExtensionIds.mid = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.rid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::RTP_STREAM_ID)
-		//	{
-		//		this->rtpHeaderExtensionIds.rid = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.rrid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::REPAIRED_RTP_STREAM_ID)
-		//	{
-		//		this->rtpHeaderExtensionIds.rrid = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.absSendTime == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::ABS_SEND_TIME)
-		//	{
-		//		this->rtpHeaderExtensionIds.absSendTime = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.transportWideCc01 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TRANSPORT_WIDE_CC_01)
-		//	{
-		//		this->rtpHeaderExtensionIds.transportWideCc01 = exten.id;
-		//	}
-
-		//	// NOTE: Remove this once framemarking draft becomes RFC.
-		//	if (this->rtpHeaderExtensionIds.frameMarking07 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING_07)
-		//	{
-		//		this->rtpHeaderExtensionIds.frameMarking07 = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.frameMarking == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING)
-		//	{
-		//		this->rtpHeaderExtensionIds.frameMarking = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.ssrcAudioLevel == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::SSRC_AUDIO_LEVEL)
-		//	{
-		//		this->rtpHeaderExtensionIds.ssrcAudioLevel = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.videoOrientation == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::VIDEO_ORIENTATION)
-		//	{
-		//		this->rtpHeaderExtensionIds.videoOrientation = exten.id;
-		//	}
-
-		//	if (this->rtpHeaderExtensionIds.toffset == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TOFFSET)
-		//	{
-		//		this->rtpHeaderExtensionIds.toffset = exten.id;
-		//	}
-		//}
-
-		//// Set the RTCP report generation interval.
-		//if (this->kind == RTC::Media::Kind::AUDIO)
-		//	this->maxRtcpInterval = RTC::RTCP::MaxAudioIntervalMs;
-		//else
-		//	this->maxRtcpInterval = RTC::RTCP::MaxVideoIntervalMs;
-
-		//// Create a KeyFrameRequestManager.
-		//if (this->kind == RTC::Media::Kind::VIDEO)
-		//{
-		//	auto jsonKeyFrameRequestDelayIt = data.find("keyFrameRequestDelay");
-		//	uint32_t keyFrameRequestDelay   = 0u;
-
-		//	// clang-format off
-		//	if (
-		//		jsonKeyFrameRequestDelayIt != data.end() &&
-		//		jsonKeyFrameRequestDelayIt->is_number_integer()
-		//	)
-		//	// clang-format on
-		//	{
-		//		keyFrameRequestDelay = jsonKeyFrameRequestDelayIt->get<uint32_t>();
-		//	}
-
-		//	this->keyFrameRequestManager = new RTC::KeyFrameRequestManager(this, keyFrameRequestDelay);
-		//}
+	
 	}
 
 	Producer::~Producer()

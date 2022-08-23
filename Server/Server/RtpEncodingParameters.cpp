@@ -33,7 +33,7 @@ namespace RTC
 
 		// ssrc is optional.
 		// clang-format off
-		if ( !data.isMember("ssrc") || !data["ssrc"].isUInt()
+		if (  data.isMember("ssrc")&&data["ssrc"].isUInt()
 			/*jsonSsrcIt != data.end() &&
 			Utils::Json::IsPositiveInteger(*jsonSsrcIt)*/
 		)
@@ -43,14 +43,14 @@ namespace RTC
 		}
 
 		// rid is optional.
-		if (!data.isMember("rid") || !data["rid"].isString() /*jsonRidIt != data.end() && jsonRidIt->is_string()*/)
+		if ( data.isMember("rid") &&data["rid"].isString() /*jsonRidIt != data.end() && jsonRidIt->is_string()*/)
 		{
 			this->rid = data["rid"].asCString();////jsonRidIt->get<std::string>();
 		}
 
 		// codecPayloadType is optional.
 		// clang-format off
-		if ( !data.isMember("codecPayloadType") || !data["codecPayloadType"].isUInt()
+		if (  data.isMember("codecPayloadType") &&data["codecPayloadType"].isUInt()
 			/*jsonCodecPayloadTypeIt != data.end() &&
 			Utils::Json::IsPositiveInteger(*jsonCodecPayloadTypeIt)*/
 		)
@@ -62,7 +62,7 @@ namespace RTC
 
 		// rtx is optional.
 		// This may throw.
-		if (!data.isMember("rtx") || !data["rtx"].isObject() /*jsonRtxIt != data.end() && jsonRtxIt->is_object()*/)
+		if ( data.isMember("rtx") &&data["rtx"].isObject() /*jsonRtxIt != data.end() && jsonRtxIt->is_object()*/)
 		{
 			this->rtx    = RtpRtxParameters(data["rtx"]);
 			this->hasRtx = true;
@@ -70,7 +70,7 @@ namespace RTC
 
 		// maxBitrate is optional.
 		// clang-format off
-		if ( !data.isMember("maxBitrate") || !data["maxBitrate"].isUInt()
+		if (  data.isMember("maxBitrate") &&data["maxBitrate"].isUInt()
 			/*jsonMaxBitrateIt != data.end() &&
 			Utils::Json::IsPositiveInteger(*jsonMaxBitrateIt)*/
 		)
