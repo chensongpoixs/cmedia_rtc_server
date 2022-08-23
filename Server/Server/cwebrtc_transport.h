@@ -254,6 +254,28 @@ namespace chen
 		void OnRtpDataReceived(RTC::TransportTuple* tuple, const uint8_t* data, size_t len);
 		void OnRtcpDataReceived(RTC::TransportTuple* tuple, const uint8_t* data, size_t len);
 
+
+
+		
+	public:
+		/* Pure virtual methods inherited from RTC::Producer::Listener. */
+		void OnProducerPaused(RTC::Producer* producer) override;
+		void OnProducerResumed(RTC::Producer* producer) override;
+		void OnProducerNewRtpStream(
+			RTC::Producer* producer, RTC::RtpStream* rtpStream, uint32_t mappedSsrc) override;
+		void OnProducerRtpStreamScore(
+			RTC::Producer* producer, RTC::RtpStream* rtpStream, uint8_t score, uint8_t previousScore) override;
+		void OnProducerRtcpSenderReport(
+			RTC::Producer* producer, RTC::RtpStream* rtpStream, bool first) override;
+		void OnProducerRtpPacketReceived(RTC::Producer* producer, RTC::RtpPacket* packet) override;
+		void OnProducerSendRtcpPacket(RTC::Producer* producer, RTC::RTCP::Packet* packet) override;
+		void OnProducerNeedWorstRemoteFractionLost(
+			RTC::Producer* producer, uint32_t mappedSsrc, uint8_t& worstRemoteFractionLost) override;
+	//public:
+	//	/* Pure virtual methods inherited from RTC::TransportCongestionControlServer::Listener. */
+
+	//	void OnTransportCongestionControlServerSendRtcpPacket(
+	//		RTC::TransportCongestionControlServer* tccServer, RTC::RTCP::Packet* packet) override;
 	private:
 		void reply_rtc_info(Json::Value& value);
 

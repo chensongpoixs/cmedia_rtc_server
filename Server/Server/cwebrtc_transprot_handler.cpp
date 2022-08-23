@@ -22,7 +22,123 @@ namespace chen {
 
 	bool cwebrtc_transport::handler_connect(uint64 session_id, Json::Value & value)
 	{
-		return false;
+		if (m_connect_called)
+		{
+			ERROR_EX_LOG("connect() already called");
+			return false;
+		}
+		RTC::DtlsTransport::Fingerprint dtlsRemoteFingerprint;
+		RTC::DtlsTransport::Role dtlsRemoteRole;
+		if (!value.isMember("dtlsParameters") || !value["dtlsParameters"].isObject())
+		{
+			ERROR_EX_LOG("missing dtlsParameters");
+			return false;
+		}
+
+		const Json::Value& DtlsParameter = value["dtlsParameters"];
+		if (!DtlsParameter.isMember("fingerprints") || !DtlsParameter["fingerprints"].isArray())
+		{
+			ERROR_EX_LOG("missing dtlsParameters.fingerprints");
+			return false;
+		}
+
+		const Json::Value & fingerprintsvalue = DtlsParameter["fingerprints"];
+		if (fingerprintsvalue.empty())
+		{
+			ERROR_EX_LOG("empty dtlsParameters.fingerprints array");
+			return false;
+		}
+		for (auto iter : fingerprintsvalue)
+		{
+			if (!iter.isObject())
+			{
+				ERROR_EX_LOG("wrong entry in dtlsParameters.fingerprints (not an object)");
+				continue;
+			}
+			if (!iter.isMember("algorithm") || !iter["algorithm"].isString())
+			{
+				ERROR_EX_LOG("missing fingerprint.algorithm");
+				continue;;
+			}
+			if (!iter.isMember("value") || !iter["value"].isString())
+			{
+				ERROR_EX_LOG("missing fingerprint.value");
+				continue;;
+			}
+			dtlsRemoteFingerprint.algorithm =
+				RTC::DtlsTransport::GetFingerprintAlgorithm(iter["algorithm"].asCString());
+			dtlsRemoteFingerprint.value = iter["value"].asCString();
+			break;
+		}
+
+		if (!fingerprintsvalue.isMember("role") || !fingerprintsvalue["role"].isString())
+		{
+			dtlsRemoteRole = RTC::DtlsTransport::Role::AUTO;
+		}
+		else
+		{
+			dtlsRemoteRole = RTC::DtlsTransport::StringToRole(fingerprintsvalue["role"].asCString());
+
+			if (dtlsRemoteRole == RTC::DtlsTransport::Role::NONE)
+			{
+				ERROR_EX_LOG("invalid dtlsParameters.role value");
+				return false;
+			}
+		}
+
+
+		// Set local DTLS role.
+		switch (dtlsRemoteRole)
+		{
+		case RTC::DtlsTransport::Role::CLIENT:
+		{
+			this->m_dtlsRole = RTC::DtlsTransport::Role::SERVER;
+
+			break;
+		}
+		// If the peer has role "auto" we become "client" since we are ICE controlled.
+		case RTC::DtlsTransport::Role::SERVER:
+		case RTC::DtlsTransport::Role::AUTO:
+		{
+			this->m_dtlsRole = RTC::DtlsTransport::Role::CLIENT;
+
+			break;
+		}
+		case RTC::DtlsTransport::Role::NONE:
+		{
+			ERROR_EX_LOG("invalid remote DTLS role");
+			return false;
+		}
+		}
+
+		this->m_connect_called = true;
+
+		// Pass the remote fingerprint to the DTLS transport.
+		if (this->m_dtls_transport_ptr->SetRemoteFingerprint(dtlsRemoteFingerprint))
+		{
+			// If everything is fine, we may run the DTLS transport if ready.
+			MayRunDtlsTransport();
+		}
+
+		// Tell the caller about the selected local DTLS role.
+		//json data = json::object();
+		// 角色  
+		switch (this->m_dtlsRole)
+		{
+		case RTC::DtlsTransport::Role::CLIENT:
+		//	data["dtlsLocalRole"] = "client";
+			break;
+
+		case RTC::DtlsTransport::Role::SERVER:
+			//data["dtlsLocalRole"] = "server";
+			break;
+
+		default:
+			ERROR_EX_LOG("invalid local DTLS role");
+		}
+		//DEBUG_EX_LOG("[reply = %s]", data.dump().c_str());
+		//request->Accept(data);
+		return true;
 	}
 	bool cwebrtc_transport::handler_restart_ice(uint64 session_id, Json::Value & value)
 	{
@@ -178,10 +294,14 @@ namespace chen {
 				this->m_tcc_server_ptr = new RTC::TransportCongestionControlServer(this, bweType, RTC::MtuSize);
 
 				if (this->m_maxIncomingBitrate != 0u)
+				{
 					this->m_tcc_server_ptr->SetMaxIncomingBitrate(this->m_maxIncomingBitrate);
 
+				}
 				if (IsConnected())
+				{
 					this->m_tcc_server_ptr->TransportConnected();
+				}
 			}
 		}
 
