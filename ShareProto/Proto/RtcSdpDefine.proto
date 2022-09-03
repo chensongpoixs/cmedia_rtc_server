@@ -1,0 +1,215 @@
+﻿syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+import "RtcSdpEnumDefine.proto";
+
+message Ssl_Fignerpint
+{
+	optional     string 	algorithm  = 1; // 使用加密算法 [sha-1、sha-224、sha-256、sha-384、sha-512]
+	optional 	 string 	digest	   = 2; //密码 
+}
+
+
+
+
+
+// Parameters for SRTP negotiation, as described in RFC 4568.
+// TODO(benwright) - Rename to SrtpCryptoParams as these only apply to SRTP and
+// not generic crypto parameters for WebRTC.
+message Crypto_Params 
+{
+	optional 		int32 		tag 			= 1;
+	optional 		string 		cipher_suite	= 2;
+	optional 		string 		key_params		= 3; 
+	optional		string 		session_params 	= 4; //
+}
+
+
+
+//// RTP header extension, see RFC8285.
+// Header extension for audio levels, as defined in:
+  // http://tools.ietf.org/html/draft-ietf-avtext-client-to-mixer-audio-level-03
+ // static const char kAudioLevelUri[];
+ //
+ // // Header extension for RTP timestamp offset, see RFC 5450 for details:
+ // // http://tools.ietf.org/html/rfc5450
+ // static const char kTimestampOffsetUri[];
+ //
+ // // Header extension for absolute send time, see url for details:
+ // // http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time
+ // static const char kAbsSendTimeUri[];
+ //
+ // // Header extension for coordination of video orientation, see url for
+ // // details:
+ // // http://www.etsi.org/deliver/etsi_ts/126100_126199/126114/12.07.00_60/ts_126114v120700p.pdf
+ // static const char kVideoRotationUri[];
+ //
+ // // Header extension for video content type. E.g. default or screenshare.
+ // static const char kVideoContentTypeUri[];
+ //
+ // // Header extension for video timing.
+ // static const char kVideoTimingUri[];
+ //
+ // // Header extension for video frame marking.
+ // static const char kFrameMarkingUri[];
+ //
+ // // Experimental codec agnostic frame descriptor.
+ // static const char kGenericFrameDescriptorUri00[];
+ // static const char kGenericFrameDescriptorUri01[];
+ // // TODO(bugs.webrtc.org/10243): Remove once dependencies have been updated.
+ // static const char kGenericFrameDescriptorUri[];
+ //
+ // // Header extension for transport sequence number, see url for details:
+ // // http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions
+ // static const char kTransportSequenceNumberUri[];
+ // static const char kTransportSequenceNumberV2Uri[];
+ //
+ // static const char kPlayoutDelayUri[];
+ //
+ // // Header extension for identifying media section within a transport.
+ // // https://tools.ietf.org/html/draft-ietf-mmusic-sdp-bundle-negotiation-49#section-15
+ // static const char kMidUri[];
+ //
+ // // Encryption of Header Extensions, see RFC 6904 for details:
+ // // https://tools.ietf.org/html/rfc6904
+ // static const char kEncryptHeaderExtensionsUri[];
+ //
+ // // Header extension for color space information.
+ // static const char kColorSpaceUri[];
+ //
+ // // Header extension for RIDs and Repaired RIDs
+ // // https://tools.ietf.org/html/draft-ietf-avtext-rid-09
+ // // https://tools.ietf.org/html/draft-ietf-mmusic-rid-15
+ // static const char kRidUri[];
+ // static const char kRepairedRidUri[];
+
+  // Inclusive min and max IDs for two-byte header extensions and one-byte
+  // header extensions, per RFC8285 Section 4.2-4.3.
+message Rtp_Extension
+{
+	optional 		string 		uri 		= 1;
+	optional		int32 		id 			= 2;
+	optional		bool 		encrypt 	= 3;
+
+}
+
+
+message Ssrc_Group
+{
+	optional		string 		semantics 		= 1;// e.g FIX, FEC, SIM.
+	repeated		uint32 		ssrcs			= 2; //// SSRCs of this type.
+}
+
+
+// Description of a Restriction Id (RID) according to:
+// https://tools.ietf.org/html/draft-ietf-mmusic-rid-15
+// A Restriction Identifier serves two purposes:
+//   1. Uniquely identifies an RTP stream inside an RTP session.
+//      When combined with MIDs (https://tools.ietf.org/html/rfc5888),
+//      RIDs uniquely identify an RTP stream within an RTP session.
+//      The MID will identify the media section and the RID will identify
+//      the stream within the section.
+//      RID identifiers must be unique within the media section.
+//   2. Allows indicating further restrictions to the stream.
+//      These restrictions are added according to the direction specified.
+//      The direction field identifies the direction of the RTP stream packets
+//      to which the restrictions apply. The direction is independent of the
+//      transceiver direction and can be one of {send, recv}.
+//      The following are some examples of these restrictions:
+//        a. max-width, max-height, max-fps, max-br, ...
+//        b. further restricting the codec set (from what m= section specified)
+//
+// Note: Indicating dependencies between streams (using depend) will not be
+// supported, since the WG is adopting a different approach to achieve this.
+// As of 2018-12-04, the new SVC (Scalable Video Coder) approach is still not
+// mature enough to be implemented as part of this work.
+// See: https://w3c.github.io/webrtc-svc/ for more details.
+
+message Rid_Description
+{
+	optional		string 			rid = 1; //// The RID identifier that uniquely identifies the stream within the session.
+	// Specifies the direction for which the specified restrictions hold.
+  // This direction is either send or receive and is independent of the
+  // direction of the transceiver.
+  // https://tools.ietf.org/html/draft-ietf-mmusic-rid-15#section-4 :
+  // The "direction" field identifies the direction of the RTP Stream
+  // packets to which the indicated restrictions are applied.  It may be
+  // either "send" or "recv".  Note that these restriction directions are
+  // expressed independently of any "inactive", "sendonly", "recvonly", or
+  // "sendrecv" attributes associated with the media section.  It is, for
+  // example, valid to indicate "recv" restrictions on a "sendonly"
+  // stream; those restrictions would apply if, at a future point in time,
+  // the stream were changed to "sendrecv" or "recvonly".
+	optional 		Rid_Direction 	direction = 2;
+	
+	// The list of codec payload types for this stream.
+  // It should be a subset of the payloads supported for the media section.
+  repeated				int32 		payload_types = 3;
+
+	 // Contains key-value pairs for restrictions.
+  // The keys are not validated against a known set.
+  // The meaning to infer for the values depends on each key.
+  // Examples:
+  // 1. An entry for max-width will have a value that is interpreted as an int.
+  // 2. An entry for max-bpp (bits per pixel) will have a float value.
+  // Interpretation (and validation of value) is left for the implementation.
+  // I.E. the media engines should validate values for parameters they support.
+  			map<string, string> 	restrictions = 4;
+}
+
+
+message Socket_Address
+{
+	optional		string 				hostname = 1;
+	optional		string 				ip 		 = 2;
+	optional 		uint32 				port 	 = 3;
+	optional		int32 				scope_id = 4;
+	optional		bool 				literal	 = 5; 
+}
+
+// Describes a Simulcast Layer.
+// Each simulcast layer has a rid as the identifier and a paused flag.
+// See also: https://tools.ietf.org/html/draft-ietf-mmusic-rid-15 for
+// an explanation about rids.
+message Simulcast_Layer
+{
+	optional	string 		rid 		= 1;
+	optional 	bool 		is_paused 	= 2; //
+}
+
+// Describes a list of Simulcast layers.
+// Simulcast layers are specified in order of preference.
+// Each layer can have a list of alternatives (in order of preference).
+// https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast-13#section-5.1
+// Example Usage:
+//   To populate a list that specifies the following:
+//     1. Layer 1 or Layer 2
+//     2. Layer 3
+//     3. Layer 4 or Layer 5
+//   Use the following code:
+//     SimulcastLayerList list;
+//     list.AddLayerWithAlternatives(
+//            {SimulcastLayer("1", false), SimulcastLayer("2", false});
+//     list.AddLayer("3");
+//     list.AddLayerWithAlternatives(
+//            {SimulcastLayer("4", false), SimulcastLayer("5", false});
+message Simulcast_Layer_List
+{
+// TODO(amithi, bugs.webrtc.org/10075):
+  // Validate that rids do not repeat in the list.
+	repeated	Simulcast_Layer 		list = 1; 
+}
+
+
+// Describes the simulcast options of a video media section.
+// This will list the send and receive layers (along with their alternatives).
+// Each simulcast layer has an identifier (rid) and can optionally be paused.
+// The order of the layers (as well as alternates) indicates user preference
+// from first to last (most preferred to least preferred).
+// https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast-13#section-5.1
+message Simulcast_Description
+{
+	repeated	Simulcast_Layer_List			send_layers 	= 1;
+	repeated	Simulcast_Layer_List			receive_layers	= 2; 
+}
+  

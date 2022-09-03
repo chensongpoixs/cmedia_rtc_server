@@ -1,0 +1,103 @@
+﻿
+syntax = "proto2";
+option optimize_for = LITE_RUNTIME;
+import "RtcSdpDefine.proto";
+import "RtcSdpEnumDefine.proto";
+
+
+message Transport_Description
+{
+	optional	string 				content_name 			= 1;
+	repeated 	string     			transport_options 		= 2;
+	optional 	string 				ice_ufrag				= 3;
+	optional 	string 				ice_pwd 				= 4;
+	optional	Ice_Mode 			ice_mode 				= 5;// 连接服务器时服务器是否进行校验 ， 是否双方都要进行校验
+	optional 	Connection_Role		connection_role			= 6; // // 是服务器、客户端， 还是即可以是服务器又可以客户端
+	optional	Ssl_Fignerpint 		identity_fingerprint	= 7;//
+}
+
+message Stream_Params
+{
+	optional 		string 					groupid 			= 1;
+	optional		string 					id 					= 2;
+	///////////////////////////////////////////////////////////////////////
+	repeated		uint32 					ssrcs				= 3; //signaled with a=msid lines. All SSRCs for this source
+	repeated		Ssrc_Group				ssrc_groups 		= 4; //e.g. FID, FEC, SIM
+	optional		string 					cname 				= 5; // RTCP CNAME
+	////////////////////////////////////////////////////////////////////////////
+	repeated		string 					stream_ids			= 6; // could be none or multiple stream IDs.
+	repeated		Rid_Description			rids				= 7;
+}
+
+
+message Media_Content_Description
+{
+	optional		bool 							rtcp_mux						= 1; // [false ]rtp与rtcp是否共有一个通道
+	optional		bool  							rtcp_reduced_size	 			= 2; // false; // 接受信息的大小数据收集
+	optional		int32 							bandwidth 						= 3; // [-1]// Options to control how session descriptions are generated.
+	optional 		string 							protocol 						= 4; 
+	repeated		Crypto_Params 					cryptos 						= 5; 
+	repeated		Rtp_Extension					rtp_header_extensions			= 6;
+	optional		bool 							rtp_header_extensions_set		= 7; //[false]
+	repeated		Stream_Params					send_streams					= 8; //
+	optional		bool 							conference_mode					= 9; // 
+	optional		Rtp_Transceiver_Direction		direction						= 10; // [kSendRecv]
+	optional		Socket_Address					connection_address				= 11; //
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Mixed one- and two-byte header not included in offer on media level or
+  // session level, but we will respond that we support it. The plan is to add
+  // it to our offer on session level. See todo in SessionDescription.
+	optional 		Extmap_Allow_Mixed				extmap_allow_mixed_enum			= 12; // [KNo]
+	optional		Simulcast_Description			simulcast						= 13; //
+}
+
+
+message Content_Info
+{
+	optional				string 						name  		= 1;
+	optional				Media_Protocol_Type			type 		= 2; //// 媒体协议rtp or rtcp
+	optional 				bool 						rejected 	= 3; // [false ] 
+	optional 				bool 						bundle_only = 4; // [false]
+	optional				Media_Content_Description	description = 5;// 
+	
+}
+
+message Content_Group
+{
+// RFC 5888 and draft-holmberg-mmusic-sdp-bundle-negotiation-00
+  // a=group:BUNDLE video voice
+	optional		string 					semantics 		= 1; // [BUNDLE]
+	repeated		string 					content_names	= 2; // [0, 1, ...]
+}
+
+message Media_Transport_Setting
+{
+	optional		string 				transport_name 			= 1;
+	optional		string 				transport_setting 		= 2;
+}
+
+
+message Session_Description
+{
+	repeated	Content_Info				contents			= 1;
+	repeated 	Transport_Description 		transport_infos		= 2;
+	repeated	Content_Group				content_groups		= 3; //a=group:BUNDLE 0 1
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////
+	optional	bool 						msid_supported		= 4; // a=msid-semantic: WMS local_stream_1
+	//// Default to what Plan B would do.
+  // TODO(bugs.webrtc.org/8530): Change default to kMsidSignalingMediaSection.
+	optional	int32 						msid_signaling 		= 5; /// [kMsidSignalingSsrcAttribute] msid [a=ssrc:3645401565 msid:glIuBfu3Z16JuczMQJqmBsbVl78PysmTooIR a9b63a87-fd12-49fb-910a-c13827512947]
+	
+	// TODO(webrtc:9985): Activate mixed one- and two-byte header extension in
+  // offer at session level. It's currently not included in offer by default
+  // because clients prior to https://bugs.webrtc.org/9712 cannot parse this
+  // correctly. If it's included in offer to us we will respond that we support
+  // it.
+	optional	bool 						extmap_allow_mixed	= 6; // a=extmap-allow-mixed
+	
+	repeated	Media_Transport_Setting			media_transport_settings = 7; //
+}
+

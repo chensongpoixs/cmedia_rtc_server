@@ -130,6 +130,9 @@
     <Filter Include="msg">
       <UniqueIdentifier>{e3178b1b-a53f-4582-8522-47d04eb058d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rtc_sdp">
+      <UniqueIdentifier>{801b5d36-9592-4ef0-8d27-d56911db4136}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -531,6 +534,21 @@
     </ClCompile>
     <ClCompile Include="RtpListener.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="rtc_sdp\RtcSdp.pb.cc">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtc_sdp\RtcSdpDefine.pb.cc">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="rtc_sdp\RtcSdpEnumDefine.pb.cc">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_sdp.cpp">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_sdp_util.cpp">
+      <Filter>rtc_sdp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -995,6 +1013,24 @@
     </ClInclude>
     <ClInclude Include="RtpListener.hpp">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="rtc_sdp\RtcSdp.pb.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtc_sdp\RtcSdpDefine.pb.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="rtc_sdp\RtcSdpEnumDefine.pb.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_sdp.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_sdp_util.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_sdp_define.h">
+      <Filter>rtc_sdp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

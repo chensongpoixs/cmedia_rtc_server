@@ -1,0 +1,81 @@
+
+ syntax = "proto2";
+ option optimize_for = LITE_RUNTIME;
+ 
+ 
+ enum Ice_Mode
+{
+	ICEMODE_FULL 	= 0;  // As defined in http://tools.ietf.org/html/rfc5245#section-4.1
+	ICEMODE_LITE   	= 1; // As defined in http://tools.ietf.org/html/rfc5245#section-4.2
+}
+
+
+// RFC 4145 - http://tools.ietf.org/html/rfc4145#section-4
+// 'active':  The endpoint will initiate an outgoing connection.
+// 'passive': The endpoint will accept an incoming connection.
+// 'actpass': The endpoint is willing to accept an incoming
+//            connection or to initiate an outgoing connection.
+///*a = setup 主要是表示dtls的协商过程中角色的问题，谁是客户端，谁是服务器
+//a = setup:actpass 既可以是客户端，也可以是服务器
+//a = setup : active 客户端
+//a = setup : passive 服务器
+//由客户端先发起client hello*/
+enum Connection_Role 
+{
+  CONNECTIONROLE_NONE 		= 0;
+  CONNECTIONROLE_ACTIVE 	= 1;
+  CONNECTIONROLE_PASSIVE 	= 2;
+  CONNECTIONROLE_ACTPASS 	= 3;
+  CONNECTIONROLE_HOLDCONN 	= 4;
+}
+
+
+
+enum  Rid_Direction 
+{ 
+	kSend = 0; 
+	kReceive = 1;
+}
+
+
+
+
+// https://w3c.github.io/webrtc-pc/#dom-rtcrtptransceiverdirection
+enum  Rtp_Transceiver_Direction 
+{
+  kSendRecv	= 0;
+  kSendOnly	= 1;
+  kRecvOnly	= 2;
+  kInactive	= 3;
+}
+
+
+// Determines if it's allowed to mix one- and two-byte rtp header extensions
+  // within the same rtp stream.
+enum Extmap_Allow_Mixed 
+{ 
+	kNo = 0; 
+	kSession = 1; 
+	kMedia  = 2;
+
+}
+
+
+// Protocol used for encoding media. This is the "top level" protocol that may
+// be wrapped by zero or many transport protocols (UDP, ICE, etc.).
+enum   Media_Protocol_Type {
+  kRtp	 = 0;  // Section will use the RTP protocol (e.g., for audio or video).
+         // https://tools.ietf.org/html/rfc3550
+  kSctp  = 1; // // Section will use the SCTP protocol (e.g., for a data channel).
+         // https://tools.ietf.org/html/rfc4960
+}
+
+
+// Determines how the MSID will be signaled in the SDP. These can be used as
+// flags to indicate both or none.
+enum Msid_Signaling {
+  // Signal MSID with one a=msid line in the media section.
+  kMsidSignalingMediaSection = 0x1;
+  // Signal MSID with a=ssrc: msid lines in the media section.
+  kMsidSignalingSsrcAttribute = 0x2;
+};
