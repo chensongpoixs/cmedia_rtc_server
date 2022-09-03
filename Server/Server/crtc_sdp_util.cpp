@@ -331,7 +331,7 @@ namespace chen {
 		}
 
 #endif 
-		int inet_pton(int af, const char* src, void* dst) 
+		int cinet_pton(int af, const char* src, void* dst) 
 		{
 #if defined(_MSC_VER)
 #include <ws2spi.h>

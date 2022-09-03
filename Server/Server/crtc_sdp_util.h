@@ -12,7 +12,11 @@ purpose:		crtc_sdp_util
 #define _C_RTC_SDP_UTIL_H_
 #include <string>
 #include <vector>
-
+#pragma warning (push)
+#pragma warning (disable : 4005)
+#include <intsafe.h>
+#include <stdint.h>
+#pragma warning (pop)
 namespace chen {
 	namespace rtc_sdp_util
 	{
@@ -27,7 +31,7 @@ namespace chen {
 			const char delimiter,
 			std::string* token,
 			std::string* rest);
-		int inet_pton(int af, const char* src, void* dst);
+		int cinet_pton(int af, const char* src, void* dst);
 
 		bool is_rtp(const std::string &protocol);
 		bool is_dtls_sctp(const std::string & protocol);

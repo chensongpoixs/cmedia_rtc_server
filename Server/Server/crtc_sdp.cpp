@@ -10,6 +10,9 @@ purpose:		crtc_sdp
 #include "crtc_sdp.h"
 #include "crtc_sdp_util.h"
 #include "crtc_sdp_define.h"
+#include <absl/utility/utility.h>
+#include <absl/types/optional.h>
+
 #if defined(_MSC_VER)
 #include <ws2spi.h>
 #include <ws2tcpip.h>
@@ -286,7 +289,7 @@ namespace chen {
 		int>::type = 0>
 		static bool FromString(const std::string& s, T* t) {
 		//RTC_DCHECK(t);
-		absl::optional<T> result = StringToNumber<T>(s);
+		absl::optional<T> result =  std::atol(s.c_str())/*StringToNumber<T>(s)*/;
 
 		if (result)
 			*t = *result;
@@ -774,10 +777,10 @@ namespace chen {
 
 
 		in_addr addr;
-		if (rtc_sdp_util::inet_pton(AF_INET, rightpart.c_str(), &addr) == 0) 
+		if (rtc_sdp_util::cinet_pton(AF_INET, rightpart.c_str(), &addr) == 0) 
 		{
 			in6_addr addr6;
-			if (rtc_sdp_util::inet_pton(AF_INET6, rightpart.c_str(), &addr6) == 0) 
+			if (rtc_sdp_util::cinet_pton(AF_INET6, rightpart.c_str(), &addr6) == 0) 
 			{
 				//*out = IPAddress();
 				return false;
