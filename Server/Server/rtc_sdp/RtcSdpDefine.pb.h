@@ -44,7 +44,7 @@ struct TableStruct_RtcSdpDefine_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::ParseTable schema[10]
+  static const ::google::protobuf::internal::ParseTable schema[12]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
@@ -53,12 +53,18 @@ struct TableStruct_RtcSdpDefine_2eproto {
 class Crypto_Params;
 class Crypto_ParamsDefaultTypeInternal;
 extern Crypto_ParamsDefaultTypeInternal _Crypto_Params_default_instance_;
+class RTC_Candidate;
+class RTC_CandidateDefaultTypeInternal;
+extern RTC_CandidateDefaultTypeInternal _RTC_Candidate_default_instance_;
 class Rid_Description;
 class Rid_DescriptionDefaultTypeInternal;
 extern Rid_DescriptionDefaultTypeInternal _Rid_Description_default_instance_;
 class Rid_Description_RestrictionsEntry_DoNotUse;
 class Rid_Description_RestrictionsEntry_DoNotUseDefaultTypeInternal;
 extern Rid_Description_RestrictionsEntry_DoNotUseDefaultTypeInternal _Rid_Description_RestrictionsEntry_DoNotUse_default_instance_;
+class Rtc_Ssrc_Info;
+class Rtc_Ssrc_InfoDefaultTypeInternal;
+extern Rtc_Ssrc_InfoDefaultTypeInternal _Rtc_Ssrc_Info_default_instance_;
 class Rtp_Extension;
 class Rtp_ExtensionDefaultTypeInternal;
 extern Rtp_ExtensionDefaultTypeInternal _Rtp_Extension_default_instance_;
@@ -83,8 +89,10 @@ extern Ssrc_GroupDefaultTypeInternal _Ssrc_Group_default_instance_;
 namespace google {
 namespace protobuf {
 template<> ::Crypto_Params* Arena::CreateMaybeMessage<::Crypto_Params>(Arena*);
+template<> ::RTC_Candidate* Arena::CreateMaybeMessage<::RTC_Candidate>(Arena*);
 template<> ::Rid_Description* Arena::CreateMaybeMessage<::Rid_Description>(Arena*);
 template<> ::Rid_Description_RestrictionsEntry_DoNotUse* Arena::CreateMaybeMessage<::Rid_Description_RestrictionsEntry_DoNotUse>(Arena*);
+template<> ::Rtc_Ssrc_Info* Arena::CreateMaybeMessage<::Rtc_Ssrc_Info>(Arena*);
 template<> ::Rtp_Extension* Arena::CreateMaybeMessage<::Rtp_Extension>(Arena*);
 template<> ::Simulcast_Description* Arena::CreateMaybeMessage<::Simulcast_Description>(Arena*);
 template<> ::Simulcast_Layer* Arena::CreateMaybeMessage<::Simulcast_Layer>(Arena*);
@@ -1419,6 +1427,312 @@ class Simulcast_Description final :
   ::google::protobuf::RepeatedPtrField< ::Simulcast_Layer_List > receive_layers_;
   friend struct ::TableStruct_RtcSdpDefine_2eproto;
 };
+// -------------------------------------------------------------------
+
+class RTC_Candidate final :
+    public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:RTC_Candidate) */ {
+ public:
+  RTC_Candidate();
+  virtual ~RTC_Candidate();
+
+  RTC_Candidate(const RTC_Candidate& from);
+
+  inline RTC_Candidate& operator=(const RTC_Candidate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  RTC_Candidate(RTC_Candidate&& from) noexcept
+    : RTC_Candidate() {
+    *this = ::std::move(from);
+  }
+
+  inline RTC_Candidate& operator=(RTC_Candidate&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  inline const ::std::string& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::std::string* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const RTC_Candidate& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const RTC_Candidate* internal_default_instance() {
+    return reinterpret_cast<const RTC_Candidate*>(
+               &_RTC_Candidate_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  void Swap(RTC_Candidate* other);
+  friend void swap(RTC_Candidate& a, RTC_Candidate& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline RTC_Candidate* New() const final {
+    return CreateMaybeMessage<RTC_Candidate>(nullptr);
+  }
+
+  RTC_Candidate* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<RTC_Candidate>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    final;
+  void CopyFrom(const RTC_Candidate& from);
+  void MergeFrom(const RTC_Candidate& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(RTC_Candidate* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:RTC_Candidate)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::internal::HasBits<1> _has_bits_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_RtcSdpDefine_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Rtc_Ssrc_Info final :
+    public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:Rtc_Ssrc_Info) */ {
+ public:
+  Rtc_Ssrc_Info();
+  virtual ~Rtc_Ssrc_Info();
+
+  Rtc_Ssrc_Info(const Rtc_Ssrc_Info& from);
+
+  inline Rtc_Ssrc_Info& operator=(const Rtc_Ssrc_Info& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Rtc_Ssrc_Info(Rtc_Ssrc_Info&& from) noexcept
+    : Rtc_Ssrc_Info() {
+    *this = ::std::move(from);
+  }
+
+  inline Rtc_Ssrc_Info& operator=(Rtc_Ssrc_Info&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  inline const ::std::string& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::std::string* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const Rtc_Ssrc_Info& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Rtc_Ssrc_Info* internal_default_instance() {
+    return reinterpret_cast<const Rtc_Ssrc_Info*>(
+               &_Rtc_Ssrc_Info_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    11;
+
+  void Swap(Rtc_Ssrc_Info* other);
+  friend void swap(Rtc_Ssrc_Info& a, Rtc_Ssrc_Info& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Rtc_Ssrc_Info* New() const final {
+    return CreateMaybeMessage<Rtc_Ssrc_Info>(nullptr);
+  }
+
+  Rtc_Ssrc_Info* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<Rtc_Ssrc_Info>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    final;
+  void CopyFrom(const Rtc_Ssrc_Info& from);
+  void MergeFrom(const Rtc_Ssrc_Info& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Rtc_Ssrc_Info* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string cname = 2;
+  bool has_cname() const;
+  void clear_cname();
+  static const int kCnameFieldNumber = 2;
+  const ::std::string& cname() const;
+  void set_cname(const ::std::string& value);
+  #if LANG_CXX11
+  void set_cname(::std::string&& value);
+  #endif
+  void set_cname(const char* value);
+  void set_cname(const char* value, size_t size);
+  ::std::string* mutable_cname();
+  ::std::string* release_cname();
+  void set_allocated_cname(::std::string* cname);
+
+  // optional string stream_id = 3;
+  bool has_stream_id() const;
+  void clear_stream_id();
+  static const int kStreamIdFieldNumber = 3;
+  const ::std::string& stream_id() const;
+  void set_stream_id(const ::std::string& value);
+  #if LANG_CXX11
+  void set_stream_id(::std::string&& value);
+  #endif
+  void set_stream_id(const char* value);
+  void set_stream_id(const char* value, size_t size);
+  ::std::string* mutable_stream_id();
+  ::std::string* release_stream_id();
+  void set_allocated_stream_id(::std::string* stream_id);
+
+  // optional string track_id = 4;
+  bool has_track_id() const;
+  void clear_track_id();
+  static const int kTrackIdFieldNumber = 4;
+  const ::std::string& track_id() const;
+  void set_track_id(const ::std::string& value);
+  #if LANG_CXX11
+  void set_track_id(::std::string&& value);
+  #endif
+  void set_track_id(const char* value);
+  void set_track_id(const char* value, size_t size);
+  ::std::string* mutable_track_id();
+  ::std::string* release_track_id();
+  void set_allocated_track_id(::std::string* track_id);
+
+  // optional string label = 5;
+  bool has_label() const;
+  void clear_label();
+  static const int kLabelFieldNumber = 5;
+  const ::std::string& label() const;
+  void set_label(const ::std::string& value);
+  #if LANG_CXX11
+  void set_label(::std::string&& value);
+  #endif
+  void set_label(const char* value);
+  void set_label(const char* value, size_t size);
+  ::std::string* mutable_label();
+  ::std::string* release_label();
+  void set_allocated_label(::std::string* label);
+
+  // optional string mslabel = 6;
+  bool has_mslabel() const;
+  void clear_mslabel();
+  static const int kMslabelFieldNumber = 6;
+  const ::std::string& mslabel() const;
+  void set_mslabel(const ::std::string& value);
+  #if LANG_CXX11
+  void set_mslabel(::std::string&& value);
+  #endif
+  void set_mslabel(const char* value);
+  void set_mslabel(const char* value, size_t size);
+  ::std::string* mutable_mslabel();
+  ::std::string* release_mslabel();
+  void set_allocated_mslabel(::std::string* mslabel);
+
+  // optional uint32 ssrc_id = 1;
+  bool has_ssrc_id() const;
+  void clear_ssrc_id();
+  static const int kSsrcIdFieldNumber = 1;
+  ::google::protobuf::uint32 ssrc_id() const;
+  void set_ssrc_id(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:Rtc_Ssrc_Info)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::internal::HasBits<1> _has_bits_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  ::google::protobuf::internal::ArenaStringPtr cname_;
+  ::google::protobuf::internal::ArenaStringPtr stream_id_;
+  ::google::protobuf::internal::ArenaStringPtr track_id_;
+  ::google::protobuf::internal::ArenaStringPtr label_;
+  ::google::protobuf::internal::ArenaStringPtr mslabel_;
+  ::google::protobuf::uint32 ssrc_id_;
+  friend struct ::TableStruct_RtcSdpDefine_2eproto;
+};
 // ===================================================================
 
 
@@ -2437,9 +2751,339 @@ Simulcast_Description::receive_layers() const {
   return receive_layers_;
 }
 
+// -------------------------------------------------------------------
+
+// RTC_Candidate
+
+// -------------------------------------------------------------------
+
+// Rtc_Ssrc_Info
+
+// optional uint32 ssrc_id = 1;
+inline bool Rtc_Ssrc_Info::has_ssrc_id() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void Rtc_Ssrc_Info::clear_ssrc_id() {
+  ssrc_id_ = 0u;
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline ::google::protobuf::uint32 Rtc_Ssrc_Info::ssrc_id() const {
+  // @@protoc_insertion_point(field_get:Rtc_Ssrc_Info.ssrc_id)
+  return ssrc_id_;
+}
+inline void Rtc_Ssrc_Info::set_ssrc_id(::google::protobuf::uint32 value) {
+  _has_bits_[0] |= 0x00000020u;
+  ssrc_id_ = value;
+  // @@protoc_insertion_point(field_set:Rtc_Ssrc_Info.ssrc_id)
+}
+
+// optional string cname = 2;
+inline bool Rtc_Ssrc_Info::has_cname() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Rtc_Ssrc_Info::clear_cname() {
+  cname_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::std::string& Rtc_Ssrc_Info::cname() const {
+  // @@protoc_insertion_point(field_get:Rtc_Ssrc_Info.cname)
+  return cname_.GetNoArena();
+}
+inline void Rtc_Ssrc_Info::set_cname(const ::std::string& value) {
+  _has_bits_[0] |= 0x00000001u;
+  cname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Rtc_Ssrc_Info.cname)
+}
+#if LANG_CXX11
+inline void Rtc_Ssrc_Info::set_cname(::std::string&& value) {
+  _has_bits_[0] |= 0x00000001u;
+  cname_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Rtc_Ssrc_Info.cname)
+}
+#endif
+inline void Rtc_Ssrc_Info::set_cname(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _has_bits_[0] |= 0x00000001u;
+  cname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Rtc_Ssrc_Info.cname)
+}
+inline void Rtc_Ssrc_Info::set_cname(const char* value, size_t size) {
+  _has_bits_[0] |= 0x00000001u;
+  cname_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Rtc_Ssrc_Info.cname)
+}
+inline ::std::string* Rtc_Ssrc_Info::mutable_cname() {
+  _has_bits_[0] |= 0x00000001u;
+  // @@protoc_insertion_point(field_mutable:Rtc_Ssrc_Info.cname)
+  return cname_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Rtc_Ssrc_Info::release_cname() {
+  // @@protoc_insertion_point(field_release:Rtc_Ssrc_Info.cname)
+  if (!has_cname()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000001u;
+  return cname_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Rtc_Ssrc_Info::set_allocated_cname(::std::string* cname) {
+  if (cname != nullptr) {
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  cname_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), cname);
+  // @@protoc_insertion_point(field_set_allocated:Rtc_Ssrc_Info.cname)
+}
+
+// optional string stream_id = 3;
+inline bool Rtc_Ssrc_Info::has_stream_id() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void Rtc_Ssrc_Info::clear_stream_id() {
+  stream_id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline const ::std::string& Rtc_Ssrc_Info::stream_id() const {
+  // @@protoc_insertion_point(field_get:Rtc_Ssrc_Info.stream_id)
+  return stream_id_.GetNoArena();
+}
+inline void Rtc_Ssrc_Info::set_stream_id(const ::std::string& value) {
+  _has_bits_[0] |= 0x00000002u;
+  stream_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Rtc_Ssrc_Info.stream_id)
+}
+#if LANG_CXX11
+inline void Rtc_Ssrc_Info::set_stream_id(::std::string&& value) {
+  _has_bits_[0] |= 0x00000002u;
+  stream_id_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Rtc_Ssrc_Info.stream_id)
+}
+#endif
+inline void Rtc_Ssrc_Info::set_stream_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _has_bits_[0] |= 0x00000002u;
+  stream_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Rtc_Ssrc_Info.stream_id)
+}
+inline void Rtc_Ssrc_Info::set_stream_id(const char* value, size_t size) {
+  _has_bits_[0] |= 0x00000002u;
+  stream_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Rtc_Ssrc_Info.stream_id)
+}
+inline ::std::string* Rtc_Ssrc_Info::mutable_stream_id() {
+  _has_bits_[0] |= 0x00000002u;
+  // @@protoc_insertion_point(field_mutable:Rtc_Ssrc_Info.stream_id)
+  return stream_id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Rtc_Ssrc_Info::release_stream_id() {
+  // @@protoc_insertion_point(field_release:Rtc_Ssrc_Info.stream_id)
+  if (!has_stream_id()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000002u;
+  return stream_id_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Rtc_Ssrc_Info::set_allocated_stream_id(::std::string* stream_id) {
+  if (stream_id != nullptr) {
+    _has_bits_[0] |= 0x00000002u;
+  } else {
+    _has_bits_[0] &= ~0x00000002u;
+  }
+  stream_id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), stream_id);
+  // @@protoc_insertion_point(field_set_allocated:Rtc_Ssrc_Info.stream_id)
+}
+
+// optional string track_id = 4;
+inline bool Rtc_Ssrc_Info::has_track_id() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Rtc_Ssrc_Info::clear_track_id() {
+  track_id_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline const ::std::string& Rtc_Ssrc_Info::track_id() const {
+  // @@protoc_insertion_point(field_get:Rtc_Ssrc_Info.track_id)
+  return track_id_.GetNoArena();
+}
+inline void Rtc_Ssrc_Info::set_track_id(const ::std::string& value) {
+  _has_bits_[0] |= 0x00000004u;
+  track_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Rtc_Ssrc_Info.track_id)
+}
+#if LANG_CXX11
+inline void Rtc_Ssrc_Info::set_track_id(::std::string&& value) {
+  _has_bits_[0] |= 0x00000004u;
+  track_id_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Rtc_Ssrc_Info.track_id)
+}
+#endif
+inline void Rtc_Ssrc_Info::set_track_id(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _has_bits_[0] |= 0x00000004u;
+  track_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Rtc_Ssrc_Info.track_id)
+}
+inline void Rtc_Ssrc_Info::set_track_id(const char* value, size_t size) {
+  _has_bits_[0] |= 0x00000004u;
+  track_id_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Rtc_Ssrc_Info.track_id)
+}
+inline ::std::string* Rtc_Ssrc_Info::mutable_track_id() {
+  _has_bits_[0] |= 0x00000004u;
+  // @@protoc_insertion_point(field_mutable:Rtc_Ssrc_Info.track_id)
+  return track_id_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Rtc_Ssrc_Info::release_track_id() {
+  // @@protoc_insertion_point(field_release:Rtc_Ssrc_Info.track_id)
+  if (!has_track_id()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000004u;
+  return track_id_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Rtc_Ssrc_Info::set_allocated_track_id(::std::string* track_id) {
+  if (track_id != nullptr) {
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  track_id_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), track_id);
+  // @@protoc_insertion_point(field_set_allocated:Rtc_Ssrc_Info.track_id)
+}
+
+// optional string label = 5;
+inline bool Rtc_Ssrc_Info::has_label() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void Rtc_Ssrc_Info::clear_label() {
+  label_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline const ::std::string& Rtc_Ssrc_Info::label() const {
+  // @@protoc_insertion_point(field_get:Rtc_Ssrc_Info.label)
+  return label_.GetNoArena();
+}
+inline void Rtc_Ssrc_Info::set_label(const ::std::string& value) {
+  _has_bits_[0] |= 0x00000008u;
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Rtc_Ssrc_Info.label)
+}
+#if LANG_CXX11
+inline void Rtc_Ssrc_Info::set_label(::std::string&& value) {
+  _has_bits_[0] |= 0x00000008u;
+  label_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Rtc_Ssrc_Info.label)
+}
+#endif
+inline void Rtc_Ssrc_Info::set_label(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _has_bits_[0] |= 0x00000008u;
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Rtc_Ssrc_Info.label)
+}
+inline void Rtc_Ssrc_Info::set_label(const char* value, size_t size) {
+  _has_bits_[0] |= 0x00000008u;
+  label_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Rtc_Ssrc_Info.label)
+}
+inline ::std::string* Rtc_Ssrc_Info::mutable_label() {
+  _has_bits_[0] |= 0x00000008u;
+  // @@protoc_insertion_point(field_mutable:Rtc_Ssrc_Info.label)
+  return label_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Rtc_Ssrc_Info::release_label() {
+  // @@protoc_insertion_point(field_release:Rtc_Ssrc_Info.label)
+  if (!has_label()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000008u;
+  return label_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Rtc_Ssrc_Info::set_allocated_label(::std::string* label) {
+  if (label != nullptr) {
+    _has_bits_[0] |= 0x00000008u;
+  } else {
+    _has_bits_[0] &= ~0x00000008u;
+  }
+  label_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), label);
+  // @@protoc_insertion_point(field_set_allocated:Rtc_Ssrc_Info.label)
+}
+
+// optional string mslabel = 6;
+inline bool Rtc_Ssrc_Info::has_mslabel() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void Rtc_Ssrc_Info::clear_mslabel() {
+  mslabel_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline const ::std::string& Rtc_Ssrc_Info::mslabel() const {
+  // @@protoc_insertion_point(field_get:Rtc_Ssrc_Info.mslabel)
+  return mslabel_.GetNoArena();
+}
+inline void Rtc_Ssrc_Info::set_mslabel(const ::std::string& value) {
+  _has_bits_[0] |= 0x00000010u;
+  mslabel_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Rtc_Ssrc_Info.mslabel)
+}
+#if LANG_CXX11
+inline void Rtc_Ssrc_Info::set_mslabel(::std::string&& value) {
+  _has_bits_[0] |= 0x00000010u;
+  mslabel_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:Rtc_Ssrc_Info.mslabel)
+}
+#endif
+inline void Rtc_Ssrc_Info::set_mslabel(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  _has_bits_[0] |= 0x00000010u;
+  mslabel_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Rtc_Ssrc_Info.mslabel)
+}
+inline void Rtc_Ssrc_Info::set_mslabel(const char* value, size_t size) {
+  _has_bits_[0] |= 0x00000010u;
+  mslabel_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Rtc_Ssrc_Info.mslabel)
+}
+inline ::std::string* Rtc_Ssrc_Info::mutable_mslabel() {
+  _has_bits_[0] |= 0x00000010u;
+  // @@protoc_insertion_point(field_mutable:Rtc_Ssrc_Info.mslabel)
+  return mslabel_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Rtc_Ssrc_Info::release_mslabel() {
+  // @@protoc_insertion_point(field_release:Rtc_Ssrc_Info.mslabel)
+  if (!has_mslabel()) {
+    return nullptr;
+  }
+  _has_bits_[0] &= ~0x00000010u;
+  return mslabel_.ReleaseNonDefaultNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Rtc_Ssrc_Info::set_allocated_mslabel(::std::string* mslabel) {
+  if (mslabel != nullptr) {
+    _has_bits_[0] |= 0x00000010u;
+  } else {
+    _has_bits_[0] &= ~0x00000010u;
+  }
+  mslabel_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), mslabel);
+  // @@protoc_insertion_point(field_set_allocated:Rtc_Ssrc_Info.mslabel)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

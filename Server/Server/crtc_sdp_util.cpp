@@ -92,7 +92,8 @@ namespace chen {
 				protocol == "RTP/SAVP" || protocol == "RTP/AVP";
 		}
 
-		static bool IsDtlsSctp(const std::string& protocol) {
+		static bool IsDtlsSctp(const std::string& protocol) 
+		{
 			return protocol == kMediaProtocolDtlsSctp ||
 				protocol == kMediaProtocolUdpDtlsSctp ||
 				protocol == kMediaProtocolTcpDtlsSctp;

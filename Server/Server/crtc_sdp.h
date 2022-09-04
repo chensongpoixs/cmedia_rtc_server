@@ -15,12 +15,14 @@ purpose:		crtc_sdp
 #include <cstdint>
 #include <string>
 #include "RtcSdp.pb.h"
+#include "crtc_sdp_define.h"
 namespace chen {
 	class crtc_sdp
 	{
 	public:
 		crtc_sdp()
-			:m_session_description()
+			: m_session_td()
+			, m_session_description()
 			, m_current_pos(0)
 		{}
 		~crtc_sdp();
@@ -50,8 +52,24 @@ namespace chen {
 
 		bool _parse_extmap(const std::string& line,
 			Rtp_Extension* extmap);
+
+
+
+		/////////////////////////////
+		bool _parse_content(const std::string& message,
+			const  MediaType media_type,
+			int mline_index,
+			const std::string& protocol,
+			const std::vector<int>& payload_types,
+			size_t* pos,
+			std::string* content_name,
+			bool* bundle_only,
+			int* msid_signaling,  
+			Transport_Description& transport);
 	private:
+		Transport_Description			m_session_td;
 		Session_Description				m_session_description;
+
 		size_t							m_current_pos;
 	};
 }

@@ -12,6 +12,7 @@ purpose:		crtc_sdp_util
 #define _C_RTC_SDP_UTIL_H_
 #include <string>
 #include <vector>
+#include "crtc_sdp_define.h"
 #pragma warning (push)
 #pragma warning (disable : 4005)
 #include <intsafe.h>
@@ -35,6 +36,15 @@ namespace chen {
 
 		bool is_rtp(const std::string &protocol);
 		bool is_dtls_sctp(const std::string & protocol);
+
+		/*template<typename C>
+		C parse_content_description(const std::string & message, const MediaType media_type, int32_t mline_index, const std::string & protocol, const std::vector<int>& payload_types, size_t * pos, std::string * content_name, bool* bundle_only, int* msid_signaling)
+		{
+
+		}*/
+		 
+		 
+
 	}
 }
 

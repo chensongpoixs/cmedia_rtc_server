@@ -213,3 +213,22 @@ message Simulcast_Description
 	repeated	Simulcast_Layer_List			receive_layers	= 2; 
 }
   
+
+
+message RTC_Candidate
+{
+	
+}
+
+message Rtc_Ssrc_Info
+{
+		optional uint32 ssrc_id = 1;
+		optional string cname = 2;
+		optional string stream_id = 3;
+		optional string track_id = 4;
+
+  // For backward compatibility.
+  // TODO(ronghuawu): Remove below 2 fields once all the clients support msid.
+		optional string label = 5;
+		optional string mslabel= 6;
+}
