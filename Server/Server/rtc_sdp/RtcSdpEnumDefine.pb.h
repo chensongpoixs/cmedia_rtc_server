@@ -120,6 +120,18 @@ const Msid_Signaling Msid_Signaling_MIN = kMsidSignalingMediaSection;
 const Msid_Signaling Msid_Signaling_MAX = kMsidSignalingSsrcAttribute;
 const int Msid_Signaling_ARRAYSIZE = Msid_Signaling_MAX + 1;
 
+enum CodecType {
+  CODEC_VIDEO = 0,
+  CODEC_RED = 1,
+  CODEC_ULPFEC = 2,
+  CODEC_FLEXFEC = 3,
+  CODEC_RTX = 4
+};
+bool CodecType_IsValid(int value);
+const CodecType CodecType_MIN = CODEC_VIDEO;
+const CodecType CodecType_MAX = CODEC_RTX;
+const int CodecType_ARRAYSIZE = CodecType_MAX + 1;
+
 // ===================================================================
 
 
@@ -149,6 +161,7 @@ template <> struct is_proto_enum< ::Rtp_Transceiver_Direction> : ::std::true_typ
 template <> struct is_proto_enum< ::Extmap_Allow_Mixed> : ::std::true_type {};
 template <> struct is_proto_enum< ::Media_Protocol_Type> : ::std::true_type {};
 template <> struct is_proto_enum< ::Msid_Signaling> : ::std::true_type {};
+template <> struct is_proto_enum< ::CodecType> : ::std::true_type {};
 
 }  // namespace protobuf
 }  // namespace google

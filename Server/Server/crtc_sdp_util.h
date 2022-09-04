@@ -21,6 +21,12 @@ purpose:		crtc_sdp_util
 namespace chen {
 	namespace rtc_sdp_util
 	{
+
+		// Remove leading and trailing whitespaces.
+		std::string string_trim(const std::string& s);
+
+
+
 		size_t split(const std::string& source,
 			char delimiter,
 			std::vector<std::string>* fields);

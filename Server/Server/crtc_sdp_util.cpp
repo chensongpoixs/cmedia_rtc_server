@@ -76,6 +76,9 @@ namespace chen {
 		const char kMediaProtocolUdpDtlsSctp[] = "UDP/DTLS/SCTP";
 		const char kMediaProtocolTcpDtlsSctp[] = "TCP/DTLS/SCTP";
 
+
+		static const char kWhitespace[] = " \n\r\t";
+
 		// Note that the below functions support some protocol strings purely for
 		// legacy compatibility, as required by JSEP in Section 5.1.2, Profile Names
 		// and Interoperability.
@@ -105,6 +108,18 @@ namespace chen {
 
 		static bool IsSctp(const std::string& protocol) {
 			return IsPlainSctp(protocol) || IsDtlsSctp(protocol);
+		}
+
+		std::string string_trim(const std::string & s)
+		{
+			std::string::size_type first = s.find_first_not_of(kWhitespace);
+			std::string::size_type last = s.find_last_not_of(kWhitespace);
+
+			if (first == std::string::npos || last == std::string::npos) {
+				return std::string("");
+			}
+
+			return s.substr(first, last - first + 1);
 		}
 
 		size_t split(const std::string & source, char delimiter, std::vector<std::string>* fields)

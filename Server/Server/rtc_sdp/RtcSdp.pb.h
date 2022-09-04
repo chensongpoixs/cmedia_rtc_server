@@ -42,7 +42,7 @@ struct TableStruct_RtcSdp_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::ParseTable schema[7]
+  static const ::google::protobuf::internal::ParseTable schema[10]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
@@ -54,12 +54,21 @@ extern Content_GroupDefaultTypeInternal _Content_Group_default_instance_;
 class Content_Info;
 class Content_InfoDefaultTypeInternal;
 extern Content_InfoDefaultTypeInternal _Content_Info_default_instance_;
+class Media_Audio_Content_Description;
+class Media_Audio_Content_DescriptionDefaultTypeInternal;
+extern Media_Audio_Content_DescriptionDefaultTypeInternal _Media_Audio_Content_Description_default_instance_;
 class Media_Content_Description;
 class Media_Content_DescriptionDefaultTypeInternal;
 extern Media_Content_DescriptionDefaultTypeInternal _Media_Content_Description_default_instance_;
+class Media_Data_Content_Description;
+class Media_Data_Content_DescriptionDefaultTypeInternal;
+extern Media_Data_Content_DescriptionDefaultTypeInternal _Media_Data_Content_Description_default_instance_;
 class Media_Transport_Setting;
 class Media_Transport_SettingDefaultTypeInternal;
 extern Media_Transport_SettingDefaultTypeInternal _Media_Transport_Setting_default_instance_;
+class Media_Video_Content_Description;
+class Media_Video_Content_DescriptionDefaultTypeInternal;
+extern Media_Video_Content_DescriptionDefaultTypeInternal _Media_Video_Content_Description_default_instance_;
 class Session_Description;
 class Session_DescriptionDefaultTypeInternal;
 extern Session_DescriptionDefaultTypeInternal _Session_Description_default_instance_;
@@ -73,8 +82,11 @@ namespace google {
 namespace protobuf {
 template<> ::Content_Group* Arena::CreateMaybeMessage<::Content_Group>(Arena*);
 template<> ::Content_Info* Arena::CreateMaybeMessage<::Content_Info>(Arena*);
+template<> ::Media_Audio_Content_Description* Arena::CreateMaybeMessage<::Media_Audio_Content_Description>(Arena*);
 template<> ::Media_Content_Description* Arena::CreateMaybeMessage<::Media_Content_Description>(Arena*);
+template<> ::Media_Data_Content_Description* Arena::CreateMaybeMessage<::Media_Data_Content_Description>(Arena*);
 template<> ::Media_Transport_Setting* Arena::CreateMaybeMessage<::Media_Transport_Setting>(Arena*);
+template<> ::Media_Video_Content_Description* Arena::CreateMaybeMessage<::Media_Video_Content_Description>(Arena*);
 template<> ::Session_Description* Arena::CreateMaybeMessage<::Session_Description>(Arena*);
 template<> ::Stream_Params* Arena::CreateMaybeMessage<::Stream_Params>(Arena*);
 template<> ::Transport_Description* Arena::CreateMaybeMessage<::Transport_Description>(Arena*);
@@ -748,6 +760,402 @@ class Media_Content_Description final :
 };
 // -------------------------------------------------------------------
 
+class Media_Audio_Content_Description final :
+    public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:Media_Audio_Content_Description) */ {
+ public:
+  Media_Audio_Content_Description();
+  virtual ~Media_Audio_Content_Description();
+
+  Media_Audio_Content_Description(const Media_Audio_Content_Description& from);
+
+  inline Media_Audio_Content_Description& operator=(const Media_Audio_Content_Description& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Media_Audio_Content_Description(Media_Audio_Content_Description&& from) noexcept
+    : Media_Audio_Content_Description() {
+    *this = ::std::move(from);
+  }
+
+  inline Media_Audio_Content_Description& operator=(Media_Audio_Content_Description&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  inline const ::std::string& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::std::string* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const Media_Audio_Content_Description& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Media_Audio_Content_Description* internal_default_instance() {
+    return reinterpret_cast<const Media_Audio_Content_Description*>(
+               &_Media_Audio_Content_Description_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  void Swap(Media_Audio_Content_Description* other);
+  friend void swap(Media_Audio_Content_Description& a, Media_Audio_Content_Description& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Media_Audio_Content_Description* New() const final {
+    return CreateMaybeMessage<Media_Audio_Content_Description>(nullptr);
+  }
+
+  Media_Audio_Content_Description* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<Media_Audio_Content_Description>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    final;
+  void CopyFrom(const Media_Audio_Content_Description& from);
+  void MergeFrom(const Media_Audio_Content_Description& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Media_Audio_Content_Description* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .Rtc_Audio_Codec audio_codecs = 1;
+  int audio_codecs_size() const;
+  void clear_audio_codecs();
+  static const int kAudioCodecsFieldNumber = 1;
+  ::Rtc_Audio_Codec* mutable_audio_codecs(int index);
+  ::google::protobuf::RepeatedPtrField< ::Rtc_Audio_Codec >*
+      mutable_audio_codecs();
+  const ::Rtc_Audio_Codec& audio_codecs(int index) const;
+  ::Rtc_Audio_Codec* add_audio_codecs();
+  const ::google::protobuf::RepeatedPtrField< ::Rtc_Audio_Codec >&
+      audio_codecs() const;
+
+  // optional .Media_Content_Description media_description = 2;
+  bool has_media_description() const;
+  void clear_media_description();
+  static const int kMediaDescriptionFieldNumber = 2;
+  const ::Media_Content_Description& media_description() const;
+  ::Media_Content_Description* release_media_description();
+  ::Media_Content_Description* mutable_media_description();
+  void set_allocated_media_description(::Media_Content_Description* media_description);
+
+  // @@protoc_insertion_point(class_scope:Media_Audio_Content_Description)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::internal::HasBits<1> _has_bits_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  ::google::protobuf::RepeatedPtrField< ::Rtc_Audio_Codec > audio_codecs_;
+  ::Media_Content_Description* media_description_;
+  friend struct ::TableStruct_RtcSdp_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Media_Video_Content_Description final :
+    public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:Media_Video_Content_Description) */ {
+ public:
+  Media_Video_Content_Description();
+  virtual ~Media_Video_Content_Description();
+
+  Media_Video_Content_Description(const Media_Video_Content_Description& from);
+
+  inline Media_Video_Content_Description& operator=(const Media_Video_Content_Description& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Media_Video_Content_Description(Media_Video_Content_Description&& from) noexcept
+    : Media_Video_Content_Description() {
+    *this = ::std::move(from);
+  }
+
+  inline Media_Video_Content_Description& operator=(Media_Video_Content_Description&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  inline const ::std::string& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::std::string* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const Media_Video_Content_Description& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Media_Video_Content_Description* internal_default_instance() {
+    return reinterpret_cast<const Media_Video_Content_Description*>(
+               &_Media_Video_Content_Description_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  void Swap(Media_Video_Content_Description* other);
+  friend void swap(Media_Video_Content_Description& a, Media_Video_Content_Description& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Media_Video_Content_Description* New() const final {
+    return CreateMaybeMessage<Media_Video_Content_Description>(nullptr);
+  }
+
+  Media_Video_Content_Description* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<Media_Video_Content_Description>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    final;
+  void CopyFrom(const Media_Video_Content_Description& from);
+  void MergeFrom(const Media_Video_Content_Description& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Media_Video_Content_Description* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .Rtc_Video_Codec video_codecs = 1;
+  int video_codecs_size() const;
+  void clear_video_codecs();
+  static const int kVideoCodecsFieldNumber = 1;
+  ::Rtc_Video_Codec* mutable_video_codecs(int index);
+  ::google::protobuf::RepeatedPtrField< ::Rtc_Video_Codec >*
+      mutable_video_codecs();
+  const ::Rtc_Video_Codec& video_codecs(int index) const;
+  ::Rtc_Video_Codec* add_video_codecs();
+  const ::google::protobuf::RepeatedPtrField< ::Rtc_Video_Codec >&
+      video_codecs() const;
+
+  // optional .Media_Content_Description media_description = 2;
+  bool has_media_description() const;
+  void clear_media_description();
+  static const int kMediaDescriptionFieldNumber = 2;
+  const ::Media_Content_Description& media_description() const;
+  ::Media_Content_Description* release_media_description();
+  ::Media_Content_Description* mutable_media_description();
+  void set_allocated_media_description(::Media_Content_Description* media_description);
+
+  // @@protoc_insertion_point(class_scope:Media_Video_Content_Description)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::internal::HasBits<1> _has_bits_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  ::google::protobuf::RepeatedPtrField< ::Rtc_Video_Codec > video_codecs_;
+  ::Media_Content_Description* media_description_;
+  friend struct ::TableStruct_RtcSdp_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Media_Data_Content_Description final :
+    public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:Media_Data_Content_Description) */ {
+ public:
+  Media_Data_Content_Description();
+  virtual ~Media_Data_Content_Description();
+
+  Media_Data_Content_Description(const Media_Data_Content_Description& from);
+
+  inline Media_Data_Content_Description& operator=(const Media_Data_Content_Description& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Media_Data_Content_Description(Media_Data_Content_Description&& from) noexcept
+    : Media_Data_Content_Description() {
+    *this = ::std::move(from);
+  }
+
+  inline Media_Data_Content_Description& operator=(Media_Data_Content_Description&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  inline const ::std::string& unknown_fields() const {
+    return _internal_metadata_.unknown_fields();
+  }
+  inline ::std::string* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields();
+  }
+
+  static const Media_Data_Content_Description& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Media_Data_Content_Description* internal_default_instance() {
+    return reinterpret_cast<const Media_Data_Content_Description*>(
+               &_Media_Data_Content_Description_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  void Swap(Media_Data_Content_Description* other);
+  friend void swap(Media_Data_Content_Description& a, Media_Data_Content_Description& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Media_Data_Content_Description* New() const final {
+    return CreateMaybeMessage<Media_Data_Content_Description>(nullptr);
+  }
+
+  Media_Data_Content_Description* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<Media_Data_Content_Description>(arena);
+  }
+  void CheckTypeAndMergeFrom(const ::google::protobuf::MessageLite& from)
+    final;
+  void CopyFrom(const Media_Data_Content_Description& from);
+  void MergeFrom(const Media_Data_Content_Description& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  void DiscardUnknownFields();
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Media_Data_Content_Description* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::std::string GetTypeName() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .Rtc_Data_Codec data_codecs = 1;
+  int data_codecs_size() const;
+  void clear_data_codecs();
+  static const int kDataCodecsFieldNumber = 1;
+  ::Rtc_Data_Codec* mutable_data_codecs(int index);
+  ::google::protobuf::RepeatedPtrField< ::Rtc_Data_Codec >*
+      mutable_data_codecs();
+  const ::Rtc_Data_Codec& data_codecs(int index) const;
+  ::Rtc_Data_Codec* add_data_codecs();
+  const ::google::protobuf::RepeatedPtrField< ::Rtc_Data_Codec >&
+      data_codecs() const;
+
+  // optional .Media_Content_Description media_description = 2;
+  bool has_media_description() const;
+  void clear_media_description();
+  static const int kMediaDescriptionFieldNumber = 2;
+  const ::Media_Content_Description& media_description() const;
+  ::Media_Content_Description* release_media_description();
+  ::Media_Content_Description* mutable_media_description();
+  void set_allocated_media_description(::Media_Content_Description* media_description);
+
+  // @@protoc_insertion_point(class_scope:Media_Data_Content_Description)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArenaLite _internal_metadata_;
+  ::google::protobuf::internal::HasBits<1> _has_bits_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  ::google::protobuf::RepeatedPtrField< ::Rtc_Data_Codec > data_codecs_;
+  ::Media_Content_Description* media_description_;
+  friend struct ::TableStruct_RtcSdp_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Content_Info final :
     public ::google::protobuf::MessageLite /* @@protoc_insertion_point(class_definition:Content_Info) */ {
  public:
@@ -790,7 +1198,7 @@ class Content_Info final :
                &_Content_Info_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    6;
 
   void Swap(Content_Info* other);
   friend void swap(Content_Info& a, Content_Info& b) {
@@ -861,14 +1269,32 @@ class Content_Info final :
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
-  // optional .Media_Content_Description description = 5;
-  bool has_description() const;
-  void clear_description();
-  static const int kDescriptionFieldNumber = 5;
-  const ::Media_Content_Description& description() const;
-  ::Media_Content_Description* release_description();
-  ::Media_Content_Description* mutable_description();
-  void set_allocated_description(::Media_Content_Description* description);
+  // optional .Media_Audio_Content_Description audio_description = 5;
+  bool has_audio_description() const;
+  void clear_audio_description();
+  static const int kAudioDescriptionFieldNumber = 5;
+  const ::Media_Audio_Content_Description& audio_description() const;
+  ::Media_Audio_Content_Description* release_audio_description();
+  ::Media_Audio_Content_Description* mutable_audio_description();
+  void set_allocated_audio_description(::Media_Audio_Content_Description* audio_description);
+
+  // optional .Media_Video_Content_Description video_description = 6;
+  bool has_video_description() const;
+  void clear_video_description();
+  static const int kVideoDescriptionFieldNumber = 6;
+  const ::Media_Video_Content_Description& video_description() const;
+  ::Media_Video_Content_Description* release_video_description();
+  ::Media_Video_Content_Description* mutable_video_description();
+  void set_allocated_video_description(::Media_Video_Content_Description* video_description);
+
+  // optional .Media_Data_Content_Description data_description = 7;
+  bool has_data_description() const;
+  void clear_data_description();
+  static const int kDataDescriptionFieldNumber = 7;
+  const ::Media_Data_Content_Description& data_description() const;
+  ::Media_Data_Content_Description* release_data_description();
+  ::Media_Data_Content_Description* mutable_data_description();
+  void set_allocated_data_description(::Media_Data_Content_Description* data_description);
 
   // optional .Media_Protocol_Type type = 2;
   bool has_type() const;
@@ -899,7 +1325,9 @@ class Content_Info final :
   ::google::protobuf::internal::HasBits<1> _has_bits_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::internal::ArenaStringPtr name_;
-  ::Media_Content_Description* description_;
+  ::Media_Audio_Content_Description* audio_description_;
+  ::Media_Video_Content_Description* video_description_;
+  ::Media_Data_Content_Description* data_description_;
   int type_;
   bool rejected_;
   bool bundle_only_;
@@ -949,7 +1377,7 @@ class Content_Group final :
                &_Content_Group_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    7;
 
   void Swap(Content_Group* other);
   friend void swap(Content_Group& a, Content_Group& b) {
@@ -1097,7 +1525,7 @@ class Media_Transport_Setting final :
                &_Media_Transport_Setting_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    8;
 
   void Swap(Media_Transport_Setting* other);
   friend void swap(Media_Transport_Setting& a, Media_Transport_Setting& b) {
@@ -1238,7 +1666,7 @@ class Session_Description final :
                &_Session_Description_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    9;
 
   void Swap(Session_Description* other);
   friend void swap(Session_Description& a, Session_Description& b) {
@@ -2427,6 +2855,246 @@ inline void Media_Content_Description::set_allocated_simulcast(::Simulcast_Descr
 
 // -------------------------------------------------------------------
 
+// Media_Audio_Content_Description
+
+// repeated .Rtc_Audio_Codec audio_codecs = 1;
+inline int Media_Audio_Content_Description::audio_codecs_size() const {
+  return audio_codecs_.size();
+}
+inline ::Rtc_Audio_Codec* Media_Audio_Content_Description::mutable_audio_codecs(int index) {
+  // @@protoc_insertion_point(field_mutable:Media_Audio_Content_Description.audio_codecs)
+  return audio_codecs_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Rtc_Audio_Codec >*
+Media_Audio_Content_Description::mutable_audio_codecs() {
+  // @@protoc_insertion_point(field_mutable_list:Media_Audio_Content_Description.audio_codecs)
+  return &audio_codecs_;
+}
+inline const ::Rtc_Audio_Codec& Media_Audio_Content_Description::audio_codecs(int index) const {
+  // @@protoc_insertion_point(field_get:Media_Audio_Content_Description.audio_codecs)
+  return audio_codecs_.Get(index);
+}
+inline ::Rtc_Audio_Codec* Media_Audio_Content_Description::add_audio_codecs() {
+  // @@protoc_insertion_point(field_add:Media_Audio_Content_Description.audio_codecs)
+  return audio_codecs_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Rtc_Audio_Codec >&
+Media_Audio_Content_Description::audio_codecs() const {
+  // @@protoc_insertion_point(field_list:Media_Audio_Content_Description.audio_codecs)
+  return audio_codecs_;
+}
+
+// optional .Media_Content_Description media_description = 2;
+inline bool Media_Audio_Content_Description::has_media_description() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Media_Audio_Content_Description::clear_media_description() {
+  if (media_description_ != nullptr) media_description_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::Media_Content_Description& Media_Audio_Content_Description::media_description() const {
+  const ::Media_Content_Description* p = media_description_;
+  // @@protoc_insertion_point(field_get:Media_Audio_Content_Description.media_description)
+  return p != nullptr ? *p : *reinterpret_cast<const ::Media_Content_Description*>(
+      &::_Media_Content_Description_default_instance_);
+}
+inline ::Media_Content_Description* Media_Audio_Content_Description::release_media_description() {
+  // @@protoc_insertion_point(field_release:Media_Audio_Content_Description.media_description)
+  _has_bits_[0] &= ~0x00000001u;
+  ::Media_Content_Description* temp = media_description_;
+  media_description_ = nullptr;
+  return temp;
+}
+inline ::Media_Content_Description* Media_Audio_Content_Description::mutable_media_description() {
+  _has_bits_[0] |= 0x00000001u;
+  if (media_description_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Media_Content_Description>(GetArenaNoVirtual());
+    media_description_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Media_Audio_Content_Description.media_description)
+  return media_description_;
+}
+inline void Media_Audio_Content_Description::set_allocated_media_description(::Media_Content_Description* media_description) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete media_description_;
+  }
+  if (media_description) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      media_description = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, media_description, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  media_description_ = media_description;
+  // @@protoc_insertion_point(field_set_allocated:Media_Audio_Content_Description.media_description)
+}
+
+// -------------------------------------------------------------------
+
+// Media_Video_Content_Description
+
+// repeated .Rtc_Video_Codec video_codecs = 1;
+inline int Media_Video_Content_Description::video_codecs_size() const {
+  return video_codecs_.size();
+}
+inline ::Rtc_Video_Codec* Media_Video_Content_Description::mutable_video_codecs(int index) {
+  // @@protoc_insertion_point(field_mutable:Media_Video_Content_Description.video_codecs)
+  return video_codecs_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Rtc_Video_Codec >*
+Media_Video_Content_Description::mutable_video_codecs() {
+  // @@protoc_insertion_point(field_mutable_list:Media_Video_Content_Description.video_codecs)
+  return &video_codecs_;
+}
+inline const ::Rtc_Video_Codec& Media_Video_Content_Description::video_codecs(int index) const {
+  // @@protoc_insertion_point(field_get:Media_Video_Content_Description.video_codecs)
+  return video_codecs_.Get(index);
+}
+inline ::Rtc_Video_Codec* Media_Video_Content_Description::add_video_codecs() {
+  // @@protoc_insertion_point(field_add:Media_Video_Content_Description.video_codecs)
+  return video_codecs_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Rtc_Video_Codec >&
+Media_Video_Content_Description::video_codecs() const {
+  // @@protoc_insertion_point(field_list:Media_Video_Content_Description.video_codecs)
+  return video_codecs_;
+}
+
+// optional .Media_Content_Description media_description = 2;
+inline bool Media_Video_Content_Description::has_media_description() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Media_Video_Content_Description::clear_media_description() {
+  if (media_description_ != nullptr) media_description_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::Media_Content_Description& Media_Video_Content_Description::media_description() const {
+  const ::Media_Content_Description* p = media_description_;
+  // @@protoc_insertion_point(field_get:Media_Video_Content_Description.media_description)
+  return p != nullptr ? *p : *reinterpret_cast<const ::Media_Content_Description*>(
+      &::_Media_Content_Description_default_instance_);
+}
+inline ::Media_Content_Description* Media_Video_Content_Description::release_media_description() {
+  // @@protoc_insertion_point(field_release:Media_Video_Content_Description.media_description)
+  _has_bits_[0] &= ~0x00000001u;
+  ::Media_Content_Description* temp = media_description_;
+  media_description_ = nullptr;
+  return temp;
+}
+inline ::Media_Content_Description* Media_Video_Content_Description::mutable_media_description() {
+  _has_bits_[0] |= 0x00000001u;
+  if (media_description_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Media_Content_Description>(GetArenaNoVirtual());
+    media_description_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Media_Video_Content_Description.media_description)
+  return media_description_;
+}
+inline void Media_Video_Content_Description::set_allocated_media_description(::Media_Content_Description* media_description) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete media_description_;
+  }
+  if (media_description) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      media_description = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, media_description, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  media_description_ = media_description;
+  // @@protoc_insertion_point(field_set_allocated:Media_Video_Content_Description.media_description)
+}
+
+// -------------------------------------------------------------------
+
+// Media_Data_Content_Description
+
+// repeated .Rtc_Data_Codec data_codecs = 1;
+inline int Media_Data_Content_Description::data_codecs_size() const {
+  return data_codecs_.size();
+}
+inline ::Rtc_Data_Codec* Media_Data_Content_Description::mutable_data_codecs(int index) {
+  // @@protoc_insertion_point(field_mutable:Media_Data_Content_Description.data_codecs)
+  return data_codecs_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::Rtc_Data_Codec >*
+Media_Data_Content_Description::mutable_data_codecs() {
+  // @@protoc_insertion_point(field_mutable_list:Media_Data_Content_Description.data_codecs)
+  return &data_codecs_;
+}
+inline const ::Rtc_Data_Codec& Media_Data_Content_Description::data_codecs(int index) const {
+  // @@protoc_insertion_point(field_get:Media_Data_Content_Description.data_codecs)
+  return data_codecs_.Get(index);
+}
+inline ::Rtc_Data_Codec* Media_Data_Content_Description::add_data_codecs() {
+  // @@protoc_insertion_point(field_add:Media_Data_Content_Description.data_codecs)
+  return data_codecs_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::Rtc_Data_Codec >&
+Media_Data_Content_Description::data_codecs() const {
+  // @@protoc_insertion_point(field_list:Media_Data_Content_Description.data_codecs)
+  return data_codecs_;
+}
+
+// optional .Media_Content_Description media_description = 2;
+inline bool Media_Data_Content_Description::has_media_description() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void Media_Data_Content_Description::clear_media_description() {
+  if (media_description_ != nullptr) media_description_->Clear();
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline const ::Media_Content_Description& Media_Data_Content_Description::media_description() const {
+  const ::Media_Content_Description* p = media_description_;
+  // @@protoc_insertion_point(field_get:Media_Data_Content_Description.media_description)
+  return p != nullptr ? *p : *reinterpret_cast<const ::Media_Content_Description*>(
+      &::_Media_Content_Description_default_instance_);
+}
+inline ::Media_Content_Description* Media_Data_Content_Description::release_media_description() {
+  // @@protoc_insertion_point(field_release:Media_Data_Content_Description.media_description)
+  _has_bits_[0] &= ~0x00000001u;
+  ::Media_Content_Description* temp = media_description_;
+  media_description_ = nullptr;
+  return temp;
+}
+inline ::Media_Content_Description* Media_Data_Content_Description::mutable_media_description() {
+  _has_bits_[0] |= 0x00000001u;
+  if (media_description_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Media_Content_Description>(GetArenaNoVirtual());
+    media_description_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Media_Data_Content_Description.media_description)
+  return media_description_;
+}
+inline void Media_Data_Content_Description::set_allocated_media_description(::Media_Content_Description* media_description) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete media_description_;
+  }
+  if (media_description) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      media_description = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, media_description, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000001u;
+  } else {
+    _has_bits_[0] &= ~0x00000001u;
+  }
+  media_description_ = media_description;
+  // @@protoc_insertion_point(field_set_allocated:Media_Data_Content_Description.media_description)
+}
+
+// -------------------------------------------------------------------
+
 // Content_Info
 
 // optional string name = 1;
@@ -2491,11 +3159,11 @@ inline void Content_Info::set_allocated_name(::std::string* name) {
 
 // optional .Media_Protocol_Type type = 2;
 inline bool Content_Info::has_type() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void Content_Info::clear_type() {
   type_ = 0;
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline ::Media_Protocol_Type Content_Info::type() const {
   // @@protoc_insertion_point(field_get:Content_Info.type)
@@ -2503,94 +3171,192 @@ inline ::Media_Protocol_Type Content_Info::type() const {
 }
 inline void Content_Info::set_type(::Media_Protocol_Type value) {
   assert(::Media_Protocol_Type_IsValid(value));
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000010u;
   type_ = value;
   // @@protoc_insertion_point(field_set:Content_Info.type)
 }
 
 // optional bool rejected = 3;
 inline bool Content_Info::has_rejected() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void Content_Info::clear_rejected() {
   rejected_ = false;
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline bool Content_Info::rejected() const {
   // @@protoc_insertion_point(field_get:Content_Info.rejected)
   return rejected_;
 }
 inline void Content_Info::set_rejected(bool value) {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000020u;
   rejected_ = value;
   // @@protoc_insertion_point(field_set:Content_Info.rejected)
 }
 
 // optional bool bundle_only = 4;
 inline bool Content_Info::has_bundle_only() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000040u) != 0;
 }
 inline void Content_Info::clear_bundle_only() {
   bundle_only_ = false;
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000040u;
 }
 inline bool Content_Info::bundle_only() const {
   // @@protoc_insertion_point(field_get:Content_Info.bundle_only)
   return bundle_only_;
 }
 inline void Content_Info::set_bundle_only(bool value) {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000040u;
   bundle_only_ = value;
   // @@protoc_insertion_point(field_set:Content_Info.bundle_only)
 }
 
-// optional .Media_Content_Description description = 5;
-inline bool Content_Info::has_description() const {
+// optional .Media_Audio_Content_Description audio_description = 5;
+inline bool Content_Info::has_audio_description() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void Content_Info::clear_description() {
-  if (description_ != nullptr) description_->Clear();
+inline void Content_Info::clear_audio_description() {
+  if (audio_description_ != nullptr) audio_description_->Clear();
   _has_bits_[0] &= ~0x00000002u;
 }
-inline const ::Media_Content_Description& Content_Info::description() const {
-  const ::Media_Content_Description* p = description_;
-  // @@protoc_insertion_point(field_get:Content_Info.description)
-  return p != nullptr ? *p : *reinterpret_cast<const ::Media_Content_Description*>(
-      &::_Media_Content_Description_default_instance_);
+inline const ::Media_Audio_Content_Description& Content_Info::audio_description() const {
+  const ::Media_Audio_Content_Description* p = audio_description_;
+  // @@protoc_insertion_point(field_get:Content_Info.audio_description)
+  return p != nullptr ? *p : *reinterpret_cast<const ::Media_Audio_Content_Description*>(
+      &::_Media_Audio_Content_Description_default_instance_);
 }
-inline ::Media_Content_Description* Content_Info::release_description() {
-  // @@protoc_insertion_point(field_release:Content_Info.description)
+inline ::Media_Audio_Content_Description* Content_Info::release_audio_description() {
+  // @@protoc_insertion_point(field_release:Content_Info.audio_description)
   _has_bits_[0] &= ~0x00000002u;
-  ::Media_Content_Description* temp = description_;
-  description_ = nullptr;
+  ::Media_Audio_Content_Description* temp = audio_description_;
+  audio_description_ = nullptr;
   return temp;
 }
-inline ::Media_Content_Description* Content_Info::mutable_description() {
+inline ::Media_Audio_Content_Description* Content_Info::mutable_audio_description() {
   _has_bits_[0] |= 0x00000002u;
-  if (description_ == nullptr) {
-    auto* p = CreateMaybeMessage<::Media_Content_Description>(GetArenaNoVirtual());
-    description_ = p;
+  if (audio_description_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Media_Audio_Content_Description>(GetArenaNoVirtual());
+    audio_description_ = p;
   }
-  // @@protoc_insertion_point(field_mutable:Content_Info.description)
-  return description_;
+  // @@protoc_insertion_point(field_mutable:Content_Info.audio_description)
+  return audio_description_;
 }
-inline void Content_Info::set_allocated_description(::Media_Content_Description* description) {
+inline void Content_Info::set_allocated_audio_description(::Media_Audio_Content_Description* audio_description) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   if (message_arena == nullptr) {
-    delete description_;
+    delete audio_description_;
   }
-  if (description) {
+  if (audio_description) {
     ::google::protobuf::Arena* submessage_arena = nullptr;
     if (message_arena != submessage_arena) {
-      description = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, description, submessage_arena);
+      audio_description = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, audio_description, submessage_arena);
     }
     _has_bits_[0] |= 0x00000002u;
   } else {
     _has_bits_[0] &= ~0x00000002u;
   }
-  description_ = description;
-  // @@protoc_insertion_point(field_set_allocated:Content_Info.description)
+  audio_description_ = audio_description;
+  // @@protoc_insertion_point(field_set_allocated:Content_Info.audio_description)
+}
+
+// optional .Media_Video_Content_Description video_description = 6;
+inline bool Content_Info::has_video_description() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Content_Info::clear_video_description() {
+  if (video_description_ != nullptr) video_description_->Clear();
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline const ::Media_Video_Content_Description& Content_Info::video_description() const {
+  const ::Media_Video_Content_Description* p = video_description_;
+  // @@protoc_insertion_point(field_get:Content_Info.video_description)
+  return p != nullptr ? *p : *reinterpret_cast<const ::Media_Video_Content_Description*>(
+      &::_Media_Video_Content_Description_default_instance_);
+}
+inline ::Media_Video_Content_Description* Content_Info::release_video_description() {
+  // @@protoc_insertion_point(field_release:Content_Info.video_description)
+  _has_bits_[0] &= ~0x00000004u;
+  ::Media_Video_Content_Description* temp = video_description_;
+  video_description_ = nullptr;
+  return temp;
+}
+inline ::Media_Video_Content_Description* Content_Info::mutable_video_description() {
+  _has_bits_[0] |= 0x00000004u;
+  if (video_description_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Media_Video_Content_Description>(GetArenaNoVirtual());
+    video_description_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Content_Info.video_description)
+  return video_description_;
+}
+inline void Content_Info::set_allocated_video_description(::Media_Video_Content_Description* video_description) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete video_description_;
+  }
+  if (video_description) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      video_description = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, video_description, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000004u;
+  } else {
+    _has_bits_[0] &= ~0x00000004u;
+  }
+  video_description_ = video_description;
+  // @@protoc_insertion_point(field_set_allocated:Content_Info.video_description)
+}
+
+// optional .Media_Data_Content_Description data_description = 7;
+inline bool Content_Info::has_data_description() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void Content_Info::clear_data_description() {
+  if (data_description_ != nullptr) data_description_->Clear();
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline const ::Media_Data_Content_Description& Content_Info::data_description() const {
+  const ::Media_Data_Content_Description* p = data_description_;
+  // @@protoc_insertion_point(field_get:Content_Info.data_description)
+  return p != nullptr ? *p : *reinterpret_cast<const ::Media_Data_Content_Description*>(
+      &::_Media_Data_Content_Description_default_instance_);
+}
+inline ::Media_Data_Content_Description* Content_Info::release_data_description() {
+  // @@protoc_insertion_point(field_release:Content_Info.data_description)
+  _has_bits_[0] &= ~0x00000008u;
+  ::Media_Data_Content_Description* temp = data_description_;
+  data_description_ = nullptr;
+  return temp;
+}
+inline ::Media_Data_Content_Description* Content_Info::mutable_data_description() {
+  _has_bits_[0] |= 0x00000008u;
+  if (data_description_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Media_Data_Content_Description>(GetArenaNoVirtual());
+    data_description_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:Content_Info.data_description)
+  return data_description_;
+}
+inline void Content_Info::set_allocated_data_description(::Media_Data_Content_Description* data_description) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete data_description_;
+  }
+  if (data_description) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      data_description = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, data_description, submessage_arena);
+    }
+    _has_bits_[0] |= 0x00000008u;
+  } else {
+    _has_bits_[0] &= ~0x00000008u;
+  }
+  data_description_ = data_description;
+  // @@protoc_insertion_point(field_set_allocated:Content_Info.data_description)
 }
 
 // -------------------------------------------------------------------
@@ -3031,6 +3797,12 @@ Session_Description::media_transport_settings() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

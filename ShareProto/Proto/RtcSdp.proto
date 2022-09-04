@@ -52,14 +52,37 @@ message Media_Content_Description
 	optional		Simulcast_Description			simulcast						= 13; //
 }
 
+message Media_Audio_Content_Description
+{
+	repeated		Rtc_Audio_Codec					audio_codecs 				= 1;
+	optional 		Media_Content_Description 		media_description 			= 2; 
+}
+
+
+message Media_Video_Content_Description
+{
+	repeated		Rtc_Video_Codec					video_codecs 				= 1;
+	optional 		Media_Content_Description 		media_description 			= 2; 
+}
+
+
+
+message Media_Data_Content_Description
+{
+	repeated		Rtc_Data_Codec					data_codecs 				= 1;
+	optional 		Media_Content_Description 		media_description 			= 2; 
+}
+
 
 message Content_Info
 {
-	optional				string 						name  		= 1;
-	optional				Media_Protocol_Type			type 		= 2; //// 媒体协议rtp or rtcp
-	optional 				bool 						rejected 	= 3; // [false ] 
-	optional 				bool 						bundle_only = 4; // [false]
-	optional				Media_Content_Description	description = 5;// 
+	optional				string 									name  				= 1;
+	optional				Media_Protocol_Type						type 				= 2; //// 媒体协议rtp or rtcp
+	optional 				bool 									rejected 			= 3; // [false ] 
+	optional 				bool 									bundle_only 		= 4; // [false]
+	optional				Media_Audio_Content_Description			audio_description 	= 5;// 
+	optional				Media_Video_Content_Description			video_description 	= 6;// 
+	optional 				Media_Data_Content_Description 			data_description	= 7; //
 	
 }
 

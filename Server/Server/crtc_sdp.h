@@ -35,7 +35,7 @@ namespace chen {
 
 
 	private:
-		bool _parse_connection_data(const std::string& line/*, rtc::SocketAddress* addr*/);
+		bool _parse_connection_data(const std::string& line, Socket_Address & addr/*, rtc::SocketAddress* addr*/);
 
 
 		bool _parse_group_attribute(const std::string& line/*,
@@ -66,6 +66,37 @@ namespace chen {
 			bool* bundle_only,
 			int* msid_signaling,  
 			Transport_Description& transport);
+
+
+		bool _parse_fmtp_attributes(const std::string& line,
+			const MediaType media_type,
+			Content_Info& content_info);
+
+
+		bool _parse_fmtp_param(const std::string& line,
+			std::string* parameter,
+			std::string* value);
+
+
+		bool _parse_sctp_port(const std::string& line,
+			int* sctp_port);
+
+		bool _parse_sctp_max_message_size(const std::string& line,
+			int* max_message_size);
+
+		bool _parse_ssrc_group_attribute(const std::string& line,
+			std::vector<Ssrc_Group>* ssrc_groups);
+
+		bool _parse_ssrc_attribute(const std::string& line,
+			/*SsrcInfoVec*/std::vector<Rtc_Ssrc_Info> * ssrc_infos,
+			int* msid_signaling);
+
+
+		bool _parse_crypto_attribute(const std::string& line,
+			Media_Content_Description& media_desc);
+
+
+		void _update_codec(MediaType media_type, Content_Info & content_info, int32_t payload_type, std::map<std::string , std::string> & codec_params);
 	private:
 		Transport_Description			m_session_td;
 		Session_Description				m_session_description;

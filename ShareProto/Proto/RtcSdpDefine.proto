@@ -232,3 +232,64 @@ message Rtc_Ssrc_Info
 		optional string label = 5;
 		optional string mslabel= 6;
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+message Rtc_Feedback_Param
+{
+	optional		string 				id 		= 1;// e.g. "nack", "ccm"
+	optional		string 				param 	= 2; // e.g. "", "rpsi", "fir"
+}
+
+message Rtc_Codec
+{
+	optional 		int32 				id 					= 1;
+	optional		string 				name 				= 2;
+	optional 		int32 				clockrate 			= 3; 
+	map<string, string > 				params 				= 4; //CodecParameterMap
+	repeated		Rtc_Feedback_Param 	feedback_params 	= 5; // 
+}
+
+
+message Rtc_Audio_Codec
+{
+	optional 		int32 				bitrate 			= 1;
+	optional		int32 				channels 			= 2; //
+	optional		Rtc_Codec			codecs 				= 3; //
+}
+
+message Rtc_Video_Codec
+{
+	optional 		Rtc_Codec			codecs 				= 1; // 
+}
+
+message Rtc_Data_Codec
+{
+	optional 		Rtc_Codec 			codecs				= 1; //
+}
+
+
+
+message Rtc_Candidate
+{
+	optional 			string 				id 						= 1;
+	optional			int32 				component				= 2;
+	optional 			string 				protocol				= 3;;
+	optional 			string 				relay_protocol 			= 4;
+    optional 			Socket_Address 		address					= 5;
+    optional 			uint32  			priority				= 6;;
+	optional 			string 				username				= 7;
+	optional 			string 				password				= 8;
+	optional 			string 				type					= 9;
+  // std::string network_name_;
+  // rtc::AdapterType network_type_;
+  // uint32_t generation_;
+  // std::string foundation_;
+  // rtc::SocketAddress related_address_;
+  // std::string tcptype_;
+  // std::string transport_name_;
+  // uint16_t network_id_;
+  // uint16_t network_cost_;
+  // std::string url_;
+}

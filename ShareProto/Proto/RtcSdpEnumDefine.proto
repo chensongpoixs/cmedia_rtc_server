@@ -79,3 +79,17 @@ enum Msid_Signaling {
   // Signal MSID with a=ssrc: msid lines in the media section.
   kMsidSignalingSsrcAttribute = 0x2;
 };
+
+
+// const char kRtxCodecName[] = "rtx";
+// const char kRedCodecName[] = "red";
+// const char kUlpfecCodecName[] = "ulpfec";
+// const char kMultiplexCodecName[] = "multiplex";
+ enum CodecType 
+ {
+    CODEC_VIDEO = 0;
+    CODEC_RED = 1; // kRedCodecName
+    CODEC_ULPFEC = 2;   // kUlpfecCodecName
+    CODEC_FLEXFEC = 3; // kFlexfecCodecName
+    CODEC_RTX = 4;		// kRtxCodecName
+  };

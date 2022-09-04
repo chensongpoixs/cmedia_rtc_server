@@ -403,7 +403,8 @@ namespace chen {
 		//      all media)
 		if (GetLineWithType(session_sdp_description, &m_current_pos, &line, kLineTypeConnection)) 
 		{
-			if (!_parse_connection_data(line)) 
+			Socket_Address socket_address;
+			if (!_parse_connection_data(line, socket_address)) 
 			{
 				return false;
 			}
@@ -635,7 +636,7 @@ namespace chen {
 					payload_types, pos, &content_name, &bundle_only,
 					&section_msid_signaling, &transport, candidates, error);*/
 				/*content =*/ _parse_content(media_sdp_description,  MEDIA_TYPE_VIDEO, mline_index, protocol,
-					payload_types, & m_current_pos, &content_name, &bundle_only,  &transport);
+					payload_types, & m_current_pos, &content_name, &bundle_only, & section_msid_signaling,  transport);
 			}
 			else if (HasAttribute(line, kMediaTypeAudio)) {
 				/*content = ParseContentDescription<AudioContentDescription>(
@@ -739,7 +740,7 @@ namespace chen {
 
 
 
-	bool crtc_sdp::_parse_connection_data(const std::string& line/*, rtc::SocketAddress* addr*/ )
+	bool crtc_sdp::_parse_connection_data(const std::string& line, Socket_Address & address/*, rtc::SocketAddress* addr*/ )
 	{
 		// Parse the line from left to right.
 		std::string token;
@@ -778,7 +779,7 @@ namespace chen {
 				//"currently supported.",
 				//error);
 		}
-
+		address.set_hostname(rightpart);
 
 		in_addr addr;
 		if (rtc_sdp_util::cinet_pton(AF_INET, rightpart.c_str(), &addr) == 0) 
@@ -808,7 +809,7 @@ namespace chen {
 		}*/
 
 
-
+		address.set_literal(true);
 
 		return true;
 	}
@@ -984,8 +985,8 @@ namespace chen {
 		, size_t* pos,  std::string* content_name, bool* bundle_only, int* msid_signaling
 		, Transport_Description & transport)
 	{
-
-
+		
+		//content_info.set_type(media_type);
 		if (media_type ==  MEDIA_TYPE_AUDIO) 
 		{
 		//	MaybeCreateStaticPayloadAudioCodecs(payload_types, media_desc->as_audio());
@@ -1009,6 +1010,10 @@ namespace chen {
 		std::vector<Rid_Description> rids;
 		Simulcast_Description simulcast;
 
+
+		Content_Info				content_info;
+
+		Media_Content_Description media_desc;
 
 		// Loop until the next m line
 		while (!IsLineType(message, kLineTypeMedia, *pos)) {
@@ -1069,6 +1074,8 @@ namespace chen {
 						// Prevent integer overflow.
 						b = std::min(b, INT_MAX / 1000);
 						//media_desc->set_bandwidth(b * 1000);
+						media_desc.set_bandwidth(b * 1000);
+						 
 					}
 				}
 				continue;
@@ -1078,10 +1085,12 @@ namespace chen {
 			if (IsLineType(line, kLineTypeConnection)) 
 			{
 				// TODO@chensong 20220904 
-				if (_parse_connection_data(line))
+				Socket_Address addrees;
+				if (_parse_connection_data(line, addrees))
 				{
 					return false;
 				}
+				*media_desc.mutable_connection_address() = addrees;
 				/*rtc::SocketAddress addr;
 				if (!ParseConnectionData(line, &addr, error)) {
 					return false;
@@ -1152,10 +1161,10 @@ namespace chen {
 			}
 			else if (HasAttribute(line, kAttributeFmtp)) 
 			{
-				/*if (!_parse_fmtp_attributes(line, media_type, media_desc, error))
+				if (!_parse_fmtp_attributes(line, media_type, content_info))
 				{
 					return false;
-				}*/
+				}
 			}
 			else if (HasAttribute(line, kAttributeFingerprint)) 
 			{
@@ -1176,34 +1185,39 @@ namespace chen {
 			else if (rtc_sdp_util:: is_dtls_sctp(protocol) && HasAttribute(line, kAttributeSctpPort)) {
 				if (media_type !=  MEDIA_TYPE_DATA) 
 				{
+					ERROR_EX_LOG("ParseFailed sctp-port attribute found in non-data media description!!!. line = %s", line.c_str());
 					return false; //  ParseFailed(
 						// line, "sctp-port attribute found in non-data media description.",
 						// error);
 				}
 				int sctp_port;
-				/*if (!ParseSctpPort(line, &sctp_port, error)) 
+				if (!_parse_sctp_port(line, &sctp_port)) 
 				{
 					return false;
 				}
-				if (!AddOrModifySctpDataCodecPort(media_desc->as_data(), sctp_port)) 
+
+				// TODO@chensong 20220905 Data channel 
+				/*if (!AddOrModifySctpDataCodecPort(media_desc->as_data(), sctp_port))
 				{
 					return false;
 				}*/
 			}
 			else if (rtc_sdp_util:: is_dtls_sctp(protocol) &&
 				HasAttribute(line, kAttributeMaxMessageSize)) {
-				if (media_type !=  MEDIA_TYPE_DATA) {
+				if (media_type !=  MEDIA_TYPE_DATA) 
+				{
+					ERROR_EX_LOG("ParseFailed  max-message-size attribute found in non-data media description.");
 					return false;// ParseFailed(
 					//	line,
 					//	"max-message-size attribute found in non-data media description.",
 					//	error);
 				}
 				int max_message_size;
-				/*if (!ParseSctpMaxMessageSize(line, &max_message_size, error))
+				if (!_parse_sctp_max_message_size(line, &max_message_size))
 				{
 					return false;
 				}
-				if (!AddOrModifySctpDataMaxMessageSize(media_desc->as_data(),
+				/*if (!AddOrModifySctpDataMaxMessageSize(media_desc->as_data(),
 					max_message_size))
 				{
 					return false;
@@ -1215,35 +1229,35 @@ namespace chen {
 				//
 				if (HasAttribute(line, kAttributeRtcpMux)) 
 				{
-					//media_desc->set_rtcp_mux(true);
+					media_desc.set_rtcp_mux(true);
 				}
 				else if (HasAttribute(line, kAttributeRtcpReducedSize)) 
 				{
-					//media_desc->set_rtcp_reduced_size(true);
+					media_desc.set_rtcp_reduced_size(true);
 				}
 				else if (HasAttribute(line, kAttributeSsrcGroup)) {
-					/*if (!ParseSsrcGroupAttribute(line, &ssrc_groups, error)) 
+					if (!_parse_ssrc_group_attribute(line, &ssrc_groups)) 
 					{
 						return false;
-					}*/
+					}
 				}
 				else if (HasAttribute(line, kAttributeSsrc)) 
 				{
-					/*if (!ParseSsrcAttribute(line, &ssrc_infos, msid_signaling, error)) 
+					if (!_parse_ssrc_attribute(line, &ssrc_infos, msid_signaling)) 
 					{
 						return false;
-					}*/
+					}
 				}
 				else if (HasAttribute(line, kAttributeCrypto))
 				{
-					/*if (!ParseCryptoAttribute(line, media_desc, error)) 
+					if (!_parse_crypto_attribute(line, media_desc)) 
 					{
 						return false;
-					}*/
+					}
 				}
 				else if (HasAttribute(line, kAttributeRtpmap)) 
 				{
-					/*if (!ParseRtpmapAttribute(line, media_type, payload_types, media_desc,
+					/*if (!_parse_rtpmap_attribute(line, media_type, payload_types, media_desc,
 						error)) {
 						return false;
 					}*/
@@ -1379,6 +1393,379 @@ namespace chen {
 	//	RemoveInvalidRidDescriptions(payload_types, &rids);
 
 		return true;
+	}
+
+	bool crtc_sdp::_parse_fmtp_attributes(const std::string& line, const MediaType media_type, Content_Info& content_info)
+	{
+		if (media_type != MEDIA_TYPE_AUDIO &&
+			media_type != MEDIA_TYPE_VIDEO) {
+			return true;
+		}
+
+		std::string line_payload;
+		std::string line_params;
+
+		// RFC 5576
+		// a=fmtp:<format> <format specific parameters>
+		// At least two fields, whereas the second one is any of the optional
+		// parameters.
+		if (!rtc_sdp_util ::tokenize_first(line.substr(kLinePrefixLength),
+			kSdpDelimiterSpaceChar, &line_payload,
+			&line_params))
+		{
+			ERROR_EX_LOG("ParseFailedExpectMinFieldNum = %s", line.c_str());
+			//ParseFailedExpectMinFieldNum(line, 2, error);
+			return false;
+		}
+
+		// Parse out the payload information.
+		std::string payload_type_str;
+		if (!GetValue(line_payload, kAttributeFmtp, &payload_type_str)) 
+		{
+			return false;
+		}
+
+		int payload_type = 0;
+		if (!GetPayloadTypeFromString(line_payload, payload_type_str, &payload_type ))
+		{
+			return false;
+		}
+
+		// Parse out format specific parameters.
+		std::vector<std::string> fields;
+		rtc_sdp_util ::split(line_params, kSdpDelimiterSemicolonChar, &fields);
+
+		//cricket::CodecParameterMap codec_params;
+		std::map<std::string, std::string> codec_params;
+		for (auto& iter : fields) 
+		{
+			if (iter.find(kSdpDelimiterEqual) == std::string::npos)
+			{
+				// Only fmtps with equals are currently supported. Other fmtp types
+				// should be ignored. Unknown fmtps do not constitute an error.
+				continue;
+			}
+
+			std::string name;
+			std::string value;
+			if (!_parse_fmtp_param(rtc_sdp_util ::string_trim(iter), &name, &value))
+			{
+				return false;
+			}
+			codec_params[name] = value;
+		}
+
+		/*if (media_type == MEDIA_TYPE_AUDIO)
+		{
+			UpdateCodec<AudioContentDescription, cricket::AudioCodec>(
+				media_desc, payload_type, codec_params);
+		}
+		else if (media_type == cricket::MEDIA_TYPE_VIDEO) {
+			UpdateCodec<VideoContentDescription, cricket::VideoCodec>(
+				media_desc, payload_type, codec_params);
+		}*/
+		_update_codec(media_type, content_info, payload_type, codec_params);
+		return true;
+	}
+
+	bool crtc_sdp::_parse_fmtp_param(const std::string & line, std::string * parameter, std::string * value)
+	{
+		if (!rtc_sdp_util ::tokenize_first(line, kSdpDelimiterEqualChar, parameter, value)) 
+		{
+			ERROR_EX_LOG("Unable to parse fmtp parameter. \'=\' missing. [line = %s]", line.c_str());
+			//ParseFailed(line, "Unable to parse fmtp parameter. \'=\' missing.", error);
+			return false;
+		}
+		// a=fmtp:<payload_type> <param1>=<value1>; <param2>=<value2>; ...
+		return true;
+	}
+
+	bool crtc_sdp::_parse_sctp_port(const std::string & line, int * sctp_port)
+	{
+		// draft-ietf-mmusic-sctp-sdp-26
+		// a=sctp-port
+		std::vector<std::string> fields;
+		const size_t expected_min_fields = 2;
+		rtc_sdp_util ::split(line.substr(kLinePrefixLength), kSdpDelimiterColonChar, &fields);
+		if (fields.size() < expected_min_fields) 
+		{
+			fields.resize(0);
+			rtc_sdp_util::split(line.substr(kLinePrefixLength), kSdpDelimiterSpaceChar, &fields);
+		}
+		if (fields.size() < expected_min_fields) 
+		{
+			ERROR_EX_LOG("ParseFailedExpectMinFieldNum(line, expected_min_fields, error)");
+			return false; // ParseFailedExpectMinFieldNum(line, expected_min_fields, error);
+		}
+		if (! FromString(fields[1], sctp_port)) 
+		{
+			ERROR_EX_LOG("Invalid sctp port value.");
+			return false; // ParseFailed(line, "Invalid sctp port value.", error);
+		}
+		return true;
+	}
+
+	bool crtc_sdp::_parse_sctp_max_message_size(const std::string & line, int * max_message_size)
+	{
+		// draft-ietf-mmusic-sctp-sdp-26
+		// a=max-message-size:199999
+		std::vector<std::string> fields;
+		const size_t expected_min_fields = 2;
+		rtc_sdp_util ::split(line.substr(kLinePrefixLength), kSdpDelimiterColonChar, &fields);
+		if (fields.size() < expected_min_fields) 
+		{
+			ERROR_EX_LOG("ParseFailedExpectMinFieldNum(line, expected_min_fields, error);");
+			return false; //  ParseFailedExpectMinFieldNum(line, expected_min_fields, error);
+		}
+		if (! FromString(fields[1], max_message_size)) 
+		{
+			ERROR_EX_LOG("Invalid SCTP max message size.");
+			return false; //  ParseFailed(line, "Invalid SCTP max message size.", error);
+		}
+		return true;
+	}
+
+	bool crtc_sdp::_parse_ssrc_group_attribute(const std::string& line, std::vector<Ssrc_Group>* ssrc_groups)
+	{
+		// RFC 5576
+		// a=ssrc-group:<semantics> <ssrc-id> ...
+		std::vector<std::string> fields;
+		rtc_sdp_util ::split(line.substr(kLinePrefixLength), kSdpDelimiterSpaceChar, &fields);
+		const size_t expected_min_fields = 2;
+		if (fields.size() < expected_min_fields) 
+		{
+			ERROR_EX_LOG("ParseFailedExpectMinFieldNum(line, expected_min_fields, error)");
+			return false;// ParseFailedExpectMinFieldNum(line, expected_min_fields, error);
+		}
+		std::string semantics;
+		if (!GetValue(fields[0], kAttributeSsrcGroup, &semantics)) 
+		{
+			return false;
+		}
+		Ssrc_Group ssrc_group;
+		ssrc_group.set_semantics(semantics);
+		//std::vector<uint32_t> ssrcs;
+		for (size_t i = 1; i < fields.size(); ++i) 
+		{
+			uint32_t ssrc = 0;
+			if (!GetValueFromString(line, fields[i], &ssrc)) 
+			{
+				return false;
+			}
+			//ssrcs.push_back(ssrc);
+			ssrc_group.add_ssrcs(ssrc);
+		}
+		
+		
+		
+		ssrc_groups->push_back(ssrc_group);
+		return true;
+	}
+
+	bool crtc_sdp::_parse_ssrc_attribute(const std::string & line, std::vector<Rtc_Ssrc_Info>* ssrc_infos, int * msid_signaling)
+	{
+		// RFC 5576
+		// a=ssrc:<ssrc-id> <attribute>
+		// a=ssrc:<ssrc-id> <attribute>:<value>
+		std::string field1, field2;
+		if (!rtc_sdp_util ::tokenize_first(line.substr(kLinePrefixLength),
+			kSdpDelimiterSpaceChar, &field1, &field2)) {
+			const size_t expected_fields = 2;
+			ERROR_EX_LOG("ParseFailedExpectFieldNum(line, expected_fields, error)");
+			return false; //  ParseFailedExpectFieldNum(line, expected_fields, error);
+		}
+
+		// ssrc:<ssrc-id>
+		std::string ssrc_id_s;
+		if (!GetValue(field1, kAttributeSsrc, &ssrc_id_s)) 
+		{
+			return false;
+		}
+		uint32_t ssrc_id = 0;
+		if (!GetValueFromString(line, ssrc_id_s, &ssrc_id)) 
+		{
+			return false;
+		}
+
+		std::string attribute;
+		std::string value;
+		if (!rtc_sdp_util ::tokenize_first(field2, kSdpDelimiterColonChar, &attribute,
+			&value)) {
+			/*rtc::StringBuilder description;
+			description << "Failed to get the ssrc attribute value from " << field2
+				<< ". Expected format <attribute>:<value>.";*/
+			ERROR_EX_LOG("Failed to get the ssrc attribute value from = %s, . Expected format <attribute>:<value>.", field2.c_str());
+			return false; //  ParseFailed(line, description.str(), error);
+		}
+
+		// Check if there's already an item for this |ssrc_id|. Create a new one if
+		// there isn't.
+		//auto ssrc_info_it =
+		//	std::find(/**ssrc_infos,*/ [ssrc_id](const Rtc_Ssrc_Info & ssrc_info) 
+		//{
+		//	return ssrc_info.ssrc_id() == ssrc_id;
+		//});
+		//if (ssrc_info_it == ssrc_infos->end()) {
+		//	Rtc_Ssrc_Info info;
+		//	info.set_ssrc_id(ssrc_id);
+		//	ssrc_infos->push_back(info);
+		//	ssrc_info_it = ssrc_infos->end() - 1;
+		//}
+		Rtc_Ssrc_Info* ssrc_info;
+
+		for (int32_t i = 0; i < ssrc_infos->size(); ++i)
+		{
+			if (ssrc_infos->at(i).ssrc_id() == ssrc_id)
+			{
+				ssrc_info = &ssrc_infos->at(i);
+			}
+		}
+		if (!ssrc_info)
+		{
+			Rtc_Ssrc_Info info;
+			info.set_ssrc_id(ssrc_id);
+			ssrc_infos->push_back(info);
+			ssrc_info = &ssrc_infos->back();
+		}
+		//Rtc_Ssrc_Info& ssrc_info = *ssrc_info_it;
+
+		// Store the info to the |ssrc_info|.
+		if (attribute == kSsrcAttributeCname) {
+			// RFC 5576
+			// cname:<value>
+			ssrc_info->set_cname ( value);
+		}
+		else if (attribute == kSsrcAttributeMsid) {
+			// draft-alvestrand-mmusic-msid-00
+			// msid:identifier [appdata]
+			std::vector<std::string> fields;
+			rtc_sdp_util::split(value, kSdpDelimiterSpaceChar, &fields);
+			if (fields.size() < 1 || fields.size() > 2) 
+			{
+				ERROR_EX_LOG("Expected format msid:<identifier>[ <appdata>]");
+				return false; // ParseFailed(
+					//line, "Expected format \"msid:<identifier>[ <appdata>]\".", error);
+			}
+			ssrc_info->set_stream_id (fields[0]);
+			if (fields.size() == 2)
+			{
+				ssrc_info->set_track_id ( fields[1]);
+			}
+			*msid_signaling |= kMsidSignalingSsrcAttribute;
+		}
+		else if (attribute == kSsrcAttributeMslabel) {
+			// draft-alvestrand-rtcweb-mid-01
+			// mslabel:<value>
+			ssrc_info->set_mslabel ( value);
+		}
+		else if (attribute == kSSrcAttributeLabel) {
+			// The label isn't defined.
+			// label:<value>
+			ssrc_info->set_label ( value);
+		}
+		return true;
+	}
+
+	bool crtc_sdp::_parse_crypto_attribute(const std::string & line, Media_Content_Description & media_desc)
+	{
+		std::vector<std::string> fields;
+		rtc_sdp_util ::split(line.substr(kLinePrefixLength), kSdpDelimiterSpaceChar, &fields);
+		// RFC 4568
+		// a=crypto:<tag> <crypto-suite> <key-params> [<session-params>]
+		const size_t expected_min_fields = 3;
+		if (fields.size() < expected_min_fields)
+		{
+			return false;// ParseFailedExpectMinFieldNum(line, expected_min_fields, error);
+		}
+		std::string tag_value;
+		if (!GetValue(fields[0], kAttributeCrypto, &tag_value)) 
+		{
+			return false;
+		}
+		int tag = 0;
+		if (!GetValueFromString(line, tag_value, &tag)) 
+		{
+			return false;
+		}
+		const std::string& crypto_suite = fields[1];
+		const std::string& key_params = fields[2];
+		std::string session_params;
+		if (fields.size() > 3) {
+			session_params = fields[3];
+		}
+		Crypto_Params crypto_params;
+		crypto_params.set_tag(tag);
+		crypto_params.set_cipher_suite(crypto_suite);
+		crypto_params.set_key_params(key_params);
+		crypto_params.set_session_params(session_params);
+		*media_desc.add_cryptos() = crypto_params;
+		//media_desc->AddCrypto( CryptoParams(tag, crypto_suite, key_params, session_params));
+		return true;
+	}
+
+	void crtc_sdp::_update_codec(MediaType media_type, Content_Info & content_info, int32_t payload_type, std::map<std::string, std::string>& codec_params)
+	{
+		Rtc_Codec* codec_ptr = NULL;
+		bool find = false;
+		if (media_type == MEDIA_TYPE_AUDIO)
+		{
+			Media_Audio_Content_Description* audio_content_ptr = content_info.mutable_audio_description();
+			for (int32_t i = 0; i < audio_content_ptr->audio_codecs_size(); ++i)
+			{
+				if (audio_content_ptr->mutable_audio_codecs(i)->codecs().id() == payload_type)
+				{
+					codec_ptr = audio_content_ptr->mutable_audio_codecs(i)->mutable_codecs();
+					find = true;
+					break;
+					 
+					//audio_content_ptr->mutable_audio_codecs(i)->codecs().add_feedback_params() = 
+				}
+			}
+			if (!find)
+			{
+				codec_ptr = content_info.mutable_audio_description()->add_audio_codecs()->mutable_codecs();
+				codec_ptr->set_id(payload_type);
+			}
+			
+		}
+		else if (media_type ==  MEDIA_TYPE_VIDEO) 
+		{
+
+			Media_Video_Content_Description* video_content_ptr = content_info.mutable_video_description();
+			for (int32_t i = 0; i < video_content_ptr->video_codecs_size(); ++i)
+			{
+				if (video_content_ptr->mutable_video_codecs(i)->codecs().id() == payload_type)
+				{
+					/*Rtc_Codec**/ codec_ptr = video_content_ptr->mutable_video_codecs(i)->mutable_codecs();
+					/*for (const auto & entry : codec_params)
+					{
+						(*codec_ptr->mutable_params())[entry.first] = entry.second;
+					}*/
+					find = true;
+					break;
+					//return;
+					//audio_content_ptr->mutable_audio_codecs(i)->codecs().add_feedback_params() = 
+				}
+			}
+			if (!find)
+			{
+				codec_ptr = content_info.mutable_video_description()->add_video_codecs()->mutable_codecs();
+				codec_ptr->set_id(payload_type);
+			}
+			/*UpdateCodec<VideoContentDescription, cricket::VideoCodec>(
+				media_desc, payload_type, codec_params);*/
+		}
+		
+
+
+		if (!codec_ptr)
+		{
+			return;
+		}
+		for (const auto & entry : codec_params)
+		{
+			(*codec_ptr->mutable_params())[entry.first] = entry.second;
+		}
 	}
 
 }
