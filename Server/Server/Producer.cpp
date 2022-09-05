@@ -75,7 +75,7 @@ namespace RTC
 		for (size_t i = 0; i < arrayObj.size(); ++i)
 		{
 			//arrayObj.isMember("payloadType")
-			rtpMapping.codecs[arrayObj["payloadType"].asUInt()] = arrayObj["mappedPayloadType"].asUInt();
+			//rtpMapping.codecs[arrayObj[i]["payloadType"].asUInt()] = arrayObj[i]["mappedPayloadType"].asUInt();
 			//if (arrayObj[i].isObject())
 			//{
 			//	ERROR_EX_LOG("not is Object !!!");
