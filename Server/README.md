@@ -19,5 +19,37 @@ perl Configure VC-WIN64A no-asm  no-shared  --prefix=D:/dep/openssl_1.1.0
 # 流程
 
 1. Create_WebRTC
-2. WebRTC_produce
-3. WebRTC_connect
+
+C2S --> forceTcp, producing, consuming, sctpCapabilities 
+
+
+返回消息
+
+	1. iceParameters ->用户名, 密码、 icelite
+	2. iceCandidates -> foundation、 priority、ip、protocol， port、type(HOST)、tcpType
+    3. iceState
+	4. iceSelectedTuple ->localIp、localPort、remoteIp、remotePort、protocol
+	5. dtlsParameters  -> fingerprints[{algorithm, value}, {algorithm, value}]、role
+	6. sctpParameters  -> MIS、OS、isDataChannel、maxMessageSize、port、sctpBufferedAmount、sendBufferSize
+
+
+
+2. WebRTC_connect
+
+C2S -> TRansportId、dtlsParameters{role, fingerprints[algorithm, value ]} ==> 发送自己本地使用fingerprints加密密钥
+
+
+S2C->
+
+
+3. WebRTC_produce
+
+
+# SDP
+
+a： 属性
+c: 连接
+v： 版本
+s： 一个会话
+o： 谁拥有这个会话
+

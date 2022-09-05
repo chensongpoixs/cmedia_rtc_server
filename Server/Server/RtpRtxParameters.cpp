@@ -24,7 +24,7 @@ namespace RTC
 
 		// ssrc is optional.
 		// clang-format off
-		if (!data.isMember("ssrc") || !data["ssrc"].isUInt()
+		if ( data.isMember("ssrc") &&data["ssrc"].isUInt()
 			/*jsonSsrcIt != data.end() &&
 			Utils::Json::IsPositiveInteger(*jsonSsrcIt)*/
 		)

@@ -33,7 +33,7 @@ namespace RTC
 		this->type = data["type"].asCString() /*jsonTypeIt->get<std::string>()*/;
 
 		// parameter is optional.
-		if (!data.isMember("parameter") || !data["parameter"].isString()/*jsonParameterIt != data.end() && jsonParameterIt->is_string()*/)
+		if ( data.isMember("parameter") &&data["parameter"].isString()/*jsonParameterIt != data.end() && jsonParameterIt->is_string()*/)
 		{
 			this->parameter = data["parameter"].asCString(); //jsonParameterIt->get<std::string>();
 		}

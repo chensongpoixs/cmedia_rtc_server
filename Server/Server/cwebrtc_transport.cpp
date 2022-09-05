@@ -1956,5 +1956,64 @@ namespace chen {
 		// Pass the packet to the parent transport.
 		/*RTC::Transport::*/ReceiveRtcpPacket(packet);
 	}
-	
+	inline void cwebrtc_transport::OnProducerPaused(RTC::Producer* producer)
+	{
+		//MS_TRACE();
+
+		//this->listener->OnTransportProducerPaused(this, producer);
+	}
+
+	inline void cwebrtc_transport::OnProducerResumed(RTC::Producer* producer)
+	{
+		//MS_TRACE();
+
+		//this->listener->OnTransportProducerResumed(this, producer);
+	}
+
+	inline void cwebrtc_transport::OnProducerNewRtpStream(
+		RTC::Producer* producer, RTC::RtpStream* rtpStream, uint32_t mappedSsrc)
+	{
+		//MS_TRACE();
+
+		//this->listener->OnTransportProducerNewRtpStream(this, producer, rtpStream, mappedSsrc);
+	}
+
+	inline void cwebrtc_transport::OnProducerRtpStreamScore(
+		RTC::Producer* producer, RTC::RtpStream* rtpStream, uint8_t score, uint8_t previousScore)
+	{
+		//MS_TRACE();
+
+		//this->listener->OnTransportProducerRtpStreamScore(this, producer, rtpStream, score, previousScore);
+	}
+
+	inline void cwebrtc_transport::OnProducerRtcpSenderReport(
+		RTC::Producer* producer, RTC::RtpStream* rtpStream, bool first)
+	{
+		//MS_TRACE();
+
+		//this->listener->OnTransportProducerRtcpSenderReport(this, producer, rtpStream, first);
+	}
+
+	inline void cwebrtc_transport::OnProducerRtpPacketReceived(RTC::Producer* producer, RTC::RtpPacket* packet)
+	{
+		//MS_TRACE();
+
+		//this->listener->OnTransportProducerRtpPacketReceived(this, producer, packet);
+	}
+
+	inline void cwebrtc_transport::OnProducerSendRtcpPacket(RTC::Producer* /*producer*/, RTC::RTCP::Packet* packet)
+	{
+		//MS_TRACE();
+
+		SendRtcpPacket(packet);
+	}
+
+	inline void cwebrtc_transport::OnProducerNeedWorstRemoteFractionLost(
+		RTC::Producer* producer, uint32_t mappedSsrc, uint8_t& worstRemoteFractionLost)
+	{
+		//MS_TRACE();
+
+		//this->listener->OnTransportNeedWorstRemoteFractionLost(
+		//	this, producer, mappedSsrc, worstRemoteFractionLost);
+	}
 }
