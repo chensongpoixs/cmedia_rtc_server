@@ -1,0 +1,102 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////// answer /////////////////////////////////////////////////////////////////// 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+v=0
+o=chensong 10000 1 IN IP4 0.0.0.0
+s=-
+t=0 0
+a=ice-lite
+a=fingerprint:sha-512 3D:9A:9C:39:15:B1:1F:B4:43:F8:F0:95:D1:F6:DE:C1:3C:09:C1:B9:83:14:A0:E8:31:11:92:69:56:7F:6D:DD:9E:76:C9:9B:CD:82:10:DF:FB:64:B5:0B:7C:FB:DF:E0:83:54:5C:2F:0E:D7:1A:A7:E6:0C:AC:6D:FD:9B:AE:75
+a=msid-semantic: WMS *
+a=group:BUNDLE 0
+m=video 7 UDP/TLS/RTP/SAVPF 100 101
+c=IN IP4 127.0.0.1
+a=rtpmap:100 H264/90000
+a=rtpmap:101 rtx/90000
+a=fmtp:100 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f;x-google-max-bitrate=28000;x-google-min-bitrate=5500;x-google-start-bitrate=1000
+a=fmtp:101 apt=100
+a=rtcp-fb:100 transport-cc
+a=rtcp-fb:100 ccm fir
+a=rtcp-fb:100 nack
+a=rtcp-fb:100 nack pli
+a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid
+a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
+a=extmap:13 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time
+a=extmap:2 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01
+a=extmap:8 http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07
+a=extmap:12 urn:3gpp:video-orientation
+a=extmap:14 urn:ietf:params:rtp-hdrext:toffset
+a=setup:active
+a=mid:0
+a=recvonly
+a=ice-ufrag:xjg2o2h2v8bfzqkv
+a=ice-pwd:z5ywy0b4le11t42tcqzpz5kdmr22i9rm
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  ICE Candidate
+// Attribute	Illustrate
+// a=candidate	a=candidate:0 1 UDP 2122252543 192.168.0.111 56774 typ host
+// a=end-of-candidates	a=end-of-candidates
+// a=candidate 用于描述 ICE 交互时的一个连接候选者的参数，需要注意 UDP 类型和 TCP 类型的 candidate 定义上是有区别的。
+// 
+// UDP 类型定义：RFC8445
+// TCP 类型定义：RFC6544
+// UDP
+// <foundation> <component-id> <transport> <priority> <conn-addr> <conn-port> <cand-type> <candidate-types>
+// a=candidate:1 1 UDP 2130706431 fe80::6676:baff:fe9c:ee4a 8998 typ host
+// TCP
+// <foundation> <component-id> <transport> <priority> <conn-addr> <conn-port> <cand-type> <candidate-types> <tcp-type-ext> <tcp-type>
+// a=candidate:2 1 TCP 2124414975 192.0.2.1 3478 typ host tcptype passive
+// 
+// component-id 1:RTP 2:RTCP
+//  
+// ICE Candidate 的 4 种类型 https://tools.ietf.org/html/draft-ietf-mmusic-ice-sip-sdp-39
+// 
+//   1. host 该 candidate 是一个真实的主机，参数中的地址和端口对应一个真实的主机地址
+//   2. srflx (server reflexive) 该 candidate 是通过 Cone NAT 反射的类型，参数中的地址和端口是端发送 Binding 请求到 STUN/TURN server 经过 NAT 时，NAT 上分配的地址和端口
+//   3. prflx (peer reflexive) 该 candidate 是通过 Symmetric NAT 反射的类型，参数中的地址和端口是端发送 Binding 请求到 STUN/TURN server 经过 NAT 时，NAT 上分配的地址和端口
+//   4. relay 该 candidate 是通过 TURN 服务中继的类型，参数中的地址和端口是 TURN 服务用于在两个对等点之间转发数据的地址和端口
+//   5. priority 表示优先级，数值越大优先级越高
+// 
+// a=end-of-candidates 在 Trickle ICE 模式时，用于显示声明 candidate 信息的结束，在 https://tools.ietf.org/html/draft-ietf-mmusic-trickle-ice-sip-18 中定义。
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+a=candidate:udpcandidate 1 udp 1076302079 192.168.1.73 43717 typ host
+a=end-of-candidates
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//a=ice-options 用于描述 ICE 连接的属性信息，ice-options 的定义有很多种，WebRTC 中常见的有：
+//a=ice-options:trickle client 一边收集 candidate 一边发送给对端并开始连通性检查，可以缩短 ICE 建立连接的时间。
+//a=ice-options:renomination 允许 ICE controlling 一方动态重新提名新的 candidate ，默认情况 Offer 一方为controlling 角色，answer 一方为 controlled 角色；同时 Lite 一方只能为 controlled 角色。
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+a=ice-options:renomination
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//  音频、视频和数据通道同一个m行
+a=rtcp-mux
+a=rtcp-rsize
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////// offer ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+v=0
+o=chensong 10000 1 IN IP4 0.0.0.0
+s=-
+t=0 0
+a=ice-lite
+a=fingerprint:sha-512 3D:9A:9C:39:15:B1:1F:B4:43:F8:F0:95:D1:F6:DE:C1:3C:09:C1:B9:83:14:A0:E8:31:11:92:69:56:7F:6D:DD:9E:76:C9:9B:CD:82:10:DF:FB:64:B5:0B:7C:FB:DF:E0:83:54:5C:2F:0E:D7:1A:A7:E6:0C:AC:6D:FD:9B:AE:75
+a=msid-semantic: WMS *
+a=group:BUNDLE datachannel
+m=application 7 UDP/DTLS/SCTP webrtc-datachannel
+c=IN IP4 127.0.0.1
+a=setup:actpass
+a=mid:datachannel
+a=ice-ufrag:0lq7i2ahzatzo6gu
+a=ice-pwd:ans9gworpo3hmsmg7clqppdwm9wyvhvp
+a=candidate:udpcandidate 1 udp 1076302079 192.168.1.73 46340 typ host
+a=end-of-candidates
+a=ice-options:renomination
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

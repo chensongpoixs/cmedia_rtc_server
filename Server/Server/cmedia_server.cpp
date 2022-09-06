@@ -15,6 +15,7 @@ purpose:		cmedia_server
 #include "croom_mgr.h"
 #include "cmsg_dispatch.h"
 #include "cuv_util.h"
+#include "ccfg.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -37,12 +38,12 @@ namespace chen {
 		{
 			return false;
 		}
-		/*if (!g_cfg.init(config_file))
+		if (!g_cfg.init(config_file))
 		{
 			return false;
-		}*/
+		}
 
-	//	ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
+		//ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
 		//ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
 		SYSTEM_LOG("dispatch init ...");
 		if (!g_msg_dispatch.init())
@@ -137,8 +138,8 @@ namespace chen {
 		//SYSTEM_LOG("g_client_collection_mgr Destroy OK !!!");
 
 		//g_cloud_render_agent_mgr.destroy();
-		//SYSTEM_LOG("  destroy OK !!!");
-		//g_cfg.destroy();
+		SYSTEM_LOG(" cfg  destroy OK !!!");
+		g_cfg.destroy();
 
 		g_msg_dispatch.destroy();
 		SYSTEM_LOG("msg dispath destroy OK !!!");

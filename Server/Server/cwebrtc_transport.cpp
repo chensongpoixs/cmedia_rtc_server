@@ -24,7 +24,7 @@ purpose:		cwebrtc_transport
 #include "SenderReport.hpp"
 #include "CompoundPacket.hpp"
 #include "csrtp_session.h"
-
+#include "ccfg.h"
 namespace chen {
 
 
@@ -44,6 +44,8 @@ namespace chen {
 			std::pow(2, 0) * (256 - IceComponent);
 	}
 
+
+	static uint32 g_port_count = 0;
 
 	cwebrtc_transport::cwebrtc_transport()
 		: ctimer()
@@ -115,11 +117,12 @@ namespace chen {
 		///////////////////////////WEBRTC init///////////////////////////////////////
 
 
-		uint16 port = 0;
+		uint16 port = g_cfg.get_uint32(ECI_RtcMinPort) + g_port_count;
+		++g_port_count;
 		std::vector<ListenIp> listenIps;
 
 		ListenIp listenip;
-		listenip.announcedIp = "0.0.0.0";
+		listenip.announcedIp = g_cfg.get_string(ECI_RtcAnnouncedIp); //"0.0.0.0";
 		listenip.ip = "0.0.0.0";
 		listenIps.push_back(listenip);
 
