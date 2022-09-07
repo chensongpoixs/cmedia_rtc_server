@@ -130,9 +130,7 @@
             }
         ],
         "mid":"0",
-        "rtcp":{
-            "cname":""
-        }
+        "rtcp":{ "cname":"" }
     },
     "transportId":"dbd37be9-4f49-45f1-b318-140ea4c878b4"
 }
