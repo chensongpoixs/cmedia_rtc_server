@@ -170,7 +170,9 @@
 									}
 							 ]
 					},
-					"rtpParameters":{
+					"rtpParameters":{ 
+						"mid":"2",
+						"rtcp":{ "cname":"UgYi3789TL6C/8Zx", "reducedSize":true 	},
 						"codecs":[
 									{
 										"clockRate":90000,
@@ -279,9 +281,7 @@
 												"parameters":{ },
 												"uri":"urn:ietf:params:rtp-hdrext:toffset"
 											}
-								],
-					"mid":"2",
-					"rtcp":{ "cname":"UgYi3789TL6C/8Zx", "reducedSize":true 	}
+								]
 					}
 				}
 
