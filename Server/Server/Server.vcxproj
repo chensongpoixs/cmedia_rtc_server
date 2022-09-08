@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}</ProjectGuid>
     <RootNamespace>Server</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="casync_log.cpp" />
+    <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="ccrypto_random.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
@@ -263,9 +264,6 @@
     <ClCompile Include="rtcp\XR.cpp" />
     <ClCompile Include="rtcp\XrDelaySinceLastRr.cpp" />
     <ClCompile Include="rtcp\XrReceiverReferenceTime.cpp" />
-    <ClCompile Include="rtc_sdp\RtcSdp.pb.cc" />
-    <ClCompile Include="rtc_sdp\RtcSdpDefine.pb.cc" />
-    <ClCompile Include="rtc_sdp\RtcSdpEnumDefine.pb.cc" />
     <ClCompile Include="RtpCodecMimeType.cpp" />
     <ClCompile Include="RtpCodecParameters.cpp" />
     <ClCompile Include="RtpEncodingParameters.cpp" />
@@ -289,6 +287,7 @@
   <ItemGroup>
     <ClInclude Include="BweType.hpp" />
     <ClInclude Include="casync_log.h" />
+    <ClInclude Include="ccfg.h" />
     <ClInclude Include="cconfig.h" />
     <ClInclude Include="ccrypto_random.h" />
     <ClInclude Include="cdigit2str.h" />
@@ -429,9 +428,6 @@
     <ClInclude Include="rtcp\XR.hpp" />
     <ClInclude Include="rtcp\XrDelaySinceLastRr.hpp" />
     <ClInclude Include="rtcp\XrReceiverReferenceTime.hpp" />
-    <ClInclude Include="rtc_sdp\RtcSdp.pb.h" />
-    <ClInclude Include="rtc_sdp\RtcSdpDefine.pb.h" />
-    <ClInclude Include="rtc_sdp\RtcSdpEnumDefine.pb.h" />
     <ClInclude Include="RtpDictionaries.hpp" />
     <ClInclude Include="RtpHeaderExtensionIds.hpp" />
     <ClInclude Include="RtpListener.hpp" />

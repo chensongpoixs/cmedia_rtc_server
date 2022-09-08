@@ -535,20 +535,14 @@
     <ClCompile Include="RtpListener.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
-    <ClCompile Include="rtc_sdp\RtcSdp.pb.cc">
-      <Filter>rtc_sdp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtc_sdp\RtcSdpDefine.pb.cc">
-      <Filter>rtc_sdp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtc_sdp\RtcSdpEnumDefine.pb.cc">
-      <Filter>rtc_sdp</Filter>
-    </ClCompile>
     <ClCompile Include="crtc_sdp.cpp">
       <Filter>rtc_sdp</Filter>
     </ClCompile>
     <ClCompile Include="crtc_sdp_util.cpp">
       <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="ccfg.cpp">
+      <Filter>config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1014,15 +1008,6 @@
     <ClInclude Include="RtpListener.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
-    <ClInclude Include="rtc_sdp\RtcSdp.pb.h">
-      <Filter>rtc_sdp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtc_sdp\RtcSdpDefine.pb.h">
-      <Filter>rtc_sdp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtc_sdp\RtcSdpEnumDefine.pb.h">
-      <Filter>rtc_sdp</Filter>
-    </ClInclude>
     <ClInclude Include="crtc_sdp.h">
       <Filter>rtc_sdp</Filter>
     </ClInclude>
@@ -1031,6 +1016,9 @@
     </ClInclude>
     <ClInclude Include="crtc_sdp_define.h">
       <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="ccfg.h">
+      <Filter>config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
