@@ -11,28 +11,28 @@ namespace RTC
 
 	/* Instance methods. */
 	using namespace chen;
-	RtpRtxParameters::RtpRtxParameters(Json::Value& data)
-	{
-		//MS_TRACE();
+	//RtpRtxParameters::RtpRtxParameters(Json::Value& data)
+	//{
+	//	//MS_TRACE();
 
-		if (!data.isObject())
-		{
-			ERROR_EX_LOG("data is not an object");
-		}
+	//	if (!data.isObject())
+	//	{
+	//		ERROR_EX_LOG("data is not an object");
+	//	}
 
-		//auto jsonSsrcIt = data.find("ssrc");
+	//	//auto jsonSsrcIt = data.find("ssrc");
 
-		// ssrc is optional.
-		// clang-format off
-		if ( data.isMember("ssrc") &&data["ssrc"].isUInt()
-			/*jsonSsrcIt != data.end() &&
-			Utils::Json::IsPositiveInteger(*jsonSsrcIt)*/
-		)
-		// clang-format on
-		{
-			this->ssrc = data["ssrc"].asUInt();//jsonSsrcIt->get<uint32_t>();
-		}
-	}
+	//	// ssrc is optional.
+	//	// clang-format off
+	//	if ( data.isMember("ssrc") &&data["ssrc"].isUInt()
+	//		/*jsonSsrcIt != data.end() &&
+	//		Utils::Json::IsPositiveInteger(*jsonSsrcIt)*/
+	//	)
+	//	// clang-format on
+	//	{
+	//		this->ssrc = data["ssrc"].asUInt();//jsonSsrcIt->get<uint32_t>();
+	//	}
+	//}
 
 	//void RtpRtxParameters::FillJson(json& jsonObject) const
 	//{

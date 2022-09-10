@@ -93,3 +93,36 @@ a=end-of-candidates
 a=ice-options:renomination
 a=rtcp-mux
 a=rtcp-rsize
+
+
+## 1、什么是 RTX
+
+RTX 就是重传 Retransmission, 将丢失的包重新由发送方传给接收方。
+
+Webrtc 默认开启 RTX (重传)，它一般采用不同的 SSRC 进行传输，即原始的 RTP 包和重传的 RTP 包的 SSRC 是不同的，这样不会干扰原始 RTP 包的度量。
+
+RTX 包的 Payload 在 RFC4588 中有详细描述，一般 NACK 导致的重传包和 Bandwidth Probe 导致的探测包也可能走 RTX 通道。
+
+
+为什么用 RTX
+媒体流多使用 RTP 通过 UDP 进行传输，由于是不可靠传输，丢包是不可避免，也是可以容忍的，但是对于一些关键数据是不能丢失的，这时候就需要重传(RTX)。
+
+## 2、在 WebRTC 中常用的 QoS 策略有
+   
+反馈：例如 PLI , NACK
+
+冗余， 例如 FEC, RTX
+
+调整：例如码率，分辨率及帧率的调整
+
+缓存: 例如 Receive Adaptive Jitter Buffer, Send Buffer
+
+这些措施一般需要结合基于拥塞控制(congestion control) 及带宽估计(bandwidth estimation)技术, 不同的网络条件下需要采用不同的措施。
+
+FEC 用作丢包恢复需要占用更多的带宽，即使 5% 的丢包需要几乎一倍的带宽，在带宽有限的情况下可能会使情况更糟。
+
+RTX 不会占用太多的带宽，接收方发送 NACK 指明哪些包丢失了，发送方通过单独的 RTP 流（不同的 SSRC）来重传丢失的包，但是 RTX 至少需要一个 RTT 来修复丢失的包。
+
+音频流对于延迟很敏感，而且占用带宽不多，所以用 FEC 更好。WebRTC 默认并不为 audio 开启 RTX
+
+视频流对于延迟没那么敏感，而且占用带宽很多，所以用 RTX 更好。

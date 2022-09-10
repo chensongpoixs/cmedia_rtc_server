@@ -11,66 +11,66 @@ namespace RTC
 	/* Instance methods. */
 
 	using namespace chen;
-	RtpHeaderExtensionParameters::RtpHeaderExtensionParameters(Json::Value& data)
-	{
-		//MS_TRACE();
+	//RtpHeaderExtensionParameters::RtpHeaderExtensionParameters(Json::Value& data)
+	//{
+	//	//MS_TRACE();
 
-		if (!data.isObject())
-		{
-			ERROR_EX_LOG("data is not an object");
-		}
+	//	if (!data.isObject())
+	//	{
+	//		ERROR_EX_LOG("data is not an object");
+	//	}
 
-		/*auto jsonUriIt        = data.find("uri");
-		auto jsonIdIt         = data.find("id");
-		auto jsonEncryptIt    = data.find("encrypt");
-		auto jsonParametersIt = data.find("parameters");*/
+	//	/*auto jsonUriIt        = data.find("uri");
+	//	auto jsonIdIt         = data.find("id");
+	//	auto jsonEncryptIt    = data.find("encrypt");
+	//	auto jsonParametersIt = data.find("parameters");*/
 
-		// uri is mandatory.
-		if (!data.isMember("uri") || !data["uri"].isString() /*jsonUriIt == data.end() || !jsonUriIt->is_string()*/)
-		{
-			ERROR_EX_LOG("missing uri");
-			return;
-		}
+	//	// uri is mandatory.
+	//	if (!data.isMember("uri") || !data["uri"].isString() /*jsonUriIt == data.end() || !jsonUriIt->is_string()*/)
+	//	{
+	//		ERROR_EX_LOG("missing uri");
+	//		return;
+	//	}
 
-		this->uri = data["uri"].asCString(); //jsonUriIt->get<std::string>();
+	//	this->uri = data["uri"].asCString(); //jsonUriIt->get<std::string>();
 
-		if (this->uri.empty())
-		{
-			ERROR_EX_LOG("empty uri");
-			return;
-		}
+	//	if (this->uri.empty())
+	//	{
+	//		ERROR_EX_LOG("empty uri");
+	//		return;
+	//	}
 
-		// Get the type.
-		this->type = RTC::RtpHeaderExtensionUri::GetType(this->uri);
+	//	// Get the type.
+	//	this->type = RTC::RtpHeaderExtensionUri::GetType(this->uri);
 
-		// id is mandatory.
-		if (!data.isMember("id") || !data["id"].isUInt()/*jsonIdIt == data.end() || !Utils::Json::IsPositiveInteger(*jsonIdIt)*/)
-		{
-			ERROR_EX_LOG("missing id");
-			return;
-		}
+	//	// id is mandatory.
+	//	if (!data.isMember("id") || !data["id"].isUInt()/*jsonIdIt == data.end() || !Utils::Json::IsPositiveInteger(*jsonIdIt)*/)
+	//	{
+	//		ERROR_EX_LOG("missing id");
+	//		return;
+	//	}
 
-		this->id = data["id"].asUInt(); //jsonIdIt->get<uint8_t>();
+	//	this->id = data["id"].asUInt(); //jsonIdIt->get<uint8_t>();
 
-		// Don't allow id 0.
-		if (this->id == 0u)
-		{
-			ERROR_EX_LOG("invalid id 0");
-			return;
-		}
+	//	// Don't allow id 0.
+	//	if (this->id == 0u)
+	//	{
+	//		ERROR_EX_LOG("invalid id 0");
+	//		return;
+	//	}
 
-		// encrypt is optional.
-		if ( data.isMember("encrypt")&&data["encrypt"].isBool()/*jsonEncryptIt != data.end() && jsonEncryptIt->is_boolean()*/)
-		{
-			this->encrypt = data["encrypt"].asBool();//jsonEncryptIt->get<bool>();
-		}
+	//	// encrypt is optional.
+	//	if ( data.isMember("encrypt")&&data["encrypt"].isBool()/*jsonEncryptIt != data.end() && jsonEncryptIt->is_boolean()*/)
+	//	{
+	//		this->encrypt = data["encrypt"].asBool();//jsonEncryptIt->get<bool>();
+	//	}
 
-		// parameters is optional.
-		if ( data.isMember("parameters") &&data["parameters"].isObject()/*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
-		{
-			this->parameters.Set(data["parameters"]);
-		}
-	}
+	//	// parameters is optional.
+	//	if ( data.isMember("parameters") &&data["parameters"].isObject()/*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
+	//	{
+	//		this->parameters.Set(data["parameters"]);
+	//	}
+	//}
 
 	//void RtpHeaderExtensionParameters::FillJson(json& jsonObject) const
 	//{

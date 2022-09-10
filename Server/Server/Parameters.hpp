@@ -62,8 +62,9 @@ namespace RTC
 		};
 
 	public:
+		explicit Parameters();
 		//void FillJson(json& jsonObject) const;
-		void Set(Json::Value& data); 
+		//void Set(Json::Value& data); 
 		bool HasBoolean(const std::string& key) const;
 		bool HasInteger(const std::string& key) const;
 		bool HasPositiveInteger(const std::string& key) const;
@@ -77,7 +78,7 @@ namespace RTC
 		const std::string& GetString(const std::string& key) const;
 		const std::vector<int32_t>& GetArrayOfIntegers(const std::string& key) const;
 
-	private:
+	public:
 		std::unordered_map<std::string, Value> mapKeyValues;
 	};
 } // namespace RTC

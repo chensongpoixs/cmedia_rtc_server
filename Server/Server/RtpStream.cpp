@@ -104,7 +104,7 @@ namespace RTC
 		params.cname            = GetCname();
 
 		// Tell the RtpCodecMimeType to update its string based on current type and subtype.
-		params.mimeType.UpdateMimeType();
+		//params.mimeType.UpdateMimeType();
 
 		this->rtxStream = new RTC::RtxStream(params);
 	}

@@ -157,6 +157,7 @@
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="crate_calculator.cpp" />
     <ClCompile Include="crtc_sdp.cpp" />
+    <ClCompile Include="crtc_sdp_handler.cpp" />
     <ClCompile Include="crtc_sdp_util.cpp" />
     <ClCompile Include="csrtp_session.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
@@ -266,6 +267,7 @@
     <ClCompile Include="rtcp\XrReceiverReferenceTime.cpp" />
     <ClCompile Include="RtpCodecMimeType.cpp" />
     <ClCompile Include="RtpCodecParameters.cpp" />
+    <ClCompile Include="RtpDictionaries.cpp" />
     <ClCompile Include="RtpEncodingParameters.cpp" />
     <ClCompile Include="RtpHeaderExtensionParameters.cpp" />
     <ClCompile Include="RtpHeaderExtensionUri.cpp" />

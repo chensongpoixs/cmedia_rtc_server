@@ -82,68 +82,78 @@ namespace RTC
 
 	/* Instance methods. */
 
-	void RtpCodecMimeType::SetMimeType(const std::string& mimeType)
-	{
-		//MS_TRACE();
+	//RtpCodecMimeType::RtpCodecMimeType()
+	//{
+	//	
 
-		auto slashPos = mimeType.find('/');
+	//	//type = RtpCodecMimeType::Type::VIDEO;
+	//	//subtype = RtpCodecMimeType::Subtype::H264;
+	//	//// video/H264
+	//	//mimeType = RtpCodecMimeType::type2String[this->type] + "/" + RtpCodecMimeType::subtype2String[this->subtype];
+	//}
 
-		if (slashPos == std::string::npos || slashPos == 0 || slashPos == mimeType.length() - 1)
-		{
-			ERROR_EX_LOG("wrong codec MIME");
-		}
+	//void RtpCodecMimeType::SetMimeType(const std::string& mimeType)
+	//{
+	//	//MS_TRACE();
 
-		std::string type    = mimeType.substr(0, slashPos);
-		std::string subtype = mimeType.substr(slashPos + 1);
+	//	auto slashPos = mimeType.find('/');
 
-		// Force lowcase names.
-		//Utils::String::ToLowerCase(type);
-		std::transform(type.begin(), type.end(), type.begin(), ::tolower);
-		std::transform(subtype.begin(), subtype.end(), subtype.begin(), ::tolower);
-		//Utils::String::ToLowerCase(subtype);
+	//	if (slashPos == std::string::npos || slashPos == 0 || slashPos == mimeType.length() - 1)
+	//	{
+	//		ERROR_EX_LOG("wrong codec MIME");
+	//	}
 
-		// Set MIME type.
-		{
-			auto it = RtpCodecMimeType::string2Type.find(type);
+	//	std::string type    = mimeType.substr(0, slashPos);
+	//	std::string subtype = mimeType.substr(slashPos + 1);
 
-			if (it == RtpCodecMimeType::string2Type.end())
-			{
-				ERROR_EX_LOG("unknown codec MIME type '%s'", type.c_str());
-			}
+	//	// Force lowcase names.
+	//	//Utils::String::ToLowerCase(type);
+	//	std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+	//	std::transform(subtype.begin(), subtype.end(), subtype.begin(), ::tolower);
+	//	//Utils::String::ToLowerCase(subtype);
 
-			this->type = it->second;
-		}
+	//	// Set MIME type.
+	//	{
+	//		auto it = RtpCodecMimeType::string2Type.find(type);
 
-		// Set MIME subtype.
-		{
-			auto it = RtpCodecMimeType::string2Subtype.find(subtype);
+	//		if (it == RtpCodecMimeType::string2Type.end())
+	//		{
+	//			ERROR_EX_LOG("unknown codec MIME type '%s'", type.c_str());
+	//		}
 
-			if (it == RtpCodecMimeType::string2Subtype.end())
-			{
-				ERROR_EX_LOG("unknown codec MIME subtype '%s'", subtype.c_str());
-			}
+	//		this->type = it->second;
+	//	}
 
-			this->subtype = it->second;
-		}
+	//	// Set MIME subtype.
+	//	{
+	//		auto it = RtpCodecMimeType::string2Subtype.find(subtype);
 
-		// Set mimeType.
-		this->mimeType = RtpCodecMimeType::type2String[this->type] + "/" +
-		                 RtpCodecMimeType::subtype2String[this->subtype];
-		//if ("opus" == subtype) // audio webrtc bug  opus 2 channel 
-		//{
-		//	this->mimeType += "/" + std::to_string(2);
-		//}
-	}
+	//		if (it == RtpCodecMimeType::string2Subtype.end())
+	//		{
+	//			ERROR_EX_LOG("unknown codec MIME subtype '%s'", subtype.c_str());
+	//		}
 
-	void RtpCodecMimeType::UpdateMimeType()
-	{
-		//MS_TRACE();
+	//		this->subtype = it->second;
+	//	}
 
-		//MS_ASSERT(this->type != Type::UNSET, "type unset");
-		//MS_ASSERT(this->subtype != Subtype::UNSET, "subtype unset");
+	//	// Set mimeType.
+	//	this->mimeType = RtpCodecMimeType::type2String[this->type] + "/" +
+	//	                 RtpCodecMimeType::subtype2String[this->subtype];
+	//	//if ("opus" == subtype) // audio webrtc bug  opus 2 channel 
+	//	//{
+	//	//	this->mimeType += "/" + std::to_string(2);
+	//	//}
+	//}
 
-		// Set mimeType.
-		this->mimeType = RtpCodecMimeType::type2String[this->type] + "/" +
-		                 RtpCodecMimeType::subtype2String[this->subtype];
-	}
+	//void RtpCodecMimeType::UpdateMimeType()
+	//{
+	//	//MS_TRACE();
+
+	//	//MS_ASSERT(this->type != Type::UNSET, "type unset");
+	//	//MS_ASSERT(this->subtype != Subtype::UNSET, "subtype unset");
+
+	//	// Set mimeType.
+	//	this->mimeType = RtpCodecMimeType::type2String[this->type] + "/" +
+	//	                 RtpCodecMimeType::subtype2String[this->subtype];
+	//}
 } // namespace RTC

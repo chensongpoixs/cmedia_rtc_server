@@ -544,6 +544,12 @@
     <ClCompile Include="ccfg.cpp">
       <Filter>config</Filter>
     </ClCompile>
+    <ClCompile Include="RtpDictionaries.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_sdp_handler.cpp">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">

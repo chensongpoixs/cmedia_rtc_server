@@ -3,7 +3,8 @@
 
 #include "IceCandidate.hpp"
 //#include "Logger.hpp"
-
+#include <ostream>
+#include <sstream>   
 namespace RTC
 {
 	/* Instance methods. */
@@ -44,50 +45,58 @@ namespace RTC
 	//			break;
 	//	}
 
-	void IceCandidate::reply(Json::Value & value)
+	std::string  IceCandidate::candidate()
 	{
+		std::ostringstream cmd;
+		cmd << foundation << " 1  ";
 		// Add foundation.
-		value["iceCandidates"]["foundation"] = this->foundation;
+		//value["iceCandidates"]["foundation"] = this->foundation;
 
-		// Add priority.
-		value["iceCandidates"]["priority"] = this->priority;
+		//// Add priority.
+		//value["iceCandidates"]["priority"] = this->priority;
 
-		// Add ip.
-		value["iceCandidates"]["ip"] = this->ip;
+		//// Add ip.
+		//value["iceCandidates"]["ip"] = this->ip;
 
-		// Add protocol.
+		//// Add protocol.
 		switch (this->protocol)
 		{
 		case Protocol::UDP:
-			value["iceCandidates"]["protocol"] = "udp";
+			//value["iceCandidates"]["protocol"] = "udp";
+			cmd << "udp ";
 			break;
 
 		case Protocol::TCP:
-			value["iceCandidates"]["protocol"] = "tcp";
+			//value["iceCandidates"]["protocol"] = "tcp";
+			cmd << "tcp ";
 			break;
 		}
-
-		// Add port.
-		value["iceCandidates"]["port"] = this->port;
+		cmd << priority << " " << ip << " " << port  << " type ";
+		//// Add port.
+		//value["iceCandidates"]["port"] = this->port;
 
 		// Add type.
 		switch (this->type)
 		{
-		case CandidateType::HOST:
-			value["iceCandidates"]["type"] = "host";
-			break;
-		}
-
-		// Add tcpType.
-		if (this->protocol == Protocol::TCP)
-		{
-			switch (this->tcpType)
+			case CandidateType::HOST:
 			{
-			case TcpCandidateType::PASSIVE:
-				value["iceCandidates"]["tcpType"] = "passive";
+				//value["iceCandidates"]["type"] = "host";
+				cmd << "host";
 				break;
 			}
 		}
+		return cmd.str();
+
+		//// Add tcpType.
+		//if (this->protocol == Protocol::TCP)
+		//{
+		//	switch (this->tcpType)
+		//	{
+		//	case TcpCandidateType::PASSIVE:
+		//		value["iceCandidates"]["tcpType"] = "passive";
+		//		break;
+		//	}
+		//}
 	}
 
 	//	// Add tcpType.

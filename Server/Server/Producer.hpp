@@ -86,7 +86,7 @@ namespace RTC
 		};
 
 	public:
-		Producer(const std::string& id, RTC::Producer::Listener* listener, Json::Value& data);
+		Producer(const std::string& id, RTC::Producer::Listener* listener/*, Json::Value& data*/);
 		virtual ~Producer();
 
 	public:

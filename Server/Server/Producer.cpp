@@ -23,209 +23,132 @@ namespace RTC
 {
 	/* Instance methods. */
 
-	Producer::Producer(const std::string& id, RTC::Producer::Listener* listener, Json::Value& data)
+	Producer::Producer(const std::string& id, RTC::Producer::Listener* listener/*, Json::Value& data*/)
 		: id(id)
 		, listener(listener)
 	{
-		if (!data.isMember("kind") && !data["kind"].isString())
-		{
-			ERROR_EX_LOG("not find kind or kind not is type string !!!");
-			return;
-			//assert()
-		}
+
 		
-		if (!data.isMember("rtpMapping") || !data["rtpMapping"].isArray())
-		{
-			ERROR_EX_LOG("missing rtpMapping");
-			return;
-		}
-		if (!data.isMember("rtpParameters") && !data["rtpParameters"].isObject())
-		{
-			ERROR_EX_LOG("rtpParameters not find or type not is object !!!");
-			return;
-		}
-
-		kind =  RTC::Media::GetKind(data["kind"].asCString()) ;
-		if (this->kind == RTC::Media::Kind::ALL)
-		{
-			ERROR_EX_LOG("invalid empty kind");
-			return;
-		}
-		if (data.isMember("paused") && data["paused"].isBool())
-		{
-			paused = data["paused"].asBool();
-		}
+		kind = RTC::Media::Kind::VIDEO;
+		paused = false;
 
 
+		////////////////////////////////////////////////mid////////////////////////////////////////////////////////
+		//
+		// default video h264 RtpParameters
+		// 1. 
+		rtpParameters.mid = "0";
 
-		//////////////////////////rtpMapping///////////////////////////
+		/////////////////////////////////////////////////RTCP///////////////////////////////////////////////////////////
+		// 2. rtcp 
+		rtpParameters.rtcp.cname = "UgYi3789TL6C/8Zx";
+		rtpParameters.rtcp.reducedSize = true;
 
-		const Json::Value & rtpMappingValue = data["rtpMapping"];
-		if (!rtpMappingValue.isMember("codecs") || !rtpMappingValue["codecs"].isArray())
-		{
-			ERROR_EX_LOG("invalid empty rtpMapping.codecs");
-			return;
-		}
-		if (!rtpMappingValue.isMember("encodings") || !rtpMappingValue["encodings"].isArray())
-		{
-			ERROR_EX_LOG("invalid empty rtpMapping.encodings");
-			return;
-		}
-		const Json::Value & rtpMapping_Codecs = rtpMappingValue["codecs"];
+		////////////////////////////////////////////////codecs///////////////////////////////////////////////////////////
+		// 3. codecs
+		//	3.1 RTP
+		RtpCodecParameters  rtpcodecparameter;
+		rtpcodecparameter.clockRate = 90000;
+		rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
+		rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::H264;
+		rtpcodecparameter.mimeType.mimeType = "video/H264";
+		rtpcodecparameter.payloadType = 108; 
+		rtpcodecparameter.parameters.mapKeyValues.emplace("level-asymmetry-allowed", Parameters::Value(1));
+		rtpcodecparameter.parameters.mapKeyValues.emplace("packetization-mode", Parameters::Value(1));
+		rtpcodecparameter.parameters.mapKeyValues.emplace("profile-level-id", Parameters::Value("42e01f"));
+		//// 服务质量Qos RTCPfeedback
+		RtcpFeedback rtcpfeedback;
 
-		for (auto it : rtpMapping_Codecs)
-		{
-			if (!it.isMember("payloadType") || !it["payloadType"].isUInt())
-			{
-				WARNING_EX_LOG("invalid empty rtpMapping.codecs.payloadType");
-				continue;;
-			}
-			if (!it.isMember("mappedPayloadType") || !it["mappedPayloadType"].isUInt())
-			{
-				WARNING_EX_LOG("invalid empty rtpMapping.codecs.mappedPayloadType");
-				continue;;
-			}
-			rtpMapping.codecs[it["payloadType"].asUInt()] = it["mappedPayloadType"].asUInt();
-		}
-		const Json::Value & rtpMapping_encodings = rtpMappingValue["encodings"];
+		rtcpfeedback.type = "goog-remb";
+		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+
+		rtcpfeedback.type = "transport-cc";
+		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+
+		rtcpfeedback.type = "ccm";
+		rtcpfeedback.parameter = "fir";
+		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+
+		rtcpfeedback.type = "nack";
+		rtcpfeedback.parameter = "";
+		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+
+
+		rtcpfeedback.type = "nack";
+		rtcpfeedback.parameter = "pli";
+		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
 		 
-		//this->rtpMapping.encodings.reserve(rtpMapping_encodings.size());
 
-		for (auto iter : rtpMapping_encodings)
-		{
-			RtpEncodingMapping rtpEncode;
-			if (!iter.isMember("ssrc") ||
-				!iter["ssrc"].isUInt())
-			{
-				WARNING_EX_LOG("invalid empty rtpMapping.encodings.ssrc");
-				continue;;
-			}
-			if (!iter.isMember("rid") ||
-				!iter["rid"].isString())
-			{
-				WARNING_EX_LOG("invalid empty rtpMapping.encodings.rid");
-				continue;;
-			}
+		rtpParameters.codecs.push_back(rtpcodecparameter);
+		// RTX RtpCodecParameters  rtpcodecparameter;
+		RtpCodecParameters  rtx_rtpcodecparameter;
+		rtx_rtpcodecparameter.clockRate = 90000;
+		rtx_rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
+		rtx_rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::RTX;
+		rtx_rtpcodecparameter.mimeType.mimeType = "video/rtx";
+		rtx_rtpcodecparameter.payloadType = 109;
 
-			if (!iter.isMember("mappedSsrc") ||
-				!iter["mappedSsrc"].isUInt())
-			{
-				WARNING_EX_LOG("invalid empty rtpMapping.encodings.mappedSsrc");
-				continue;;
-			}
-			//rtpMapping.encodings.emplace_back();
-			rtpEncode.rid = iter["rid"].asCString();
-			rtpEncode.mappedSsrc = iter["mappedSsrc"].asUInt();
-			rtpEncode.ssrc = iter["ssrc"].asUInt();
-			rtpMapping.encodings.push_back(rtpEncode);
-		}
+		rtx_rtpcodecparameter.parameters.mapKeyValues.emplace("apt", Parameters::Value(108));
+		rtpParameters.codecs.push_back(rtx_rtpcodecparameter);
+
+		/////////////////////////////////encodings////////////////////////////////////////////
+		RtpEncodingParameters rtpencodingparameter;
+		rtpencodingparameter.ssrc = 899346955;
+		rtpencodingparameter.rtx.ssrc = 28746816;
+		rtpParameters.encodings.push_back(rtpencodingparameter);
 
 
+		////////////////////////////////////RtpHeaderExtensionParameters///////////////////////////////////////////////////////
+		RtpHeaderExtensionParameters rtpheaderextensionparameter;
+		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:mid";
+		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		rtpheaderextensionparameter.id = 3;
+		rtpheaderextensionparameter.encrypt = false;
 
-		// The number of encodings in rtpParameters must match the number of encodings
-		// in rtpMapping.
-		if (this->rtpParameters.encodings.size() != this->rtpMapping.encodings.size())
-		{
-			ERROR_EX_LOG("rtpParameters.encodings size does not match rtpMapping.encodings size");
-			return;
-		}
-		////////////////////////////////////////////////////
+		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id";
+		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		rtpheaderextensionparameter.id = 10;
+		rtpheaderextensionparameter.encrypt = false;
 
+		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
 
-		// This may throw.
-		this->rtpParameters = RTC::RtpParameters(data["rtpParameters"]);
+		////
+		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id";
+		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		rtpheaderextensionparameter.id = 11;
+		rtpheaderextensionparameter.encrypt = false;
 
-
-		// Evaluate type.
-		this->type = RTC::RtpParameters::GetType(this->rtpParameters);
-
-		// Reserve a slot in rtpStreamByEncodingIdx and rtpStreamsScores vectors
-		// for each RTP stream.
-		this->rtpStreamByEncodingIdx.resize(this->rtpParameters.encodings.size(), nullptr);
-		this->rtpStreamScores.resize(this->rtpParameters.encodings.size(), 0u);
-
-
-		auto& encoding = this->rtpParameters.encodings[0];
-		auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
-
-		if (!RTC::Codecs::Tools::IsValidTypeForCodec(this->type, mediaCodec->mimeType))
-		{
-			ERROR_EX_LOG(
-				"%s codec not supported for %s",
-				mediaCodec->mimeType.ToString().c_str(),
-				RTC::RtpParameters::GetTypeString(this->type).c_str());
-		}
-//<<<<<<< HEAD
-
-		if (!data.isMember("rtpMapping") || !data["rtpMapping"].isArray())
-		{
-			ERROR_EX_LOG("missing rtpMapping");
-			return;
-		}
-		const Json::Value arrayObj = data["rtpMapping"]["codecs"];
-		for (size_t i = 0; i < arrayObj.size(); ++i)
-		{
-			//arrayObj.isMember("payloadType")
-			//rtpMapping.codecs[arrayObj[i]["payloadType"].asUInt()] = arrayObj[i]["mappedPayloadType"].asUInt();
-			//if (arrayObj[i].isObject())
-			//{
-			//	ERROR_EX_LOG("not is Object !!!");
-			//	return;
-			//}
-			//if (
-			//	 !arrayObj[i].isMember("payloadType") || !arrayObj[i]["payloadType"].isUInt()
-			//	)
-			//	// clang-format on
-			//{
-			//	ERROR_EX_LOG("wrong entry in rtpMapping.codecs (missing payloadType)");
-			//}
-
-		}
-
-		if (!data["rtpMapping"].isMember("encodings") || !data["rtpMapping"]["encodings"].isArray())
-		{
-			ERROR_EX_LOG("missing rtpMapping.encodings");
-			return;
-		}
-		this->rtpMapping.encodings.reserve(data["rtpMapping"]["encodings"].size());
+		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
 		
-		for (size_t i = 0; i < data["rtpMapping"]["encodings"].size(); ++i)
-		{
-			RtpEncodingMapping rtpEncode;
-			if (!data["rtpMapping"]["encodings"].isMember("ssrc") || 
-				!data["rtpMapping"]["encodings"]["ssrc"].isUInt())
-			{
-				rtpEncode.ssrc = data["rtpMapping"]["encodings"]["ssrc"].asUInt();
-			}
-			if (!data["rtpMapping"]["encodings"].isMember("rid") ||
-				!data["rtpMapping"]["encodings"]["rid"].isString())
-			{
-				rtpEncode.rid = data["rtpMapping"]["encodings"]["rid"].asCString();
-			}
+		rtpheaderextensionparameter.uri = "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time";
+		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		rtpheaderextensionparameter.id = 2;
+		rtpheaderextensionparameter.encrypt = false;
 
-			if (!data["rtpMapping"]["encodings"].isMember("mappedSsrc") ||
-				!data["rtpMapping"]["encodings"]["mappedSsrc"].isUInt())
-			{
-				rtpEncode.mappedSsrc = data["rtpMapping"]["encodings"]["mappedSsrc"].asUInt();
-			}
-		}
+		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
 
-		if (data.isMember("paused")  &&data["paused"].isBool())
-		{
-			paused = data["paused"].asBool();
-		}
 
-		// The number of encodings in rtpParameters must match the number of encodings
-		// in rtpMapping.
-		if (this->rtpParameters.encodings.size() != this->rtpMapping.encodings.size())
-		{
-			ERROR_EX_LOG("rtpParameters.encodings size does not match rtpMapping.encodings size");
-			return;
-		}
+		rtpheaderextensionparameter.uri = "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01";
+		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		rtpheaderextensionparameter.id = 3;
+		rtpheaderextensionparameter.encrypt = false;
 
-//=======
-//		 
-//>>>>>>> 937daffc83cb799c8c64611afe41b71c62c129f1
+		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+
+		rtpheaderextensionparameter.uri = "urn:3gpp:video-orientation";
+		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		rtpheaderextensionparameter.id = 13;
+		rtpheaderextensionparameter.encrypt = false;
+
+		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+
+		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:toffset";
+		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		rtpheaderextensionparameter.id = 14;
+		rtpheaderextensionparameter.encrypt = false;
+
+		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
 
 		// Fill RTP header extension ids.
 		// This may throw.
@@ -303,17 +226,17 @@ namespace RTC
 		if (this->kind == RTC::Media::Kind::VIDEO)
 		{
 			//auto jsonKeyFrameRequestDelayIt = data.find("keyFrameRequestDelay");
-			uint32_t keyFrameRequestDelay = 0u;
+			uint32_t keyFrameRequestDelay = 100u;
 
 			// clang-format off
-			if (
-				data.isMember("keyFrameRequestDelay") && data["keyFrameRequestDelay"].isUInt64()
-				)
-				// clang-format on
-			{
-				keyFrameRequestDelay = data["keyFrameRequestDelay"].asUInt();// jsonKeyFrameRequestDelayIt->get<uint32_t>();
-			}
-
+			//if (
+			//	data.isMember("keyFrameRequestDelay") && data["keyFrameRequestDelay"].isUInt64()
+			//	)
+			//	// clang-format on
+			//{
+			//	keyFrameRequestDelay = data["keyFrameRequestDelay"].asUInt();// jsonKeyFrameRequestDelayIt->get<uint32_t>();
+			//}
+			//keyFrameRequestDelay = 500;
 			this->keyFrameRequestManager = new RTC::KeyFrameRequestManager(this, keyFrameRequestDelay);
 		}
 
@@ -1121,7 +1044,7 @@ namespace RTC
 			params.useDtx = true;
 		}
 
-		for (const auto& fb : mediaCodec.rtcpFeedback)
+		/*for (const auto& fb : mediaCodec.rtcpFeedback)
 		{
 			if (!params.useNack && fb.type == "nack" && fb.parameter.empty())
 			{
@@ -1141,7 +1064,7 @@ namespace RTC
 
 				params.useFir = true;
 			}
-		}
+		}*/
 
 		// Create a RtpStreamRecv for receiving a media stream.
 		auto* rtpStream = new RTC::RtpStreamRecv(this, params);

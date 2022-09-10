@@ -56,7 +56,11 @@ namespace chen {
 		{
 
 			int err;
-
+			if (!g_uv_loop)
+			{
+				WARNING_EX_LOG("uv loop ptr == null !!!");
+				return;
+			}
 			uv_stop(g_uv_loop);
 			uv_walk(g_uv_loop, onWalk, nullptr);
 

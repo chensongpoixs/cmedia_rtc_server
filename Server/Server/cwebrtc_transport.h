@@ -277,7 +277,7 @@ namespace chen
 	//	void OnTransportCongestionControlServerSendRtcpPacket(
 	//		RTC::TransportCongestionControlServer* tccServer, RTC::RTCP::Packet* packet) override;
 	private:
-		void reply_rtc_info(Json::Value& value);
+		void reply_rtc_info(/*Json::Value& value*/);
 
 	private:
 		///////////////////////////////////////////////////////////////////////////////////////////////////

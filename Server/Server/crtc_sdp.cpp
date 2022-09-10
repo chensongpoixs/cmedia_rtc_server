@@ -12,7 +12,7 @@ purpose:		crtc_sdp
 #include "crtc_sdp_define.h"
 #include <absl/utility/utility.h>
 #include <absl/types/optional.h>
-#include "RtcSdpDefine.pb.h"
+//#include "RtcSdpDefine.pb.h"
 #include "clog.h"
 #if defined(_MSC_VER)
 #include <ws2spi.h>
@@ -326,21 +326,72 @@ namespace chen {
 		return GetValueFromString(line, s, payload_type) &&
 			IsValidRtpPayloadType(*payload_type);
 	}
-
+	static const size_t SDP_LINE_DATA_SIZE = 1024 * 1024;
+	
+	static uint8_t BUFFER_LIINE[SDP_LINE_DATA_SIZE];
 	crtc_sdp::~crtc_sdp()
 	{
 	}
 	bool crtc_sdp::init(const std::string & sdp)
 	{
-		
+		m_client_sdp = sdp;
+		m_current_pos = 0;
+
+		size_t cur_line_data_size = 0;
+		size_t line_size = 0;
+		size_t m_size = 0;
+		//NORMAL_EX_LOG("[sdp = %s]", m_client_sdp.c_str());
+		while (m_current_pos < m_client_sdp.size() && _get_line_data(cur_line_data_size))
+		{
+
+			NORMAL_EX_LOG("[line = %lu][cur_line_data_size = %lu][%s]", ++line_size, cur_line_data_size, BUFFER_LIINE);
+			if (BUFFER_LIINE[0] == 'a')
+			{
+				_handler_sdp_a(&BUFFER_LIINE[0], cur_line_data_size);
+			}
+			else if (BUFFER_LIINE[0] == 'm')
+			{
+				if (m_size != 0)
+				{
+					m_media_datas.push_back(m_rtp_parameter);
+				}
+				++m_size;
+				_handler_sdp_m(&BUFFER_LIINE[0], cur_line_data_size);
+			}
+		}
+		if (m_size != m_media_datas.size())
+		{
+			m_media_datas.push_back(m_rtp_parameter);
+		}
 		//// 1. Session Description
 		//if (!_parse_session_description(sdp))
 		//{
 		//	// error 
 		//	return false;
 		//}
-		//return true;
+		return true;
 	}
+	bool crtc_sdp::_get_line_data(size_t & read_size)
+	{
+		read_size = 0;
+		memset(BUFFER_LIINE, 0, SDP_LINE_DATA_SIZE);
+		while (m_client_sdp.size() > m_current_pos /*&& m_client_sdp[m_current_pos]*/)
+		{
+			// '\r\n' line end 
+			if (m_client_sdp[m_current_pos] == '\r' && m_client_sdp.size() > (m_current_pos + 1))
+			{
+				if (m_client_sdp[m_current_pos + 1] == '\n')
+				{
+					m_current_pos += 2;
+					return true;
+				}
+			}
+			BUFFER_LIINE[read_size++] = m_client_sdp[m_current_pos++];
+		}
+		WARNING_EX_LOG("not find [\r\n] [buffer = %s]", BUFFER_LIINE);
+		return false;
+	}
+
 	//bool crtc_sdp::_parse_session_description(const std::string & session_sdp_description)
 	//{
 	//	m_session_description.set_msid_supported(false);
