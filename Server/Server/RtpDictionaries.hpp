@@ -296,6 +296,7 @@ namespace RTC
 		std::vector<RtpHeaderExtensionParameters> headerExtensions;
 		RtcpParameters rtcp;
 		bool hasRtcp{ false };
+		RtpCodecMimeType::Type		m_codec_type;
 	};
 } // namespace RTC
 

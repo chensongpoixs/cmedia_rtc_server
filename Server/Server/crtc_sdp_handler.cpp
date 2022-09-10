@@ -176,38 +176,42 @@ namespace chen {
 			//	// Force lowcase names.
 			//	//Utils::String::ToLowerCase(type);
 				std::transform(type.begin(), type.end(), type.begin(), ::tolower);
-				std::transform(subtype.begin(), subtype.end(), subtype.begin(), ::tolower);
+				//std::transform(subtype.begin(), subtype.end(), subtype.begin(), ::tolower);
 				//Utils::String::ToLowerCase(subtype);
 
 			//	// Set MIME type.
 			{
-				/*auto it = RTC::RtpCodecMimeType::string2Type.find(type);
-
-				if (it == RTC::RtpCodecMimeType::string2Type.end())
-				{
-					ERROR_EX_LOG("unknown codec MIME type '%s'", type.c_str());
-					return false;
-				}*/
-				//m_rtp_parameter.codecs[index].mimeType.type = it->second;
+				 
+					m_rtp_parameter.codecs[index].mimeType.type = m_rtp_parameter.m_codec_type; // it->second;
 					//this->type = it->second;
 			}
 
 			//	// Set MIME subtype.
-				/*{
-					auto it = RTC::RtpCodecMimeType::string2Subtype.find(subtype);
+				{
+					auto it = RTC::RtpCodecMimeType::string2Subtype.find(type);
 
 					if (it == RTC::RtpCodecMimeType::string2Subtype.end())
 					{
-						ERROR_EX_LOG("unknown codec MIME subtype '%s'", subtype.c_str());
+						ERROR_EX_LOG("unknown codec MIME type '%s'", type.c_str());
 						return false;
 					}
 
 					m_rtp_parameter.codecs[index].mimeType.subtype = it->second;
-				}*/
-
+				}
+				// // opus/48000/2
+				auto subtypePos = subtype.find('/');
+				if (subtypePos == std::string::npos || subtypePos == 0 || subtypePos == subtype.length() - 1)
+				{
+					m_rtp_parameter.codecs[index].clockRate = std::atoi(subtype.c_str());
+				}
+				else
+				{
+					std::string clock_rate = subtype.substr(0, subtypePos);
+					m_rtp_parameter.codecs[index].clockRate = std::atoi(clock_rate.c_str());
+				}
 			//	// Set mimeType.
-			//	this->mimeType = RtpCodecMimeType::type2String[this->type] + "/" +
-			//	                 RtpCodecMimeType::subtype2String[this->subtype];
+			/*	this->mimeType = RtpCodecMimeType::type2String[this->type] + "/" +
+				                 RtpCodecMimeType::subtype2String[this->subtype];*/
 			//	//if ("opus" == subtype) // audio webrtc bug  opus 2 channel 
 			//	//{
 			//	//	this->mimeType += "/" + std::to_string(2);
@@ -252,6 +256,20 @@ namespace chen {
 					break;
 				}
 			}
+			/**
+			*   RTX --> [ apt <--> rtp]
+			*	a=rtpmap:96 H264/90000
+				a=rtcp-fb:96 goog-remb
+				a=rtcp-fb:96 transport-cc
+				a=rtcp-fb:96 ccm fir
+				a=rtcp-fb:96 nack
+				a=rtcp-fb:96 nack pli
+				a=fmtp:96 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f;x-google-max-bitrate=100000;x-google-min-bitrate=4000;x-google-start-bitrate=8000
+				a=rtpmap:97 rtx/90000
+				a=fmtp:97 apt=96;x-google-max-bitrate=100000;x-google-min-bitrate=4000;x-google-start-bitrate=8000
+			*
+			*/
+			// 
 		//	RTC::Parameters parameter;
 			_parse_value_array(fields[1], m_rtp_parameter.codecs[index].parameters);
 			
@@ -331,9 +349,22 @@ namespace chen {
 			WARNING_EX_LOG(" m line [key = %s][size = %lu]", key.c_str(), fields.size());
 			return false;
 		}
+		
 		RTC::RtpParameters _temp_rtp_parameter;
 		m_rtp_parameter = _temp_rtp_parameter; // std::swap(_temp_rtp_parameter);
-		for (size_t i = 3; i < fields.size(); ++i)
+
+		std::transform(key.begin(), key.end(), key.begin(), ::tolower);
+
+		auto it = RTC::RtpCodecMimeType::string2Type.find(key);
+
+		if (it == RTC::RtpCodecMimeType::string2Type.end())
+		{
+			ERROR_EX_LOG("unknown m line type MIME key '%s'", key.c_str());
+			return false;
+		}
+
+		m_rtp_parameter.m_codec_type = it->second;
+		for (size_t i = 2; i < fields.size(); ++i)
 		{
 			RTC::RtpCodecParameters rtpcodecparameter;
 			rtpcodecparameter.payloadType = std::atoi(fields[i].c_str());
