@@ -41,6 +41,7 @@ namespace chen {
 			ERROR_EX_LOG("webrtc transport init failed !!!");
 			return false;
 		}
+		transport_ptr->handler_webrtc_sdp(value["sdp"].asCString());
 		//m_webrtc_transport_map.insert(std::make_pair(transportId, transport));
 		if (!m_webrtc_transport_map.insert(std::make_pair(transportId, transport_ptr)).second)
 		{
@@ -51,7 +52,8 @@ namespace chen {
 		} 
 		DEBUG_EX_LOG("webrtc transport create [transportId = %s]", transportId.c_str());
 
-
+		transport_ptr->handler_webrtc_connect();
+		transport_ptr->reply_info(session_id);
 		//TODO@chensong 20220812 返回客户端创建webrtc的信息
 
 		return true;

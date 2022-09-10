@@ -185,6 +185,7 @@ namespace RTC
 		uint8_t channels{ 1u };
 		RTC::Parameters parameters;
 		std::vector<RtcpFeedback> rtcpFeedbacks;
+		uint8_t rtx_payloadType{ 0 };
 	};
 
 	class RtpRtxParameters

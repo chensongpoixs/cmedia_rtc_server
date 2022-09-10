@@ -18,7 +18,117 @@ purpose:		cwebrtc_transport_handler
 
 #include "Producer.hpp"
 namespace chen {
+	bool cwebrtc_transport::handler_webrtc_sdp(const std::string & sdp)
+	{
+		m_client_rtc_sdp.init(sdp);
+		/*
+		{
+					kind       : 'video',
+					mimeType   : 'video/h264',
+					clockRate  : 90000,
+					parameters :
+					{
+						'packetization-mode'      : 1,
+						'profile-level-id'        : '42e01f',
+						'level-asymmetry-allowed' : 1,
+						'x-google-start-bitrate'  : 1000,
+						'x-google-max-bitrate'    : 28000,
+						'x-google-min-bitrate'    : 5500,
+					}
+				}
+		*/
 
+		const std::vector< RTC::RtpParameters>& rtp_media_datas = m_client_rtc_sdp.get_rtp_parameters();
+		// video
+		int32 index = 0;
+		for (size_t i = 0; i < rtp_media_datas.size(); ++i)
+		{
+			if (rtp_media_datas[i].m_codec_type == RTC::RtpCodecMimeType::Type::VIDEO)
+			{
+				index = i;
+				break;
+			}
+		}
+
+
+		std::string producerId = s_crypto_random.GetRandomString(20);
+
+		RTC::Producer * producer_ptr = new RTC::Producer(producerId, this, rtp_media_datas[index]);
+		try
+		{
+			m_rtpListener.AddProducer(producer_ptr);
+		}
+		catch (const std::exception&)
+		{
+			delete producer_ptr;
+			ERROR_EX_LOG("rtplistener add produce failed !!!");
+			return false;
+		}
+
+		if (!m_mapProducers.insert(std::make_pair(producerId, producer_ptr)).second)
+		{
+			ERROR_EX_LOG("map producers install failed !!! %s", producerId.c_str());
+			return false;
+		}
+		NORMAL_EX_LOG("Producer created [producerId:%s]", producerId.c_str());
+
+
+		// Take the transport related RTP header extensions of the Producer and
+		// add them to the Transport.
+		// NOTE: Producer::GetRtpHeaderExtensionIds() returns the original
+		// header extension ids of the Producer (and not their mapped values).
+		const auto& producerRtpHeaderExtensionIds = producer_ptr->GetRtpHeaderExtensionIds();
+
+		if (producerRtpHeaderExtensionIds.mid != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.mid = producerRtpHeaderExtensionIds.mid;
+		}
+
+		if (producerRtpHeaderExtensionIds.rid != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.rid = producerRtpHeaderExtensionIds.rid;
+		}
+
+		if (producerRtpHeaderExtensionIds.rrid != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.rrid = producerRtpHeaderExtensionIds.rrid;
+		}
+
+		if (producerRtpHeaderExtensionIds.absSendTime != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.absSendTime = producerRtpHeaderExtensionIds.absSendTime;
+		}
+
+		if (producerRtpHeaderExtensionIds.transportWideCc01 != 0u)
+		{
+			this->m_recvRtpHeaderExtensionIds.transportWideCc01 =
+				producerRtpHeaderExtensionIds.transportWideCc01;
+		}
+
+		return true;
+	}
+
+	bool cwebrtc_transport::handler_webrtc_connect()
+	{
+		const RTC::DtlsTransport::Fingerprint& finger_print = m_client_rtc_sdp.get_finger_print();
+
+		if (m_connect_called)
+		{
+			ERROR_EX_LOG("connect() already called");
+			return false;
+		}
+		// default 就服务器模式
+		this->m_dtlsRole = RTC::DtlsTransport::Role::SERVER;
+		this->m_connect_called = true;
+
+		// Pass the remote fingerprint to the DTLS transport.
+		if (this->m_dtls_transport_ptr->SetRemoteFingerprint(finger_print))
+		{
+			// If everything is fine, we may run the DTLS transport if ready.
+			MayRunDtlsTransport();
+		}
+		return true;
+	}
 
 	bool cwebrtc_transport::handler_connect(uint64 session_id, Json::Value & value)
 	{
@@ -165,8 +275,8 @@ namespace chen {
 	bool cwebrtc_transport::handler_produce(uint64 session_id, Json::Value & value)
 	{
 		std::string producerId = s_crypto_random.GetRandomString(20);
-
-		RTC::Producer * producer_ptr = new RTC::Producer(producerId, this);
+		RTC::RtpParameters rtp;
+		RTC::Producer * producer_ptr = new RTC::Producer(producerId, this, rtp);
 		try
 		{
 			m_rtpListener.AddProducer(producer_ptr);
@@ -426,11 +536,11 @@ namespace chen {
 	{
 		return false;
 	}
-	void cwebrtc_transport::reply_info()
+	void cwebrtc_transport::reply_info(uint64 session_id)
 	{
 		Json::Value  reply;
 		reply["id"] = m_id;
-
+		
 
 		if (!m_dtls_transport_ptr)
 		{
@@ -458,33 +568,34 @@ namespace chen {
 
 
 		std::ostringstream sdp;
-		sdp << "v =0\r\n";
-		sdp << "o =chensong 10000 1 IN IP4 0.0.0.0\r\n";
-		sdp << "s =-\r\n";
-		sdp << "t =0 0\r\n";
-		sdp << "a =ice-lite\r\n" ;
+		sdp << "v=0\r\n";
+		sdp << "o=chensong 10000 1 IN IP4 0.0.0.0\r\n";
+		sdp << "s=-\r\n";
+		sdp << "t=0 0\r\n";
+		sdp << "a=ice-lite\r\n" ;
 		sdp << "a=fingerprint:" << algorithm << " " << fingerprints[0].value << "\r\n";
 		sdp << "a=msid-semantic: WMS *\r\n";
-		sdp << "m=video 7 UDP/TLS/RTP/SAVPF 100 101\r\n"; // TODO@chensong 编码类型
-		sdp << "c=IN IP4 127.0.0.1\r\n";
-		sdp << "a=rtpmap:100 H264/90000\r\n";
-		sdp << "a=rtpmap:101 rtx/90000\r\n";
-		sdp << "a=fmtp:100 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f;x-google-max-bitrate=28000;x-google-min-bitrate=5500;x-google-start-bitrate=1000\r\n";
-		sdp << "a=fmtp:101 apt=100\r\n";
-		sdp << "a=rtcp-fb:100 transport-cc\r\n";
-		sdp << "a=rtcp-fb:100 ccm fir\r\n";
-		sdp << "a=rtcp-fb:100 nack\r\n";
-		sdp << "a=rtcp-fb:100 nack pli\r\n";
-		sdp << "a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid\r\n";
-		sdp << "a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n";
-		sdp << "a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id\r\n";
-		sdp << "a=extmap:13 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r\n";
-		sdp << "a=extmap:2 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\n";
-		sdp << "a=extmap:8 http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07\r\n";  //  关键帧 服务器的掉包处理
-		sdp << "a=extmap:12 urn:3gpp:video-orientation\r\n"; 
-		sdp << "a=extmap:14 urn:ietf:params:rtp-hdrext:toffset\r\n";
-		sdp << "a=setup:server\r\n";
-		sdp << "a=mid:0\r\n";
+		sdp << m_client_rtc_sdp.get_webrtc_sdp();
+		//sdp << "m=video 7 UDP/TLS/RTP/SAVPF 100 101\r\n"; // TODO@chensong 编码类型
+		//sdp << "c=IN IP4 127.0.0.1\r\n";
+		//sdp << "a=rtpmap:100 H264/90000\r\n";
+		//sdp << "a=rtpmap:101 rtx/90000\r\n";
+		//sdp << "a=fmtp:100 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f;x-google-max-bitrate=28000;x-google-min-bitrate=5500;x-google-start-bitrate=1000\r\n";
+		//sdp << "a=fmtp:101 apt=100\r\n";
+		//sdp << "a=rtcp-fb:100 transport-cc\r\n";
+		//sdp << "a=rtcp-fb:100 ccm fir\r\n";
+		//sdp << "a=rtcp-fb:100 nack\r\n";
+		//sdp << "a=rtcp-fb:100 nack pli\r\n";
+		//sdp << "a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid\r\n";
+		//sdp << "a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n";
+		//sdp << "a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id\r\n";
+		//sdp << "a=extmap:13 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r\n";
+		//sdp << "a=extmap:2 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\n";
+		//sdp << "a=extmap:8 http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07\r\n";  //  关键帧 服务器的掉包处理
+		//sdp << "a=extmap:12 urn:3gpp:video-orientation\r\n"; 
+		//sdp << "a=extmap:14 urn:ietf:params:rtp-hdrext:toffset\r\n";
+		//sdp << "a=setup:server\r\n";
+		//sdp << "a=mid:0\r\n";
 		sdp << "a=sendrecv\r\n";
 		sdp << "a=ice-ufrag:"<< m_ice_server_ptr->GetUsernameFragment() /*xjg2o2h2v8bfzqkv*/ << "\r\n";
 		sdp << "a=ice-pwd:"<< m_ice_server_ptr->GetPassword() /*z5ywy0b4le11t42tcqzpz5kdmr22i9rm*/ <<"\r\n";
@@ -499,6 +610,8 @@ namespace chen {
 		sdp << "a=rtcp-mux";
 		sdp << "a=rtcp-rsize";
 
+
+		reply["sdp"] =  sdp.str().c_str();
 		 
 		//sdp << "";
 

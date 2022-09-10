@@ -25,6 +25,58 @@ purpose:		crtc_sdp_handler
 #include "crtc_sdp.h"
 
 namespace chen {
+	void crtc_sdp::_config_media()
+	{
+		////////////////////////匹配支持编码/////////////////////////////////
+		/*	{
+					kind       : 'video',
+					mimeType   : 'video/h264',
+					clockRate  : 90000,
+					parameters :
+					{
+						'packetization-mode'      : 1,
+						'profile-level-id'        : '42e01f',
+						'level-asymmetry-allowed' : 1,
+						'x-google-start-bitrate'  : 1000,
+						'x-google-max-bitrate'    : 28000,
+						'x-google-min-bitrate'    : 5500,
+					}
+				}
+		*/
+		size_t index = 0;
+		for (size_t i = 0; i < m_media_datas.size(); ++i)
+		{
+			if (m_media_datas[i].m_codec_type == RTC::RtpCodecMimeType::Type::VIDEO)
+			{
+				index = i;
+				break;
+			}
+		}
+		std::vector<RTC::RtpCodecParameters> rtp_codec_parameters;
+		// 匹配编码算法
+		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
+		{
+			if (m_media_datas[index].codecs[i].clockRate == 90000 && RTC::RtpCodecMimeType::Subtype::H264 == m_media_datas[index].codecs[i].mimeType.subtype)
+			{
+				rtp_codec_parameters.push_back(m_media_datas[index].codecs[i]);
+				for (size_t rtx_i = 0; rtx_i < m_media_datas[index].codecs.size(); ++rtx_i)
+				{
+					if (m_media_datas[index].codecs[rtx_i].payloadType == m_media_datas[index].codecs[i].rtx_payloadType)
+					{
+						rtp_codec_parameters.push_back(m_media_datas[index].codecs[rtx_i]);
+						break;
+						 
+					}
+				}
+				break;
+			}
+		}
+		m_media_datas[index].codecs = rtp_codec_parameters;
+		//RTC::RtpParameters rtp_parameter = m_media_datas[index];
+
+
+
+	}
 	bool crtc_sdp::_handler_sdp_v(const uint8_t * line_data, size_t line_data_size)
 	{
 		return true;
@@ -150,6 +202,23 @@ namespace chen {
 				WARNING_EX_LOG("rtpmap size = %u !!!", fields.size());
 				return false;
 			}
+
+			////////////////////////匹配支持编码/////////////////////////////////
+		/*	{
+					kind       : 'video',
+					mimeType   : 'video/h264',
+					clockRate  : 90000,
+					parameters :
+					{
+						'packetization-mode'      : 1,
+						'profile-level-id'        : '42e01f',
+						'level-asymmetry-allowed' : 1,
+						'x-google-start-bitrate'  : 1000,
+						'x-google-max-bitrate'    : 28000,
+						'x-google-min-bitrate'    : 5500,
+					}
+				}*/
+			/// 
 			uint8_t payloadType = std::atoi(fields[0].c_str());
 			size_t index = 0;
 			for (size_t i = 0; i < m_rtp_parameter.codecs.size(); ++i)
@@ -197,6 +266,7 @@ namespace chen {
 					}
 
 					m_rtp_parameter.codecs[index].mimeType.subtype = it->second;
+					
 				}
 				// // opus/48000/2
 				auto subtypePos = subtype.find('/');
@@ -272,7 +342,24 @@ namespace chen {
 			// 
 		//	RTC::Parameters parameter;
 			_parse_value_array(fields[1], m_rtp_parameter.codecs[index].parameters);
-			
+			if (RTC::RtpCodecMimeType::Subtype::RTX == m_rtp_parameter.codecs[index].mimeType.subtype)
+			{
+				// video ----> RTX
+				// apt 
+				std::unordered_map<std::string, RTC::Parameters::Value>::iterator iter = m_rtp_parameter.codecs[index].parameters.mapKeyValues.find("apt");
+				if (iter != m_rtp_parameter.codecs[index].parameters.mapKeyValues.end())
+				{ 
+					for (size_t rtx_i = 0; rtx_i < m_rtp_parameter.codecs.size(); ++rtx_i)
+					{
+						if (m_rtp_parameter.codecs[rtx_i].payloadType == std::atoi(iter->second.stringValue.c_str()))
+						{
+							m_rtp_parameter.codecs[rtx_i].rtx_payloadType = payloadType;
+							break;
+						}
+					}
+				}
+
+			}
 
 		}
 		else if ("ssrc-group" == key)

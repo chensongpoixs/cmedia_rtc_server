@@ -35,14 +35,20 @@ namespace chen {
 		{}
 		~crtc_sdp();
 		bool init(const std::string & sdp);
-
+	public:
+		const std::vector< RTC::RtpParameters> & get_rtp_parameters() const { return m_media_datas; }
+		const RTC::DtlsTransport::Fingerprint& get_finger_print() const { m_finger_print; }
+	public:
+		std::string get_webrtc_sdp() const ;
 	protected:
 	private:
 		//bool _parse_session_description(const std::string & session_sdp_description);
 		//bool _parse_media_description(const std::string & media_sdp_description);
 
 		bool  _get_line_data(size_t & read_size);
-
+		
+	private:
+		void _config_media();
 	private:
 		bool  _handler_sdp_v(const uint8_t * line_data, size_t line_data_size);
 		bool  _handler_sdp_o(const uint8_t * line_data, size_t line_data_size);

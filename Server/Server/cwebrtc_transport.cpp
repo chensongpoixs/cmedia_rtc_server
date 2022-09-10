@@ -75,6 +75,7 @@ namespace chen {
 		, m_rtpListener()
 		, m_maxIncomingBitrate(0u)
 		, m_maxOutgoingBitrate(0u)
+		, m_client_rtc_sdp()
 	{
 
 		//m_ice_server_ptr;
@@ -91,8 +92,9 @@ namespace chen {
 	cwebrtc_transport::~cwebrtc_transport()
 	{
 	}
-	bool cwebrtc_transport::init(const std::string & transport_id)
+	bool cwebrtc_transport::init(const std::string & transport_id/*, const std::string & sdp*/)
 	{
+		
 		// {"OS":1024,"MIS":1024}
 		static const size_t sctpSendBufferSize = 262144u; //default 262144u
 		static const uint16 OS = 1024u;
@@ -380,6 +382,8 @@ namespace chen {
 		//}
 		//this->mapDataConsumers.clear();
 	}
+
+	
 	
 	void cwebrtc_transport::Connected()
 	{

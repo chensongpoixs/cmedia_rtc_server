@@ -1,4 +1,4 @@
-//#define MS_CLASS "RTC::Producer"
+Ôªø//#define MS_CLASS "RTC::Producer"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "Producer.hpp"
@@ -23,132 +23,138 @@ namespace RTC
 {
 	/* Instance methods. */
 
-	Producer::Producer(const std::string& id, RTC::Producer::Listener* listener/*, Json::Value& data*/)
+	Producer::Producer(const std::string& id, RTC::Producer::Listener* listener, const RTC::RtpParameters& rtp_Parameter/*, Json::Value& data*/)
 		: id(id)
 		, listener(listener)
 	{
 
-		
-		kind = RTC::Media::Kind::VIDEO;
+		if (rtp_Parameter.m_codec_type == RtpCodecMimeType::Type::VIDEO)
+		{
+			kind = RTC::Media::Kind::VIDEO;
+		}
+		else
+		{
+			kind = RTC::Media::Kind::AUDIO;
+		}
 		paused = false;
 
-
+		rtpParameters = rtp_Parameter;
 		////////////////////////////////////////////////mid////////////////////////////////////////////////////////
 		//
 		// default video h264 RtpParameters
 		// 1. 
-		rtpParameters.mid = "0";
+		//rtpParameters.mid = "0";
 
-		/////////////////////////////////////////////////RTCP///////////////////////////////////////////////////////////
-		// 2. rtcp 
-		rtpParameters.rtcp.cname = "UgYi3789TL6C/8Zx";
-		rtpParameters.rtcp.reducedSize = true;
+		///////////////////////////////////////////////////RTCP///////////////////////////////////////////////////////////
+		//// 2. rtcp 
+		//rtpParameters.rtcp.cname = "UgYi3789TL6C/8Zx";
+		//rtpParameters.rtcp.reducedSize = true;
 
-		////////////////////////////////////////////////codecs///////////////////////////////////////////////////////////
-		// 3. codecs
-		//	3.1 RTP
-		RtpCodecParameters  rtpcodecparameter;
-		rtpcodecparameter.clockRate = 90000;
-		rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
-		rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::H264;
-		rtpcodecparameter.mimeType.mimeType = "video/H264";
-		rtpcodecparameter.payloadType = 108; 
-		rtpcodecparameter.parameters.mapKeyValues.emplace("level-asymmetry-allowed", Parameters::Value(1));
-		rtpcodecparameter.parameters.mapKeyValues.emplace("packetization-mode", Parameters::Value(1));
-		rtpcodecparameter.parameters.mapKeyValues.emplace("profile-level-id", Parameters::Value("42e01f"));
-		//// ∑˛ŒÒ÷ ¡øQos RTCPfeedback
-		RtcpFeedback rtcpfeedback;
+		//////////////////////////////////////////////////codecs///////////////////////////////////////////////////////////
+		//// 3. codecs
+		////	3.1 RTP
+		//RtpCodecParameters  rtpcodecparameter;
+		//rtpcodecparameter.clockRate = 90000;
+		//rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
+		//rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::H264;
+		//rtpcodecparameter.mimeType.mimeType = "video/H264";
+		//rtpcodecparameter.payloadType = 108; 
+		//rtpcodecparameter.parameters.mapKeyValues.emplace("level-asymmetry-allowed", Parameters::Value(1));
+		//rtpcodecparameter.parameters.mapKeyValues.emplace("packetization-mode", Parameters::Value(1));
+		//rtpcodecparameter.parameters.mapKeyValues.emplace("profile-level-id", Parameters::Value("42e01f"));
+		////// ÊúçÂä°Ë¥®ÈáèQos RTCPfeedback
+		//RtcpFeedback rtcpfeedback;
 
-		rtcpfeedback.type = "goog-remb";
-		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+		//rtcpfeedback.type = "goog-remb";
+		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
 
-		rtcpfeedback.type = "transport-cc";
-		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+		//rtcpfeedback.type = "transport-cc";
+		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
 
-		rtcpfeedback.type = "ccm";
-		rtcpfeedback.parameter = "fir";
-		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+		//rtcpfeedback.type = "ccm";
+		//rtcpfeedback.parameter = "fir";
+		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
 
-		rtcpfeedback.type = "nack";
-		rtcpfeedback.parameter = "";
-		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
-
-
-		rtcpfeedback.type = "nack";
-		rtcpfeedback.parameter = "pli";
-		rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
-		 
-
-		rtpParameters.codecs.push_back(rtpcodecparameter);
-		// RTX RtpCodecParameters  rtpcodecparameter;
-		RtpCodecParameters  rtx_rtpcodecparameter;
-		rtx_rtpcodecparameter.clockRate = 90000;
-		rtx_rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
-		rtx_rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::RTX;
-		rtx_rtpcodecparameter.mimeType.mimeType = "video/rtx";
-		rtx_rtpcodecparameter.payloadType = 109;
-
-		rtx_rtpcodecparameter.parameters.mapKeyValues.emplace("apt", Parameters::Value(108));
-		rtpParameters.codecs.push_back(rtx_rtpcodecparameter);
-
-		/////////////////////////////////encodings////////////////////////////////////////////
-		RtpEncodingParameters rtpencodingparameter;
-		rtpencodingparameter.ssrc = 899346955;
-		rtpencodingparameter.rtx.ssrc = 28746816;
-		rtpParameters.encodings.push_back(rtpencodingparameter);
+		//rtcpfeedback.type = "nack";
+		//rtcpfeedback.parameter = "";
+		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
 
 
-		////////////////////////////////////RtpHeaderExtensionParameters///////////////////////////////////////////////////////
-		RtpHeaderExtensionParameters rtpheaderextensionparameter;
-		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:mid";
-		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		rtpheaderextensionparameter.id = 3;
-		rtpheaderextensionparameter.encrypt = false;
+		//rtcpfeedback.type = "nack";
+		//rtcpfeedback.parameter = "pli";
+		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+		// 
 
-		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id";
-		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		rtpheaderextensionparameter.id = 10;
-		rtpheaderextensionparameter.encrypt = false;
+		//rtpParameters.codecs.push_back(rtpcodecparameter);
+		//// RTX RtpCodecParameters  rtpcodecparameter;
+		//RtpCodecParameters  rtx_rtpcodecparameter;
+		//rtx_rtpcodecparameter.clockRate = 90000;
+		//rtx_rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
+		//rtx_rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::RTX;
+		//rtx_rtpcodecparameter.mimeType.mimeType = "video/rtx";
+		//rtx_rtpcodecparameter.payloadType = 109;
 
-		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		//rtx_rtpcodecparameter.parameters.mapKeyValues.emplace("apt", Parameters::Value(108));
+		//rtpParameters.codecs.push_back(rtx_rtpcodecparameter);
 
-		////
-		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id";
-		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		rtpheaderextensionparameter.id = 11;
-		rtpheaderextensionparameter.encrypt = false;
-
-		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-		
-		rtpheaderextensionparameter.uri = "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time";
-		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		rtpheaderextensionparameter.id = 2;
-		rtpheaderextensionparameter.encrypt = false;
-
-		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		///////////////////////////////////encodings////////////////////////////////////////////
+		//RtpEncodingParameters rtpencodingparameter;
+		//rtpencodingparameter.ssrc = 899346955;
+		//rtpencodingparameter.rtx.ssrc = 28746816;
+		//rtpParameters.encodings.push_back(rtpencodingparameter);
 
 
-		rtpheaderextensionparameter.uri = "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01";
-		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		rtpheaderextensionparameter.id = 3;
-		rtpheaderextensionparameter.encrypt = false;
+		//////////////////////////////////////RtpHeaderExtensionParameters///////////////////////////////////////////////////////
+		//RtpHeaderExtensionParameters rtpheaderextensionparameter;
+		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:mid";
+		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		//rtpheaderextensionparameter.id = 3;
+		//rtpheaderextensionparameter.encrypt = false;
 
-		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id";
+		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		//rtpheaderextensionparameter.id = 10;
+		//rtpheaderextensionparameter.encrypt = false;
 
-		rtpheaderextensionparameter.uri = "urn:3gpp:video-orientation";
-		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		rtpheaderextensionparameter.id = 13;
-		rtpheaderextensionparameter.encrypt = false;
+		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
 
-		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		//////
+		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id";
+		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		//rtpheaderextensionparameter.id = 11;
+		//rtpheaderextensionparameter.encrypt = false;
 
-		rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:toffset";
-		rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		rtpheaderextensionparameter.id = 14;
-		rtpheaderextensionparameter.encrypt = false;
+		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		//
+		//rtpheaderextensionparameter.uri = "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time";
+		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		//rtpheaderextensionparameter.id = 2;
+		//rtpheaderextensionparameter.encrypt = false;
 
-		rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+
+
+		//rtpheaderextensionparameter.uri = "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01";
+		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		//rtpheaderextensionparameter.id = 3;
+		//rtpheaderextensionparameter.encrypt = false;
+
+		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+
+		//rtpheaderextensionparameter.uri = "urn:3gpp:video-orientation";
+		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		//rtpheaderextensionparameter.id = 13;
+		//rtpheaderextensionparameter.encrypt = false;
+
+		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+
+		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:toffset";
+		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
+		//rtpheaderextensionparameter.id = 14;
+		//rtpheaderextensionparameter.encrypt = false;
+
+		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
 
 		// Fill RTP header extension ids.
 		// This may throw.

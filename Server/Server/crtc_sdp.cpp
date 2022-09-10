@@ -12,6 +12,7 @@ purpose:		crtc_sdp
 #include "crtc_sdp_define.h"
 #include <absl/utility/utility.h>
 #include <absl/types/optional.h>
+#include <sstream>
 //#include "RtcSdpDefine.pb.h"
 #include "clog.h"
 #if defined(_MSC_VER)
@@ -363,6 +364,7 @@ namespace chen {
 		{
 			m_media_datas.push_back(m_rtp_parameter);
 		}
+		_config_media();
 		//// 1. Session Description
 		//if (!_parse_session_description(sdp))
 		//{
@@ -370,6 +372,84 @@ namespace chen {
 		//	return false;
 		//}
 		return true;
+	}
+	std::string crtc_sdp::get_webrtc_sdp() const
+	{
+		size_t index = 0;
+		for (size_t i = 0; i < m_media_datas.size(); ++i)
+		{
+			if (m_media_datas[i].m_codec_type == RTC::RtpCodecMimeType::Type::VIDEO)
+			{
+				index = i;
+				break;
+			}
+		}
+		std::ostringstream sdp;
+
+		sdp << "m=video 7 UDP/TLS/RTP/SAVPF ";
+		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
+		{
+			sdp << m_media_datas[index].codecs[i].payloadType << " ";
+		}
+		sdp  << /*100 101*/"\r\n"; // TODO@chensong 编码类型
+		sdp << "c=IN IP4 127.0.0.1\r\n";
+		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
+		{
+			sdp << "a=rtpmap:" << m_media_datas[index].codecs[i].payloadType << " " << m_media_datas[index].codecs[i].mimeType.mimeType  <<"\r\n";
+			if (!m_media_datas[index].codecs[i].parameters.mapKeyValues.empty())
+			{
+				sdp << "a=fmtp:" << m_media_datas[index].codecs[i].payloadType << " ";
+				size_t cur_second = 0;
+				for (const std::pair<std::string, RTC::Parameters::Value>& pi : m_media_datas[index].codecs[i].parameters.mapKeyValues)
+				{
+					if (0 != cur_second)
+					{
+						sdp << ";";
+					}
+					++cur_second;;
+					sdp << pi.first << "=" << pi.second.stringValue  ;
+				}
+				
+				sdp << "\r\n";
+			}
+			//for (size_t fmtp_i = 0; fmtp_i < )
+		}
+		//sdp << "a=rtpmap:100 H264/90000\r\n";
+		//sdp << "a=rtpmap:101 rtx/90000\r\n";
+		//sdp << "a=fmtp:100 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f;x-google-max-bitrate=28000;x-google-min-bitrate=5500;x-google-start-bitrate=1000\r\n";
+		//sdp << "a=fmtp:101 apt=100\r\n";
+		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
+		{
+			for  (const RTC::RtcpFeedback & rtcp_feedback: m_media_datas[index].codecs[i].rtcpFeedbacks )
+			{
+				sdp << "a=rtcp-fb:" << m_media_datas[index].codecs[i].payloadType << " " << rtcp_feedback.type;
+				if (!rtcp_feedback.parameter.empty())
+				{
+					sdp << " " << rtcp_feedback.parameter;
+				}
+				sdp << "\r\n";
+			}
+		}
+		/*sdp << "a=rtcp-fb:100 transport-cc\r\n";
+		sdp << "a=rtcp-fb:100 ccm fir\r\n";
+		sdp << "a=rtcp-fb:100 nack\r\n";
+		sdp << "a=rtcp-fb:100 nack pli\r\n";*/
+		for (size_t i = 0; i < m_media_datas[index].headerExtensions.size(); ++i)
+		{
+			sdp << "a=extmap:" << m_media_datas[index].headerExtensions[i].id << " " << m_media_datas[index].headerExtensions[i].uri << "\r\n";
+		}
+		//sdp << "a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid\r\n";
+		//sdp << "a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n";
+		//sdp << "a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id\r\n";
+		//sdp << "a=extmap:13 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r\n";
+		//sdp << "a=extmap:2 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\n";
+		//sdp << "a=extmap:8 http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07\r\n";  //  关键帧 服务器的掉包处理
+		//sdp << "a=extmap:12 urn:3gpp:video-orientation\r\n";
+		//sdp << "a=extmap:14 urn:ietf:params:rtp-hdrext:toffset\r\n";
+		sdp << "a=setup:server\r\n";
+		sdp << "a=mid:"<<m_media_datas[index].mid <<"\r\n";
+
+		return std::string();
 	}
 	bool crtc_sdp::_get_line_data(size_t & read_size)
 	{

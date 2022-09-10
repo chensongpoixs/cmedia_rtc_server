@@ -28,7 +28,7 @@ purpose:		cwebrtc_transport
 #include <json/json.h>
 #include "Producer.hpp"
 #include "RtpListener.hpp"
-
+#include "crtc_sdp.h"
 namespace chen
 {
 	class csctp_association;
@@ -62,8 +62,9 @@ namespace chen
 		~cwebrtc_transport();
 
 	public:
-		bool init(const std::string & transport_id);
+		bool init(const std::string & transport_id/*, const std::string & sdp*/);
 
+	
 
 		void destroy();
 
@@ -71,6 +72,9 @@ namespace chen
 		void CloseProducersAndConsumers();
 	public:
 
+		bool handler_webrtc_sdp(const std::string & sdp);
+		bool handler_webrtc_connect();
+		/////////////////////////
 		bool handler_connect(uint64 session_id, Json::Value & value);
 		bool handler_restart_ice(uint64 session_id, Json::Value & value);
 		bool handler_info(uint64 session_id, Json::Value & value);
@@ -117,7 +121,7 @@ namespace chen
 		bool handler_data_consumer_set_buffered_amount_low_threshold(uint64 session_id, Json::Value& value);
 
 	public:
-		void reply_info();
+		void reply_info(uint64 session_id);
 
 	public:
 		// Must be called from the subclass.
@@ -331,6 +335,7 @@ namespace chen
 		RTC::RtpListener									m_rtpListener;
 		uint32_t											m_maxIncomingBitrate{ 0u };
 		uint32_t											m_maxOutgoingBitrate{ 0u };
+		crtc_sdp											m_client_rtc_sdp;
 };
 }
 
