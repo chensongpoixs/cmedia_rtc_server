@@ -295,6 +295,10 @@ namespace chen {
 			m_rtp_parameter.rtcp.cname = cname;
 			//m_media_datas.push_back(m_rtp_parameter);
 		}
+		else  
+		{
+			WARNING_EX_LOG("key = %s", key.c_str());
+		}
 		// 
 		NORMAL_EX_LOG("==================================a= %s ===================================================================", key.c_str());
 		std::ostringstream cmd;
@@ -388,6 +392,9 @@ namespace chen {
 					if (data_value[i] == ';')
 					{
 						data.mapKeyValues.emplace(key, RTC::Parameters::Value(value));
+						key.clear();
+						value.clear();
+						break;
 					}
 					else
 					{
