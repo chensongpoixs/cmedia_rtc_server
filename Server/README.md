@@ -56,7 +56,7 @@ o： 谁拥有这个会话
 
 
 
-
+```
 v=0
 o=chensong 10000 1 IN IP4 0.0.0.0
 s=-
@@ -93,7 +93,7 @@ a=end-of-candidates
 a=ice-options:renomination
 a=rtcp-mux
 a=rtcp-rsize
-
+```
 
 ## 1、什么是 RTX
 

@@ -18,6 +18,7 @@
 #include "ctime_api.h"
 //#include "httplib.h"
 #ifdef _MSC_VER
+//#define _CRT_SECURE_NO_WARNINGS
 #include <io.h>
 #include <direct.h>
 #elif defined(__linux__) ||defined(__APPLE__)

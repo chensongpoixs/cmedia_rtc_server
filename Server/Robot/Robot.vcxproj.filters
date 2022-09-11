@@ -35,13 +35,7 @@
     <ClInclude Include="cconfig.h">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="cdataconsumer.h">
-      <Filter>client</Filter>
-    </ClInclude>
     <ClInclude Include="cdesktop_capture.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="cdevice.h">
       <Filter>client</Filter>
     </ClInclude>
     <ClInclude Include="cint2str.h">
@@ -53,22 +47,7 @@
     <ClInclude Include="clog_define.h">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="cmediasoup_mgr.h">
-      <Filter>client</Filter>
-    </ClInclude>
     <ClInclude Include="cnet_types.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="cproducer.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="crecv_transport.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="csend_transport.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="csession_description.h">
       <Filter>client</Filter>
     </ClInclude>
     <ClInclude Include="csingleton.h">
@@ -80,9 +59,6 @@
     <ClInclude Include="ctime_const.h">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="ctransport.h">
-      <Filter>client</Filter>
-    </ClInclude>
     <ClInclude Include="cwebsocket_mgr.h">
       <Filter>client</Filter>
     </ClInclude>
@@ -92,32 +68,8 @@
     <ClInclude Include="json.hpp">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="mediasoupclient.hpp">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="ortc.hpp">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="scalabilityMode.hpp">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="sdptransform.hpp">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.hpp">
-      <Filter>client</Filter>
-    </ClInclude>
     <ClInclude Include="wsclient.h">
       <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="sdp\MediaSection.hpp">
-      <Filter>sdp</Filter>
-    </ClInclude>
-    <ClInclude Include="sdp\RemoteSdp.hpp">
-      <Filter>sdp</Filter>
-    </ClInclude>
-    <ClInclude Include="sdp\Utils.hpp">
-      <Filter>sdp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -139,13 +91,7 @@
     <ClCompile Include="cconfig.cpp">
       <Filter>client</Filter>
     </ClCompile>
-    <ClCompile Include="cdataconsumer.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
     <ClCompile Include="cdesktop_capture.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="cdevice.cpp">
       <Filter>client</Filter>
     </ClCompile>
     <ClCompile Include="cint2str.cpp">
@@ -154,28 +100,10 @@
     <ClCompile Include="clog.cpp">
       <Filter>client</Filter>
     </ClCompile>
-    <ClCompile Include="cmediasoup_mgr.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
     <ClCompile Include="cnet_types.cpp">
       <Filter>client</Filter>
     </ClCompile>
-    <ClCompile Include="cproducer.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="crecv_transport.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="csend_transport.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="csession_description.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
     <ClCompile Include="ctime_api.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="ctransport.cpp">
       <Filter>client</Filter>
     </ClCompile>
     <ClCompile Include="cwebsocket_mgr.cpp">
@@ -184,38 +112,11 @@
     <ClCompile Include="desktop_capture_source.cc">
       <Filter>client</Filter>
     </ClCompile>
-    <ClCompile Include="grammar.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="mediasoupclient.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="ortc.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="parser.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="scalabilityMode.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="writer.cpp">
       <Filter>client</Filter>
     </ClCompile>
     <ClCompile Include="wsclient.cpp">
       <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="sdp\MediaSection.cpp">
-      <Filter>sdp</Filter>
-    </ClCompile>
-    <ClCompile Include="sdp\RemoteSdp.cpp">
-      <Filter>sdp</Filter>
-    </ClCompile>
-    <ClCompile Include="sdp\Utils.cpp">
-      <Filter>sdp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
