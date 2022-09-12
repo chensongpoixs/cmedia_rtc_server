@@ -12,27 +12,48 @@ purpose:		log
 #include <string>
 #include <thread>
 #include <chrono>
-
-
-
- 
-
-bool stoped = false;
-
-void signalHandler(int signum)
+#include "Robot.h"
+void Stop(int i)
 {
-	stoped = true;
-	
+	chen::g_robot.stop();
 }
 
-
-
-int  main(int argc, char *argv[])
+void RegisterSignal()
 {
-	signal(SIGINT, signalHandler);
-	signal(SIGTERM, signalHandler);
+	signal(SIGINT, Stop);
+	signal(SIGTERM, Stop);
 
+}
 
+int main(int argc, char* argv[])
+{
 	 
+	RegisterSignal();
+
+	const char* config_filename = "server.cfg";
+	if (argc > 1)
+	{
+		config_filename = argv[1];
+	}
+	const char* log_path = "./log";
+	if (argc > 2)
+	{
+		log_path = argv[2];
+	}
+	bool init = chen::g_robot.init(log_path, config_filename);
+
+	if (init)
+	{
+		init = chen::g_robot.Loop();
+	}
+
+
+	chen::g_robot.destroy();
+	if (!init)
+	{
+		return 1;
+	}
 	return 0;
+
+
 }

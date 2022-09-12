@@ -37,7 +37,7 @@ namespace chen {
 		bool init(const std::string & sdp);
 	public:
 		const std::vector< RTC::RtpParameters> & get_rtp_parameters() const { return m_media_datas; }
-		const RTC::DtlsTransport::Fingerprint& get_finger_print() const { m_finger_print; }
+		const RTC::DtlsTransport::Fingerprint  get_finger_print() const { return  m_finger_print; }
 	public:
 		std::string get_webrtc_sdp() const ;
 	protected:

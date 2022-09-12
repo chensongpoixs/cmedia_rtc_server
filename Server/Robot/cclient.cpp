@@ -6,20 +6,15 @@ author:			chensong
 purpose:		log
 ************************************************************************************************/
 #include "cclient.h"
-//#include "mediasoupclient.hpp"
-//#include "ortc.hpp"
+ 
 #include "clog.h"
 #include "ccfg.h"
 #include "cwebsocket_mgr.h"
 #include <iostream>
 #include <io.h>
-//#define _CRT_SECURE_NO_WARNINGS
-//#include "cdevice.h"
+ 
 #include "pc/video_track_source.h"
-//#include "crecv_transport.h"
-//#include "csend_transport.h"
-//#include "cinput_device.h"
-//#include "NvCodec/nvenc.h"
+
 #include "build_version.h"
 namespace chen {
 

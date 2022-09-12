@@ -24,7 +24,7 @@ purpose:		async_log
 #include "clog_color.h"
 #include <thread>
 #include <list>
-#include "cnet_types.h"
+#include "cnet_type.h"
 #include <mutex>
 #include <atomic>
 #include <condition_variable>

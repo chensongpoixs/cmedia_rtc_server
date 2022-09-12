@@ -4,9 +4,6 @@
     <Filter Include="client">
       <UniqueIdentifier>{14240d66-51be-4246-84ca-4e1783ac683f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sdp">
-      <UniqueIdentifier>{03211b5a-a793-4ed8-928d-f61f006b4e6b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="build_version.bat">
@@ -71,6 +68,13 @@
     <ClInclude Include="wsclient.h">
       <Filter>client</Filter>
     </ClInclude>
+    <ClInclude Include="Robot.h" />
+    <ClInclude Include="clog_color.h">
+      <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="cnoncopyable.h">
+      <Filter>client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="casync_log.cpp">
@@ -112,10 +116,12 @@
     <ClCompile Include="desktop_capture_source.cc">
       <Filter>client</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="wsclient.cpp">
       <Filter>client</Filter>
     </ClCompile>
-    <ClCompile Include="wsclient.cpp">
+    <ClCompile Include="Robot.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="clog_color.cpp">
       <Filter>client</Filter>
     </ClCompile>
   </ItemGroup>

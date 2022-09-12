@@ -154,14 +154,17 @@
     <ClInclude Include="cdesktop_capture.h" />
     <ClInclude Include="cint2str.h" />
     <ClInclude Include="clog.h" />
+    <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
     <ClInclude Include="cnet_types.h" />
+    <ClInclude Include="cnoncopyable.h" />
     <ClInclude Include="csingleton.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
     <ClInclude Include="cwebsocket_mgr.h" />
     <ClInclude Include="desktop_capture_source.h" />
     <ClInclude Include="json.hpp" />
+    <ClInclude Include="Robot.h" />
     <ClInclude Include="wsclient.h" />
   </ItemGroup>
   <ItemGroup>
@@ -174,11 +177,13 @@
     <ClCompile Include="cdesktop_capture.cpp" />
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
+    <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cnet_types.cpp" />
     <ClCompile Include="ctime_api.cpp" />
     <ClCompile Include="cwebsocket_mgr.cpp" />
     <ClCompile Include="desktop_capture_source.cc" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Robot.cpp" />
     <ClCompile Include="wsclient.cpp" />
   </ItemGroup>
   <ItemGroup>
