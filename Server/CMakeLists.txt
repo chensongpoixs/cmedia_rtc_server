@@ -18,8 +18,8 @@ SET(EXTRA_INC_DIR "D:/Work/cmedia_server/webrtc_google")
 INCLUDE_DIRECTORIES( 
 					${EXTRA_INC_DIR}/src/third_party/abseil-cpp
 			 		${EXTRA_INC_DIR}/src
-					${PROJECT_SOURCE_DIR}/cmediasoup
-					${PROJECT_SOURCE_DIR}/cmediasoup/sdp
+				#	${PROJECT_SOURCE_DIR}/cmediasoup
+					#${PROJECT_SOURCE_DIR}/cmediasoup/sdp
 					
 					)
 
@@ -29,7 +29,7 @@ INCLUDE_DIRECTORIES(
 
 LINK_DIRECTORIES(
 				${PROJECT_SOURCE_DIR}/linux/lib
-				${EXTRA_INC_DIR}/src/out/test_vs2017_debug
+				#${EXTRA_INC_DIR}/src/out/test_vs2017_debug
 				)
 
 
