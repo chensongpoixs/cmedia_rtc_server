@@ -1,4 +1,4 @@
-project(cmeidasoup_client)
+project(cmedia_rtc_server)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 MESSAGE(STATUS "#########################")
@@ -36,7 +36,7 @@ LINK_DIRECTORIES(
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/linux/lib )
-add_subdirectory(cmediasoup)
+#add_subdirectory(cmediasoup)
 
-
+add_subdirectory(Server)
 
