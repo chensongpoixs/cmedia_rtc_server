@@ -79,3 +79,25 @@ Server/Server/*.dll
 server/Server/log
 
 ShareProto/Proto/personTest_pb.js
+cache-v2
+clion-environment.txt
+vcs.xml
+Server/.idea/.gitignore
+Server/.idea/misc.xml
+Server/.idea/modules.xml
+Server/cmake-build-debug/CMakeCache.txt
+Server/cmake-build-debug/.cmake/api/v1/query/cmakeFiles-v1
+Server/cmake-build-debug/.cmake/api/v1/query/codemodel-v2
+Server/cmake-build-debug/.cmake/api/v1/query/toolchains-v1
+Server/cmake-build-debug/CMakeFiles/clion-log.txt
+Server/cmake-build-debug/CMakeFiles/cmake.check_cache
+Server/cmake-build-debug/CMakeFiles/CMakeOutput.log
+Server/cmake-build-debug/CMakeFiles/3.22.3/CMakeCCompiler.cmake
+Server/cmake-build-debug/CMakeFiles/3.22.3/CMakeCXXCompiler.cmake
+Server/cmake-build-debug/CMakeFiles/3.22.3/CMakeDetermineCompilerABI_C.bin
+Server/cmake-build-debug/CMakeFiles/3.22.3/CMakeDetermineCompilerABI_CXX.bin
+Server/cmake-build-debug/CMakeFiles/3.22.3/CMakeSystem.cmake
+Server/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdC/CMakeCCompilerId.c
+Server/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdC/CMakeCCompilerId.o
+Server/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdCXX/CMakeCXXCompilerId.cpp
+Server/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdCXX/CMakeCXXCompilerId.o
