@@ -27,11 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="build_version.bat">
-      <Filter>client</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="cclient.h">
       <Filter>client</Filter>
     </ClInclude>
@@ -40,9 +35,6 @@
       <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="casync_log.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="ccfg.h">
       <Filter>log</Filter>
     </ClInclude>
     <ClInclude Include="clog.h">
@@ -102,6 +94,9 @@
     <ClInclude Include="cpeer_connnection.h">
       <Filter>webrtc</Filter>
     </ClInclude>
+    <ClInclude Include="ccfg.h">
+      <Filter>config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cclient.cpp">
@@ -113,9 +108,6 @@
       <Filter>util</Filter>
     </ClCompile>
     <ClCompile Include="casync_log.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="ccfg.cpp">
       <Filter>log</Filter>
     </ClCompile>
     <ClCompile Include="clog.cpp">
@@ -157,10 +149,14 @@
     <ClCompile Include="cpeer_connnection.cpp">
       <Filter>webrtc</Filter>
     </ClCompile>
+    <ClCompile Include="ccfg.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="CMakeLists.txt">
-      <Filter>client</Filter>
-    </Text>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="build_version.bat" />
   </ItemGroup>
 </Project>

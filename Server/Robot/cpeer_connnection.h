@@ -9,15 +9,22 @@ purpose:		log
 #define _C_PEER_CONNECTION_H_
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
+//#include "cclient.h"
 namespace chen {
-
+	class cclient;
 	class cpeer_connection :public webrtc::PeerConnectionObserver /*好玩东西给webrtc封装这个里面   */,
 		public webrtc::CreateSessionDescriptionObserver/*,
 		public PeerConnectionClientObserver*/
 	{
 	public:
-		explicit cpeer_connection();
-		~cpeer_connection();
+		cpeer_connection(cclient * ptr)
+			: m_client_ptr(ptr)
+			, peer_connection_factory_(NULL)
+			, peer_connection_(NULL)
+		{
+
+		}
+		//~cpeer_connection();
 
 		bool init();
 		void update();
@@ -61,6 +68,7 @@ namespace chen {
 
 		bool _add_track();
 	private:
+		cclient						*									m_client_ptr;
 		rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>		peer_connection_factory_;
 		rtc::scoped_refptr<webrtc::PeerConnectionInterface>				peer_connection_;
 		

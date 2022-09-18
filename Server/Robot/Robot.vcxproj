@@ -71,14 +71,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
     <LibraryPath>$(C_INCLUDE)\webrtc\lib\x64\debug;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <IncludePath>$(C_INCLUDE)/webrtc/include;$(C_INCLUDE)/webrtc/include\third_party\abseil-cpp;$(C_INCLUDE)/webrtc/include\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
     <LibraryPath>$(C_INCLUDE)\webrtc\lib\x64\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <IncludePath>$(C_INCLUDE)/webrtc/include;$(C_INCLUDE)/webrtc/include\third_party\abseil-cpp;$(C_INCLUDE)/webrtc/include\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>

@@ -30,8 +30,9 @@ purpose:		log
 #include "rtc_base/logging.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/rtc_certificate_generator.h"
-#include "rtc_base/strings/json.h"
+//#include "rtc_base/strings/json.h"
 #include "clog.h"
+#include "cclient.h"
 #include "ccapturer_tracksource.h"
 namespace chen {
 
@@ -54,7 +55,7 @@ namespace chen {
 		}
 	};
 
-	cpeer_connection::cpeer_connection()
+	/*cpeer_connection::cpeer_connection()
 		: peer_connection_factory_(NULL)
 		, peer_connection_(NULL)
 	{
@@ -62,12 +63,21 @@ namespace chen {
 	cpeer_connection::~cpeer_connection()
 	{
 	}
-
+*/
 	bool cpeer_connection::init()
 	{
+		 auto networkThread = rtc::Thread::CreateWithSocketServer();
+		 auto signalingThread = rtc::Thread::Create();
+		 auto workerThread = rtc::Thread::Create();
+		if (! networkThread->Start() || ! signalingThread->Start() || ! workerThread->Start())
+		{
+			ERROR_EX_LOG("thread start errored");
+			return false;
+		}
 		peer_connection_factory_ = webrtc::CreatePeerConnectionFactory(
-			nullptr /* network_thread */, nullptr /* worker_thread */,
-			nullptr /* signaling_thread */, nullptr /* default_adm */,
+			networkThread.get(),
+			signalingThread.get(),
+			workerThread.get() /* signaling_thread */, nullptr /* default_adm */,
 			webrtc::CreateBuiltinAudioEncoderFactory(),
 			webrtc::CreateBuiltinAudioDecoderFactory(),
 			webrtc::CreateBuiltinVideoEncoderFactory(),
@@ -96,12 +106,13 @@ namespace chen {
 			ERROR_EX_LOG("create peer connection failed !!!");
 			return false;
 		}
-		if (!_add_track)
+		if (!_add_track())
 		{
 			return false;
 		}
 		peer_connection_->CreateOffer(
 			this, webrtc::PeerConnectionInterface::RTCOfferAnswerOptions());
+		
 		return true;
 	}
 
@@ -125,12 +136,15 @@ namespace chen {
 		webrtc::SdpParseError error;
 		std::unique_ptr<webrtc::SessionDescriptionInterface> session_description =
 			webrtc::CreateSessionDescription(webrtc::SdpType::kAnswer, sdp, &error);
-		if (!session_description) {
-			RTC_LOG(WARNING) << "Can't parse received session description message. "
-				<< "SdpParseError was: " << error.description;
-			return;
+		if (!session_description)
+		{
+			/*RTC_LOG(WARNING) << "Can't parse received session description message. "
+				<< "SdpParseError was: " << error.description;*/
+			WARNING_EX_LOG("Can't parse received session description message. SdpParseError was: = %s ", error.description.c_str());
+			return false;
 		}
-		RTC_LOG(INFO) << " Received session description :";// << message;
+		NORMAL_EX_LOG("Received session description : %s", sdp.c_str());
+	//	RTC_LOG(INFO) << " Received session description :";// << message;
 		peer_connection_->SetRemoteDescription( DummySetSessionDescriptionObserver::Create(), session_description.release());
 		peer_connection_->CreateAnswer(
 			this, webrtc::PeerConnectionInterface::RTCOfferAnswerOptions());
@@ -157,6 +171,11 @@ namespace chen {
 
 		std::string sdp;
 		desc->ToString(&sdp);
+		NORMAL_EX_LOG("[sdp = %s]", sdp.c_str());
+		if (m_client_ptr)
+		{
+			m_client_ptr->set_load_offer(sdp);
+		}
 		// send server peer sdp info 
 	}
 

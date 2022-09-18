@@ -67,6 +67,7 @@ namespace chen {
 		clock_type											m_mutex;
 		send_buffer_list									m_send_buffer_list;
 		send_buffer_list									m_sending_buffer_list;
+		boost::beast::multi_buffer							m_buffer;
 
 	};
 }

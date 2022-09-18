@@ -9,8 +9,8 @@ purpose:		wan_server
 
 #include "cwan_server.h"
 #include "clog.h"
-//#include "ccfg.h"
- 
+#include "ccfg.h"
+
 
 
 namespace chen {
@@ -93,7 +93,7 @@ namespace chen {
 		{
 			return false;
 		}
-		if (!m_websocket_server_ptr->startup(1, "0.0.0.0", 9909 /*g_cfg.get_string(ECI_WanIp).c_str(), g_cfg.get_uint32(ECI_WanPort)*/))
+		if (!m_websocket_server_ptr->startup(1, g_cfg.get_string(ECI_WebSocketWanIp).c_str(), g_cfg.get_uint32(ECI_WebSocketWanPort) /*"0.0.0.0", 9909*/ /*g_cfg.get_string(ECI_WanIp).c_str(), g_cfg.get_uint32(ECI_WanPort)*/))
 		{
 			return false;
 		}

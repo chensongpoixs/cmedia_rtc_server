@@ -110,8 +110,8 @@ namespace chen {
 		// Read a message
 		//boost::beast::multi_buffer buffer;
 	
-		m_ws.async_read_some(
-			boost::asio::buffer(m_recv_buffer, m_recv_buffer_size), 
+		m_ws.async_read(
+			m_buffer, 
 			boost::asio::bind_executor(
 				m_strand,
 				std::bind(
@@ -170,15 +170,31 @@ namespace chen {
 		}
 		else
 		{
-			websocket_msg_ptr->set_buffer(m_recv_buffer, bytes_transferred);
+			//std::ostringstream cmd;
+			//cmd << m_buffer;
+			//boost::asio::mutable_buffer::mutable_buffer p = m_buffer.data();
+			/*boost::beast::const_buffers_type<char> p = */// m_buffer.data();
+			std::stringstream ss;
+			ss << boost::beast::buffers(m_buffer.data());
+			websocket_msg_ptr->set_buffer((unsigned char *)ss.str().c_str(), ss.str().length());
 			websocket_msg_ptr->set_session_id(m_session_id);
 			m_websocket_server_mgr_ptr->msg_push(websocket_msg_ptr);
 		}
 		
-
-	//	m_recv_buffer.consume(m_recv_buffer.size());
-		m_ws.async_read_some(
+		//std::cout << m_buffer.member() << std::endl;;
+		m_buffer.consume(m_buffer.size());
+	//	m_ws.text(m_ws.got_text());
+		/*m_ws.async_read_some(
 			boost::asio::buffer(m_recv_buffer, m_recv_buffer_size),
+			boost::asio::bind_executor(
+				m_strand,
+				std::bind(
+					&cwebsocket_session::_handle_read,
+					this,
+					std::placeholders::_1,
+					std::placeholders::_2)));*/
+		m_ws.async_read (
+			m_buffer,
 			boost::asio::bind_executor(
 				m_strand,
 				std::bind(

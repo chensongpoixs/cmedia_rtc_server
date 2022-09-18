@@ -47,7 +47,7 @@ namespace chen {
             webrtc::DesktopCaptureOptions::CreateDefault());*/
             //×ÀÃæ
         webrtc::DesktopCaptureOptions result;
-        result.set_allow_directx_capturer(true);
+      //  result.set_allow_directx_capturer(true);
         dc_ = webrtc::DesktopCapturer::CreateScreenCapturer(result);
 
 		if (!dc_)

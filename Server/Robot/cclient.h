@@ -16,11 +16,20 @@ purpose:		log
 
 #include "csingleton.h"
 #include "cdesktop_capture.h"
- 
+#include "cpeer_connnection.h"
+
 namespace chen {
 
 	 
-
+	enum EMedia_Session_Status
+	{
+		EMedia_Session_Node = 0,
+		EMedia_Session_connecting,
+		EMedia_Session_Connected,
+		EMedia_Login,
+		EMedia_Loading,
+		EMedia_Gameing,
+	};
 
 
 
@@ -34,29 +43,26 @@ namespace chen {
 		cclient();
 		~cclient();
 
+	public:
 
+		void set_load_offer(const std::string & sdp) { m_offer_sdp = sdp; }
 	public:
 		bool init(uint32 gpu_index);
-		void Loop(const std::string& mediasoupIp, uint16_t port, const std::string& roomName, const std::string& clientName
-			, uint32_t reconnect_waittime);
+		void Loop(/*const std::string& mediasoupIp, uint16_t port, const std::string& roomName, const std::string& clientName
+			, uint32_t reconnect_waittime*/);
 		void stop();
 
 		void Destory();
 
-
-		// 线程不安全的
-		bool webrtc_video(unsigned char * rgba, uint32 fmt,  int32_t width, int32_t height);
-		bool webrtc_texture(void * texture, uint32 fmt, int32_t width, int32_t height);
-		bool webrtc_video(unsigned char * y_ptr, unsigned char * uv_ptr, uint32 fmt, int32_t width, int32_t height);
-		bool webrtc_video(const webrtc::VideoFrame& frame);
-		
+ 
 
 	
 		
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
-	
+	private:
+		bool _send_request_media(uint32 msg_id, const nlohmann::json & data);
 	private:
 		uint64			m_id;
 		bool			m_loaded;
@@ -73,8 +79,9 @@ namespace chen {
 		 
 		bool							m_webrtc_connect;
 		 
-		cpeer_connection		*		m_peer_connection_ptr;
-
+		rtc::scoped_refptr<cpeer_connection>		 		m_peer_connection_ptr;
+		EMedia_Session_Status						m_media_session_stats;
+		std::string										m_offer_sdp;
 
 		
 	};
