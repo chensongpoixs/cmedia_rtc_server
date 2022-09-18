@@ -4,6 +4,27 @@
     <Filter Include="client">
       <UniqueIdentifier>{14240d66-51be-4246-84ca-4e1783ac683f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{74882663-4497-4485-b2f5-1367d762daa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{93d3f1b5-101d-40b7-9ae5-a1b717fabb40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{4b994f13-c359-4f5a-b1fa-5ec18705e190}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="websocket">
+      <UniqueIdentifier>{54e703fa-c2cf-4e05-aa5d-e0bb4bab9afc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{3912ed68-c4ee-4bf8-a3a8-304c102a4fa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="webrtc">
+      <UniqueIdentifier>{414fa8ad-c323-4dfd-bc5c-c647fa63d957}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{5f87961b-6db3-4dd8-ac2a-f007937a50ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="build_version.bat">
@@ -11,118 +32,130 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="build_version.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="casync_log.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="cbase64.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="ccapturer_tracksource.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="ccfg.h">
-      <Filter>client</Filter>
-    </ClInclude>
     <ClInclude Include="cclient.h">
       <Filter>client</Filter>
     </ClInclude>
-    <ClInclude Include="cconfig.h">
-      <Filter>client</Filter>
+    <ClInclude Include="Robot.h" />
+    <ClInclude Include="cdigit2str.h">
+      <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="cdesktop_capture.h">
-      <Filter>client</Filter>
+    <ClInclude Include="casync_log.h">
+      <Filter>log</Filter>
     </ClInclude>
-    <ClInclude Include="cint2str.h">
-      <Filter>client</Filter>
+    <ClInclude Include="ccfg.h">
+      <Filter>log</Filter>
     </ClInclude>
     <ClInclude Include="clog.h">
-      <Filter>client</Filter>
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog_color.h">
+      <Filter>log</Filter>
     </ClInclude>
     <ClInclude Include="clog_define.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="cnet_types.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="csingleton.h">
-      <Filter>client</Filter>
+      <Filter>log</Filter>
     </ClInclude>
     <ClInclude Include="ctime_api.h">
-      <Filter>client</Filter>
+      <Filter>time</Filter>
     </ClInclude>
     <ClInclude Include="ctime_const.h">
-      <Filter>client</Filter>
+      <Filter>time</Filter>
     </ClInclude>
-    <ClInclude Include="cwebsocket_mgr.h">
-      <Filter>client</Filter>
+    <ClInclude Include="csingleton.h">
+      <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="desktop_capture_source.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>client</Filter>
+    <ClInclude Include="cint2str.h">
+      <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="wsclient.h">
-      <Filter>client</Filter>
+      <Filter>websocket</Filter>
     </ClInclude>
-    <ClInclude Include="Robot.h" />
-    <ClInclude Include="clog_color.h">
-      <Filter>client</Filter>
+    <ClInclude Include="cwebsocket_mgr.h">
+      <Filter>websocket</Filter>
     </ClInclude>
     <ClInclude Include="cnoncopyable.h">
-      <Filter>client</Filter>
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_types.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="desktop_capture_source.h">
+      <Filter>webrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cdesktop_capture.h">
+      <Filter>webrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="ccapturer_tracksource.h">
+      <Filter>webrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cconfig.h">
+      <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="cbase64.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="build_version.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cpeer_connnection.h">
+      <Filter>webrtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="casync_log.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="cbase64.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="ccapturer_tracksource.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="ccfg.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
     <ClCompile Include="cclient.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="cconfig.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="cdesktop_capture.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="cint2str.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="clog.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="cnet_types.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="ctime_api.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebsocket_mgr.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="desktop_capture_source.cc">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="wsclient.cpp">
       <Filter>client</Filter>
     </ClCompile>
     <ClCompile Include="Robot.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="cdigit2str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="casync_log.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="ccfg.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="clog.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
     <ClCompile Include="clog_color.cpp">
-      <Filter>client</Filter>
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="ctime_api.cpp">
+      <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="cint2str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="wsclient.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_mgr.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cnet_types.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="desktop_capture_source.cc">
+      <Filter>webrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cdesktop_capture.cpp">
+      <Filter>webrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="ccapturer_tracksource.cpp">
+      <Filter>webrtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cconfig.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="cbase64.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cpeer_connnection.cpp">
+      <Filter>webrtc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

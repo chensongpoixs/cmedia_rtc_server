@@ -152,12 +152,14 @@
     <ClInclude Include="cclient.h" />
     <ClInclude Include="cconfig.h" />
     <ClInclude Include="cdesktop_capture.h" />
+    <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cint2str.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
     <ClInclude Include="cnet_types.h" />
     <ClInclude Include="cnoncopyable.h" />
+    <ClInclude Include="cpeer_connnection.h" />
     <ClInclude Include="csingleton.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
@@ -175,10 +177,12 @@
     <ClCompile Include="cclient.cpp" />
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="cdesktop_capture.cpp" />
+    <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cnet_types.cpp" />
+    <ClCompile Include="cpeer_connnection.cpp" />
     <ClCompile Include="ctime_api.cpp" />
     <ClCompile Include="cwebsocket_mgr.cpp" />
     <ClCompile Include="desktop_capture_source.cc" />

@@ -50,8 +50,10 @@ namespace chen {
         result.set_allow_directx_capturer(true);
         dc_ = webrtc::DesktopCapturer::CreateScreenCapturer(result);
 
-        if (!dc_)
-            return false;
+		if (!dc_)
+		{
+			return false;
+		}
 
         webrtc::DesktopCapturer::SourceList sources;
         dc_->GetSourceList(&sources);
@@ -73,7 +75,8 @@ namespace chen {
 
     void DesktopCapture::OnCaptureResult(
         webrtc::DesktopCapturer::Result result,
-        std::unique_ptr<webrtc::DesktopFrame> frame) {
+        std::unique_ptr<webrtc::DesktopFrame> frame)
+	{
         //RTC_LOG(LS_INFO) << "new Frame";
 
         static auto timestamp =
@@ -124,8 +127,8 @@ namespace chen {
             .set_rotation(webrtc::kVideoRotation_0)
             .build();
        // captureFrame.set_ntp_time_ms(0);
-        s_client.webrtc_video(captureFrame);
-       // DesktopCaptureSource::OnFrame(captureFrame);
+     //   s_client.webrtc_video(captureFrame);
+		DesktopCapture::OnFrame(captureFrame);
         // rtc media info 
        /* DesktopCaptureSource::OnFrame(
             webrtc::VideoFrame(i420_buffer_, 0, 0, webrtc::kVideoRotation_0));*/
@@ -140,7 +143,8 @@ namespace chen {
         start_flag_ = true;
 
         // Start new thread to capture
-        capture_thread_.reset(new std::thread([this]() {
+        capture_thread_.reset(new std::thread([this]() 
+		{
             dc_->Start(this);
 
             while (start_flag_) {
@@ -153,7 +157,8 @@ namespace chen {
     void DesktopCapture::StopCapture() {
         start_flag_ = false;
 
-        if (capture_thread_ && capture_thread_->joinable()) {
+        if (capture_thread_ && capture_thread_->joinable()) 
+		{
             capture_thread_->join();
         }
     }

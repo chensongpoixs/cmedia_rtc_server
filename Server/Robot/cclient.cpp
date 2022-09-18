@@ -27,6 +27,7 @@ namespace chen {
 		:m_id(100000)
 		,m_loaded(false)
 		, m_stoped(false)
+		, m_peer_connection_ptr(NULL)
 		{}
 	cclient::~cclient(){}
 
@@ -35,7 +36,7 @@ namespace chen {
 	 
 	bool cclient::init(uint32 gpu_index)
 	{
-		
+		//m_peer_connection_ptr->init();
 		
 		return true;
 	}

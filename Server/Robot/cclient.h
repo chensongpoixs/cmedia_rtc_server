@@ -73,7 +73,7 @@ namespace chen {
 		 
 		bool							m_webrtc_connect;
 		 
-		 
+		cpeer_connection		*		m_peer_connection_ptr;
 
 
 		

@@ -20,7 +20,7 @@ purpose:		log
 namespace chen {
 
 
-    class DesktopCapture  :
+    class DesktopCapture  : public VideoCaptureSource, 
         public webrtc::DesktopCapturer::Callback,
         public rtc::VideoSinkInterface<webrtc::VideoFrame> {
     public:
@@ -44,6 +44,8 @@ namespace chen {
 
         void OnCaptureResult(webrtc::DesktopCapturer::Result result,
             std::unique_ptr<webrtc::DesktopFrame> frame) override;
+
+	private:
 
         std::unique_ptr<webrtc::DesktopCapturer> dc_;
 

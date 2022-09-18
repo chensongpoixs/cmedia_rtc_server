@@ -8,7 +8,7 @@ purpose:	system log color
 
 #ifndef _C_LOG_COLOR_H_
 #define _C_LOG_COLOR_H_
-//#include "cnoncopyable.h"
+#include "cnoncopyable.h"
 namespace chen
 {
 	enum ELogColorType
@@ -22,7 +22,7 @@ namespace chen
 		ELCT_Max
 	};
 
-	class clog_color// :private cnoncopyable
+	class clog_color :private cnoncopyable
 	{
 	public:
 		explicit clog_color();
