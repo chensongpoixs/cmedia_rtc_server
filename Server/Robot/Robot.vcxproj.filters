@@ -25,6 +25,9 @@
     <Filter Include="config">
       <UniqueIdentifier>{5f87961b-6db3-4dd8-ac2a-f007937a50ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="msg">
+      <UniqueIdentifier>{3daeeba7-eeb6-4d4d-992e-814efdb61ff9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cclient.h">
@@ -96,6 +99,9 @@
     </ClInclude>
     <ClInclude Include="ccfg.h">
       <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsg_base_id.h">
+      <Filter>msg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

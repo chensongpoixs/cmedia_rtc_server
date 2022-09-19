@@ -373,6 +373,17 @@ namespace chen {
 		//}
 		return true;
 	}
+	void crtc_sdp::destroy()
+	{
+		//std::string							m_client_sdp;
+		//size_t								m_current_pos;
+		//std::vector< RTC::RtpParameters>	m_media_datas;
+		//RTC::RtpParameters					m_rtp_parameter;
+		m_media_datas.clear();
+		/// crypto
+		//RTC::DtlsTransport::Fingerprint	    m_finger_print;
+		//m_finger_print;
+	}
 	std::string crtc_sdp::get_webrtc_sdp() const
 	{
 		size_t index = 0;
@@ -436,7 +447,7 @@ namespace chen {
 		sdp << "a=rtcp-fb:100 nack pli\r\n";*/
 		for (size_t i = 0; i < m_media_datas[index].headerExtensions.size(); ++i)
 		{
-			sdp << "a=extmap:" << m_media_datas[index].headerExtensions[i].id << " " << m_media_datas[index].headerExtensions[i].uri << "\r\n";
+			sdp << "a=extmap:" << std::to_string(m_media_datas[index].headerExtensions[i].id) << " " << m_media_datas[index].headerExtensions[i].uri << "\r\n";
 		}
 		//sdp << "a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid\r\n";
 		//sdp << "a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n";
@@ -449,7 +460,7 @@ namespace chen {
 		sdp << "a=setup:server\r\n";
 		sdp << "a=mid:"<<m_media_datas[index].mid <<"\r\n";
 
-		return std::string();
+		return sdp.str();
 	}
 	bool crtc_sdp::_get_line_data(size_t & read_size)
 	{

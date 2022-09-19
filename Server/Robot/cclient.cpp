@@ -12,7 +12,7 @@ purpose:		log
 #include "cwebsocket_mgr.h"
 #include <iostream>
 #include <io.h>
- 
+#include "cmsg_base_id.h"
 #include "pc/video_track_source.h"
 
 #include "build_version.h"
@@ -44,7 +44,7 @@ namespace chen {
 	}
 	void cclient::stop()
 	{
-		
+		m_stoped = true;
 	}
 	void cclient::Loop(/*const std::string & mediasoupIp, uint16_t port, const std::string & roomName, const std::string & clientName
 	,	uint32_t websocket_reconnect_waittime*/)
@@ -63,7 +63,7 @@ namespace chen {
 			return;
 		}
 		std::string ws_url = "ws://" + g_cfg.get_string(ECI_WebSocketHost)+":" + std::to_string(g_cfg.get_uint32(ECI_WebSocketPort));
-
+		std::list<std::string> msgs;
 		while (!m_stoped)
 		{
 			switch (m_media_session_stats)
@@ -99,16 +99,17 @@ namespace chen {
 					// send fonsg 
 					nlohmann::json data =
 					{
-						{"sdp",m_offer_sdp}
-
+						{"sdp",m_offer_sdp},
+						//{"room_name", g_cfg.get_string(ECI_Room_Name)},
+						{"user_name", g_cfg.get_string(ECI_Client_Name)}
 					};
-					if (!_send_request_media(202, data))
+					if (!_send_request_media(C2S_Login, data))
 					{
 						m_media_session_stats = EMedia_Session_Node;
 						WARNING_EX_LOG("send login failed !!!");
 						continue;
 					}
-				//	m_media_session_stats = EMedia_Loading;
+					m_media_session_stats = EMedia_Loading;
 				}
 				
 				break;
@@ -125,6 +126,19 @@ namespace chen {
 			{
 				break;
 			}
+			}
+			m_websocket_mgr.presssmsg(msgs);
+
+
+			if (!msgs.empty() && m_websocket_mgr.get_status() == CWEBSOCKET_MESSAGE)
+			{
+				_presssmsg(msgs);
+			}
+
+			if (m_websocket_mgr.get_status() != CWEBSOCKET_MESSAGE)
+			{
+				m_media_session_stats = EMedia_Session_Node;
+				msgs.clear();
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			
@@ -159,6 +173,111 @@ namespace chen {
 		};
 		m_websocket_mgr.send(request_data.dump());
 		return true;
+	}
+
+	void cclient::_presssmsg(std::list<std::string>& msgs)
+	{
+		nlohmann::json response;
+		while (!msgs.empty() && m_websocket_mgr.get_status() == CWEBSOCKET_MESSAGE)
+		{
+			std::string msg = std::move(msgs.front());
+			msgs.pop_front();
+			NORMAL_EX_LOG("server ====> msg = %s", msg.c_str());
+
+			try
+			{
+				response = nlohmann::json::parse(msg);
+			}
+			catch (const std::exception&)
+			{
+				ERROR_EX_LOG("websocket protoo [msg = %s] json parse failed !!!", msg.c_str());
+				continue;
+			}
+
+			if (response.find("msg_id") != response.end())
+			{
+				NORMAL_EX_LOG("[data = %s]", msg.c_str());
+			}
+			else
+			{
+				WARNING_EX_LOG("not find msg_id [data = %s]", msg.c_str());
+			}
+			//if (response.find(WEBSOCKET_PROTOO_NOTIFICATION) != response.end())
+			//{
+			//	//NORMAL_EX_LOG("notification --> msg = %s", msg);
+			//	auto method_iter = response.find(WEBSOCKET_PROTOO_METHOD);
+			//	if (method_iter == response.end())
+			//	{
+			//		WARNING_EX_LOG("notification websocket protoo not find method name  msg = %s", response.dump().c_str());
+			//		continue;
+			//	}
+			//	std::string method = response[WEBSOCKET_PROTOO_METHOD];
+			//	std::map<std::string, server_protoo_msg>::iterator iter = m_server_notification_protoo_msg_call.find(method);
+			//	if (iter != m_server_notification_protoo_msg_call.end())
+			//	{
+
+			//		(this->*(iter->second))(response);
+			//		//server_request_new_dataconsumer(response);
+			//	}
+			//	else
+			//	{
+			//		//_default_replay(response);
+			//		//WARNING_EX_LOG("server request client not find method  response = %s", response.dump().c_str());
+			//	}
+
+			//}
+			//else if (response.find(WEBSOCKET_PROTOO_RESPONSE) != response.end())//response
+			//{
+			//	auto id_iter = response.find(WEBSOCKET_PROTOO_ID);
+			//	if (id_iter == response.end())
+			//	{
+			//		WARNING_EX_LOG("websocket protoo response not find 'id' [response = %s] filed !!! ", response.dump().c_str());
+			//		continue;
+			//	}
+			//	uint64 id = response["id"].get<uint64>();
+			//	std::map<uint64, client_protoo_msg>::const_iterator iter = m_client_protoo_msg_call.find(id);
+			//	if (iter == m_client_protoo_msg_call.end())
+			//	{
+			//		ERROR_EX_LOG("not find id = %u, msg = %s", id, msg.c_str());
+			//	}
+			//	else
+			//	{
+			//		if (!(this->*(iter->second))(response))
+			//		{
+			//			m_status = EMediasoup_Reset;
+			//			return;
+			//		}
+			//		m_client_protoo_msg_call.erase(iter);
+			//	}
+			//}
+			//else if (response.find(WEBSOCKET_PROTOO_REQUEST) != response.end())
+			//{
+			//	//服务器请求客户端响应的请求
+			//	auto method_iter = response.find(WEBSOCKET_PROTOO_METHOD);
+			//	if (method_iter == response.end())
+			//	{
+			//		WARNING_EX_LOG("websocket protoo not find method name  msg = %s", response.dump().c_str());
+			//		continue;
+			//	}
+			//	std::string method = response[WEBSOCKET_PROTOO_METHOD];
+			//	std::map<std::string, server_protoo_msg>::iterator iter = m_server_protoo_msg_call.find(method);
+			//	if (iter != m_server_protoo_msg_call.end())
+			//	{
+
+			//		(this->*(iter->second))(response);
+			//		//server_request_new_dataconsumer(response);
+			//	}
+			//	else
+			//	{
+			//		_default_replay(response);
+			//		//WARNING_EX_LOG("server request client not find method  response = %s", response.dump().c_str());
+			//	}
+			//}
+			//else
+			//{
+			//	ERROR_EX_LOG(" not find msg type !!! msg = %s", msg.c_str());
+			//}
+		}
 	}
 	
 	

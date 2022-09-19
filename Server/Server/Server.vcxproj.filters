@@ -550,6 +550,9 @@
     <ClCompile Include="crtc_sdp_handler.cpp">
       <Filter>rtc_sdp</Filter>
     </ClCompile>
+    <ClCompile Include="cclient_msg_dispatch.cpp">
+      <Filter>dispatch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1025,6 +1028,9 @@
     </ClInclude>
     <ClInclude Include="ccfg.h">
       <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="cclient_msg_dispatch.h">
+      <Filter>dispatch</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

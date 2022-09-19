@@ -63,6 +63,10 @@ namespace chen {
 	
 	private:
 		bool _send_request_media(uint32 msg_id, const nlohmann::json & data);
+
+
+	private:
+		void  _presssmsg(std::list<std::string> & msgs);
 	private:
 		uint64			m_id;
 		bool			m_loaded;

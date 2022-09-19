@@ -73,6 +73,7 @@ examples/html/simple_demo/node_modules
 
 
 Server/bin
+Server/log
 Server/vsout
 Server/.vs 
 Server/Server/*.dll

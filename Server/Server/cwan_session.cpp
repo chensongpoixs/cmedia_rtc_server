@@ -14,9 +14,12 @@ purpose:	网络数据的收发
 #include <json/json.h>
 #include "cwan_server.h"
 #include "croom_mgr.h"
+#include "cclient_msg_dispatch.h"
+#include "cmsg_dispatch.h"
 namespace chen {
 	cwan_session::cwan_session()
 		: m_session_id(0)
+		, m_user_name("")
 		, m_client_connect_type(EClientConnectNone)
 	{
 		
@@ -36,6 +39,9 @@ namespace chen {
 	{
 		//WARNING_EX_LOG("");
 		m_client_connect_type = EClientConnectNone;
+		m_user_name.clear();
+		m_session_id = 0;
+		m_rtc_sdp.destroy();
 	}
 	void cwan_session::update(uint32 uDeltaTime)
 	{
@@ -57,22 +63,46 @@ namespace chen {
 		}
 		// TODO@chensong 20220812 管理的比较漏
 		const uint32 msg_id = m_json_response["msg_id"].asUInt();
-		// "create_webrtc"
-		if ( C2S_Login == msg_id)
-		{
 
-			//g_global_webrtc_mgr.handler_create_webrtc(session_id, m_json_response);
-		}
-		else if (C2S_destroy_room == msg_id)
+		if (msg_id < S2S_DestroyRoom)
 		{
-			//g_global_webrtc_mgr.handler_destroy_webrtc(session_id, m_json_response);
+			cclient_msg_handler * client_msg_handler = g_client_msg_dispatch.get_msg_handler(msg_id);
+			if (!client_msg_handler)
+			{
+				WARNING_EX_LOG("[session_id = %llu]not find msg_id= %u callback !!!", session_id, msg_id);
+				return;
+			}
+			++client_msg_handler->handle_count;
+			(this->*(client_msg_handler->handler))(m_json_response);
+
+		}
+		else if (msg_id < Msg_Client_Max)
+		{
+			//cmsg_handler *msg_handler = g_msg_dispatch.get_msg_handler(msg_id);
+			//++msg_handler->handle_count;
+			//(this->*(msg_handler->handler))(session_id, m_json_response);
 		}
 		else
 		{
-		//	g_global_webrtc_mgr.handler_webrtc(session_id, m_json_response);
-			
-
+			WARNING_EX_LOG("not find [msg_id = %u][msg = %s]", msg_id, p);
 		}
+		
+		// "create_webrtc"
+		//if ( C2S_Login == msg_id)
+		//{
+		//	m_session_id = session_id;
+		//	//g_global_webrtc_mgr.handler_create_webrtc(session_id, m_json_response);
+		//}
+		//else if (C2S_destroy_room == msg_id)
+		//{
+		//	//g_global_webrtc_mgr.handler_destroy_webrtc(session_id, m_json_response);
+		//}
+		//else
+		//{
+		////	g_global_webrtc_mgr.handler_webrtc(session_id, m_json_response);
+		//	
+
+		//}
 		// "destroy_webrtc"
 
 
@@ -136,11 +166,48 @@ namespace chen {
 
 
 
-	void    cwan_session::handler_login(const void* ptr, uint32 msg_size)
+	bool    cwan_session::handler_login(  Json::Value & value)
 	{
-		 
-
+		if (!value.isMember("data") || !value["data"].isObject())
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] !!! ", m_session_id, value.asCString());
+			return false;
+		}  
+		if (!value["data"].isMember("user_name") || !value["data"]["user_name"].isString())
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find user_name  , [value = %s] !!! ", m_session_id, value.asCString());
+			return false;
+		}
+		if (!value["data"].isMember("sdp") || !value["data"]["sdp"].isString())
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find sdp  , [value = %s] !!! ", m_session_id, value.asCString());
+			return false;
+		}
+		m_user_name = value["data"]["user_name"].asCString();
+		if (!m_rtc_sdp.init(value["data"]["sdp"].asCString()))
+		{
+			WARNING_EX_LOG("rtc session_id = %lu, sdp = %s", value["data"]["sdp"].asCString());
+			return false ;
+		}
 		
+
+
+		m_client_connect_type = EClientConnectSession;
+
+		NORMAL_EX_LOG("sdp = %s", m_rtc_sdp.get_webrtc_sdp().c_str());
+
+
+		return true;
+	}
+
+	bool cwan_session::handler_create_room(Json::Value & value)
+	{
+		return true;
+	}
+
+	bool cwan_session::handler_destroy_room(Json::Value & value)
+	{
+		return true;
 	}
 
 	 
