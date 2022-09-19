@@ -139,6 +139,7 @@ namespace chen {
 	}
 	void cwan_server::on_connect(uint64_t session_id,  const char * buf)
 	{
+		NORMAL_EX_LOG("[session_id = %u]", session_id);
 		//if (para)
 		/*uint32 index = get_session_index(session_id);
 		if (m_session_ptr[index].is_used())
@@ -207,7 +208,7 @@ namespace chen {
 	}
 	void cwan_server::on_disconnect(uint64_t session_id)
 	{
-
+		NORMAL_EX_LOG("session_id = %u", session_id);
 		std::map<uint64, cwan_session*>::iterator iter = m_session_map.find(session_id);
 		if (iter != m_session_map.end())
 		{
