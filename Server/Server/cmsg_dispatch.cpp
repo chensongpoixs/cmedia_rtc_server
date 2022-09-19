@@ -17,7 +17,7 @@ namespace chen {
 	bool cmsg_dispatch::init()
 	{
 		
-		_register_msg_handler(C2S_rtc_connect,			"webrtc_connect",		&cwebrtc_transport::handler_connect);
+		_register_msg_handler(C2S_RtcConnect,			"webrtc_connect",		&cwebrtc_transport::handler_connect);
 		_register_msg_handler(C2S_rtc_restart_ice,		"webrtc_restart_ice",	&cwebrtc_transport::handler_restart_ice);
 		_register_msg_handler(C2S_rtc_info,			"webrtc_info",			&cwebrtc_transport::handler_info);
 		_register_msg_handler(C2S_rtc_get_stats,		"webrtc_get_stats",		&cwebrtc_transport::handler_get_stats);

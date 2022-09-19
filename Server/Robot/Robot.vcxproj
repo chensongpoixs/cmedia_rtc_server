@@ -177,6 +177,7 @@
     <ClCompile Include="ccapturer_tracksource.cpp" />
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cclient.cpp" />
+    <ClCompile Include="cclient_handler.cpp" />
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="cdesktop_capture.cpp" />
     <ClCompile Include="cdigit2str.cpp" />

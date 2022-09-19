@@ -29,6 +29,10 @@ namespace chen {
 		EMedia_Login,
 		EMedia_Loading,
 		EMedia_Gameing,
+	/*	EMedia_CreateRoom,
+		EMedia_CreateRooming,*/
+		EMedia_CreateVideo,
+		EMedia_CreateVideoing,
 	};
 
 
@@ -69,6 +73,9 @@ namespace chen {
 		bool handler_s2c_login(nlohmann::json& data);
 		bool handler_s2c_create_room(nlohmann::json&data);
 		bool handler_s2c_destroy_room(nlohmann::json& data);
+
+		bool handler_s2c_rtc_connect(nlohmann::json& msg);
+
 	private:
 		uint64			m_id;
 		bool			m_loaded;

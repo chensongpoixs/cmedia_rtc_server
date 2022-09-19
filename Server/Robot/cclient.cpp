@@ -19,17 +19,6 @@ purpose:		log
 #include "build_version.h"
 namespace chen {
 
-#define  WEBSOCKET_CHECK_RESPONSE()  if (msg.find("result") == msg.end())\
-	{\
-		ERROR_EX_LOG(" [msg = %s] not find 'result' failed !!!", msg.dump().c_str());\
-		return false;\
-	}\
-	uint16  result = msg["result"].get<uint16>();\
-	if (0 != result)\
-	{\
-		ERROR_EX_LOG("  not result  [msg = %s] !!!", msg.dump().c_str());\
-		return false;\
-	}
 
 
 	static const uint32_t TICK_TIME = 200;
@@ -105,13 +94,13 @@ namespace chen {
 			}
 			case chen::EMedia_Login:
 			{
-				if (!m_offer_sdp.empty())
+				//if (!m_offer_sdp.empty())
 				{
 					// send fonsg 
 					nlohmann::json data =
 					{
-						{"sdp",m_offer_sdp},
-						//{"room_name", g_cfg.get_string(ECI_Room_Name)},
+						//{"sdp",m_offer_sdp},
+						{"room_name", g_cfg.get_string(ECI_Room_Name)},
 						{"user_name", g_cfg.get_string(ECI_Client_Name)}
 					};
 					if (!_send_request_media(C2S_Login, data))
@@ -130,6 +119,54 @@ namespace chen {
 				break;
 			}
 			case chen::EMedia_Gameing:
+			{
+				break;
+			}
+			//case EMedia_CreateRoom:
+			//{
+			//	// send fonsg 
+			//	nlohmann::json data =
+			//	{
+			//		//{"sdp",m_offer_sdp},
+			//		//{"room_name", g_cfg.get_string(ECI_Room_Name)},
+			//		{"room_name", g_cfg.get_string(ECI_Room_Name)}
+			//	};
+			//	if (!_send_request_media(C2S_CreateRoom, data))
+			//	{
+			//		m_media_session_stats = EMedia_Session_Node;
+			//		WARNING_EX_LOG("send login failed !!!");
+			//		continue;
+			//	}
+			//	NORMAL_EX_LOG("create room send  room_name = %s", g_cfg.get_string(ECI_Room_Name).c_str());
+			//	m_media_session_stats = EMedia_CreateRooming;
+			//	break;
+			//}
+			//case	EMedia_CreateRooming:
+			//{
+			//	break;
+			//}
+			case	EMedia_CreateVideo:
+			{
+				if (!m_offer_sdp.empty())
+				{
+					// send fonsg 
+					nlohmann::json data =
+					{
+						{"sdp",m_offer_sdp}/*,
+						{"room_name", g_cfg.get_string(ECI_Room_Name)},
+						{"user_name", g_cfg.get_string(ECI_Client_Name)}*/
+					};
+					if (!_send_request_media(C2S_RtcConnect, data))
+					{
+						m_media_session_stats = EMedia_Session_Node;
+						WARNING_EX_LOG("send login failed !!!");
+						continue;
+					}
+					m_media_session_stats = EMedia_CreateVideoing;
+				} 
+				break;
+			}
+			case	EMedia_CreateVideoing:
 			{
 				break;
 			}
@@ -223,107 +260,10 @@ namespace chen {
 			{
 				WARNING_EX_LOG("not find msg_id [data = %s]", msg.c_str());
 			}
-			//if (response.find(WEBSOCKET_PROTOO_NOTIFICATION) != response.end())
-			//{
-			//	//NORMAL_EX_LOG("notification --> msg = %s", msg);
-			//	auto method_iter = response.find(WEBSOCKET_PROTOO_METHOD);
-			//	if (method_iter == response.end())
-			//	{
-			//		WARNING_EX_LOG("notification websocket protoo not find method name  msg = %s", response.dump().c_str());
-			//		continue;
-			//	}
-			//	std::string method = response[WEBSOCKET_PROTOO_METHOD];
-			//	std::map<std::string, server_protoo_msg>::iterator iter = m_server_notification_protoo_msg_call.find(method);
-			//	if (iter != m_server_notification_protoo_msg_call.end())
-			//	{
-
-			//		(this->*(iter->second))(response);
-			//		//server_request_new_dataconsumer(response);
-			//	}
-			//	else
-			//	{
-			//		//_default_replay(response);
-			//		//WARNING_EX_LOG("server request client not find method  response = %s", response.dump().c_str());
-			//	}
-
-			//}
-			//else if (response.find(WEBSOCKET_PROTOO_RESPONSE) != response.end())//response
-			//{
-			//	auto id_iter = response.find(WEBSOCKET_PROTOO_ID);
-			//	if (id_iter == response.end())
-			//	{
-			//		WARNING_EX_LOG("websocket protoo response not find 'id' [response = %s] filed !!! ", response.dump().c_str());
-			//		continue;
-			//	}
-			//	uint64 id = response["id"].get<uint64>();
-			//	std::map<uint64, client_protoo_msg>::const_iterator iter = m_client_protoo_msg_call.find(id);
-			//	if (iter == m_client_protoo_msg_call.end())
-			//	{
-			//		ERROR_EX_LOG("not find id = %u, msg = %s", id, msg.c_str());
-			//	}
-			//	else
-			//	{
-			//		if (!(this->*(iter->second))(response))
-			//		{
-			//			m_status = EMediasoup_Reset;
-			//			return;
-			//		}
-			//		m_client_protoo_msg_call.erase(iter);
-			//	}
-			//}
-			//else if (response.find(WEBSOCKET_PROTOO_REQUEST) != response.end())
-			//{
-			//	//服务器请求客户端响应的请求
-			//	auto method_iter = response.find(WEBSOCKET_PROTOO_METHOD);
-			//	if (method_iter == response.end())
-			//	{
-			//		WARNING_EX_LOG("websocket protoo not find method name  msg = %s", response.dump().c_str());
-			//		continue;
-			//	}
-			//	std::string method = response[WEBSOCKET_PROTOO_METHOD];
-			//	std::map<std::string, server_protoo_msg>::iterator iter = m_server_protoo_msg_call.find(method);
-			//	if (iter != m_server_protoo_msg_call.end())
-			//	{
-
-			//		(this->*(iter->second))(response);
-			//		//server_request_new_dataconsumer(response);
-			//	}
-			//	else
-			//	{
-			//		_default_replay(response);
-			//		//WARNING_EX_LOG("server request client not find method  response = %s", response.dump().c_str());
-			//	}
-			//}
-			//else
-			//{
-			//	ERROR_EX_LOG(" not find msg type !!! msg = %s", msg.c_str());
-			//}
+			 
 		}
 	}
 
-	bool cclient::handler_s2c_login(nlohmann::json & msg)
-	{
-		WEBSOCKET_CHECK_RESPONSE();
-		if (EMedia_Loading != m_media_session_stats)
-		{
-			WARNING_EX_LOG("client status error  status = %u", m_media_session_stats);
-		}
-		m_media_session_stats = EMedia_Gameing;
-		NORMAL_EX_LOG("client login ok !!!");
-		return true;
-	}
-
-	bool cclient::handler_s2c_create_room(nlohmann::json & msg)
-	{
-		WEBSOCKET_CHECK_RESPONSE();
-		return true;
-	}
-
-	bool cclient::handler_s2c_destroy_room(nlohmann::json & msg)
-	{
-		WEBSOCKET_CHECK_RESPONSE();
-		return true;
-	}
 	
 	
 

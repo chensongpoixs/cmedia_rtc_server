@@ -49,8 +49,8 @@ namespace chen {
 
 		bool    handler_login(  Json::Value & value);
 
-		bool	handler_create_room(  Json::Value & value);
-		bool	handler_destroy_room(Json::Value & value);
+		//bool	handler_create_room(  Json::Value & value);
+		//bool	handler_destroy_room(Json::Value & value);
 		/*void	handler_webrtc_command(const void* ptr, uint32 msg_size);
 
 		void    handler_mediasoupstatusupdate(const void * ptr, uint32 msg_size);*/
@@ -62,7 +62,7 @@ namespace chen {
 		void disconnect();
 
 	public:
-		bool send_msg(uint16 msg_id , const std::string & data);
+		bool send_msg(uint16 msg_id , int32 error,    Json::Value   data);
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		cwan_session(const cwan_session&);
@@ -71,6 +71,8 @@ namespace chen {
 	
 	private:
 		uint64_t					m_session_id; //会话id
+
+		std::string				m_room_name;
 		std::string				m_user_name;
 		EClientConnectType      m_client_connect_type;
 		uint64					m_client_session;

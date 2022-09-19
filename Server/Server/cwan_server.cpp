@@ -232,7 +232,7 @@ namespace chen {
 
 	void cwan_server::send_msg(uint32 session_id, uint16 msg_id, const void * p, uint32 size)
 	{
-		if (m_websocket_server_ptr->send_msg(session_id,  p, size))
+		if (!m_websocket_server_ptr->send_msg(session_id,  p, size))
 		{
 			WARNING_EX_LOG("send session_id = %lu", session_id);
 		}
