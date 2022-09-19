@@ -17,6 +17,7 @@ purpose:		cmedia_server
 #include "cuv_util.h"
 #include "ccfg.h"
 #include "crtc_sdp.h"
+#include "cclient_msg_dispatch.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -47,6 +48,12 @@ namespace chen {
 		//ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
 		//ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
 		SYSTEM_LOG("dispatch init ...");
+
+		if (!g_client_msg_dispatch.init())
+		{
+			return false;
+		}
+
 		if (!g_msg_dispatch.init())
 		{
 			return false;

@@ -15,6 +15,7 @@ purpose:	网络数据的收发
 #include "cnet_type.h"
 #include <list>
 #include <json/json.h>
+#include "crtc_sdp.h"
 namespace chen {
 
 	enum EClientConnectType
@@ -28,7 +29,7 @@ namespace chen {
 	class cwan_session //:private cnoncopyable
 	{
 	private:
-		typedef void (cwan_session::* msg_handler_type)(const void* ptr, uint32 msg_size);
+		//typedef void (cwan_session::* msg_handler_type)(const void* ptr, uint32 msg_size);
 		//typedef std::map<uint16, msg_handler_type>			M_MSG_MAP;
 	public:
 		explicit cwan_session();
@@ -46,8 +47,10 @@ namespace chen {
 		void	close();
 	public:
 
-		void    handler_login(const void* ptr, uint32 msg_size);
+		bool    handler_login(  Json::Value & value);
 
+		//bool	handler_create_room(  Json::Value & value);
+		//bool	handler_destroy_room(Json::Value & value);
 		/*void	handler_webrtc_command(const void* ptr, uint32 msg_size);
 
 		void    handler_mediasoupstatusupdate(const void * ptr, uint32 msg_size);*/
@@ -58,6 +61,8 @@ namespace chen {
 		void set_used();
 		void disconnect();
 
+	public:
+		bool send_msg(uint16 msg_id , int32 error,    Json::Value   data);
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		cwan_session(const cwan_session&);
@@ -67,12 +72,16 @@ namespace chen {
 	private:
 		uint64_t					m_session_id; //会话id
 
+		std::string				m_room_name;
+		std::string				m_user_name;
 		EClientConnectType      m_client_connect_type;
 		uint64					m_client_session;
 		std::list<std::string>  m_room_list; // 加入房间列表
 	//	M_MSG_MAP				m_msg_map;
 		Json::Reader							m_json_reader;					// json解析
 		Json::Value								m_json_response;
+
+		crtc_sdp								m_rtc_sdp;
 
 	};
 }//namespace chen

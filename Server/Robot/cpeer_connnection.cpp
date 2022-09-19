@@ -176,6 +176,7 @@ namespace chen {
 		{
 			m_client_ptr->set_load_offer(sdp);
 		}
+		
 		// send server peer sdp info 
 	}
 

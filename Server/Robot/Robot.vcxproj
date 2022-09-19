@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{16DBE473-9739-4270-AAE5-BE7DB073D410}</ProjectGuid>
     <RootNamespace>Robot</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -157,6 +157,8 @@
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
+    <ClInclude Include="cmsg_base_id.h" />
+    <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnet_types.h" />
     <ClInclude Include="cnoncopyable.h" />
     <ClInclude Include="cpeer_connnection.h" />
@@ -175,12 +177,14 @@
     <ClCompile Include="ccapturer_tracksource.cpp" />
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cclient.cpp" />
+    <ClCompile Include="cclient_handler.cpp" />
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="cdesktop_capture.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
+    <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnet_types.cpp" />
     <ClCompile Include="cpeer_connnection.cpp" />
     <ClCompile Include="ctime_api.cpp" />

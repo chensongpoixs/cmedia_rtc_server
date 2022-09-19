@@ -16,8 +16,8 @@ namespace chen {
 	}
 	bool cmsg_dispatch::init()
 	{
-		_register_msg_handler(C2S_Login,			"C2S_Login",		&cwebrtc_transport::handler_connect);
-		_register_msg_handler(C2S_rtc_connect,			"webrtc_connect",		&cwebrtc_transport::handler_connect);
+		
+		_register_msg_handler(C2S_RtcConnect,			"webrtc_connect",		&cwebrtc_transport::handler_connect);
 		_register_msg_handler(C2S_rtc_restart_ice,		"webrtc_restart_ice",	&cwebrtc_transport::handler_restart_ice);
 		_register_msg_handler(C2S_rtc_info,			"webrtc_info",			&cwebrtc_transport::handler_info);
 		_register_msg_handler(C2S_rtc_get_stats,		"webrtc_get_stats",		&cwebrtc_transport::handler_get_stats);
@@ -85,7 +85,7 @@ namespace chen {
 	}
 	cmsg_handler * cmsg_dispatch::get_msg_handler(uint16 msg_id)
 	{
-		if (static_cast<int> (msg_id) >= Msg_Client_Max)
+		if (static_cast<int> (msg_id) >= Msg_Client_Max || static_cast<int> (msg_id) <= S2S_DestroyRoom)
 		{
 			return NULL;
 		}

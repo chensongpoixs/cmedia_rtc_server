@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}</ProjectGuid>
     <RootNamespace>Server</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="casync_log.cpp" />
     <ClCompile Include="ccfg.cpp" />
+    <ClCompile Include="cclient_msg_dispatch.cpp" />
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="ccrypto_random.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="csctp_association_mgr.cpp" />
     <ClCompile Include="ctimer.cpp" />
     <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="cwan_handler.cpp" />
     <ClCompile Include="cwan_server.cpp" />
     <ClCompile Include="cwan_session.cpp" />
     <ClCompile Include="cwebrtc_mgr.cpp" />
@@ -291,6 +293,7 @@
     <ClInclude Include="BweType.hpp" />
     <ClInclude Include="casync_log.h" />
     <ClInclude Include="ccfg.h" />
+    <ClInclude Include="cclient_msg_dispatch.h" />
     <ClInclude Include="cconfig.h" />
     <ClInclude Include="ccrypto_random.h" />
     <ClInclude Include="cdigit2str.h" />
@@ -305,6 +308,7 @@
     <ClInclude Include="crtc_sdp.h" />
     <ClInclude Include="crtc_sdp_define.h" />
     <ClInclude Include="crtc_sdp_util.h" />
+    <ClInclude Include="cshare_proto_error.h" />
     <ClInclude Include="csrtp_session.h" />
     <ClInclude Include="cudp_socket.h" />
     <ClInclude Include="cudp_socket_handler.h" />

@@ -22,7 +22,7 @@ namespace chen {
 		C2S_CreateRoom,
 		S2C_CreateRoom,
 		C2S_DestroyRoom ,
-		S2S_DestroyRoom,
+		S2C_DestroyRoom,
 
 		//////// WebRTC
 		

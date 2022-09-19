@@ -373,6 +373,17 @@ namespace chen {
 		//}
 		return true;
 	}
+	void crtc_sdp::destroy()
+	{
+		//std::string							m_client_sdp;
+		//size_t								m_current_pos;
+		//std::vector< RTC::RtpParameters>	m_media_datas;
+		//RTC::RtpParameters					m_rtp_parameter;
+		m_media_datas.clear();
+		/// crypto
+		//RTC::DtlsTransport::Fingerprint	    m_finger_print;
+		//m_finger_print;
+	}
 	std::string crtc_sdp::get_webrtc_sdp() const
 	{
 		size_t index = 0;
@@ -386,19 +397,24 @@ namespace chen {
 		}
 		std::ostringstream sdp;
 
+		/*sdp << "v=0\r\n";
+		sdp << "o=chensong 10000 1 IN IP4 0.0.0.0\r\n";
+		sdp << "s=-\r\n";
+		sdp << "t= 0 0\r\n";
+		sdp << "group:BUNDLE " << index << "\r\n";*/
 		sdp << "m=video 7 UDP/TLS/RTP/SAVPF ";
 		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
 		{
-			sdp << m_media_datas[index].codecs[i].payloadType << " ";
+			sdp << std::to_string(m_media_datas[index].codecs[i].payloadType) << " ";
 		}
 		sdp  << /*100 101*/"\r\n"; // TODO@chensong 编码类型
 		sdp << "c=IN IP4 127.0.0.1\r\n";
 		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
 		{
-			sdp << "a=rtpmap:" << m_media_datas[index].codecs[i].payloadType << " " << m_media_datas[index].codecs[i].mimeType.mimeType  <<"\r\n";
+			sdp << "a=rtpmap:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " " << m_media_datas[index].codecs[i].mimeType.mimeType  <<"\r\n";
 			if (!m_media_datas[index].codecs[i].parameters.mapKeyValues.empty())
 			{
-				sdp << "a=fmtp:" << m_media_datas[index].codecs[i].payloadType << " ";
+				sdp << "a=fmtp:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " ";
 				size_t cur_second = 0;
 				for (const std::pair<std::string, RTC::Parameters::Value>& pi : m_media_datas[index].codecs[i].parameters.mapKeyValues)
 				{
@@ -422,7 +438,7 @@ namespace chen {
 		{
 			for  (const RTC::RtcpFeedback & rtcp_feedback: m_media_datas[index].codecs[i].rtcpFeedbacks )
 			{
-				sdp << "a=rtcp-fb:" << m_media_datas[index].codecs[i].payloadType << " " << rtcp_feedback.type;
+				sdp << "a=rtcp-fb:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " " << rtcp_feedback.type;
 				if (!rtcp_feedback.parameter.empty())
 				{
 					sdp << " " << rtcp_feedback.parameter;
@@ -436,7 +452,7 @@ namespace chen {
 		sdp << "a=rtcp-fb:100 nack pli\r\n";*/
 		for (size_t i = 0; i < m_media_datas[index].headerExtensions.size(); ++i)
 		{
-			sdp << "a=extmap:" << m_media_datas[index].headerExtensions[i].id << " " << m_media_datas[index].headerExtensions[i].uri << "\r\n";
+			sdp << "a=extmap:" << std::to_string(m_media_datas[index].headerExtensions[i].id) << " " << m_media_datas[index].headerExtensions[i].uri << "\r\n";
 		}
 		//sdp << "a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid\r\n";
 		//sdp << "a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n";
@@ -449,7 +465,7 @@ namespace chen {
 		sdp << "a=setup:server\r\n";
 		sdp << "a=mid:"<<m_media_datas[index].mid <<"\r\n";
 
-		return std::string();
+		return sdp.str();
 	}
 	bool crtc_sdp::_get_line_data(size_t & read_size)
 	{

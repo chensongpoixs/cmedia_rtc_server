@@ -133,6 +133,9 @@
     <Filter Include="rtc_sdp">
       <UniqueIdentifier>{801b5d36-9592-4ef0-8d27-d56911db4136}</UniqueIdentifier>
     </Filter>
+    <Filter Include="handler">
+      <UniqueIdentifier>{7a5ee41c-66a1-4c09-9cfa-8250595cbe9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -508,9 +511,6 @@
     <ClCompile Include="IceCandidate.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
-    <ClCompile Include="cwebrtc_transprot_handler.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="cmsg_dispatch.cpp">
       <Filter>dispatch</Filter>
     </ClCompile>
@@ -549,6 +549,15 @@
     </ClCompile>
     <ClCompile Include="crtc_sdp_handler.cpp">
       <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="cclient_msg_dispatch.cpp">
+      <Filter>dispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="cwan_handler.cpp">
+      <Filter>handler</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebrtc_transprot_handler.cpp">
+      <Filter>handler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1025,6 +1034,12 @@
     </ClInclude>
     <ClInclude Include="ccfg.h">
       <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="cclient_msg_dispatch.h">
+      <Filter>dispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="cshare_proto_error.h">
+      <Filter>msg</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
