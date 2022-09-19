@@ -35,10 +35,7 @@ namespace chen {
 
 	class cclient
 	{
-	private:
-		typedef bool (cclient::*client_protoo_msg)(const  nlohmann::json & msg);
-		typedef bool(cclient::*server_protoo_msg)(const  nlohmann::json & msg);
-		 
+	
 	public:
 		cclient();
 		~cclient();
@@ -67,6 +64,11 @@ namespace chen {
 
 	private:
 		void  _presssmsg(std::list<std::string> & msgs);
+
+	public:
+		bool handler_s2c_login(nlohmann::json& data);
+		bool handler_s2c_create_room(nlohmann::json&data);
+		bool handler_s2c_destroy_room(nlohmann::json& data);
 	private:
 		uint64			m_id;
 		bool			m_loaded;

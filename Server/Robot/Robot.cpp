@@ -9,6 +9,7 @@ purpose:		robot
 #include "clog.h"
 #include "ccfg.h"
 #include "cclient.h"
+#include "cmsg_dispatch.h"
 namespace chen {
 	Robot g_robot;
 	Robot::~Robot()
@@ -25,6 +26,13 @@ namespace chen {
 		{
 			return false;
 		}
+
+		SYSTEM_LOG("g_msg_dispatch init ...");
+		if (!g_msg_dispatch.init())
+		{
+			return false;
+		}
+		SYSTEM_LOG("g_msg_dispatch ok ...");
 		return true;;
 	}
 	bool Robot::Loop()
@@ -52,15 +60,19 @@ namespace chen {
 		s_client.Loop();
 		SYSTEM_LOG("Leave main loop");
 
-			return true;
+		return true;
 	}
 	void Robot::destroy()
 	{
-		s_client.Destory();
-		SYSTEM_LOG("client Destroy OK !!!");
-		SYSTEM_LOG(" cfg  destroy OK !!!");
-		g_cfg.destroy();
 
+		s_client.Destory(); 
+		SYSTEM_LOG("client Destroy OK !!!");
+
+		g_msg_dispatch.destroy();
+		SYSTEM_LOG("msg despatch Destroy OK !!!");
+		
+		g_cfg.destroy();
+		SYSTEM_LOG(" cfg  destroy OK !!!");
 		/*g_msg_dispatch.destroy();
 		SYSTEM_LOG("msg dispath destroy OK !!!");*/
 

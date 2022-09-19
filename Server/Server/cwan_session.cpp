@@ -164,6 +164,12 @@ namespace chen {
 		collection_ptr->set_status(ECollection_Init);*/
 	}
 
+	bool cwan_session::send_msg(uint16 msg_id, const std::string & data)
+	{
+		 g_wan_server.send_msg(m_session_id, msg_id, data.c_str(), data.length() );
+		 return true;
+	}
+
 
 
 	bool    cwan_session::handler_login(  Json::Value & value)
@@ -184,14 +190,13 @@ namespace chen {
 			return false;
 		}
 		m_user_name = value["data"]["user_name"].asCString();
+		NORMAL_EX_LOG("[sdp = %s]", value["data"]["sdp"].asCString());
 		if (!m_rtc_sdp.init(value["data"]["sdp"].asCString()))
 		{
 			WARNING_EX_LOG("rtc session_id = %lu, sdp = %s", value["data"]["sdp"].asCString());
 			return false ;
 		}
 		
-
-
 		m_client_connect_type = EClientConnectSession;
 
 		NORMAL_EX_LOG("sdp = %s", m_rtc_sdp.get_webrtc_sdp().c_str());

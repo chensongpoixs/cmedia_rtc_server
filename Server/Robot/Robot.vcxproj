@@ -158,6 +158,7 @@
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
     <ClInclude Include="cmsg_base_id.h" />
+    <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnet_types.h" />
     <ClInclude Include="cnoncopyable.h" />
     <ClInclude Include="cpeer_connnection.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
+    <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnet_types.cpp" />
     <ClCompile Include="cpeer_connnection.cpp" />
     <ClCompile Include="ctime_api.cpp" />

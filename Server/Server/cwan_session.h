@@ -61,6 +61,8 @@ namespace chen {
 		void set_used();
 		void disconnect();
 
+	public:
+		bool send_msg(uint16 msg_id , const std::string & data);
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		cwan_session(const cwan_session&);

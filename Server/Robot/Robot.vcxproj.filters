@@ -28,6 +28,9 @@
     <Filter Include="msg">
       <UniqueIdentifier>{3daeeba7-eeb6-4d4d-992e-814efdb61ff9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dispatch">
+      <UniqueIdentifier>{f13c04e9-56a6-489d-8a79-f92c81ed11a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cclient.h">
@@ -103,6 +106,9 @@
     <ClInclude Include="cmsg_base_id.h">
       <Filter>msg</Filter>
     </ClInclude>
+    <ClInclude Include="cmsg_dispatch.h">
+      <Filter>dispatch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cclient.cpp">
@@ -157,6 +163,9 @@
     </ClCompile>
     <ClCompile Include="ccfg.cpp">
       <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="cmsg_dispatch.cpp">
+      <Filter>dispatch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

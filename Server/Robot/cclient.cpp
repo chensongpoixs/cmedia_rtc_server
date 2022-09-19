@@ -14,11 +14,22 @@ purpose:		log
 #include <io.h>
 #include "cmsg_base_id.h"
 #include "pc/video_track_source.h"
-
+#include "cmsg_dispatch.h"
+#include "json.hpp"
 #include "build_version.h"
 namespace chen {
 
-
+#define  WEBSOCKET_CHECK_RESPONSE()  if (msg.find("result") == msg.end())\
+	{\
+		ERROR_EX_LOG(" [msg = %s] not find 'result' failed !!!", msg.dump().c_str());\
+		return false;\
+	}\
+	uint16  result = msg["result"].get<uint16>();\
+	if (0 != result)\
+	{\
+		ERROR_EX_LOG("  not result  [msg = %s] !!!", msg.dump().c_str());\
+		return false;\
+	}
 
 
 	static const uint32_t TICK_TIME = 200;
@@ -197,6 +208,16 @@ namespace chen {
 			if (response.find("msg_id") != response.end())
 			{
 				NORMAL_EX_LOG("[data = %s]", msg.c_str());
+				uint16 msg_id = response["msg_id"].get<uint16>();
+				cmsg_handler* msg_handler =  g_msg_dispatch.get_msg_handler(msg_id);
+				if (!msg_handler || !msg_handler->handler)
+				{
+					WARNING_EX_LOG("not find msg_id = %u  or callback !!!", msg_id);
+					continue;
+				}
+
+				++msg_handler->handle_count;
+				(this->*(msg_handler->handler))(response);
 			}
 			else
 			{
@@ -278,6 +299,30 @@ namespace chen {
 			//	ERROR_EX_LOG(" not find msg type !!! msg = %s", msg.c_str());
 			//}
 		}
+	}
+
+	bool cclient::handler_s2c_login(nlohmann::json & msg)
+	{
+		WEBSOCKET_CHECK_RESPONSE();
+		if (EMedia_Loading != m_media_session_stats)
+		{
+			WARNING_EX_LOG("client status error  status = %u", m_media_session_stats);
+		}
+		m_media_session_stats = EMedia_Gameing;
+		NORMAL_EX_LOG("client login ok !!!");
+		return true;
+	}
+
+	bool cclient::handler_s2c_create_room(nlohmann::json & msg)
+	{
+		WEBSOCKET_CHECK_RESPONSE();
+		return true;
+	}
+
+	bool cclient::handler_s2c_destroy_room(nlohmann::json & msg)
+	{
+		WEBSOCKET_CHECK_RESPONSE();
+		return true;
 	}
 	
 	
