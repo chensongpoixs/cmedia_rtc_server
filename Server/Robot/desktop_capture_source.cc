@@ -10,7 +10,7 @@ purpose:		log
 
 #include "api/video/i420_buffer.h"
 #include "api/video/video_rotation.h"
-#include "rtc_base/logging.h"
+//#include "rtc_base/logging.h"
 #include <chrono>
 #include "third_party/libyuv/include/libyuv.h"
 #include "clog.h"

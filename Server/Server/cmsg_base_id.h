@@ -17,6 +17,8 @@ namespace chen {
 		// ROOM
 		C2S_BeatHeart = 200,
 		S2C_BeatHeart,
+		C2S_Login,
+		S2C_Login,
 		C2S_create_room,
 		S2C_create_room,
 		C2S_destroy_room ,

@@ -71,14 +71,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
     <LibraryPath>$(C_INCLUDE)\webrtc\lib\x64\debug;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <IncludePath>$(C_INCLUDE)/webrtc/include;$(C_INCLUDE)/webrtc/include\third_party\abseil-cpp;$(C_INCLUDE)/webrtc/include\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\vsout\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
     <LibraryPath>$(C_INCLUDE)\webrtc\lib\x64\release;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
     <IncludePath>$(C_INCLUDE)/webrtc/include;$(C_INCLUDE)/webrtc/include\third_party\abseil-cpp;$(C_INCLUDE)/webrtc/include\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
@@ -152,12 +152,14 @@
     <ClInclude Include="cclient.h" />
     <ClInclude Include="cconfig.h" />
     <ClInclude Include="cdesktop_capture.h" />
+    <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cint2str.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
     <ClInclude Include="cnet_types.h" />
     <ClInclude Include="cnoncopyable.h" />
+    <ClInclude Include="cpeer_connnection.h" />
     <ClInclude Include="csingleton.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
@@ -175,10 +177,12 @@
     <ClCompile Include="cclient.cpp" />
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="cdesktop_capture.cpp" />
+    <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cnet_types.cpp" />
+    <ClCompile Include="cpeer_connnection.cpp" />
     <ClCompile Include="ctime_api.cpp" />
     <ClCompile Include="cwebsocket_mgr.cpp" />
     <ClCompile Include="desktop_capture_source.cc" />

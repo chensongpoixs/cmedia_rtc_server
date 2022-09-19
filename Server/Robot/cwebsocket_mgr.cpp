@@ -56,7 +56,7 @@ namespace chen
 		if (!m_ws)
 		{
 			//RTC_LOG(LS_ERROR) << "ws connect failed !!! ws_url = " << ws_url;
-			ERROR_EX_LOG("ws connect mediasoup failed !!! ws_url = %s", ws_url.c_str());
+			ERROR_EX_LOG("ws connect media_rtc_server failed !!! ws_url = %s", ws_url.c_str());
 			return false;
 		}
 		if (m_ws)

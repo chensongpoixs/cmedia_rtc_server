@@ -1,13 +1,13 @@
 ﻿/***********************************************************************************************
-	created: 		2019-04-30
-	
-	author:			chensong
-					
-	purpose:		log
+created: 		2019-04-30
+
+author:			chensong
+
+purpose:		log
 ************************************************************************************************/
 #include "clog.h"
 #include <cstdarg>
-
+#include "cdigit2str.h"
 namespace chen {
 	static casync_log* g_log_ptr = nullptr;
 	clog::clog()
@@ -26,36 +26,34 @@ namespace chen {
 	{
 		*this << '[' << func << ':' << line << "] ";
 	}
-	bool clog::init( ELogStorageType storage_type, const std::string& host , uint32 port   )
+	bool clog::init(const std::string & path, const std::string & name, const std::string & ext, ELogNameType name_type, bool mod_append, bool show_screen)
 	{
-		printf("host = %s, port = %lu, storage_type = %d\n", host.c_str(), port, storage_type);
-		if (g_log_ptr)
-		{
-			printf("  casync_log != null  !!!" );
-			return false;
-		}
 		g_log_ptr = new casync_log();
 		if (!g_log_ptr)
 		{
-			printf(" alloc casync_log new fail ");
+			std::cout << " alloc casync_log new fail " << std::endl;
 			return false;
 		}
-		if (!g_log_ptr->init(storage_type, host, port ))
+		if (!g_log_ptr->init(path, name, ext, true))
 		{
-			printf( "log init error \n");
+			std::cout << "log init error " << std::endl;
 			return false;
 		}
 		return true;
 	}
-	
+	void clog::fix_log(ELogLevelType level, const void * p, int len)
+	{
+		if (g_log_ptr && len > 0 /*&& m_level <= g_log_ptr->get_level()*/)
+		{
+			g_log_ptr->append_fix(level, p, len);
+		}
+	}
 	void clog::var_log(ELogLevelType level, const char * format, ...)
 	{
 		if (!g_log_ptr)
 		{
-			printf("g_log_ptr == null\n");
 			return;
 		}
-		//return;
 		va_list argptr;
 		va_start(argptr, format);
 		g_log_ptr->append_var(level, format, argptr);
@@ -78,6 +76,7 @@ namespace chen {
 	}
 	clog & clog::operator<<(bool value)
 	{
+		// TODO: 在此处插入 return 语句
 		if (value)
 		{
 			return *this << '1';
@@ -89,74 +88,159 @@ namespace chen {
 	}
 	clog & clog::operator<<(char value)
 	{
+		// TODO: 在此处插入 return 语句
 		if (m_len < EBuf_Size)
 		{
 			m_data[m_len++] = value;
 		}
 		return *this;
 	}
-	clog & clog::operator<<(signed char)
+	clog & clog::operator<<(signed char value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_data[m_len++] = value;
+		}
+		//return *this;
 		return *this;
 	}
-	clog & clog::operator<<(unsigned char)
+	clog & clog::operator<<(unsigned char value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_data[m_len++] = value;
+		}
 		return *this;
 	}
-	clog & clog::operator<<(signed short)
+	clog & clog::operator<<(signed short value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(unsigned short)
+	clog & clog::operator<<(unsigned short value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(signed int)
+	clog & clog::operator<<(signed int value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(unsigned int)
+	clog & clog::operator<<(unsigned int value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(signed long)
+	clog & clog::operator<<(signed long value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(unsigned long)
+	clog & clog::operator<<(unsigned long value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(signed long long)
+	clog & clog::operator<<(signed long long value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(unsigned long long)
+	clog & clog::operator<<(unsigned long long value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(const char *)
+	clog & clog::operator<<(const char * value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			//m_data[m_len++] = value;
+			if (!memcpy(m_data + m_len, value, strlen(value)))
+			{
+				return *this;
+			}
+			m_len += static_cast<int32>( strlen(value));
+		}
 		return *this;
 	}
-	clog & clog::operator<<(const std::string &)
+	clog & clog::operator<<(const std::string & value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			//m_data[m_len++] = value;
+			//m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+			/*m_len += */
+			if (!memcpy(m_data + m_len, value.c_str(), value.length()))
+			{
+				return *this;
+			}
+			m_len += static_cast<int32>(value.length());
+		}
 		return *this;
 	}
-	clog & clog::operator<<(float)
+	clog & clog::operator<<(float value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			//m_data[m_len++] = value;
+			m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len, value);
+		}
 		return *this;
 	}
-	clog & clog::operator<<(double)
+	clog & clog::operator<<(double value)
 	{
+		// TODO: 在此处插入 return 语句
+		if (m_len < EBuf_Size)
+		{
+			/*m_data[m_len++] =*/ m_len += digit2str_dec(m_data + m_len, EBuf_Size - m_len,value);
+		}
 		return *this;
 	}
 	clog::~clog()
 	{
-		//if (g_log_ptr && m_len > 0 /*&& m_level <= g_log_ptr->get_level()*/)
-		//{
-		//	g_log_ptr->append_fix(m_level, m_data, m_len);
-		//}
+		if (g_log_ptr && m_len > 0 /*&& m_level <= g_log_ptr->get_level()*/)
+		{
+			g_log_ptr->append_fix(m_level, m_data, m_len);
+		}
 	}
 
 

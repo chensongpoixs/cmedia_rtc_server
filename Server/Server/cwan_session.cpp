@@ -44,7 +44,7 @@ namespace chen {
 	void cwan_session::handler_msg(uint64_t session_id , const void* p, uint32 size)
 	{
 		// 1. 登录状态判断
-
+		NORMAL_EX_LOG("[session_id = %u][p = %s]", session_id, p);
 		if (!m_json_reader.parse((const char *)p, (const char *)p + size, m_json_response))
 		{
 			ERROR_EX_LOG("parse json failed !!! [session_id = %llu][json = %s]", session_id, p);
@@ -58,18 +58,18 @@ namespace chen {
 		// TODO@chensong 20220812 管理的比较漏
 		const uint32 msg_id = m_json_response["msg_id"].asUInt();
 		// "create_webrtc"
-		if ( C2S_create_room == msg_id)
+		if ( C2S_Login == msg_id)
 		{
 
-			g_global_webrtc_mgr.handler_create_webrtc(session_id, m_json_response);
+			//g_global_webrtc_mgr.handler_create_webrtc(session_id, m_json_response);
 		}
 		else if (C2S_destroy_room == msg_id)
 		{
-			g_global_webrtc_mgr.handler_destroy_webrtc(session_id, m_json_response);
+			//g_global_webrtc_mgr.handler_destroy_webrtc(session_id, m_json_response);
 		}
 		else
 		{
-			g_global_webrtc_mgr.handler_webrtc(session_id, m_json_response);
+		//	g_global_webrtc_mgr.handler_webrtc(session_id, m_json_response);
 			
 
 		}

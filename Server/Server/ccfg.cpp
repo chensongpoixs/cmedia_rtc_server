@@ -36,7 +36,7 @@ namespace chen {
 		set_uint32(ECI_LogPoolSize, "log_pool_size", 10);
 		
 		set_string(ECI_WebSocketWanIp, "websocket_wan_ip", "0.0.0.0");
-		set_uint32(ECI_WebSocketWanPort, "websocket_wan_port", 9000);
+		set_uint32(ECI_WebSocketWanPort, "websocket_wan_port", 9500);
 
 		set_uint32(ECI_RtcMinPort, "rtc_min_port", 50000); // 
 		set_uint32(ECI_RtcMaxPort, "rtc_max_port", 60000);

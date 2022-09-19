@@ -221,12 +221,14 @@ namespace chen {
 		//static const unsigned int max_size = 1024;
 		m_lock.lock();
 		//char * buf = new char[LOG_BUF_MAX_SIZE];
-		memset(m_log_buf, 0x00, LOG_BUF_MAX_SIZE);
+		//memset(m_log_buf, 0x00, LOG_BUF_MAX_SIZE);
 		uint32 cnt = vsnprintf(m_log_buf, LOG_BUF_MAX_SIZE, format, ap);
 
 		if (cnt < 0)
 		{
 			//delete[] buf;
+			m_lock.unlock();
+
 			return;
 		}
 
@@ -235,12 +237,16 @@ namespace chen {
 		if (!log_item_ptr)
 		{
 			//delete[] buf;
+			m_lock.unlock();
+
 			return;
 		}
 		log_item_ptr->buf = new char[cnt];
 		if (!log_item_ptr->buf)
 		{
 			delete log_item_ptr;
+			m_lock.unlock();
+
 			return;
 		}
 

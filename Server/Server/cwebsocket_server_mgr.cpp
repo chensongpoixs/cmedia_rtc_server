@@ -19,6 +19,7 @@ purpose:		websocket_server_mgr
 #include <memory>
 #include <algorithm>
 #include <boost/asio/buffer.hpp>
+#include "clog.h"
 namespace chen{
 
 
@@ -177,6 +178,7 @@ namespace chen{
 
 		if (ec)
 		{
+			ERROR_EX_LOG("open socket error");
 			//LOG_ERROR << "open socket error " << ec.value();
 			return false;
 		}
@@ -187,6 +189,7 @@ namespace chen{
 
 			if (ec)
 			{
+				ERROR_EX_LOG("set_option reuse_address error,");
 				//LOG_ERROR << "set_option reuse_address error, " << ec.value();
 				return false;
 			}
@@ -196,6 +199,7 @@ namespace chen{
 
 		if (ec)
 		{
+			ERROR_EX_LOG("bind error");
 			//LOG_ERROR << "bind error, " << ec.value();
 			return false;
 		}
@@ -205,6 +209,7 @@ namespace chen{
 		if (ec)
 		{
 			//LOG_ERROR << "listen error, " << ec.value() << ", port = " << port;
+			ERROR_EX_LOG("listen error , %u", port);
 			return false;
 		}
 
@@ -212,7 +217,7 @@ namespace chen{
 		{
 			_post_accept();
 		}
-
+		NORMAL_LOG("listen on ip= %s, port = %u", ip.c_str(), port);
 		//LOG_INFO << "listen on ip=" << ip << " port=" << port;
 		return true;
 	}
