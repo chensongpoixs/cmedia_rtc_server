@@ -121,5 +121,5 @@ Server/cmake-build-debug/Server/cmake_install.cmake
 Server/cmake-build-debug/Server/Makefile
 Server/cmake-build-debug/Server/CMakeFiles/CMakeDirectoryInformation.cmake
 Server/cmake-build-debug/Server/CMakeFiles/progress.marks
-demo/node_modules
-demo/logs
+Server/www/node_modules
+Server/www/logs
