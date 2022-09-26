@@ -1937,9 +1937,12 @@ function connect()
 		
 		device_obj = new device();
 
-var sdp = device_obj.get_webrtc_sdp();
+		const  sdp = device_obj.get_webrtc_sdp();
 
-console.log(sdp);
+		console.log(sdp);
+		let webrtc_sdpobj = new webrtc_sdp();
+		const sdpObject =   	webrtc_sdpobj.parse(sdp.toString());
+		console.log(sdpObject);
 	}
 	
 	
