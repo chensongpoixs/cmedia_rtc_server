@@ -1,5 +1,4 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
-
+﻿ 
 // Window events for a gamepad connecting
 let haveEvents = 'GamepadEvent' in window;
 let haveWebkitEvents = 'WebKitGamepadEvent' in window;
@@ -17,6 +16,7 @@ let connect_on_load = false;
 
 let is_reconnection = false;
 let ws;
+
 const WS_OPEN_STATE = 1;
 
 let qualityControlOwnershipCheckBox;
@@ -29,12 +29,18 @@ let onDataChannelConnected;
 let responseEventListeners = new Map();
 
 
+///////////////////////
+
+let device_obj = null;
+
+
+
 var msg_id = 1000;
 
 
 // 20
-var map = new Array('', '', '', '', '', '', 'a', '', '', 'e', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'a', '', '', 'e', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
-
+var hash_map = new Array('', '', '', '', '', '', 'a', '', '', 'e', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'a', '', '', 'e', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+//////////////////////////////
 
 let freezeFrameOverlay = null;
 let shouldShowPlayOverlay = true;
@@ -1848,7 +1854,8 @@ function updateKickButton(playersCount) {
         kickButton.value = `Kick (${playersCount})`;
 }
 
-function connect() {
+function connect() 
+{
     "use strict";
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -1858,12 +1865,22 @@ function connect() {
         return;
     }
 
+
+//////////////////////////////////////////////////
+/// native sdp 
+
+
+/////////////////////////////////////////////////
+
+
 	//var url = window.location.href.replace('http://', 'ws://').replace('https://', 'wss://');
-	var ws_url = "ws://127.0.0.1:8888//?roomId=chensong&peerId=chensong";
+	var ws_url = "ws://127.0.0.1:8888//?roomId=20220926&peerId=chensong";
 	console.log(ws_url);
     ws = new WebSocket(ws_url, 'protoo');
 
-    ws.onmessage = function(event) {
+    ws.onmessage = function(event)
+	{
+		
         console.log(`<- SS: ${event.data}`);
         let msg = JSON.parse(event.data);
         if (msg.type === 'config') {
@@ -1917,13 +1934,19 @@ function connect() {
 				data: {}
             }));
         }
+		
+		device_obj = new device();
+
+var sdp = device_obj.get_webrtc_sdp();
+
+console.log(sdp);
 	}
 	
 	
-	//console.log(map.length);
-	// for(var i = 0; i < map.length; i++)
+	//console.log(hash_map.length);
+	// for(var i = 0; i < hash_map.length; i++)
 	// {
-  　//　　　    console.log( map[i] );
+  　//　　　    console.log( hash_map[i] );
   　//}
 	 
 }
