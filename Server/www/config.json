@@ -1,0 +1,6 @@
+{
+	"LogToFile": true,
+	"HomepageFile": "/websocket/player.html",
+	"EnableWebserver": true,
+	"HttpPort": 80
+}

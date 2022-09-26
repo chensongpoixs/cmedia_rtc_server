@@ -20,8 +20,8 @@ namespace chen {
 	bool cclient_msg_dispatch::init()
 	{
 		_register_msg_handler(C2S_Login, "C2S_Login", &cwan_session::handler_login);
-		_register_msg_handler(C2S_CreateRoom, "C2S_CreateRoom", &cwan_session::handler_create_room);
-		_register_msg_handler(C2S_DestroyRoom, "C2S_DestroyRoom", &cwan_session::handler_destroy_room);
+		//_register_msg_handler(C2S_CreateRoom, "C2S_CreateRoom", &cwan_session::handler_create_room);
+		//_register_msg_handler(C2S_DestroyRoom, "C2S_DestroyRoom", &cwan_session::handler_destroy_room);
 		return true;
 	}
 	void cclient_msg_dispatch::destroy()
