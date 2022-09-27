@@ -7,6 +7,10 @@ let rAF = window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.requestAnimationFrame;
 let kbEvent = document.createEvent("KeyboardEvent");
+
+//const sdpTransform = require('sdp-transform');
+
+
 let initMethod = typeof kbEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
 
 let webRtcPlayerObj = null;
@@ -1854,7 +1858,7 @@ function updateKickButton(playersCount) {
         kickButton.value = `Kick (${playersCount})`;
 }
 
-function connect() 
+  function connect() 
 {
     "use strict";
 
@@ -1937,11 +1941,12 @@ function connect()
 		
 		device_obj = new device();
 
-		const  sdp = device_obj.get_webrtc_sdp();
+		var  sdp =   device_obj.get_webrtc_sdp();
 
 		console.log(sdp);
+		//const sdpObject = sdpTransform.parse(sdp.toString());
 		let webrtc_sdpobj = new webrtc_sdp();
-		const sdpObject =   	webrtc_sdpobj.parse(sdp.toString());
+		const sdpObject =   	webrtc_sdpobj.parse(sdp);
 		console.log(sdpObject);
 	}
 	

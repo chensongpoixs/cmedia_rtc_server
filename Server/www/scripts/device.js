@@ -100,6 +100,8 @@
 				}
 				catch (error) { }
 				console.log('-------------------native  offer sdp ------------------------------------------');
+				       //     offer.sdp = offer.sdp.replace('useinbandfec=1', 'useinbandfec=1;stereo=1;sprop-maxcapturerate=48000');
+
 				console.log(offer.sdp);
              
 				return offer.sdp;
