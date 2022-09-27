@@ -42,7 +42,7 @@ namespace chen {
 		set_uint32(ECI_RtcMaxPort, "rtc_max_port", 60000);
 		set_string(ECI_RtcAnnouncedIp, "rtc_announced_ip", "192.168.1.73");
 
-		
+		set_uint32(ECI_LogLevel, "log_level", ELogLevel_Num);
 		//配置表的值
 		load_cfg_file();
 

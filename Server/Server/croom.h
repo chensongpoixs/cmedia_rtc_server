@@ -13,6 +13,7 @@ Copyright boost
 #include <string>
 #include "cnet_type.h"
 #include <map>
+#include <json/json.h>
 namespace chen
 {
 	class croom
@@ -44,12 +45,12 @@ namespace chen
 		bool leave_userinfo(uint64 session_id);
 
 
-
+		bool webrtc_message(uint64 session_id, Json::Value& value);
 
 	private:
 
 		// 房间中广播消息
-
+		bool _broadcast_message(uint64 session_id,  uint32 msg_id, Json::Value & value);
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		//croom(const croom&);

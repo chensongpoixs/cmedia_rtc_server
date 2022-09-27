@@ -19,10 +19,29 @@ namespace chen {
 		S2C_BeatHeart,
 		C2S_Login,
 		S2C_Login,
-		C2S_CreateRoom,
-		S2C_CreateRoom,
+		C2S_JoinRoom,
+		S2C_JoinRoom,
 		C2S_DestroyRoom ,
-		S2S_DestroyRoom,
+		S2C_DestroyRoom,
+
+		C2S_WebrtcMessage,
+		S2C_WebrtcMessage,
+		
+		//C2S_CreateAnswar,
+		//S2C_CreateAnswar,
+		//C2S_Candidate,
+		//S2C_Candidate,
+
+
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		S2C_WebrtcMessageUpdate = 500,
+		S2C_JoinRoomUpdate,
+		S2C_LevalRoomUpdate,
+		//S2C_CreateAnswarUpdate,
+		//S2C_CandidateUpdate,
+
 
 		//////// WebRTC
 		

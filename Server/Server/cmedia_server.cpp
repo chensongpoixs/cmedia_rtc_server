@@ -44,9 +44,9 @@ namespace chen {
 		{
 			return false;
 		}
-		
-		//ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
-		//ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
+		LOG::set_level(static_cast<ELogLevelType>(g_cfg.get_uint32(ECI_LogLevel)));
+		ctime_base_api::set_time_zone(g_cfg.get_int32(ECI_TimeZone));
+		ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
 		SYSTEM_LOG("dispatch init ...");
 
 		if (!g_client_msg_dispatch.init())

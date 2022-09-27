@@ -92,8 +92,11 @@ namespace chen {
 #pragma error "unknow platform!!!"
 
 #endif
+ 
+#define LOG clog
 
-	//标准log 有时间前缀
+
+//标准log 有时间前缀
 #define LOG_SYSTEM LOG(ELogLevel_System)
 #define LOG_FATAL  LOG(ELogLevel_Fatal, FUNCTION, __LINE__)
 #define LOG_ERROR  LOG(ELogLevel_Error, FUNCTION, __LINE__)
@@ -101,20 +104,19 @@ namespace chen {
 #define LOG_INFO   LOG(ELogLevel_Info)
 #define LOG_DEBUG  LOG(ELogLevel_Debug)
 
-#define FIX_LOG LOG::fix_log
 #define VAR_LOG LOG::var_log
 
-#define NORMAL_LOG(format, ...)		VAR_LOG(ELogLevel_System, format, ##__VA_ARGS__)
+#define NORMAL_LOG(format, ...)		VAR_LOG(ELogLevel_Info, format, ##__VA_ARGS__)
 #define ERROR_LOG(format, ...)		VAR_LOG(ELogLevel_Error, format, ##__VA_ARGS__)
 #define WARNING_LOG(format, ...)	VAR_LOG(ELogLevel_Warn, format, ##__VA_ARGS__)
-#define SYSTEM_LOG(format, ...)		VAR_LOG(ELogLevel_Info, format, ##__VA_ARGS__)
+#define SYSTEM_LOG(format, ...)		VAR_LOG(ELogLevel_System, format, ##__VA_ARGS__)
 #define DEBUG_LOG(format, ...)		VAR_LOG(ELogLevel_Debug, format, ##__VA_ARGS__)
 
 #define NORMAL_EX_LOG(format, ...)	NORMAL_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
 #define DEBUG_EX_LOG(format, ...)	DEBUG_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
-#define ERROR_EX_LOG(format, ...)	ERROR_LOG  ("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
 #define WARNING_EX_LOG(format, ...)	WARNING_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
 
+#define ERROR_EX_LOG(format, ...)	ERROR_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
 } // namespace chen
 
 #endif //!#define _C_LOG_H_

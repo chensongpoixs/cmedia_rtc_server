@@ -13,6 +13,7 @@ Copyright boost
 #include "cnet_type.h"
 #include <string>
 #include <unordered_map>
+#include <json/json.h>
 namespace chen {
 	class croom;
 	class croom_mgr 
@@ -40,7 +41,7 @@ namespace chen {
 
 		bool leave_room(uint64 session_id, const std::string & room_name);
 
-
+		bool webrtc_message(const std::string &room_name, uint64  session_id, Json::Value & value);
 
 
 

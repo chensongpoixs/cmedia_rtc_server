@@ -36,7 +36,7 @@ namespace chen {
 		// TODO@chensong 20220812 管理的比较漏
 		const uint32 msg_id = m_json_response["msg_id"].asUInt();
 
-		if (msg_id < S2S_DestroyRoom)
+		if (msg_id < S2C_WebrtcMessageUpdate)
 		{
 
 			cclient_msg_handler * client_msg_handler = g_client_msg_dispatch.get_msg_handler(msg_id);
@@ -91,13 +91,13 @@ namespace chen {
 		}
 		if (!value["data"].isMember("user_name") || !value["data"]["user_name"].isString())
 		{
-			WARNING_EX_LOG("[session_id = %llu]not find user_name  , [value = %s] !!! ", m_session_id, value.asCString());
+			WARNING_EX_LOG("[session_id = %llu]not find user_name      !!! ", m_session_id );
 			send_msg(S2C_Login, EShareProtoUserName, reply);
 			return false;
 		}
 		if (!value["data"].isMember("room_name") || !value["data"]["room_name"].isString())
 		{
-			WARNING_EX_LOG("[session_id = %llu]not find room_name  , [value = %s] !!! ", m_session_id, value.asCString());
+			WARNING_EX_LOG("[session_id = %llu]not find room_name    !!! ", m_session_id );
 			send_msg(S2C_Login, EShareProtoRoomName, reply);
 			return false;
 		}
@@ -106,7 +106,7 @@ namespace chen {
 		if (!g_room_mgr.join_room(m_session_id, m_room_name, m_user_name))
 		{
 			//EShareProtoCreateRoomFailed
-			WARNING_EX_LOG("[session_id = %llu] create roomname failed  , [value = %s] !!! ", m_session_id, value.asCString());
+			WARNING_EX_LOG("[session_id = %llu] create roomname failed   !!! ", m_session_id );
 			send_msg(S2C_Login, EShareProtoCreateRoomFailed, reply);
 			return false;
 		}
@@ -127,6 +127,61 @@ namespace chen {
 		return true;
 	}
 
+
+
+	bool	cwan_session::handler_join_room(Json::Value &value)
+	{
+		 
+		return true;
+	}
+	bool	cwan_session::handler_destroy_room(Json::Value& value)
+	{
+		return true;
+	}
+
+	bool	cwan_session::handler_webrtc_message(Json::Value& value)
+	{
+		Json::Value reply;
+		if (!value.isMember("data") || !value["data"].isObject())
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] !!! ", m_session_id, value.asCString());
+			send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+			return false;
+		}
+		g_room_mgr.webrtc_message(m_room_name, m_session_id, value["data"]);
+		send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+		/*Json::Value reply;
+		if (!value.isMember("data") || !value["data"].isObject())
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] !!! ", m_session_id, value.asCString());
+			send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+			return false;
+		}*/
+		/*if (!value["data"].isMember("type") || !value["data"]["type"].isString())
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find type  , [value = %s] !!! ", m_session_id, value.asCString());
+			send_msg(S2C_WebrtcMessage, EShareProtoUserName, reply);
+			return false;
+		}*/
+		//if (!value["data"].isMember("room_name") || !value["data"]["room_name"].isString())
+		/*{
+			WARNING_EX_LOG("[session_id = %llu]not find room_name  , [value = %s] !!! ", m_session_id, value.asCString());
+			send_msg(S2C_Login, EShareProtoRoomName, reply);
+			return false;
+		}*/
+
+
+		return true;
+	}
+	/*bool	cwan_session::handler_create_answer(Json::Value& value)
+	{
+		return true;
+	}
+
+	bool	cwan_session::handler_candidate(Json::Value& value)
+	{
+		return true;
+	}*/
 	/*bool cwan_session::handler_create_room(Json::Value & value)
 	{
 
