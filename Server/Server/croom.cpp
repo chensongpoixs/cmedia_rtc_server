@@ -51,15 +51,20 @@ namespace chen {
 	}
 	bool croom::leave_userinfo(uint64 session_id)
 	{
+		Json::Value reply;
+		
 		CUSERINFO_MAP::iterator iter = m_userinfo_map.find(session_id);
 		if (iter != m_userinfo_map.end())
 		{
+			reply["username"] = iter->second.username;
+			_broadcast_message(session_id, S2C_LevalRoomUpdate, reply);
 			//WARNING_EX_LOG("[room_name = %s][session_id = %u][old user_name = %s][new username = %s]", m_room_name.c_str(), session_id, iter->second.username.c_str(), username.c_str());
 			m_userinfo_map.erase(iter);
 			return true;
 		}
 		WARNING_EX_LOG("[room_name = %s][session_id = %u] not find  failed !!!", m_room_name.c_str(), session_id );
-
+		reply["username"] = "";
+		_broadcast_message(session_id, S2C_LevalRoomUpdate, reply);
 		return true;
 	}
 	bool croom::webrtc_message(uint64 session_id, Json::Value & value)

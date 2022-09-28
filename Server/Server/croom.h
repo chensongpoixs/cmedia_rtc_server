@@ -42,7 +42,7 @@ namespace chen
 
 
 
-		bool leave_userinfo(uint64 session_id);
+		bool leave_userinfo(uint64 session_id );
 
 
 		bool webrtc_message(uint64 session_id, Json::Value& value);

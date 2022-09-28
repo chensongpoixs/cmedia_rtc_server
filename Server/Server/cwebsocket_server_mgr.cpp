@@ -149,8 +149,8 @@ namespace chen{
 		CWEBSOCKET_SESSION_MAP::iterator iter =  m_session_map.find(sessionId);
 		if (iter != m_session_map.end())
 		{
-			std::shared_ptr<cwebsocket_session> session_ptr = iter->second;
-			return session_ptr->send_msg(sessionId, msg_ptr, msg_size);
+			  
+			return iter->second->send_msg(sessionId, msg_ptr, msg_size);
 		}
 		return false;
 	}
@@ -304,7 +304,7 @@ namespace chen{
 		{
 			clock_guard lock(m_session_mutex);
 			m_session_map.erase(session_id);
-
+			
 		}
 		/*
 		cnet_msg* msg_ptr = create_msg(EMIR_Disconnect, 0);
