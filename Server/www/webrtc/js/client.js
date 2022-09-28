@@ -216,7 +216,7 @@ function conn()
     }
 
      var ws_url = "ws://127.0.0.1:9500/?roomId=20220927&peerId=chensong";
-
+	console.log('ws_url = ', ws_url);
      ws = new WebSocket(ws_url );
 
 	//io.set('origins', 'http://localhost:8082'); 
@@ -345,7 +345,7 @@ function conn()
 	//	}
 	//	
 	//	//如果收到的SDP是ｏｆｆｅｒ
-	//	if(data.hasOwnProperty('type') && data.type === 'offer')
+	//	if(data.hasOwnProperty('typ.e') && datatype === 'offer')
 	//	{
 	//		offer.value = data.sdp;
 	//		
@@ -403,26 +403,7 @@ function conn()
         	else 
         	{
         		console.log("login ok !!! roomid = ", roomid);
-        	}
-        }
-        else if (msg.msg_id === 209) // S2C_WebrtcMessage
-        {
-        	console.log("webrtc mssage ~~~");
-        }
-        else if (msg.msg_id === 500) //S2C_WebrtcMessageUpdate
-        {
-        	// 1. config
-
-        	// 2. answer
-        	
-        	// 3. icecandidate
-        }
-        else if (msg.msg_id === 501) //S2C_JoinRoomUpdate
-        {
-        	console.log('new peer !!!');
-
-        		console.log('receive joined message!  --》', roomid);
-				//状态机变更'joined'
+        		//状态机变更'joined'
 				state = 'joined';
 				/**
 				 如果是Mesh方案， 第一个人不该在这里创建
@@ -438,6 +419,79 @@ function conn()
 				btnConn.disabled = true;
 				btnLeave.disabled = false;
 				console.log('receive joined message , state=', state);
+        	}
+        }
+        else if (msg.msg_id === 209) // S2C_WebrtcMessage
+        {
+        	console.log("webrtc mssage ~~~");
+        }
+        else if (msg.msg_id === 500) //S2C_WebrtcMessageUpdate
+        {
+        	// 1. config
+
+        	// 2. answer
+        	
+        	// 3. icecandidate
+
+        	//	//如果收到的SDP是ｏｆｆｅｒ
+			if(msg.data.hasOwnProperty('type') && msg.data.type === 'offer')
+			{
+				offer.value = msg.data.sdp;
+				
+				//进行媒体协商
+				pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+				
+				// 创建answer
+				pc.createAnswer()
+					.then(getAnswer)
+					.catch(handleAnswerError);
+				
+				
+			}
+			else if (msg.data.hasOwnProperty('type') && msg.data.type === 'answer')
+			{   // 如果收到的SDP是Answer
+				answer.value = msg.data.sdp;
+				
+				//进行媒体协商
+				pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+				
+			}
+			else if (msg.data.hasOwnProperty('type') && msg.data.type === 'candidate')
+			{
+				//如果收到是Candidate信息
+				var candidate = new RTCIceCandidate({
+					sdpMLineIndex :msg.data.label,
+					candidate: msg.data.candidate
+				});
+				
+				//将远端Candidate信息添加到PeerConnection
+				pc.addIceCandidate(candidate);
+			}
+			else 
+			{
+				console.log('the message is invalid!!!', msg.data);
+			}
+        	
+        }
+        else if (msg.msg_id === 501) //S2C_JoinRoomUpdate
+        {
+        	console.log('new peer !!!');
+
+        		console.log('receive joined message!  --》', roomid);
+				// 如果是多人， 每加入一个人都要创建一个新的PeerConnection
+			if (state === 'joined_unbind')
+			{
+				createPeerConnection();
+				bindTracks();
+			}
+	//	
+			//状态机变更为 joined_conn
+			state = 'joined_conn';
+		
+			// 开始 '呼叫'对方
+			call();
+		
+			console.log('receive other_join message , state = ', state);
 
         }
         else if (msg.msg_id === 502) // S2C_LevalRoomUpdate
@@ -668,7 +722,7 @@ function getAnswer(desc)
 	pc.setLocalDescription(desc);
 	
 	// 将Answer显示出来
-	answer.value = desc;
+	answer.value = desc.sdp;
 	
 	// 将Answer SDP 发送给对端
 	sendMessage({
@@ -689,7 +743,7 @@ function getOffer(desc)
 	pc.setLocalDescription(desc);
 	
 	//将Offer显示在网页中出来
-	offer.value = desc;
+	offer.value = desc.sdp;
 	offerdesc = desc;
 	
 	//将Offer SDP 发送给对端
@@ -860,8 +914,8 @@ function closeLocalMedia()
 function leave()
 {
 	//向信令服务器发送leave信息
-	socket.emit('leave', roomid);
-	
+	//socket.emit('leave', roomid);
+	ws.close();
 	//挂断 '呼叫'
 	hangup();
 	
