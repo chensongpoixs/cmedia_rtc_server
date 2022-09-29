@@ -497,6 +497,9 @@ function conn()
         else if (msg.msg_id === 502) // S2C_LevalRoomUpdate
         {
         	console.log('leval room update ---->>>>> ');
+        	//	//改变button状态
+		//	btnConn.disabled = true;
+			//btnLeave.disabled = false;
         }
 
 
