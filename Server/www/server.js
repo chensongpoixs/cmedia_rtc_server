@@ -17,12 +17,12 @@ var options = {
 var server=http.createServer(app);
 var io= socketIo(server);//将socket.io注入express模块
 
-app.use(serveIndex('./webrtc'));
-app.use(express.static('./webrtc'));
+app.use(serveIndex('./app'));
+app.use(express.static('./app'));
 
  
-app.get("/webrtc",function (req,res,next) {
-    res.sendFile(__dirname+"/webrtc/room.html");
+app.get("/app",function (req,res,next) {
+    res.sendFile(__dirname+"/app/room.html");
 });
  
 server.listen(8080);//express 监听 8080 端口，因为本机80端口已被暂用
