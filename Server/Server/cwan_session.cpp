@@ -80,6 +80,7 @@ namespace chen {
 			g_room_mgr.leave_room(m_session_id, room_name);
 		}
 
+		g_room_mgr.leave_room(m_session_id, m_room_name);
 		/*if (!g_client_collection_mgr.client_remove_session_collection(m_client_session))
 		{
 			ERROR_EX_LOG("client collection remove session_id = %lu failed !!!", m_client_session);

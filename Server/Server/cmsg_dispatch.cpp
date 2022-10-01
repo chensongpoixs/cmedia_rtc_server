@@ -85,7 +85,7 @@ namespace chen {
 	}
 	cmsg_handler * cmsg_dispatch::get_msg_handler(uint16 msg_id)
 	{
-		if (static_cast<int> (msg_id) >= Msg_Client_Max || static_cast<int> (msg_id) <= S2S_DestroyRoom)
+		if (static_cast<int> (msg_id) >= Msg_Client_Max || static_cast<int> (msg_id) <= S2C_WebrtcMessageUpdate)
 		{
 			return NULL;
 		}

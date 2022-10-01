@@ -18,7 +18,7 @@ namespace chen {
 		, m_session_id(session_id)
 		, m_ws(std::move(socket))
 		, m_strand(m_ws.get_executor())
-		, m_recv_buffer((unsigned char *)::malloc(sizeof(unsigned char *) * (1024 * 1024)))
+		, m_recv_buffer(NULL)
 		, m_recv_buffer_size(1024 * 1024)
 		, m_writeing_atomic(false)
 		, m_send_buffer_list()
@@ -29,10 +29,11 @@ namespace chen {
 	}*/
 	cwebsocket_session::~cwebsocket_session()
 	{
+		NORMAL_EX_LOG("[session_id = %u]", m_session_id);
 		m_websocket_server_mgr_ptr = NULL;
 		if (m_recv_buffer)
 		{
-			::free(   m_recv_buffer);
+		//	::free(   m_recv_buffer);
 			m_recv_buffer = NULL;
 		}
 		m_sending_buffer_list.clear();
@@ -292,7 +293,7 @@ namespace chen {
 	}
 	void cwebsocket_session::_release()
 	{
-		m_session_id = 0;
+		
 		//boost::asio::ip::tcp::socket::shutdown_both
 		if (m_ws.is_open())
 		{
@@ -306,8 +307,9 @@ namespace chen {
 	}
 	void cwebsocket_session::_handle_close(boost::system::error_code ec)
 	{
-		m_session_id = 0;
+		
 		m_websocket_server_mgr_ptr->post_disconnect(this);;
+		//m_session_id = 0;
 	}
 }
 

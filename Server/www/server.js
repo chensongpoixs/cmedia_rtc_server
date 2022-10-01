@@ -1,91 +1,112 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
-//-- Server side logic. Serves pixel streaming WebRTC-based page, proxies data back to Streamer --//
-
-var express = require('express');
-var app = express();
-
-const fs = require('fs');
-const path = require('path');
-const querystring = require('querystring');
-const bodyParser = require('body-parser');
-const logging = require('./modules/logging.js');
-logging.RegisterConsoleLogger();
-
-// Command line argument --configFile needs to be checked before loading the config, all other command line arguments are dealt with through the config object
-
-const defaultConfig = { 
-	LogToFile: true,
-	HomepageFile: "/websocket/player.html", 
-	EnableWebserver: true,  
-	HttpPort: 80 
-};
-
-const argv = require('yargs').argv;
-var configFile = (typeof argv.configFile != 'undefined') ? argv.configFile.toString() : path.join(__dirname, 'config.json');
-console.log(`configFile ${configFile}`);
-const config = require('./modules/config.js').init(configFile, defaultConfig);
+var http=require("http");
+var express=require("express");//引入express
+var socketIo=require("socket.io");//引入socket.io
+var serveIndex = require('serve-index'); // 目录导入
+var fs = require('fs');
 
 
 
-//If not using authetication then just move on to the next function/middleware
-var isAuthenticated = redirectUrl => function (req, res, next) { return next(); }
+var app=new express();
 
 
-if (config.LogToFile) {
-	logging.RegisterFileLogger('./logs');
+var options = {
+	key : fs.readFileSync('./certs/privkey.pem'),
+	cert: fs.readFileSync('./certs/fullchain.pem')
 }
 
-console.log("Config: " + JSON.stringify(config, null, '\t'));
+var server=http.createServer(app);
+var io= socketIo(server);//将socket.io注入express模块
 
-var http = require('http').Server(app);
-
- 
-
- 
-const helmet = require('helmet');
-var hsts = require('hsts');
-var net = require('net');
+app.use(serveIndex('./webrtc'));
+app.use(express.static('./webrtc'));
 
  
- 
-
-
-if(config.EnableWebserver) 
-{
-	//console.log('--------------websocket-----------------');
-	//Setup folders
-	app.use(express.static(path.join(__dirname, '/websocket')))
-	app.use('/images', express.static(path.join(__dirname, './images')))
-	app.use('/scripts', [isAuthenticated('/login'),express.static(path.join(__dirname, '/scripts'))]);
-	//app.use('/', [isAuthenticated('/login'), express.static(path.join(__dirname, '/custom_html'))])
-}
-
-
-
-if(config.EnableWebserver) {
-	app.get('/', isAuthenticated('/login'), function (req, res) {
-		homepageFile = (typeof config.HomepageFile != 'undefined' && config.HomepageFile != '') ? config.HomepageFile.toString() : defaultConfig.HomepageFile;
-		homepageFilePath = path.join(__dirname, homepageFile)
-
-		fs.access(homepageFilePath, (err) => {
-			if (err) {
-				console.error('Unable to locate file ' + homepageFilePath)
-				res.status(404).send('Unable to locate file ' + homepageFile);
-			}
-			else {
-				res.sendFile(homepageFilePath);
-			}
-		});
-	});
-}
-
-//Setup http and https servers
-http.listen(defaultConfig.HttpPort, function () {
-	console.logColor(logging.Green, 'Http listening on *: ' + defaultConfig.HttpPort);
+app.get("/webrtc",function (req,res,next) {
+    res.sendFile(__dirname+"/webrtc/room.html");
 });
-
+ 
+server.listen(8080);//express 监听 8080 端口，因为本机80端口已被暂用
  
 
-console.logColor(logging.Cyan, `Running chen-WebSever`);
+var log4js = require('log4js');
 
+
+log4js.configure({
+    appenders: {
+        file: {
+            type: 'file',
+            filename: 'app.log',
+            layout: {
+                type: 'pattern',
+                pattern: '%r %p - %m',
+            }
+        }
+    },
+    categories: {
+       default: {
+          appenders: ['file'],
+          level: 'debug'
+       }
+    }
+});
+//  房间的人数的设置哈
+var USERCOUNT = 3;
+var logger = log4js.getLogger();
+io.on('connection', (socket)=> {
+
+	socket.on('message', (room, data)=>{
+		logger.debug('message, room: ' + room + ", data, type:" + data.type);
+		socket.to(room).emit('message',room, data);
+	});
+
+	/*
+	socket.on('message', (room)=>{
+		logger.debug('message, room: ' + room );
+		socket.to(room).emit('message',room);
+	});
+	*/
+
+	socket.on('join', (room)=>{
+		socket.join(room);
+		var myRoom = io.sockets.adapter.rooms[room]; 
+		var users = (myRoom)? Object.keys(myRoom.sockets).length : 0;
+		logger.debug('the user number of room (' + room + ') is: ' + users);
+
+		if(users < USERCOUNT)
+		{
+			socket.emit('joined', room, socket.id); //发给除自己之外的房间内的所有人
+			//if(users >= 1)
+			{
+				socket.to(room).emit('other_join', room, socket.id);
+				logger.debug('the -----> user number of room (' + room + ') is: ' + users);
+			}
+		
+		}
+		else
+		{
+			socket.leave(room);	
+			socket.emit('full', room, socket.id);
+		}
+		//socket.emit('joined', room, socket.id); //发给自己
+		//socket.emit('joined', room, socket.id); //发给自己
+		//socket.broadcast.emit('joined', room, socket.id); //发给除自己之外的这个节点上的所有人
+		//socket.to(room).emit('other_join', room, socket.id);
+		//io.in(room).emit('joined', room, socket.id); //发给房间内的所有人
+	});
+
+	socket.on('leave', (room)=>{
+
+		socket.leave(room);
+
+		var myRoom = io.sockets.adapter.rooms[room]; 
+		var users = (myRoom)? Object.keys(myRoom.sockets).length : 0;
+		logger.debug('the user number of room is: ' + users);
+
+		//socket.emit('leaved', room, socket.id);
+		//socket.broadcast.emit('leaved', room, socket.id);
+		socket.to(room).emit('bye', room, socket.id);
+		socket.emit('leaved', room, socket.id);
+		//io.in(room).emit('leaved', room, socket.id);
+	});
+
+});

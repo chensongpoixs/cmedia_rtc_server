@@ -37,7 +37,7 @@ namespace chen {
 	private:
 		typedef std::atomic_bool 															catomic_bool;
 		typedef std::vector<std::thread>													cthreads;
-		typedef std::unordered_map<uint64_t, std::shared_ptr<cwebsocket_session>>			CWEBSOCKET_SESSION_MAP;
+		typedef std::unordered_map<uint64_t,  cwebsocket_session *>			CWEBSOCKET_SESSION_MAP;
 
 		typedef std::mutex															clock_type;
 		typedef std::lock_guard<clock_type>											clock_guard;

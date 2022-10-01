@@ -48,7 +48,12 @@ namespace chen {
 	public:
 
 		bool    handler_login(  Json::Value & value);
+		bool	handler_join_room(Json::Value &value);
+		bool	handler_destroy_room(Json::Value& value);
 
+		bool	handler_webrtc_message(Json::Value& value);
+		//bool	handler_create_answer(Json::Value& value);
+		//bool	handler_candidate(Json::Value& value);
 		//bool	handler_create_room(  Json::Value & value);
 		//bool	handler_destroy_room(Json::Value & value);
 		/*void	handler_webrtc_command(const void* ptr, uint32 msg_size);

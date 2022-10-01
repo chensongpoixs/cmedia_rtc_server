@@ -70,7 +70,18 @@ namespace chen {
 			WARNING_EX_LOG("not find [room name = %s]  failed !!!", room_name.c_str() );
 			return false;
 		}
-		return iter->second.leave_userinfo(session_id);
+		return iter->second.leave_userinfo(session_id );
+	}
+
+	bool croom_mgr::webrtc_message(const std::string & room_name, uint64 session_id, Json::Value & value)
+	{
+		CROOM_MAP::iterator iter =  m_room_map.find(room_name);
+		if (iter != m_room_map.end())
+		{
+			return iter->second.webrtc_message(session_id, value);
+		}
+		WARNING_EX_LOG("ont find room name = %s", room_name.c_str());
+		return false;
 	}
 
 }
