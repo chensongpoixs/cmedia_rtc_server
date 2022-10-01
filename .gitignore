@@ -70,7 +70,7 @@
 examples/html/simple_demo/node_modules
 !webrtc/*
 
-
+test/*
 
 Server/bin
 Server/log
