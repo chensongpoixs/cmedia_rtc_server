@@ -13,6 +13,7 @@
 //#include "cnet_type.h"
 #include "csrtp_session.h"
 #include "ctimer.h"
+#include <json/json.h>
 namespace RTC
 {
 	class DtlsTransport : public chen::ctimer
@@ -176,6 +177,8 @@ namespace RTC
 		}
 		void SendApplicationData(const uint8_t* data, size_t len);
 
+
+		bool reply(Json::Value& value);
 	private:
 		bool IsRunning() const
 		{

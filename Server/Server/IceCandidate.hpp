@@ -66,6 +66,8 @@ namespace RTC
 
 		//void FillJson(json& jsonObject) const;
 		std::string candidate( );
+		bool reply(Json::Value&value);
+		// const  bool reply(Json::Value&value) const;
 	private:
 		// Others.
 		std::string foundation;

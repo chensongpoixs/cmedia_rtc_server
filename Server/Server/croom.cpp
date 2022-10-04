@@ -13,6 +13,7 @@ Copyright boost
 #include "clog.h"
 #include "cwan_server.h"
 #include "cmsg_base_id.h"
+#include "ccrypto_random.h"
 namespace chen {
 	croom::croom()
 		: m_room_name("")
@@ -67,6 +68,35 @@ namespace chen {
 		_broadcast_message(session_id, S2C_LevalRoomUpdate, reply);
 		return true;
 	}
+	bool croom::create_webrtc(uint64 session_id, Json::Value & value)
+	{
+		cuser_info* user_info_ptr = _get_user_info(session_id);
+		if (!user_info_ptr)
+		{
+			ERROR_EX_LOG("not find session_id = %u", session_id);
+			return false;
+		}
+
+
+		std::string transportId = s_crypto_random.GetRandomString(20);
+		cwebrtc_transport* transport_ptr = new cwebrtc_transport();
+		if (!transport_ptr)
+		{
+			ERROR_EX_LOG("webrtc transport alloc  failed !!!");
+			return false;
+		}
+		if (!transport_ptr->init(transportId))
+		{
+			delete transport_ptr;
+			transport_ptr = NULL;
+			ERROR_EX_LOG("webrtc transport init failed !!!");
+			return false;
+		}
+
+		user_info_ptr->producers[transportId] = transport_ptr;
+
+		return true;
+	}
 	bool croom::webrtc_message(uint64 session_id, Json::Value & value)
 	{
 		return _broadcast_message(session_id, S2C_WebrtcMessageUpdate , value);
@@ -89,5 +119,14 @@ namespace chen {
 			}
 		}
 		return true;
+	}
+	cuser_info * croom::_get_user_info(uint64 session_id)
+	{
+		CUSERINFO_MAP::iterator iter = m_userinfo_map.find(session_id);
+		if (iter != m_userinfo_map.end())
+		{
+			return NULL;
+		}
+		return &iter->second;
 	}
 }

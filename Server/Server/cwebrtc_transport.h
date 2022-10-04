@@ -123,6 +123,10 @@ namespace chen
 	public:
 		void reply_info(uint64 session_id);
 
+
+
+		bool reply_create_webrtc(Json::Value & value);
+
 	public:
 		// Must be called from the subclass.
 		void Connected();

@@ -755,6 +755,51 @@ namespace chen {
 		//reply_rtc_info(reply);
 	}
 
+	bool cwebrtc_transport::reply_create_webrtc(Json::Value & value)
+	{
+
+		value["id"] = m_id;
+
+		/// ICE parameters
+		
+		Json::Value ice_parameters;
+		ice_parameters["iceLite"] = true;
+		ice_parameters["password"] = m_ice_server_ptr->GetPassword();
+		ice_parameters["usernameFragment"] = m_ice_server_ptr->GetUsernameFragment();
+
+
+		value["iceParameters"] = ice_parameters;
+
+		// ICE candidates
+		//Json::Value ice_candidates;
+		for ( RTC::IceCandidate & ice: m_ice_canidates)
+		{
+			ice.reply(value["iceCandidates"]);
+		}
+		 
+		// DTLS Parameters
+		m_dtls_transport_ptr->reply(value["fingerprints"]);
+
+
+		switch (this->m_dtlsRole)
+		{
+		case RTC::DtlsTransport::Role::NONE:
+			value["fingerprints"]["role"] = "none";
+			break;
+		case RTC::DtlsTransport::Role::AUTO:
+			value["fingerprints"]["role"] = "auto";
+			break;
+		case RTC::DtlsTransport::Role::CLIENT:
+			value["fingerprints"]["role"] = "client";
+			break;
+		case RTC::DtlsTransport::Role::SERVER:
+			value["fingerprints"]["role"] = "server";
+			break;
+		}
+
+		return true;
+	}
+
 	void cwebrtc_transport::reply_rtc_info(/*Json::Value & value*/)
 	{
 		//1. Add iceRole (we are always "controlled"). ？？？？？？ 

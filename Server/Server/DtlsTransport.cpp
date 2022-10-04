@@ -873,6 +873,17 @@ namespace RTC
 		SendPendingOutgoingDtlsData();
 	}
 
+	bool DtlsTransport::reply(Json::Value& value)
+	{
+		for (DtlsTransport::Fingerprint & fingerprint: localFingerprints)
+		{
+			value["algorithm"]=RTC::DtlsTransport::GetFingerprintAlgorithmString(fingerprint.algorithm);
+			value["value"] = fingerprint.value;
+		}
+		
+		return true;
+	}
+
 	void DtlsTransport::Reset()
 	{
 		//MS_TRACE();

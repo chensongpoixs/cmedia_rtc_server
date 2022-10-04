@@ -127,3 +127,4 @@ Server/chensong.log
 Server/www/logs
  
 Server/www/app.log
+Server/Server/webrtc_offer_1.sdp
