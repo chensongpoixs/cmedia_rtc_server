@@ -128,3 +128,4 @@ Server/www/logs
  
 Server/www/app.log
 Server/Server/webrtc_offer_1.sdp
+Server/www/package-lock.json
