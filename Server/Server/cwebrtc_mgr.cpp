@@ -12,6 +12,8 @@ Copyright boost
 #include "ccrypto_random.h"
 #include "cwebrtc_transport.h"
 #include "cmsg_dispatch.h"
+#include "cwan_server.h"
+#include "cguard_reply.h"
 namespace chen {
 	cwebrtc_mgr g_global_webrtc_mgr;
 	cwebrtc_mgr::cwebrtc_mgr()
@@ -41,7 +43,7 @@ namespace chen {
 			ERROR_EX_LOG("webrtc transport init failed !!!");
 			return false;
 		}
-		transport_ptr->handler_webrtc_sdp(value["sdp"].asCString());
+		//transport_ptr->handler_webrtc_sdp(value["sdp"].asCString());
 		//m_webrtc_transport_map.insert(std::make_pair(transportId, transport));
 		if (!m_webrtc_transport_map.insert(std::make_pair(transportId, transport_ptr)).second)
 		{
@@ -52,10 +54,14 @@ namespace chen {
 		} 
 		DEBUG_EX_LOG("webrtc transport create [transportId = %s]", transportId.c_str());
 
-		transport_ptr->handler_webrtc_connect();
-		transport_ptr->reply_info(session_id);
+		//transport_ptr->handler_webrtc_connect();
+		//transport_ptr->reply_info(session_id);
 		//TODO@chensong 20220812 返回客户端创建webrtc的信息
 
+		//Json::Value reply_createRtc;
+		CGUARD_REPLY(S2C_CreateRtc, session_id);
+		transport_ptr->reply_create_webrtc(reply );
+		//g_wan_server.send_msg(session_id, S2C_CreateRtc, reply_createRtc.asCString().c_str());
 		return true;
 	}
 	bool cwebrtc_mgr::handler_destroy_webrtc(uint64 session_id, Json::Value & value)

@@ -95,6 +95,7 @@ namespace chen {
 	bool cwebrtc_transport::init(const std::string & transport_id/*, const std::string & sdp*/)
 	{
 		
+		m_id = transport_id;
 		// {"OS":1024,"MIS":1024}
 		static const size_t sctpSendBufferSize = 262144u; //default 262144u
 		static const uint16 OS = 1024u;

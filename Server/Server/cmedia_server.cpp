@@ -18,6 +18,8 @@ purpose:		cmedia_server
 #include "ccfg.h"
 #include "crtc_sdp.h"
 #include "cclient_msg_dispatch.h"
+#include "csctp_association_mgr.h"
+#include "cglobal_rtc.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -49,11 +51,17 @@ namespace chen {
 		ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
 		SYSTEM_LOG("dispatch init ...");
 
-		if (!g_client_msg_dispatch.init())
+		if (!g_global_rtc.init())
 		{
 			return false;
 		}
 
+		SYSTEM_LOG("global rtc init OK !!!");
+		if (!g_client_msg_dispatch.init())
+		{
+			return false;
+		}
+		SYSTEM_LOG("client_msg dispatch init OK !!!");
 		if (!g_msg_dispatch.init())
 		{
 			return false;
@@ -152,6 +160,8 @@ namespace chen {
 		g_msg_dispatch.destroy();
 		SYSTEM_LOG("msg dispath destroy OK !!!");
 
+		g_global_rtc.destory();
+		SYSTEM_LOG("global rtc destory OK !!!");
 		//1 log
 		LOG::destroy();
 		printf("Log Destroy OK!\n");

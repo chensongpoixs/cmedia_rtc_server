@@ -44,8 +44,11 @@ namespace chen {
 
 
 		//////// WebRTC
-		
-		C2S_RtcConnect = 1000,
+		C2S_CreateRtc = 1000,
+		S2C_CreateRtc,
+
+
+		C2S_RtcConnect,
 		S2C_RtcConnect,
 		
 		C2S_rtc_restart_ice, 

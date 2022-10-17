@@ -100,8 +100,25 @@ const WS_OPEN_STATE = 1;
 //////////////////////////////SDP /////////////////////////
 
 
+let RemoteSdpobj = null;
+
+
+let sendTransport = null;
+
+// let logger = null;
+
+
+// logger = new Logger();
+
+// let AnswerMediaSectionObj = null;
+
 var session_sdp ;
 
+
+// AnswerMediaSectionObj = new AnswerMediaSection();
+
+
+// AnswerMediaSectionObj.test();
 
 var remove_sdpObject =
             {
@@ -305,64 +322,64 @@ function conn()
         	// 3. icecandidate
 
         	//	//如果收到的SDP是ｏｆｆｅｒ
-			if(msg.data.hasOwnProperty('type') && msg.data.type === 'offer')
-			{
-				offer.value = msg.data.sdp;
-				
-				//进行媒体协商
-				pc.setRemoteDescription(new RTCSessionDescription(msg.data));
-				
-				// 创建answer
-				pc.createAnswer()
-					.then(getAnswer)
-					.catch(handleAnswerError);
-				
-				
-			}
-			else if (msg.data.hasOwnProperty('type') && msg.data.type === 'answer')
-			{   // 如果收到的SDP是Answer
-				answer.value = msg.data.sdp;
-				
-				//进行媒体协商
-				pc.setRemoteDescription(new RTCSessionDescription(msg.data));
-				
-			}
-			else if (msg.data.hasOwnProperty('type') && msg.data.type === 'candidate')
-			{
-				//如果收到是Candidate信息
-				var candidate = new RTCIceCandidate({
-					sdpMLineIndex :msg.data.label,
-					candidate: msg.data.candidate
-				});
-				
-				//将远端Candidate信息添加到PeerConnection
-				pc.addIceCandidate(candidate);
-			}
-			else 
-			{
-				console.log('the message is invalid!!!', msg.data);
-			}
+      			if(msg.data.hasOwnProperty('type') && msg.data.type === 'offer')
+      			{
+      				offer.value = msg.data.sdp;
+      				
+      				//进行媒体协商
+      				pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+      				
+      				// 创建answer
+      				pc.createAnswer()
+      					.then(getAnswer)
+      					.catch(handleAnswerError);
+      				
+      				
+      			}
+      			else if (msg.data.hasOwnProperty('type') && msg.data.type === 'answer')
+      			{   // 如果收到的SDP是Answer
+      				answer.value = msg.data.sdp;
+      				
+      				//进行媒体协商
+      				pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+      				
+      			}
+      			else if (msg.data.hasOwnProperty('type') && msg.data.type === 'candidate')
+      			{
+      				//如果收到是Candidate信息
+      				var candidate = new RTCIceCandidate({
+      					sdpMLineIndex :msg.data.label,
+      					candidate: msg.data.candidate
+      				});
+      				
+      				//将远端Candidate信息添加到PeerConnection
+      				pc.addIceCandidate(candidate);
+      			}
+      			else 
+      			{
+      				console.log('the message is invalid!!!', msg.data);
+      			}
         	
         }
         else if (msg.msg_id === 501) //S2C_JoinRoomUpdate
         {
-        	console.log('new peer !!!');
+        	 console.log('new peer !!!');
 
         		console.log('receive joined message!  --》', roomid);
-				// 如果是多人， 每加入一个人都要创建一个新的PeerConnection
-			if (state === 'joined_unbind')
-			{
-				createPeerConnection();
-				bindTracks();
-			}
-	//	
-			//状态机变更为 joined_conn
-			state = 'joined_conn';
-		
-			// 开始 '呼叫'对方
-			call();
-		
-			console.log('receive other_join message , state = ', state);
+				  // 如果是多人， 每加入一个人都要创建一个新的PeerConnection
+    			if (state === 'joined_unbind')
+    			{
+    				createPeerConnection();
+    				bindTracks();
+    			}
+    	//	
+    			//状态机变更为 joined_conn
+    			state = 'joined_conn';
+    		
+    			// 开始 '呼叫'对方
+    			call();
+    		
+    			console.log('receive other_join message , state = ', state);
 
         }
         else if (msg.msg_id === 502) // S2C_LevalRoomUpdate
@@ -371,6 +388,24 @@ function conn()
         	//	//改变button状态
 		//	btnConn.disabled = true;
 			//btnLeave.disabled = false;
+        }
+        else if (msg.msg_id == 1001)
+        {
+            // 创建RTC
+            console.log('create RTC sendTransport OK  ---->');
+            sendTransport = new Transport(  'send'
+                                          ,   msg.id
+                                          ,   msg.iceParameters
+                                          ,   msg.iceCandidates
+                                          ,   msg.dtlsParameters
+                                          ,   msg.sctpParameters
+                                          ,   []
+                                          ,   {}
+                                          ,  {});
+        }
+        else
+        {
+          console.log('not find msg_id = ', msg.msg_id);
         }
 
 
@@ -1020,9 +1055,9 @@ function parse_sdp(sdp)
 	var session = {}
     , media = []
     , location = session; // points at where properties go under (one of the above)
-	console.log('-------------------------');
-	console.log(grammar);
-	console.log('---------------------------');
+	console.log('[parse_sdp]-------------------------');
+	console.log('[parse_sdp()]' , grammar);
+	console.log('[parse_sdp]---------------------------');
   // parse lines we understand
   sdp.split(/(\r\n|\r|\n)/).filter(validLine).forEach(function (l) {
     var type = l[0];
@@ -1149,9 +1184,9 @@ var defaultInnerOrder = ['i', 'c', 'b', 'a'];
 
 function sdp_write(session, opts) 
 {
-	console.log('session.origin.sessionVersion = '+ session.origin.sessionVersion);
+	console.log('[sdp_write]session.origin.sessionVersion = '+ session.origin.sessionVersion);
 	session.origin.sessionVersion++;
-	console.log('session.origin.sessionVersion = '+ session.origin.sessionVersion);
+	console.log('[sdp_write]session.origin.sessionVersion = '+ session.origin.sessionVersion);
   opts = opts || {};
   // ensure certain properties exist
   if (session.version == null) {
@@ -1352,6 +1387,40 @@ function getAnswer(desc)
 }
 
 
+//function handleIceConnectState(status)
+//{
+//
+//}
+
+
+function setremotesdp()
+{
+    var  iceParameters = {iceLite: true, password: 'zs5484zxgjhi0a07oh65lxoehc279j1w', usernameFragment: 'xqzyquhv6tv8m0qh'};
+    var iceCandidates = {foundation: 'udpcandidate', ip: '192.168.1.73', port: 41382, priority: 1076302079, protocol: 'udp', type : 'host'};
+    var dtlsParameters = {fingerprints:[{algorithm: 'sha-1', value: 'B6:97:F0:66:BC:1A:63:95:80:0B:DB:8F:FE:6A:81:57:D2:BD:E8:6B'},
+                  {algorithm: 'sha-224', value: '1D:85:0A:7E:D7:6D:EC:D0:15:1B:70:BE:C1:FD:2D:E1:87:49:5F:76:C5:6E:C8:CD:3F:94:AA:FA'},
+                  {algorithm: 'sha-256', value: '1C:CC:83:52:4A:96:52:7F:D2:94:BB:C0:40:96:AE:71:BB:98:81:55:F5:0B:B8:B6:5C:2D:4E:2F:44:2F:09:2F'},
+                  {algorithm: 'sha-384', value: '37:8E:F6:CA:AE:69:F5:6A:21:72:90:6F:40:13:9A:33:F0…6:09:BC:D1:FB:5F:B3:6F:7A:76:88:1F:68:99:24:6A:F0'},
+                  {algorithm: 'sha-512', value: '54:32:E9:9B:1E:AB:CA:F5:2B:61:80:B4:6B:60:70:1E:24…A:D9:49:18:56:59:23:60:48:BD:FB:2E:32:CF:F2:FA:61'}],
+                    role: "client"};
+    var   sctpParameters = {MIS: 1024, OS: 1024, isDataChannel: true, maxMessageSize: 262144, port: 5000, sctpBufferedAmount:0, sendBufferSize:262144};
+    console.log('RemoteSdp new ---');
+    RemoteSdpobj = new RemoteSdp(iceParameters, iceCandidates, dtlsParameters, sctpParameters);
+    console.log(RemoteSdpobj);
+    console.log('RemoteSdp new ok !!!');
+
+   // if (RemoteSdpobj)
+   // {
+   //    RemoteSdpobj.test();
+    //}
+   
+    // 注册一个imagine事件监听者
+    RemoteSdpobj.on('imagine', function() { console.log('前端收割机') });
+    // 发布事件imagine
+    RemoteSdpobj.emit('imagine');
+ //   RemoteSdpobj.test();
+}
+
 /**
  功能： 获取Offer SDP 描述符的
 
@@ -1366,27 +1435,43 @@ function getOffer(desc)
 	offer.value = desc.sdp;
 	offerdesc = desc;
 	
-	console.log('-------------SDP------------');
+
+  setremotesdp();
+
+  // 发送请求创建RTC
+  sendMessage(
+        {
+          msg_id: 1000,
+          data: offerdesc
+        }
+       );
+
+
+
+ // RemoteSdpobj = new RemoteSdp();
+
+ // logger.debug('[test][logger debug]=============================>');
+	console.log('[getOffer]-------------SDP------------');
 	
 	session_sdp = parse_sdp(offer.value);
-	console.log(session_sdp);
-	console.log('session_sdp.origin.sessionVersion = '+ session_sdp.origin.sessionVersion);
+	console.log('[getOffer]', session_sdp);
+	console.log('[getOffer]session_sdp.origin.sessionVersion = '+ session_sdp.origin.sessionVersion);
 	// Get our local DTLS parameters.
     const dtlsParameters =  extractDtlsParameters({ sdpObject: session_sdp });
         // Set our DTLS role.
     dtlsParameters.role = 'client';
 	
 	
-	console.log('------------dtlsParameters-------------');
-	console.log(dtlsParameters);
+	console.log('[getOffer]------------dtlsParameters-------------');
+	console.log('[getOffer]', dtlsParameters);
         // Update the remote DTLS role in the SDP.
 		
 		
 		
 	const test_write_sdp = 	sdp_write(session_sdp);
-	console.log('-------------test_write_sdp------------');
-	console.log(test_write_sdp);
-	console.log('-------------SDP------------');
+	console.log('[getOffer]-------------test_write_sdp------------');
+	console.log('[getOffer]', test_write_sdp);
+	console.log('[getOffer]-------------SDP------------');
 	//将Offer SDP 发送给对端
 	
 	sendMessage(
@@ -1447,6 +1532,23 @@ function createPeerConnection()
 		
 		*/
 		pc.ontrack = getRemoteStream;
+
+
+    /**
+     * pc addEventListener ice 连接状态的转换
+     * 有四种状态转换
+     * 1. checking: 连接中 connecting
+     * 2. connected, completed: 连接成功 
+     * 3. failed : 连接失败 
+     * 4. disconnected: 断开连接
+     * 5. closed：断开连接了
+     *
+     */
+     pc.addEventListener('iceconnectionstatechange', ()=>{
+        console.log('[addEventListener] iceconnectionstatechange = ', pc.iceConnectionState);
+
+       
+     });
 	}
 	else 
 	{

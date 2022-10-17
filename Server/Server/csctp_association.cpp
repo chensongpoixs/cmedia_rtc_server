@@ -355,22 +355,22 @@ namespace chen {
 	{
 		// Add port (always 5000). 
 		// TODO@chensong     20220821
-		value["sctpParameters"]["port"] = 5000;
+		value["port"] = 5000;
 
 		// Add OS
-		value["sctpParameters"]["OS"] = m_os;
+		value["OS"] = m_os;
 
 		// Add MIS.
-		value["sctpParameters"]["MIS"] = m_mis;
+		value["MIS"] = m_mis;
 
 		// Add maxMessageSize.
-		value["sctpParameters"]["maxMessageSize"] = m_max_sctp_message_size; //this->maxSctpMessageSize;
+		value["maxMessageSize"] = m_max_sctp_message_size; //this->maxSctpMessageSize;
 
 		// Add sendBufferSize.
-		value["sctpParameters"]["sendBufferSize"] = m_sctp_send_buffer_size;// //this->sctpSendBufferSize;
+		value["sendBufferSize"] = m_sctp_send_buffer_size;// //this->sctpSendBufferSize;
 
 		// Add sctpBufferedAmountLowThreshold.
-		value["sctpParameters"]["sctpBufferedAmount"] = m_sctp_buffered_amount;////this->sctpBufferedAmount;
+		value["sctpBufferedAmount"] = m_sctp_buffered_amount;////this->sctpBufferedAmount;
 
 		// Add isDataChannel.
 		// value["sctpParameters"]["isDataChannel"] = this->isDataChannel;

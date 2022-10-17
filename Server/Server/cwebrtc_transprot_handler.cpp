@@ -567,7 +567,7 @@ namespace chen {
 		std::string algorithm =  RTC::DtlsTransport::GetFingerprintAlgorithmString(fingerprints[0].algorithm);
 
 
-		std::ostringstream sdp;
+		/*std::ostringstream sdp;
 		sdp << "v=0\r\n";
 		sdp << "o=chensong 10000 1 IN IP4 0.0.0.0\r\n";
 		sdp << "s=-\r\n";
@@ -575,7 +575,7 @@ namespace chen {
 		sdp << "a=ice-lite\r\n" ;
 		sdp << "a=fingerprint:" << algorithm << " " << fingerprints[0].value << "\r\n";
 		sdp << "a=msid-semantic: WMS *\r\n";
-		sdp << m_client_rtc_sdp.get_webrtc_sdp();
+		sdp << m_client_rtc_sdp.get_webrtc_sdp();*/
 		//sdp << "m=video 7 UDP/TLS/RTP/SAVPF 100 101\r\n"; // TODO@chensong 编码类型
 		//sdp << "c=IN IP4 127.0.0.1\r\n";
 		//sdp << "a=rtpmap:100 H264/90000\r\n";
@@ -596,22 +596,22 @@ namespace chen {
 		//sdp << "a=extmap:14 urn:ietf:params:rtp-hdrext:toffset\r\n";
 		//sdp << "a=setup:server\r\n";
 		//sdp << "a=mid:0\r\n";
-		sdp << "a=sendrecv\r\n";
-		sdp << "a=ice-ufrag:"<< m_ice_server_ptr->GetUsernameFragment() /*xjg2o2h2v8bfzqkv*/ << "\r\n";
-		sdp << "a=ice-pwd:"<< m_ice_server_ptr->GetPassword() /*z5ywy0b4le11t42tcqzpz5kdmr22i9rm*/ <<"\r\n";
-		sdp << "a=candidate:" << m_ice_canidates[0].candidate() /*udpcandidate 1 udp 1076302079 192.168.1.73 43717 typ host*/ <<"\r\n";
-		sdp << "a=end-of-candidates\r\n";
-		//	//a=ice-options 用于描述 ICE 连接的属性信息，ice-options 的定义有很多种，WebRTC 中常见的有：
-		//	//a=ice-options:trickle client 一边收集 candidate 一边发送给对端并开始连通性检查，可以缩短 ICE 建立连接的时间。
-		//	//a=ice-options:renomination 允许 ICE controlling 一方动态重新提名新的 candidate ，
-		//                                 默认情况 Offer 一方为controlling 角色，answer 一方为 controlled 角色；同时 Lite 一方只能为 controlled 角色。
-		sdp << "a=ice-options:renomination";
-		////  音频、视频和数据通道同一个m行
-		sdp << "a=rtcp-mux";
-		sdp << "a=rtcp-rsize";
+		//sdp << "a=sendrecv\r\n";
+		//sdp << "a=ice-ufrag:"<< m_ice_server_ptr->GetUsernameFragment() /*xjg2o2h2v8bfzqkv*/ << "\r\n";
+		//sdp << "a=ice-pwd:"<< m_ice_server_ptr->GetPassword() /*z5ywy0b4le11t42tcqzpz5kdmr22i9rm*/ <<"\r\n";
+		//sdp << "a=candidate:" << m_ice_canidates[0].candidate() /*udpcandidate 1 udp 1076302079 192.168.1.73 43717 typ host*/ <<"\r\n";
+		//sdp << "a=end-of-candidates\r\n";
+		////	//a=ice-options 用于描述 ICE 连接的属性信息，ice-options 的定义有很多种，WebRTC 中常见的有：
+		////	//a=ice-options:trickle client 一边收集 candidate 一边发送给对端并开始连通性检查，可以缩短 ICE 建立连接的时间。
+		////	//a=ice-options:renomination 允许 ICE controlling 一方动态重新提名新的 candidate ，
+		////                                 默认情况 Offer 一方为controlling 角色，answer 一方为 controlled 角色；同时 Lite 一方只能为 controlled 角色。
+		//sdp << "a=ice-options:renomination";
+		//////  音频、视频和数据通道同一个m行
+		//sdp << "a=rtcp-mux";
+		//sdp << "a=rtcp-rsize";
 
 
-		reply["sdp"] =  sdp.str().c_str();
+		//reply["sdp"] =  sdp.str().c_str();
 		 
 		//sdp << "";
 
@@ -778,22 +778,30 @@ namespace chen {
 		}
 		 
 		// DTLS Parameters
-		m_dtls_transport_ptr->reply(value["fingerprints"]);
+		if (m_dtls_transport_ptr)
+		{
+			m_dtls_transport_ptr->reply(value["dtlsParameters"]);
+		}
+		
+		if (m_sctp_association_ptr)
+		{
+			m_sctp_association_ptr->reply(value["sctpParameters"]);
+		}
 
 
 		switch (this->m_dtlsRole)
 		{
 		case RTC::DtlsTransport::Role::NONE:
-			value["fingerprints"]["role"] = "none";
+			value["dtlsParameters"]["role"] = "none";
 			break;
 		case RTC::DtlsTransport::Role::AUTO:
-			value["fingerprints"]["role"] = "auto";
+			value["dtlsParameters"]["role"] = "auto";
 			break;
 		case RTC::DtlsTransport::Role::CLIENT:
 			value["fingerprints"]["role"] = "client";
 			break;
 		case RTC::DtlsTransport::Role::SERVER:
-			value["fingerprints"]["role"] = "server";
+			value["dtlsParameters"]["role"] = "server";
 			break;
 		}
 

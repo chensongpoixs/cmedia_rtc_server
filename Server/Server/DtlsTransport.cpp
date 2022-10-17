@@ -877,8 +877,10 @@ namespace RTC
 	{
 		for (DtlsTransport::Fingerprint & fingerprint: localFingerprints)
 		{
-			value["algorithm"]=RTC::DtlsTransport::GetFingerprintAlgorithmString(fingerprint.algorithm);
-			value["value"] = fingerprint.value;
+			Json::Value fingerprints;
+			fingerprints["algorithm"] = RTC::DtlsTransport::GetFingerprintAlgorithmString(fingerprint.algorithm);;
+			//value["algorithm"]=RTC::DtlsTransport::GetFingerprintAlgorithmString(fingerprint.algorithm);
+			fingerprints["value"] = fingerprint.value;
 		}
 		
 		return true;

@@ -59,6 +59,11 @@ namespace chen {
 		/*void	handler_webrtc_command(const void* ptr, uint32 msg_size);
 
 		void    handler_mediasoupstatusupdate(const void * ptr, uint32 msg_size);*/
+
+
+
+		bool   handler_create_rtc(Json::Value& value);
+
 	private:
 		//void   _collecion_update_mediasoup_type(EMediasoupType type);
 	public:

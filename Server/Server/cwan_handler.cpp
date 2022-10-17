@@ -36,7 +36,7 @@ namespace chen {
 		// TODO@chensong 20220812 管理的比较漏
 		const uint32 msg_id = m_json_response["msg_id"].asUInt();
 
-		if (msg_id < S2C_WebrtcMessageUpdate)
+		if ((msg_id < S2C_WebrtcMessageUpdate) || (msg_id < Msg_Client_Max && msg_id > S2C_LevalRoomUpdate))
 		{
 
 			cclient_msg_handler * client_msg_handler = g_client_msg_dispatch.get_msg_handler(msg_id);
@@ -50,7 +50,7 @@ namespace chen {
 			(this->*(client_msg_handler->handler))(m_json_response);
 
 		}
-		else if (msg_id < Msg_Client_Max)
+		else if (msg_id < C2S_CreateRtc)
 		{
 			Json::Value reply;
 			if (!m_json_response["data"].isMember("room_name") || !m_json_response["data"]["room_name"].isString())
@@ -72,7 +72,7 @@ namespace chen {
 
 
 			//(this->*(msg_handler->handler))(session_id, m_json_response);
-		}
+		} 
 		else
 		{
 			WARNING_EX_LOG("not find [msg_id = %u][msg = %s]", msg_id, p);
@@ -192,4 +192,12 @@ namespace chen {
 	{
 		return true;
 	}*/
+
+
+
+	bool   cwan_session::handler_create_rtc(Json::Value& value)
+	{
+		g_global_webrtc_mgr.handler_create_webrtc(m_session_id, value);
+		return true;
+	}
 }
