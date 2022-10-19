@@ -105,6 +105,13 @@ let RemoteSdpobj = null;
 
 let sendTransport = null;
 
+
+let Rtcobj = null;
+// let RtcSdpobj = null;
+
+Rtcobj = new Rtc();
+// RtcSdpobj = new RtcSdp();
+// RtcSdpobj.test();
 // let logger = null;
 
 
@@ -1415,7 +1422,7 @@ function setremotesdp()
     //}
    
     // 注册一个imagine事件监听者
-    RemoteSdpobj.on('imagine', function() { console.log('前端收割机') });
+    RemoteSdpobj.on('imagine', function() { console.log('emit--------->') });
     // 发布事件imagine
     RemoteSdpobj.emit('imagine');
  //   RemoteSdpobj.test();
@@ -1446,6 +1453,12 @@ function getOffer(desc)
         }
        );
 
+  if (Rtcobj)
+  {
+    console.log('[Rtc][CreateNativeRtpCapabilities] main -->');
+    Rtcobj.CreateNativeRtpCapabilities();
+
+  }
 
 
  // RemoteSdpobj = new RemoteSdp();

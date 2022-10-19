@@ -48,6 +48,7 @@
         this._appData = appData;
         this._remoteSdp = null;
         this._pc = null;
+        this._transportReady = false; //连接的状态
 
 
         ///////////////////////////////////
@@ -58,42 +59,42 @@
                 dtlsParameters,
                 sctpParameters
             });
-            console.log('RTCPeerConnection new --------->');
-            this._pc = new RTCPeerConnection(Object.assign({ iceServers: iceServers || [], iceTransportPolicy: iceTransportPolicy || 'all', 
-                bundlePolicy: 'max-bundle', rtcpMuxPolicy: 'require', sdpSemantics: 'unified-plan' }, additionalSettings), proprietaryConstraints);
+        console.log('RTCPeerConnection new --------->');
+        this._pc = new RTCPeerConnection(Object.assign({ iceServers: iceServers || [], iceTransportPolicy: iceTransportPolicy || 'all', 
+            bundlePolicy: 'max-bundle', rtcpMuxPolicy: 'require', sdpSemantics: 'unified-plan' }, additionalSettings), proprietaryConstraints);
 
-            // Handle RTCPeerConnection connection status.
-            this._pc.addEventListener('iceconnectionstatechange', () => {
-                console.log(' +++ mediasoup core debugger  iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
-                console.log('RTCPeerConnection addEventListener  --------->');
-                // 分布订阅模式   
-                switch (this._pc.iceConnectionState) {
-                     case 'checking':
-                      //  console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
-                        this.emit('@connectionstatechange', 'connecting');
-                        
-                        break;
-                    case 'connected':
-                    case 'completed':
-                        //console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
-                        this.emit('@connectionstatechange', 'connected');
-                        break;
-                    case 'failed':
+        // Handle RTCPeerConnection connection status.
+        this._pc.addEventListener('iceconnectionstatechange', () => {
+            console.log(' +++ mediasoup core debugger  iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
+            console.log('RTCPeerConnection addEventListener  --------->');
+            // 分布订阅模式   
+            switch (this._pc.iceConnectionState) {
+                 case 'checking':
+                  //  console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
+                    this.emit('@connectionstatechange', 'connecting');
+                    
+                    break;
+                case 'connected':
+                case 'completed':
                     //console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
-                        this.emit('@connectionstatechange', 'failed');
-                        break;
-                    case 'disconnected':
-                    //console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
-                        this.emit('@connectionstatechange', 'disconnected');
-                        break;
-                    case 'closed':
-                    //console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
-                        this.emit('@connectionstatechange', 'closed');
-                        break;
-                }
-            });
+                    this.emit('@connectionstatechange', 'connected');
+                    break;
+                case 'failed':
+                //console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
+                    this.emit('@connectionstatechange', 'failed');
+                    break;
+                case 'disconnected':
+                //console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
+                    this.emit('@connectionstatechange', 'disconnected');
+                    break;
+                case 'closed':
+                //console.log('iceconnectionstatechange ---> [' +  this._pc.iceConnectionState + '] ^_^ !!!');
+                    this.emit('@connectionstatechange', 'closed');
+                    break;
+            }
+        });
       
-
+      //  await this._pc.createOffer();
        // this._test();
         // this._work({
         //     direction,
