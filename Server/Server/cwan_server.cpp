@@ -10,8 +10,8 @@ purpose:		wan_server
 #include "cwan_server.h"
 #include "clog.h"
 #include "ccfg.h"
-
-
+#include "cglobal_rtc.h"
+#include "cmsg_base_id.h"
 
 namespace chen {
 	 
@@ -172,6 +172,8 @@ namespace chen {
 			delete session_ptr;
 			session_ptr = NULL;
 		}
+
+		
 	}
 	void cwan_server::on_msg_receive(uint64_t session_id,   const void * p, uint32 size)
 	{

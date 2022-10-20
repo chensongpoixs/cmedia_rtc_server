@@ -17,6 +17,7 @@ purpose:	网络数据的收发
 #include "cclient_msg_dispatch.h"
 #include "cmsg_dispatch.h"
 #include "cshare_proto_error.h"
+#include "cglobal_rtc.h"
 namespace chen {
 
 	void cwan_session::handler_msg(uint64_t session_id, const void* p, uint32 size)
@@ -123,7 +124,7 @@ namespace chen {
 
 		NORMAL_EX_LOG("%s Login OK!!", m_user_name.c_str());
 		send_msg(S2C_Login, EShareProtoOk, reply);
-
+		 send_msg(S2C_RtpCapabilities, 0, g_global_rtc.all_rtp_capabilities());
 		return true;
 	}
 

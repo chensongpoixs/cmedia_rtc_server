@@ -681,9 +681,9 @@ namespace chen {
 			nlohmann::json data =
 			{
 				{"forceTcp",false},
-			{"producing",true},
-			{"consuming" , false},
-			{	"sctpCapabilities", m_sctpCapabilities }
+				{"producing",true},
+				{"consuming" , false},
+				{	"sctpCapabilities", m_sctpCapabilities }
 
 			};
 			if (!_send_request_mediasoup(MEDIASOUP_REQUEST_METHOD_CREATEWEBRTCTRANSPORT, data))

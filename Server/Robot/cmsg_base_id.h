@@ -19,20 +19,42 @@ namespace chen {
 		S2C_BeatHeart,
 		C2S_Login,
 		S2C_Login,
-		C2S_CreateRoom,
-		S2C_CreateRoom,
-		C2S_DestroyRoom ,
+		C2S_JoinRoom,
+		S2C_JoinRoom,
+		C2S_DestroyRoom,
 		S2C_DestroyRoom,
 
+		C2S_WebrtcMessage,
+		S2C_WebrtcMessage,
+
+		//C2S_CreateAnswar,
+		//S2C_CreateAnswar,
+		//C2S_Candidate,
+		//S2C_Candidate,
+
+
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		S2C_WebrtcMessageUpdate = 500,
+		S2C_JoinRoomUpdate,
+		S2C_LevalRoomUpdate,
+		//S2C_CreateAnswarUpdate,
+		//S2C_CandidateUpdate,
+
+
 		//////// WebRTC
-		
-		C2S_RtcConnect = 1000,
+		C2S_CreateRtc = 1000,
+		S2C_CreateRtc,
+
+
+		C2S_RtcConnect,
 		S2C_RtcConnect,
-		
-		C2S_rtc_restart_ice, 
+
+		C2S_rtc_restart_ice,
 		S2C_rtc_restart_ice,
-		
-		C2S_rtc_info,  
+
+		C2S_rtc_info,
 		S2C_rtc_info,
 
 
@@ -68,13 +90,13 @@ namespace chen {
 		S2C_rtc_consumer_close,
 
 
-		
+
 		C2S_rtc_produce_info,
 		S2C_rtc_produce_info,
 
 		C2S_rtc_produce_get_stats,
 		S2C_rtc_produce_get_stats,
-		
+
 		C2S_rtc_produce_pause,
 		S2C_rtc_produce_pause,
 
@@ -83,7 +105,7 @@ namespace chen {
 
 		C2S_rtc_produce_enable_trace_event,
 		S2C_rtc_produce_enable_trace_event,
-		
+
 		C2S_rtc_consumer_info,
 		S2C_rtc_consumer_info,
 
@@ -136,13 +158,13 @@ namespace chen {
 
 		C2S_rtc_data_consumer_get_buffered_amount,
 		S2C_rtc_data_consumer_get_buffered_amount,
-		
+
 		C2S_rtc_data_consumer_set_buffered_amount_low_threshold,
 		S2C_rtc_data_consumer_set_buffered_amount_low_threshold,
 
 		Msg_Client_Max = 125000,
 
-		
+
 		Msg_Max,
 	};
 

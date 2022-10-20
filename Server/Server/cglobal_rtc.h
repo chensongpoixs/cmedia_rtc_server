@@ -11,6 +11,7 @@ purpose:		cglobal_rtc
 #ifndef _C_GLOBAL_RTC_H_
 #define _C_GLOBAL_RTC_H_
 #include "cnoncopyable.h"
+#include <json/json.h>
 namespace chen {
 	class cglobal_rtc : public cnoncopyable
 	{
@@ -22,6 +23,11 @@ namespace chen {
 	public:
 		  	bool init();
 		  void destory();
+
+
+	public:
+		//RtpCapabilities
+		Json::Value  all_rtp_capabilities();
 	};
 	extern cglobal_rtc g_global_rtc;
 }
