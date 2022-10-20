@@ -17,11 +17,11 @@ namespace chen {
 	bool cmsg_dispatch::init()
 	{
 		
-		_register_msg_handler(S2C_Login, "S2C_Login", &cclient ::handler_s2c_login);
+		/*_register_msg_handler(S2C_Login, "S2C_Login", &cclient ::handler_s2c_login);
  
 		_register_msg_handler(S2C_CreateRoom, "S2C_CreateRoom", &cclient::handler_s2c_create_room);
 		_register_msg_handler(S2C_DestroyRoom, "S2C_DestroyRoom", &cclient::handler_s2c_destroy_room);
-
+*/
 
 		return true;
 	}

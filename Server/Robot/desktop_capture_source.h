@@ -1,12 +1,4 @@
-﻿/***********************************************************************************************
-created: 		2022-08-24
-
-author:			chensong
-
-purpose:		log
-************************************************************************************************/
-
-#ifndef EXAMPLES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_SOURCE_TEST_H_
+﻿#ifndef EXAMPLES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_SOURCE_TEST_H_
 #define EXAMPLES_DESKTOP_CAPTURE_DESKTOP_CAPTURER_SOURCE_TEST_H_
 
 #include "api/video/video_frame.h"

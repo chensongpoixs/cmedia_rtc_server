@@ -1,177 +1,131 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="client">
-      <UniqueIdentifier>{14240d66-51be-4246-84ca-4e1783ac683f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="util">
-      <UniqueIdentifier>{74882663-4497-4485-b2f5-1367d762daa4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="log">
-      <UniqueIdentifier>{93d3f1b5-101d-40b7-9ae5-a1b717fabb40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="time">
-      <UniqueIdentifier>{4b994f13-c359-4f5a-b1fa-5ec18705e190}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="websocket">
-      <UniqueIdentifier>{54e703fa-c2cf-4e05-aa5d-e0bb4bab9afc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="net">
-      <UniqueIdentifier>{3912ed68-c4ee-4bf8-a3a8-304c102a4fa0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="webrtc">
-      <UniqueIdentifier>{414fa8ad-c323-4dfd-bc5c-c647fa63d957}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="config">
-      <UniqueIdentifier>{5f87961b-6db3-4dd8-ac2a-f007937a50ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="msg">
       <UniqueIdentifier>{3daeeba7-eeb6-4d4d-992e-814efdb61ff9}</UniqueIdentifier>
     </Filter>
     <Filter Include="dispatch">
       <UniqueIdentifier>{f13c04e9-56a6-489d-8a79-f92c81ed11a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="handler">
-      <UniqueIdentifier>{350f4b5f-21c6-4442-907b-ef6ae6c11f50}</UniqueIdentifier>
+    <Filter Include="sdp">
+      <UniqueIdentifier>{6c28c4fe-7ab2-47a5-a32c-f04ff853c573}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cclient.h">
-      <Filter>client</Filter>
-    </ClInclude>
-    <ClInclude Include="Robot.h" />
-    <ClInclude Include="cdigit2str.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="casync_log.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="clog.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="clog_color.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="clog_define.h">
-      <Filter>log</Filter>
-    </ClInclude>
-    <ClInclude Include="ctime_api.h">
-      <Filter>time</Filter>
-    </ClInclude>
-    <ClInclude Include="ctime_const.h">
-      <Filter>time</Filter>
-    </ClInclude>
-    <ClInclude Include="csingleton.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="cint2str.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="wsclient.h">
-      <Filter>websocket</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebsocket_mgr.h">
-      <Filter>websocket</Filter>
-    </ClInclude>
-    <ClInclude Include="cnoncopyable.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="cnet_types.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="desktop_capture_source.h">
-      <Filter>webrtc</Filter>
-    </ClInclude>
-    <ClInclude Include="cdesktop_capture.h">
-      <Filter>webrtc</Filter>
-    </ClInclude>
-    <ClInclude Include="ccapturer_tracksource.h">
-      <Filter>webrtc</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="cconfig.h">
-      <Filter>config</Filter>
-    </ClInclude>
-    <ClInclude Include="cbase64.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="build_version.h">
-      <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="cpeer_connnection.h">
-      <Filter>webrtc</Filter>
-    </ClInclude>
-    <ClInclude Include="ccfg.h">
-      <Filter>config</Filter>
-    </ClInclude>
     <ClInclude Include="cmsg_base_id.h">
       <Filter>msg</Filter>
     </ClInclude>
     <ClInclude Include="cmsg_dispatch.h">
       <Filter>dispatch</Filter>
     </ClInclude>
+    <ClInclude Include="build_version.h" />
+    <ClInclude Include="cassertion_macros.h" />
+    <ClInclude Include="casync_log.h" />
+    <ClInclude Include="cbase64.h" />
+    <ClInclude Include="ccapturer_tracksource.h" />
+    <ClInclude Include="ccfg.h" />
+    <ClInclude Include="cclient.h" />
+    <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cdataconsumer.h" />
+    <ClInclude Include="cdesktop_capture.h" />
+    <ClInclude Include="cdevice.h" />
+    <ClInclude Include="cdigit2str.h" />
+    <ClInclude Include="cinput_device.h" />
+    <ClInclude Include="cinput_device_event.h" />
+    <ClInclude Include="cint_point.h" />
+    <ClInclude Include="cint2str.h" />
+    <ClInclude Include="clog.h" />
+    <ClInclude Include="clog_color.h" />
+    <ClInclude Include="clog_define.h" />
+    <ClInclude Include="cmediasoup_mgr.h" />
+    <ClInclude Include="cnet_types.h" />
+    <ClInclude Include="cnoncopyable.h" />
+    <ClInclude Include="cosd_util.h" />
+    <ClInclude Include="cproducer.h" />
+    <ClInclude Include="cprotocol.h" />
+    <ClInclude Include="crecv_transport.h" />
+    <ClInclude Include="csend_transport.h" />
+    <ClInclude Include="csession_description.h" />
+    <ClInclude Include="csingleton.h" />
+    <ClInclude Include="ctime_api.h" />
+    <ClInclude Include="ctime_const.h" />
+    <ClInclude Include="ctransport.h" />
+    <ClInclude Include="cwebscoket_connection.h" />
+    <ClInclude Include="cwebsocket_mgr.h" />
+    <ClInclude Include="cwebsocket_protoo.h" />
+    <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="cwindow_util.h" />
+    <ClInclude Include="desktop_capture_source.h" />
+    <ClInclude Include="external_video_encoder_factory.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="mediasoupclient.hpp" />
+    <ClInclude Include="ortc.hpp" />
+    <ClInclude Include="scalabilityMode.hpp" />
+    <ClInclude Include="sdptransform.hpp" />
+    <ClInclude Include="Utils.hpp" />
+    <ClInclude Include="wsclient.h" />
+    <ClInclude Include="sdp\MediaSection.hpp">
+      <Filter>sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="sdp\RemoteSdp.hpp">
+      <Filter>sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="sdp\Utils.hpp">
+      <Filter>sdp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cclient.cpp">
-      <Filter>client</Filter>
-    </ClCompile>
-    <ClCompile Include="Robot.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="cdigit2str.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="casync_log.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="clog.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="clog_color.cpp">
-      <Filter>log</Filter>
-    </ClCompile>
-    <ClCompile Include="ctime_api.cpp">
-      <Filter>time</Filter>
-    </ClCompile>
-    <ClCompile Include="cint2str.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="wsclient.cpp">
-      <Filter>websocket</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebsocket_mgr.cpp">
-      <Filter>websocket</Filter>
-    </ClCompile>
-    <ClCompile Include="cnet_types.cpp">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="desktop_capture_source.cc">
-      <Filter>webrtc</Filter>
-    </ClCompile>
-    <ClCompile Include="cdesktop_capture.cpp">
-      <Filter>webrtc</Filter>
-    </ClCompile>
-    <ClCompile Include="ccapturer_tracksource.cpp">
-      <Filter>webrtc</Filter>
-    </ClCompile>
-    <ClCompile Include="cconfig.cpp">
-      <Filter>config</Filter>
-    </ClCompile>
-    <ClCompile Include="cbase64.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="cpeer_connnection.cpp">
-      <Filter>webrtc</Filter>
-    </ClCompile>
-    <ClCompile Include="ccfg.cpp">
-      <Filter>config</Filter>
-    </ClCompile>
     <ClCompile Include="cmsg_dispatch.cpp">
       <Filter>dispatch</Filter>
     </ClCompile>
-    <ClCompile Include="cclient_handler.cpp">
-      <Filter>handler</Filter>
+    <ClCompile Include="casync_log.cpp" />
+    <ClCompile Include="cbase64.cpp" />
+    <ClCompile Include="ccapturer_tracksource.cpp" />
+    <ClCompile Include="ccfg.cpp" />
+    <ClCompile Include="cclient.cpp" />
+    <ClCompile Include="cclient_handler.cpp" />
+    <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="cdataconsumer.cpp" />
+    <ClCompile Include="cdesktop_capture.cpp" />
+    <ClCompile Include="cdevice.cpp" />
+    <ClCompile Include="cdigit2str.cpp" />
+    <ClCompile Include="cinput_device.cpp" />
+    <ClCompile Include="cinput_device_event.cpp" />
+    <ClCompile Include="cint2str.cpp" />
+    <ClCompile Include="clog.cpp" />
+    <ClCompile Include="clog_color.cpp" />
+    <ClCompile Include="cmediasoup_mgr.cpp" />
+    <ClCompile Include="cnet_types.cpp" />
+    <ClCompile Include="cosd_util.cpp" />
+    <ClCompile Include="cproducer.cpp" />
+    <ClCompile Include="crecv_transport.cpp" />
+    <ClCompile Include="csend_transport.cpp" />
+    <ClCompile Include="csession_description.cpp" />
+    <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="ctransport.cpp" />
+    <ClCompile Include="cwebscoket_connection.cpp" />
+    <ClCompile Include="cwebsocket_mgr.cpp" />
+    <ClCompile Include="cwebsocket_protoo.cpp" />
+    <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="cwindow_util.cpp" />
+    <ClCompile Include="desktop_capture_source.cc" />
+    <ClCompile Include="external_video_encoder_factory.cc" />
+    <ClCompile Include="grammar.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mediasoupclient.cpp" />
+    <ClCompile Include="ortc.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="scalabilityMode.cpp" />
+    <ClCompile Include="writer.cpp" />
+    <ClCompile Include="wsclient.cpp" />
+    <ClCompile Include="sdp\MediaSection.cpp">
+      <Filter>sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="sdp\RemoteSdp.cpp">
+      <Filter>sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="sdp\Utils.cpp">
+      <Filter>sdp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,5 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="build_version.bat" />
+    <None Include="client.cfg" />
+    <None Include="cow.ive" />
   </ItemGroup>
 </Project>

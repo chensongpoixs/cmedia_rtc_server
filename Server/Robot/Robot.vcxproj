@@ -98,7 +98,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>WEBRTC_WIN=1;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;USE_AURA=1;NO_TCMALLOC;FULL_SAFE_BROWSING;SAFE_BROWSING_CSD;SAFE_BROWSING_DB_LOCAL;CHROMIUM_BUILD;_HAS_EXCEPTIONS=0;__STD_C;_CRT_RAND_S;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_ATL_NO_OPENGL;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;PSAPI_VERSION=2;_SECURE_ATL;_USING_V110_SDK71_;WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_UNICODE;UNICODE;NTDDI_VERSION=NTDDI_WIN10_RS2;_WIN32_WINNT=0x0A00;WINVER=0x0A00;_DEBUG;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;_HAS_ITERATOR_DEBUGGING=0;WEBRTC_ENABLE_PROTOBUF=1;WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;RTC_ENABLE_VP9;HAVE_SCTP;WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1;ABSL_ALLOCATOR_NOTHROW=1;GTEST_API_=;GTEST_HAS_POSIX_RE=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;GTEST_HAS_ABSL=1;HAVE_WEBRTC_VIDEO;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>./sdp</AdditionalIncludeDirectories>
@@ -142,33 +142,60 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="build_version.bat" />
+    <None Include="client.cfg" />
+    <None Include="cow.ive" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="build_version.h" />
+    <ClInclude Include="cassertion_macros.h" />
     <ClInclude Include="casync_log.h" />
     <ClInclude Include="cbase64.h" />
     <ClInclude Include="ccapturer_tracksource.h" />
     <ClInclude Include="ccfg.h" />
     <ClInclude Include="cclient.h" />
     <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cdataconsumer.h" />
     <ClInclude Include="cdesktop_capture.h" />
+    <ClInclude Include="cdevice.h" />
     <ClInclude Include="cdigit2str.h" />
+    <ClInclude Include="cinput_device.h" />
+    <ClInclude Include="cinput_device_event.h" />
     <ClInclude Include="cint2str.h" />
+    <ClInclude Include="cint_point.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
+    <ClInclude Include="cmediasoup_mgr.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnet_types.h" />
     <ClInclude Include="cnoncopyable.h" />
-    <ClInclude Include="cpeer_connnection.h" />
+    <ClInclude Include="cosd_util.h" />
+    <ClInclude Include="cproducer.h" />
+    <ClInclude Include="cprotocol.h" />
+    <ClInclude Include="crecv_transport.h" />
+    <ClInclude Include="csend_transport.h" />
+    <ClInclude Include="csession_description.h" />
     <ClInclude Include="csingleton.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
+    <ClInclude Include="ctransport.h" />
+    <ClInclude Include="cwebscoket_connection.h" />
     <ClInclude Include="cwebsocket_mgr.h" />
+    <ClInclude Include="cwebsocket_protoo.h" />
+    <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="cwindow_util.h" />
     <ClInclude Include="desktop_capture_source.h" />
+    <ClInclude Include="external_video_encoder_factory.h" />
     <ClInclude Include="json.hpp" />
-    <ClInclude Include="Robot.h" />
+    <ClInclude Include="mediasoupclient.hpp" />
+    <ClInclude Include="ortc.hpp" />
+    <ClInclude Include="scalabilityMode.hpp" />
+    <ClInclude Include="sdptransform.hpp" />
+    <ClInclude Include="sdp\MediaSection.hpp" />
+    <ClInclude Include="sdp\RemoteSdp.hpp" />
+    <ClInclude Include="sdp\Utils.hpp" />
+    <ClInclude Include="Utils.hpp" />
     <ClInclude Include="wsclient.h" />
   </ItemGroup>
   <ItemGroup>
@@ -179,19 +206,42 @@
     <ClCompile Include="cclient.cpp" />
     <ClCompile Include="cclient_handler.cpp" />
     <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="cdataconsumer.cpp" />
     <ClCompile Include="cdesktop_capture.cpp" />
+    <ClCompile Include="cdevice.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
+    <ClCompile Include="cinput_device.cpp" />
+    <ClCompile Include="cinput_device_event.cpp" />
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
+    <ClCompile Include="cmediasoup_mgr.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnet_types.cpp" />
-    <ClCompile Include="cpeer_connnection.cpp" />
+    <ClCompile Include="cosd_util.cpp" />
+    <ClCompile Include="cproducer.cpp" />
+    <ClCompile Include="crecv_transport.cpp" />
+    <ClCompile Include="csend_transport.cpp" />
+    <ClCompile Include="csession_description.cpp" />
     <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="ctransport.cpp" />
+    <ClCompile Include="cwebscoket_connection.cpp" />
     <ClCompile Include="cwebsocket_mgr.cpp" />
+    <ClCompile Include="cwebsocket_protoo.cpp" />
+    <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="cwindow_util.cpp" />
     <ClCompile Include="desktop_capture_source.cc" />
+    <ClCompile Include="external_video_encoder_factory.cc" />
+    <ClCompile Include="grammar.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Robot.cpp" />
+    <ClCompile Include="mediasoupclient.cpp" />
+    <ClCompile Include="ortc.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="scalabilityMode.cpp" />
+    <ClCompile Include="sdp\MediaSection.cpp" />
+    <ClCompile Include="sdp\RemoteSdp.cpp" />
+    <ClCompile Include="sdp\Utils.cpp" />
+    <ClCompile Include="writer.cpp" />
     <ClCompile Include="wsclient.cpp" />
   </ItemGroup>
   <ItemGroup>

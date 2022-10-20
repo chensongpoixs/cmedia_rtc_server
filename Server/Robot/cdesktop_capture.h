@@ -1,10 +1,3 @@
-/***********************************************************************************************
-created: 		2022-08-24
-
-author:			chensong
-
-purpose:		log
-************************************************************************************************/
 #ifndef _C_DESKTOP_CAPTURE_H_
 #define _C_DESKTOP_CAPTURE_H_
 #include "api/video/video_frame.h"
@@ -13,16 +6,20 @@ purpose:		log
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "api/video/i420_buffer.h"
-
+#include "cclient.h"
 
 #include <thread>
 #include <atomic>
+#include <mutex>
 namespace chen {
 
 
-    class DesktopCapture  : public VideoCaptureSource, 
+    class DesktopCapture  :
         public webrtc::DesktopCapturer::Callback,
         public rtc::VideoSinkInterface<webrtc::VideoFrame> {
+    private:
+        typedef std::mutex                      clock_type;
+        typedef std::lock_guard<clock_type>     clock_guard;
     public:
         static DesktopCapture* Create(size_t target_fps, size_t capture_screen_index);
 
@@ -33,6 +30,7 @@ namespace chen {
         void StartCapture();
         void StopCapture();
 
+        void set_clinet_ptr(cclient* ptr);
     private:
         DesktopCapture();
 
@@ -45,8 +43,6 @@ namespace chen {
         void OnCaptureResult(webrtc::DesktopCapturer::Result result,
             std::unique_ptr<webrtc::DesktopFrame> frame) override;
 
-	private:
-
         std::unique_ptr<webrtc::DesktopCapturer> dc_;
 
         size_t fps_;
@@ -56,6 +52,8 @@ namespace chen {
         std::atomic_bool start_flag_;
 
         rtc::scoped_refptr<webrtc::I420Buffer> i420_buffer_;
+        clock_type              m_lock;
+        cclient* m_client_ptr;
     };
 
 }

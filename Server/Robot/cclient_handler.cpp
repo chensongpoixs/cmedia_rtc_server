@@ -33,7 +33,7 @@ namespace chen {
 
 
 
-	bool cclient::handler_s2c_login(nlohmann::json & msg)
+	/*bool cclient::handler_s2c_login(nlohmann::json & msg)
 	{
 		WEBSOCKET_CHECK_RESPONSE();
 		if (EMedia_Loading != m_media_session_stats)
@@ -66,6 +66,6 @@ namespace chen {
 	{
 		WEBSOCKET_CHECK_RESPONSE();
 		return true;
-	}
+	}*/
 
 }

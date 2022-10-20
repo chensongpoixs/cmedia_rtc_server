@@ -13,7 +13,7 @@
 //using namespace logging;
 #include "cnet_types.h"
 namespace chen {
-	//using namespace rtc;
+	using namespace rtc;
 	cconfig::cconfig():m_configs(NULL), m_values_size(0)
 	{
 	}

@@ -1,3 +1,10 @@
+﻿/***********************************************************************************************
+created: 		2019-03-02
+
+author:			chensong
+
+purpose:		log
+************************************************************************************************/
 #ifndef C_LOG_DEFINE_H
 #define C_LOG_DEFINE_H
 
@@ -22,6 +29,19 @@ namespace chen
 		ELogName_DateTime,
 		ELogName_AutoDate,
 	};
+
+
+	enum ELogStorageType
+	{
+		ELogStoragePost				= 0X01, 
+		ELogStorageFile				= 0X02, 
+		ELogStorageFilePost			= 0X03, 
+		ELogStorageScreen			= 0X04, 
+		ELogStorageScreenPost		= 0X05, 
+		ELogStorageScreenFile		= 0X06, 
+		ELogStorageScreenFilePost	= 0X07, 
+	};
+
 }//namespace chen
 
 

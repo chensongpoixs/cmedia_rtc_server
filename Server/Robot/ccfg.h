@@ -13,32 +13,28 @@
 namespace chen {
 	enum ECNGIndex
 	{
-		ECI_WebSocketHost = 0,
-		ECI_WebSocketPort,
-		ECI_WebSocketReconnect,
-		ECI_Room_Name,
-		ECI_Client_Name,
-		/*ECI_MediaSoup_Host = 0,
+		ECI_MediaSoup_Host = 0,
 		ECI_MediaSoup_Http_Port,
 		ECI_MediaSoup_WebSocket_Port,
-		
+		ECI_Room_Name,
+		ECI_Client_Name,
 		ECI_Video_Fps,
 		ECI_WebSocket_Reconnect,
-		ECI_ReconnectWait,*/
-		//ECI_ProduceVideo,
-		//ECI_OsgWebrtcFrame,
-		//ECI_DesktopCapture,
-		//ECI_WebSocketTimers, //断线从新连接的次数
-		//ECI_RtcAvgRate, // 
-		//ECI_RtcMaxRate,
-		//ECI_RtcFrames,
-		//ECI_EncoderVideoGop,
-		//ECI_LogLevel,
-		//ECI_EncoderArraySize,
-		//ECI_EncoderPreset,
-		//ECI_EncoderPFrameCount,
-		//ECI_EncoderLowLatency,
-		//ECI_GpuVideoLock,
+		ECI_ReconnectWait,
+		ECI_ProduceVideo,
+		ECI_OsgWebrtcFrame,
+		ECI_DesktopCapture,
+		ECI_WebSocketTimers, //断线从新连接的次数
+		ECI_RtcAvgRate, // 
+		ECI_RtcMaxRate,
+		ECI_RtcFrames,
+		ECI_EncoderVideoGop,
+		ECI_LogLevel,
+		ECI_EncoderArraySize,
+		ECI_EncoderPreset,
+		ECI_EncoderPFrameCount,
+		ECI_EncoderLowLatency,
+		ECI_GpuVideoLock,
 	//	ECI_Time_Zone,
 	//	ECI_Time_Adjust,
 	//	ECI_Log_DB_Host,

@@ -1,59 +1,52 @@
-/***********************************************************************************************
-created: 		2022-08-24
-
-author:			chensong
-
-purpose:		log
-************************************************************************************************/
 #include <iostream>
 #include <csignal> // sigsuspend()
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <thread>
-#include <chrono>
-#include "Robot.h"
-void Stop(int i)
+#include "cmediasoup_mgr.h"
+
+
+
+ 
+//cmediasoup::cmediasoup_mgr g_mediasoup_mgr;
+
+
+bool stoped = false;
+
+void signalHandler(int signum)
 {
-	chen::g_robot.stop();
+	stoped = true;
+	
 }
 
-void RegisterSignal()
+
+
+int  main(int argc, char *argv[])
 {
-	signal(SIGINT, Stop);
-	signal(SIGTERM, Stop);
+	signal(SIGINT, signalHandler);
+	signal(SIGTERM, signalHandler);
+	
+	cmediasoup::cmediasoup_mgr::global_init();
 
-}
+	cmediasoup::cmediasoup_mgr g_mediasoup_mgr1;
+	//cmediasoup::cmediasoup_mgr g_mediasoup_mgr2;
+	g_mediasoup_mgr1.init(5);
+	//g_mediasoup_mgr2.init(5);
 
-int main(int argc, char* argv[])
-{
-	 
-	RegisterSignal();
-
-	const char* config_filename = "client.cfg";
-	if (argc > 1)
+	//g_mediasoup_mgr.set_mediasoup_status_callback(&mediasoup_callback);
+	/*
+	const char* mediasoupIp, uint16_t port
+		, const char* roomName, const char* clientName
+	
+	*/
+	g_mediasoup_mgr1.startup("127.0.0.1", 8888, "chensong", "chensong");
+	//g_mediasoup_mgr2.startup("127.0.0.1", 8888, "chensong2", "chensong2");
+	while (!stoped)
 	{
-		config_filename = argv[1];
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
-	const char* log_path = "./log";
-	if (argc > 2)
-	{
-		log_path = argv[2];
-	}
-	bool init = chen::g_robot.init(log_path, config_filename);
-
-	if (init)
-	{
-		init = chen::g_robot.Loop();
-	}
-
-
-	chen::g_robot.destroy();
-	if (!init)
-	{
-		return 1;
-	}
+	g_mediasoup_mgr1.destroy();
+	//g_mediasoup_mgr2.destroy();
+	cmediasoup::cmediasoup_mgr::global_destroy();
 	return 0;
-
-
 }
