@@ -248,7 +248,7 @@ namespace chen {
 				// Create a ICE server.  这边创建ICE 协商    STURN 服务器操作  验证用户合法性   
 				// 1. 验证用户名（16）
 				// 2. 验证密码 （32）
-			m_ice_server_ptr = new RTC::IceServer(this, s_crypto_random.GetRandomString(16), s_crypto_random.GetRandomString(16));
+			m_ice_server_ptr = new RTC::IceServer(this, s_crypto_random.GetRandomString(16), s_crypto_random.GetRandomString(32));
 			if (!m_ice_server_ptr)
 			{
 				ERROR_EX_LOG("alloc ice server failed !!!");

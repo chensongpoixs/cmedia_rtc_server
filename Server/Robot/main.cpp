@@ -39,7 +39,7 @@ int  main(int argc, char *argv[])
 		, const char* roomName, const char* clientName
 	
 	*/
-	g_mediasoup_mgr1.startup("127.0.0.1", 8888, "chensong", "chensong");
+	g_mediasoup_mgr1.startup("127.0.0.1", 9500, "chensong", "chensong");
 	//g_mediasoup_mgr2.startup("127.0.0.1", 8888, "chensong2", "chensong2");
 	while (!stoped)
 	{

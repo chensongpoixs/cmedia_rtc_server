@@ -14,6 +14,8 @@ Copyright boost
 #include "cmsg_dispatch.h"
 #include "cwan_server.h"
 #include "cguard_reply.h"
+#include "cshare_proto_error.h"
+#include <json/json.h>
 namespace chen {
 	cwebrtc_mgr g_global_webrtc_mgr;
 	cwebrtc_mgr::cwebrtc_mgr()
@@ -60,10 +62,122 @@ namespace chen {
 
 		//Json::Value reply_createRtc;
 		CGUARD_REPLY(S2C_CreateRtc, session_id);
-		transport_ptr->reply_create_webrtc(reply );
+		reply["result"] = 0;
+		transport_ptr->reply_create_webrtc(reply["data"] );
 		//g_wan_server.send_msg(session_id, S2C_CreateRtc, reply_createRtc.asCString().c_str());
 		return true;
 	}
+
+
+	bool cwebrtc_mgr::handler_connect_webrtc(uint64 session_id, Json::Value& value)
+	{
+		CGUARD_REPLY(S2C_RtcConnect, session_id);
+		if (!value["data"].isMember("transportId"))
+		{
+			reply["result"] = EShareProtoNotTransportId;
+
+			return false;
+		}
+		std::string transportId = value["data"]["transportId"].asCString();
+
+		NORMAL_EX_LOG("[transportId = %s]", transportId.c_str());
+
+		Json::Value dtlsParameters = value["data"]["transportId"];
+
+		
+		if (!value["data"].isMember("fingerprints"))
+		{
+			reply["result"] = EShareProtoNotFindDtlsFingerprints;
+			return false;
+		}
+		RTC::DtlsTransport::Fingerprint dtlsRemoteFingerprint;
+		RTC::DtlsTransport::Role dtlsRemoteRole;
+		if (!value["data"].isMember("role"))
+		{
+			//reply["result"] = EShareProtoNotFindDtlsParametersRole;
+			//return false;
+			dtlsRemoteRole = RTC::DtlsTransport::StringToRole(value["data"]["role"].asCString());
+
+			if (dtlsRemoteRole == RTC::DtlsTransport::Role::NONE)
+			{
+				ERROR_EX_LOG("invalid dtlsParameters.role value");
+				reply["result"] = EShareProtoDtlsParametersRoleTypeError;
+				return false;
+			}
+		}
+		else
+		{
+			dtlsRemoteRole = RTC::DtlsTransport::Role::AUTO;
+		}
+		  //Json::Value dtlsFingerPrint = dtlsParameters["fingerprints"];
+		if (value["data"]["fingerprints"].size() < 1)
+		{
+			reply["result"] = EShareProtoNotFindDtlsFingerprints;
+			return false;
+		}
+		for (int i = 0; i < value["data"]["fingerprints"].size(); ++i)
+		{
+			// check 
+			if (!value["data"]["fingerprints"][i].isMember("algorithm"))
+			{
+				WARNING_EX_LOG("algorithm");
+				continue;
+			}
+			if (!value["data"]["fingerprints"][i].isMember("value"))
+			{
+				WARNING_EX_LOG("value");
+				continue;
+			}
+			dtlsRemoteFingerprint.algorithm = RTC::DtlsTransport::GetFingerprintAlgorithm(value["data"]["fingerprints"][i]["algorithm"].asString());
+			dtlsRemoteFingerprint.value = value["data"]["fingerprints"][i]["value"].asString() ;
+			break;
+		}
+
+		std::unordered_map<std::string, cwebrtc_transport*>::iterator iter =  m_webrtc_transport_map.find(transportId);
+		if (iter == m_webrtc_transport_map.end())
+		{
+			reply["result"] = EShareProtoNotTransportIdRtcObject;
+			return false;
+		}
+
+		if (!iter->second->handler_webrtc_connect(dtlsRemoteRole, dtlsRemoteFingerprint))
+		{
+			reply["result"] = EShareProtoRtcConnectStatusError;
+			return false;
+		}
+		reply["data"]["dtlsLocalRole"] = iter->second->get_role_name();
+
+		return true;
+	}
+
+
+	bool cwebrtc_mgr::handler_webrtc_produce(uint64 session_id, Json::Value& value)
+	{
+		CGUARD_REPLY(S2C_RtcProduce, session_id);
+		if (!value["data"].isMember("transportId"))
+		{
+			reply["result"] = EShareProtoNotTransportId;
+
+			return false;
+		}
+		std::string transportId = value["data"]["transportId"].asCString();
+
+		NORMAL_EX_LOG("[transportId = %s]", transportId.c_str());
+		std::unordered_map<std::string, cwebrtc_transport*>::iterator iter = m_webrtc_transport_map.find(transportId);
+		if (iter == m_webrtc_transport_map.end())
+		{
+			reply["result"] = EShareProtoNotTransportIdRtcObject;
+			return false;
+		}
+
+		/*if (!iter->second->handler_webrtc_connect(dtlsRemoteRole, dtlsRemoteFingerprint))
+		{
+			reply["result"] = EShareProtoRtcConnectStatusError;
+			return false;
+		}*/
+		return true;
+	}
+
 	bool cwebrtc_mgr::handler_destroy_webrtc(uint64 session_id, Json::Value & value)
 	{
 		// client tranid 

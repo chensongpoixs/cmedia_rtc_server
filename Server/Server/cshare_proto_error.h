@@ -20,6 +20,11 @@ namespace chen {
 		EShareProtoSdp, // SDP info 
 		EShareProtoParseSdpFailed, // 解析SDP失败 
 		EShareProtoCreateRoomFailed,
+		EShareProtoNotTransportId,
+		EShareProtoNotTransportIdRtcObject,
+		EShareProtoRtcConnectStatusError,
+		EShareProtoDtlsParametersRoleTypeError,
+		EShareProtoNotFindDtlsFingerprints,
 	};
 }
 

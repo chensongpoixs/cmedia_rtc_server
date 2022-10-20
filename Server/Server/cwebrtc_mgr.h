@@ -27,6 +27,13 @@ namespace chen
 	public:
 		bool handler_info(uint64 session_id,  Json::Value & value);
 		bool handler_create_webrtc(uint64 session_id, Json::Value & value);
+
+
+		bool handler_connect_webrtc(uint64 session_id, Json::Value& value);
+
+		bool handler_webrtc_produce(uint64 session_id, Json::Value& value);
+
+
 		bool handler_destroy_webrtc(uint64 session_id, Json::Value& value);
 		/////////////////////////////////
 		bool handler_webrtc(uint64 session_id, Json::Value& value);

@@ -286,6 +286,7 @@ namespace chen {
 			codec["parameters"]["x-google-start-bitrate"] = 1000;
 			codec["parameters"]["x-google-max-bitrate"] = 28000;
 			codec["parameters"]["x-google-min-bitrate"] = 5500;
+			codec["preferredPayloadType"] = 100;
 			{
 				Json::Value rtcpFeedback;
 				Json::Value typeobj;

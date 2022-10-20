@@ -156,7 +156,7 @@ namespace mediasoupclient
 	  const json* codecOptions)
 	{
 	 
-
+		std::string test = iceCandidates.dump().c_str();
 		auto* mediaSection = new AnswerMediaSection(
 		  this->iceParameters,
 		  this->iceCandidates,

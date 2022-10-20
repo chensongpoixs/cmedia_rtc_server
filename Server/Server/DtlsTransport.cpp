@@ -881,6 +881,7 @@ namespace RTC
 			fingerprints["algorithm"] = RTC::DtlsTransport::GetFingerprintAlgorithmString(fingerprint.algorithm);;
 			//value["algorithm"]=RTC::DtlsTransport::GetFingerprintAlgorithmString(fingerprint.algorithm);
 			fingerprints["value"] = fingerprint.value;
+			value["fingerprints"].append(fingerprints);
 		}
 		
 		return true;

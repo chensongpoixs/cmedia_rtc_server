@@ -101,6 +101,7 @@ namespace RTC
 
 	bool IceCandidate::reply(Json::Value & value)
 	{
+		
 		// Add foundation.
 		value["foundation"] = this->foundation;
 

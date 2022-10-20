@@ -11,6 +11,7 @@
 #include "csingleton.h"
 //#include "cdesktop_capture.h"
 #include "cmediasoup_mgr.h"
+#include "cmsg_base_id.h"
 namespace chen {
 	class DesktopCapture;
 	class csend_transport;
@@ -111,15 +112,21 @@ namespace chen {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 		// 客户端请求服务器
 	public:
-		bool _send_router_rtpcapabilities();
+		bool _send_login();
 		bool _send_create_webrtc_transport();
 		bool _send_connect_webrtc_transport(nlohmann::json dtlsparameters);
 		bool _send_produce_webrtc_transport();
 
 		bool _send_join_room();
 	public:
-		bool _server_RouterRtpCapabilities(const  nlohmann::json & msg);
-		bool _server_create_webrtc_transport(const  nlohmann::json & msg);
+		bool handler_rtp_capabilities(const  nlohmann::json & msg);
+		bool handler_Login(const  nlohmann::json & msg);
+		bool handler_create_webrtc_transport(const  nlohmann::json & msg);
+
+		bool handler_connect_webrtc_transport(const  nlohmann::json & msg);
+
+		bool handler_produce_webrtc_transport(const  nlohmann::json & msg);
+		//bool _server_create_webrtc_transport(const  nlohmann::json & msg);
 		bool _server_connect_webrtc_transport(const  nlohmann::json & msg);
 
 		bool _server_recv_connect_webrtc_transport(const  nlohmann::json & msg);
@@ -145,7 +152,7 @@ namespace chen {
 		void _presssmsg(std::list<std::string> & msgs);
 
 	private:
-		bool _send_request_mediasoup( const std::string& method, const nlohmann::json & data);
+		bool _send_request_mediasoup(EMsgBaseID msg_id, const nlohmann::json & data);
 		bool _reply_server(uint64 id);
 
 	private:
@@ -170,7 +177,7 @@ namespace chen {
 		rtc::scoped_refptr<crecv_transport>	 m_recv_transport ;
 		std::map<uint64, client_protoo_msg> m_client_protoo_msg_call;
 		std::map<std::string, server_protoo_msg> m_server_protoo_msg_call;
-		std::map < std::string, server_protoo_msg> m_server_notification_protoo_msg_call;
+		std::map < EMsgBaseID, server_protoo_msg> m_server_notification_protoo_msg_call;
 
 		time_t							m_async_data_consumer_t;
 

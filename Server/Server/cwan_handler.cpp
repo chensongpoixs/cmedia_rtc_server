@@ -124,7 +124,7 @@ namespace chen {
 
 		NORMAL_EX_LOG("%s Login OK!!", m_user_name.c_str());
 		send_msg(S2C_Login, EShareProtoOk, reply);
-		 send_msg(S2C_RtpCapabilities, 0, g_global_rtc.all_rtp_capabilities());
+		 send_msg(S2C_RtpCapabilitiesUpdate, 0, g_global_rtc.all_rtp_capabilities());
 		return true;
 	}
 
@@ -199,6 +199,16 @@ namespace chen {
 	bool   cwan_session::handler_create_rtc(Json::Value& value)
 	{
 		g_global_webrtc_mgr.handler_create_webrtc(m_session_id, value);
+		return true;
+	}
+
+	bool   cwan_session::handler_connect_rtc(Json::Value& value)
+	{
+		g_global_webrtc_mgr.handler_connect_webrtc(m_session_id, value);
+		return true;
+	}
+	bool   cwan_session::handler_rtc_produce(Json::Value& value)
+	{
 		return true;
 	}
 }

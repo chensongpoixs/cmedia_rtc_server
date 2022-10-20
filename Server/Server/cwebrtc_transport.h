@@ -73,7 +73,7 @@ namespace chen
 	public:
 
 		bool handler_webrtc_sdp(const std::string & sdp);
-		bool handler_webrtc_connect();
+		bool handler_webrtc_connect(RTC::DtlsTransport::Role role, RTC::DtlsTransport::Fingerprint  Fingerprint);
 		/////////////////////////
 		bool handler_connect(uint64 session_id, Json::Value & value);
 		bool handler_restart_ice(uint64 session_id, Json::Value & value);
@@ -123,7 +123,7 @@ namespace chen
 	public:
 		void reply_info(uint64 session_id);
 
-
+		std::string get_role_name() const;
 
 		bool reply_create_webrtc(Json::Value & value);
 

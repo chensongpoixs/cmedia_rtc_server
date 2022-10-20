@@ -39,7 +39,8 @@ namespace chen {
 		S2C_WebrtcMessageUpdate = 500,
 		S2C_JoinRoomUpdate,
 		S2C_LevalRoomUpdate,
-		S2C_RtpCapabilities,
+
+		S2C_RtpCapabilitiesUpdate,
 		//S2C_CreateAnswarUpdate,
 		//S2C_CandidateUpdate,
 
@@ -52,6 +53,10 @@ namespace chen {
 		C2S_RtcConnect,
 		S2C_RtcConnect,
 		
+		C2S_RtcProduce,
+		S2C_RtcProduce,
+
+
 		C2S_rtc_restart_ice, 
 		S2C_rtc_restart_ice,
 		

@@ -116,7 +116,7 @@ namespace mediasoupclient
 		  const json* codecOptions)
 		  : MediaSection(iceParameters, iceCandidates)
 		{
-			 
+			
 			auto type = offerMediaObject["type"].get<std::string>();
 
 			this->mediaObject["mid"]        = offerMediaObject["mid"];

@@ -108,9 +108,9 @@ namespace chen {
 		return true;
 	}
 
-	bool cwebrtc_transport::handler_webrtc_connect()
+	bool cwebrtc_transport::handler_webrtc_connect(RTC::DtlsTransport::Role role, RTC::DtlsTransport::Fingerprint  Fingerprint)
 	{
-		const RTC::DtlsTransport::Fingerprint& finger_print = m_client_rtc_sdp.get_finger_print();
+		//const RTC::DtlsTransport::Fingerprint& finger_print = m_client_rtc_sdp.get_finger_print();
 
 		if (m_connect_called)
 		{
@@ -118,11 +118,34 @@ namespace chen {
 			return false;
 		}
 		// default 就服务器模式
-		this->m_dtlsRole = RTC::DtlsTransport::Role::SERVER;
+		//this->m_dtlsRole = RTC::DtlsTransport::Role::SERVER;
+		
+		// Set local DTLS role.
+		switch (role)
+		{
+		case RTC::DtlsTransport::Role::CLIENT:
+		{
+			this->m_dtlsRole = RTC::DtlsTransport::Role::SERVER;
+
+			break;
+		}
+		// If the peer has role "auto" we become "client" since we are ICE controlled.
+		case RTC::DtlsTransport::Role::SERVER:
+		case RTC::DtlsTransport::Role::AUTO:
+		{
+			this->m_dtlsRole = RTC::DtlsTransport::Role::CLIENT;
+
+			break;
+		}
+		case RTC::DtlsTransport::Role::NONE:
+		{
+			ERROR_EX_LOG("invalid remote DTLS role");
+		}
+		}
 		this->m_connect_called = true;
 
 		// Pass the remote fingerprint to the DTLS transport.
-		if (this->m_dtls_transport_ptr->SetRemoteFingerprint(finger_print))
+		if (this->m_dtls_transport_ptr->SetRemoteFingerprint(Fingerprint))
 		{
 			// If everything is fine, we may run the DTLS transport if ready.
 			MayRunDtlsTransport();
@@ -755,6 +778,32 @@ namespace chen {
 		//reply_rtc_info(reply);
 	}
 
+	std::string cwebrtc_transport::get_role_name() const
+	{
+		switch (this->m_dtlsRole)
+		{
+			case RTC::DtlsTransport::Role::CLIENT:
+			{
+				return "client";
+				break;
+			}
+
+			case RTC::DtlsTransport::Role::SERVER:
+			{
+				return  "server";
+				break;
+			}
+
+			default:
+			{
+				ERROR_EX_LOG("not find dtlsRole type  = %d", this->m_dtlsRole);
+				return "";
+			 
+			}
+		}
+		return std::string();
+	}
+
 	bool cwebrtc_transport::reply_create_webrtc(Json::Value & value)
 	{
 
@@ -774,7 +823,9 @@ namespace chen {
 		//Json::Value ice_candidates;
 		for ( RTC::IceCandidate & ice: m_ice_canidates)
 		{
-			ice.reply(value["iceCandidates"]);
+			Json::Value iceCandidate;
+			ice.reply(iceCandidate);
+			value["iceCandidates"].append(iceCandidate);
 		}
 		 
 		// DTLS Parameters
