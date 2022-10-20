@@ -95,9 +95,9 @@ namespace RTC
 			return !(*this == other);
 		}
 
-		/*void SetMimeType(const std::string& mimeType);
+		void SetMimeType(const std::string& mimeType);
 
-		void UpdateMimeType();*/
+		//void UpdateMimeType();
 
 		const std::string& ToString() const
 		{
@@ -171,6 +171,7 @@ namespace RTC
 	{
 	public:
 		explicit RtpCodecParameters();// {}//= default;
+		bool parse(Json::Value & data);
 		//explicit RtpCodecParameters(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
@@ -279,7 +280,7 @@ namespace RTC
 	public:
 		explicit RtpParameters();
 		//{}// = default;
-		//explicit RtpParameters(Json::Value& data);
+		  bool parse(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;*/
 		const RTC::RtpCodecParameters* GetCodecForEncoding(RtpEncodingParameters& encoding) const;

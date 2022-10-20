@@ -15,7 +15,9 @@ purpose:		cwebrtc_transport_handler
 #include <map>                                                   // std::multimap
 #include <sstream>                                               // std::ostringstream
 #include "ccrypto_random.h"
-
+#include "cmsg_base_id.h"
+#include "cguard_reply.h"
+#include "cshare_proto_error.h"
 #include "Producer.hpp"
 namespace chen {
 	bool cwebrtc_transport::handler_webrtc_sdp(const std::string & sdp)
@@ -297,8 +299,26 @@ namespace chen {
 	}
 	bool cwebrtc_transport::handler_produce(uint64 session_id, Json::Value & value)
 	{
+		CGUARD_REPLY(S2C_RtcProduce, session_id);
 		std::string producerId = s_crypto_random.GetRandomString(20);
 		RTC::RtpParameters rtp;
+
+		Json::Value produce_data = value["data"];
+		// check kind
+		if (!produce_data.isMember("kind"))
+		{
+			reply["result"] = EShareProtoMediaNotKind;
+			return false;
+		}
+
+		// check rtpParameters
+
+		if (!produce_data.isMember("rtpParameters"))
+		{
+			reply["result"] = EShareProtoNotRtpParameters;
+			return false;
+		}
+
 		RTC::Producer * producer_ptr = new RTC::Producer(producerId, this, rtp);
 		try
 		{

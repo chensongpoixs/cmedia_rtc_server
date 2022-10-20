@@ -90,102 +90,108 @@ namespace RTC
 
 	/* Instance methods. */
 
-	//RtpParameters::RtpParameters(Json::Value& data)
-	//{
-	//	//MS_TRACE();
+	bool RtpParameters::parse(Json::Value& data)
+	{
+		if (!data.isMember("codecs"))
+		{
+			WARNING_EX_LOG("rtpParameters not find `codecs` failed !!!");
+			return false;
+		}
 
-	//	//if (!data.is_object())
-	//		//MS_THROW_TYPE_ERROR("data is not an object");
+		if (!data.isMember("headerExtensions"))
+		{
+			WARNING_EX_LOG("rtpParameters not find `headerExtensions` failed !!!");
+			return false;
+		}
 
-	//	/*auto jsonMidIt              = data.find("mid");
-	//	auto jsonCodecsIt           = data.find("codecs");
-	//	auto jsonEncodingsIt        = data.find("encodings");
-	//	auto jsonHeaderExtensionsIt = data.find("headerExtensions");
-	//	auto jsonRtcpIt             = data.find("rtcp");*/
+		if (!data.isMember("encodings"))
+		{
+			WARNING_EX_LOG("rtpParameters not find `encodings` failed !!!");
+			return false;
+		}
 
-	//	// mid is optional.
-	//	if (data.isMember("mid") && data["mid"].isString()/*jsonMidIt != data.end() && jsonMidIt->is_string()*/)
-	//	{
-	//		this->mid = data["mid"].asCString();//jsonMidIt->get<std::string>();
+		if (!data.isMember("rtcp"))
+		{
+			WARNING_EX_LOG("rtpParameters not find `rtcp` failed !!!");
+			return false;
+		}
 
-	//		if (this->mid.empty())
-	//		{
-	//			ERROR_EX_LOG("empty mid");
-	//		}
-	//	}
+		if (!data.isMember("mid"))
+		{
+			WARNING_EX_LOG("rtpParameters not find `mid` failed !!!");
+			return false;
+		}
 
-	//	// codecs is mandatory.
-	//	if (!data.isMember("codecs") || !data["codecs"].isArray() /*jsonCodecsIt == data.end() || !jsonCodecsIt->is_array()*/)
-	//	{
-	//		ERROR_EX_LOG("missing codecs");
-	//	}
 
-	//	this->codecs.reserve(data["codecs"].size()/*jsonCodecsIt->size()*/);
-	//	for (auto iter : data["codecs"])
-	//	{
 
-	//		codecs.push_back(RtpCodecParameters(iter));
-	//	}
-	//	//for (auto& entry : *jsonCodecsIt)
-	//	//{
-	//	//	// This may throw due the constructor of RTC::RtpCodecParameters.
-	//	//	this->codecs.emplace_back(entry);
-	//	//}
+		this->mid = data["mid"].asCString();
+		 
+		this->codecs.reserve(data["codecs"].size()/*jsonCodecsIt->size()*/);
+		for (auto iter : data["codecs"])
+		{
 
-	//	if (this->codecs.empty())
-	//	{
-	//		ERROR_EX_LOG("empty codecs");
-	//		return;
-	//	}
+			codecs.push_back(RtpCodecParameters(iter));
+		}
+		//for (auto& entry : *jsonCodecsIt)
+		//{
+		//	// This may throw due the constructor of RTC::RtpCodecParameters.
+		//	this->codecs.emplace_back(entry);
+		//}
 
-	//	// encodings is mandatory.
-	//	if (!data.isMember("encodings") || !data["encodings"].isArray() /*jsonEncodingsIt == data.end() || !jsonEncodingsIt->is_array()*/)
-	//	{
-	//		ERROR_EX_LOG("missing encodings");
-	//		return;
-	//	}
-	//	const Json::Value & rtpParameter_encodings = data["encodings"];
-	//	this->encodings.reserve(rtpParameter_encodings.size());
-	//	for (auto iter : rtpParameter_encodings)
-	//	{
-	//		this->encodings.emplace_back(RtpEncodingParameters(iter));
-	//	}
-	//	//for (auto& entry : *jsonEncodingsIt)
-	//	//{
-	//	//	// This may throw due the constructor of RTC::RtpEncodingParameters.
-	//	//	this->encodings.emplace_back(entry);
-	//	//}
+		if (this->codecs.empty())
+		{
+			ERROR_EX_LOG("empty codecs");
+			return;
+		}
 
-	//	if (this->encodings.empty())
-	//	{
-	//		ERROR_EX_LOG("empty encodings");
-	//	}
+		// encodings is mandatory.
+		if (!data.isMember("encodings") || !data["encodings"].isArray() /*jsonEncodingsIt == data.end() || !jsonEncodingsIt->is_array()*/)
+		{
+			ERROR_EX_LOG("missing encodings");
+			return;
+		}
+		const Json::Value & rtpParameter_encodings = data["encodings"];
+		this->encodings.reserve(rtpParameter_encodings.size());
+		for (auto iter : rtpParameter_encodings)
+		{
+			this->encodings.emplace_back(RtpEncodingParameters(iter));
+		}
+		//for (auto& entry : *jsonEncodingsIt)
+		//{
+		//	// This may throw due the constructor of RTC::RtpEncodingParameters.
+		//	this->encodings.emplace_back(entry);
+		//}
 
-	//	// headerExtensions is optional.
-	//	if (!data.isMember("headerExtensions") || !data["headerExtensions"].isArray()/*jsonHeaderExtensionsIt != data.end() && jsonHeaderExtensionsIt->is_array()*/)
-	//	{
-	//		const Json::Value & headerExtensionsValue = data["headerExtensions"];
-	//		this->headerExtensions.reserve(headerExtensionsValue.size());
+		if (this->encodings.empty())
+		{
+			ERROR_EX_LOG("empty encodings");
+		}
 
-	//		for (auto iter : headerExtensionsValue)
-	//		{
-	//			// This may throw due the constructor of RTC::RtpHeaderExtensionParameters.
-	//			this->headerExtensions.emplace_back(iter);
-	//		}
-	//	}
+		// headerExtensions is optional.
+		if (!data.isMember("headerExtensions") || !data["headerExtensions"].isArray()/*jsonHeaderExtensionsIt != data.end() && jsonHeaderExtensionsIt->is_array()*/)
+		{
+			const Json::Value & headerExtensionsValue = data["headerExtensions"];
+			this->headerExtensions.reserve(headerExtensionsValue.size());
 
-	//	// rtcp is optional.
-	//	if (data.isMember("rtcp") || data["rtcp"].isObject() /*jsonRtcpIt != data.end() && jsonRtcpIt->is_object()*/)
-	//	{
-	//		// This may throw.
-	//		this->rtcp    = RTC::RtcpParameters(data["rtcp"]);
-	//		this->hasRtcp = true;
-	//	}
+			for (auto iter : headerExtensionsValue)
+			{
+				// This may throw due the constructor of RTC::RtpHeaderExtensionParameters.
+				this->headerExtensions.emplace_back(iter);
+			}
+		}
 
-	//	// Validate RTP parameters.
-	//	ValidateCodecs();
-	//	ValidateEncodings();
-	//}
+		// rtcp is optional.
+		if (data.isMember("rtcp") || data["rtcp"].isObject() /*jsonRtcpIt != data.end() && jsonRtcpIt->is_object()*/)
+		{
+			// This may throw.
+			this->rtcp    = RTC::RtcpParameters(data["rtcp"]);
+			this->hasRtcp = true;
+		}
+
+		// Validate RTP parameters.
+		ValidateCodecs();
+		ValidateEncodings();
+	}
 
 	//void RtpParameters::FillJson(json& jsonObject) const
 	//{

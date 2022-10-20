@@ -22,7 +22,7 @@ namespace chen {
 			: m_msg_id(msg_id)
 			, m_message(msg)
 			, m_session_id(session_id)
-			, m_send(false){  }
+			, m_send(true){  }
 		void cancel();
 
 		~cguard_reply();

@@ -12,92 +12,89 @@ namespace RTC
 {
 	/* Instance methods. */
 
-	//RtpCodecParameters::RtpCodecParameters(Json::Value& data)
-	//{
-	//	//MS_TRACE();
+	bool RtpCodecParameters::parse(Json::Value& data)
+	{
+		//MS_TRACE();
+		if (data.isMember("mimeType"))
+		{
+			WARNING_EX_LOG("RtpCodecParameters not find `mimeType` failed !!!");
+			return false;
+		}
+		if (data.isMember("payloadType"))
+		{
+			WARNING_EX_LOG("RtpCodecParameters not find `payloadType` failed !!!");
+			return false;
+		}
+		if (data.isMember("clockRate"))
+		{
+			WARNING_EX_LOG("RtpCodecParameters not find `clockRate` failed !!!");
+			return false;
+		}
+		if (data.isMember("channels"))
+		{
+			WARNING_EX_LOG("RtpCodecParameters not find `channels` failed !!!");
+			//return false;
+		}
+		if (data.isMember("parameters"))
+		{
+			WARNING_EX_LOG("RtpCodecParameters not find `parameters` failed !!!");
+			return false;
+		}
+		if (data.isMember("rtcpFeedback"))
+		{
+			WARNING_EX_LOG("RtpCodecParameters not find `rtcpFeedback` failed !!!");
+			return false;
+		}
+		 
 
-	//	/*if (!data.is_object())
-	//	{
-	//		ERROR_EX_LOG("data is not an object");
-	//	}*/
+	 
 
-	//	/*auto jsonMimeTypeIt     = data.find("mimeType");
-	//	auto jsonPayloadTypeIt  = data.find("payloadType");
-	//	auto jsonClockRateIt    = data.find("clockRate");
-	//	auto jsonChannelsIt     = data.find("channels");
-	//	auto jsonParametersIt   = data.find("parameters");
-	//	auto jsonRtcpFeedbackIt = data.find("rtcpFeedback");*/
+		// Set MIME field.
+		// This may throw.
+		this->mimeType.SetMimeType(data["mimeType"].asCString() );
 
-	//	// mimeType is mandatory.
-	//	if (!data.isMember("mimeType") || !data["mimeType"].isString()/*jsonMimeTypeIt == data.end() || !jsonMimeTypeIt->is_string()*/)
-	//	{
-	//		ERROR_EX_LOG("missing mimeType");
-	//	}
+		 
 
-	//	// Set MIME field.
-	//	// This may throw.
-	//	this->mimeType.SetMimeType(data["mimeType"].asCString()/* jsonMimeTypeIt->get<std::string>()*/);
+		this->payloadType = data["payloadType"].asInt(); /*jsonPayloadTypeIt->get<uint8_t>()*/;
 
-	//	// payloadType is mandatory.
-	//	// clang-format off
-	//	if ( !data.isMember("payloadType") || !data["payloadType"].isUInt()
-	//		/*jsonPayloadTypeIt == data.end() ||
-	//		!Utils::Json::IsPositiveInteger(*jsonPayloadTypeIt)*/
-	//	)
-	//	// clang-format on
-	//	{
-	//		ERROR_EX_LOG("missing payloadType");
-	//	}
+		
 
-	//	this->payloadType = data["payloadType"].asInt(); /*jsonPayloadTypeIt->get<uint8_t>()*/;
+		this->clockRate = data["clockRate"].asUInt();
 
-	//	// clockRate is mandatory.
-	//	// clang-format off
-	//	if ( !data.isMember("clockRate") || !data["clockRate"].isUInt()
-	//		/*jsonClockRateIt == data.end() ||
-	//		!Utils::Json::IsPositiveInteger(*jsonClockRateIt)*/
-	//	)
-	//	// clang-format on
-	//	{
-	//		ERROR_EX_LOG("missing clockRate");
-	//	}
+		// channels is optional.
+		// clang-format off
+		if ( data.isMember("channels") &&data["channels"].isUInt()
+			/*jsonChannelsIt != data.end() &&
+			Utils::Json::IsPositiveInteger(*jsonChannelsIt)*/
+		)
+		// clang-format on
+		{
+			this->channels = data["channels"].asUInt();/*jsonChannelsIt->get<uint8_t>();*/
+		}
 
-	//	this->clockRate = data["clockRate"].asUInt();/*jsonClockRateIt->get<uint32_t>()*/;
+		// parameters is optional.
+		if ( data.isMember("parameters") &&data["parameters"].isObject() /*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
+		{
+			this->parameters.Set(data["parameters"]);
+		}
 
-	//	// channels is optional.
-	//	// clang-format off
-	//	if ( data.isMember("channels") &&data["channels"].isUInt()
-	//		/*jsonChannelsIt != data.end() &&
-	//		Utils::Json::IsPositiveInteger(*jsonChannelsIt)*/
-	//	)
-	//	// clang-format on
-	//	{
-	//		this->channels = data["channels"].asUInt();/*jsonChannelsIt->get<uint8_t>();*/
-	//	}
+		// rtcpFeedback is optional.
+		if ( data.isMember("rtcpFeedback") && !data["rtcpFeedback"].isArray() /*jsonRtcpFeedbackIt != data.end() && jsonRtcpFeedbackIt->is_array()*/)
+		{
+			this->rtcpFeedback.reserve(data["rtcpFeedback"].size()/*jsonRtcpFeedbackIt->size()*/);
 
-	//	// parameters is optional.
-	//	if ( data.isMember("parameters") &&data["parameters"].isObject() /*jsonParametersIt != data.end() && jsonParametersIt->is_object()*/)
-	//	{
-	//		this->parameters.Set(data["parameters"]);
-	//	}
+			//for (auto& entry : *jsonRtcpFeedbackIt)
+			const Json::Value rtcpFeebackValue = data["rtcpFeedback"];
+			for (auto it : rtcpFeebackValue)
+			{
+				// This may throw due the constructor of RTC::RtcpFeedback.
+				this->rtcpFeedback.emplace_back(RtcpFeedback(it));
+			}
+		}
 
-	//	// rtcpFeedback is optional.
-	//	if ( data.isMember("rtcpFeedback") && !data["rtcpFeedback"].isArray() /*jsonRtcpFeedbackIt != data.end() && jsonRtcpFeedbackIt->is_array()*/)
-	//	{
-	//		this->rtcpFeedback.reserve(data["rtcpFeedback"].size()/*jsonRtcpFeedbackIt->size()*/);
-
-	//		//for (auto& entry : *jsonRtcpFeedbackIt)
-	//		const Json::Value rtcpFeebackValue = data["rtcpFeedback"];
-	//		for (auto it : rtcpFeebackValue)
-	//		{
-	//			// This may throw due the constructor of RTC::RtcpFeedback.
-	//			this->rtcpFeedback.emplace_back(RtcpFeedback(it));
-	//		}
-	//	}
-
-	//	// Check codec.
-	//	CheckCodec();
-	//}
+		// Check codec.
+		CheckCodec();
+	}
 
 	//void RtpCodecParameters::FillJson(json& jsonObject) const
 	//{
@@ -167,7 +164,11 @@ RtpCodecParameters::RtpCodecParameters()
 	//rtcpfeedback.parameter = "pli";
 	//rtcpFeedbacks.push_back(rtcpfeedback);
 }
-
+//bool RtpCodecParameters::parse(Json::Value & data)
+//{
+//
+//	return true;
+//}
 inline void RtpCodecParameters::CheckCodec()
 	{
 	//	MS_TRACE();

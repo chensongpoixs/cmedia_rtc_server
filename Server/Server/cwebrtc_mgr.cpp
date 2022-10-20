@@ -170,11 +170,12 @@ namespace chen {
 			return false;
 		}
 
-		/*if (!iter->second->handler_webrtc_connect(dtlsRemoteRole, dtlsRemoteFingerprint))
+		if (!iter->second->handler_produce(session_id, value))
 		{
-			reply["result"] = EShareProtoRtcConnectStatusError;
+			//reply["result"] = EShareProtoRtcConnectStatusError;
 			return false;
-		}*/
+		}
+		guard_reply.cancel();
 		return true;
 	}
 

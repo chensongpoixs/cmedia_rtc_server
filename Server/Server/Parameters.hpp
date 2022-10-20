@@ -64,7 +64,7 @@ namespace RTC
 	public:
 		explicit Parameters();
 		//void FillJson(json& jsonObject) const;
-		//void Set(Json::Value& data); 
+		void Set(Json::Value& data); 
 		bool HasBoolean(const std::string& key) const;
 		bool HasInteger(const std::string& key) const;
 		bool HasPositiveInteger(const std::string& key) const;

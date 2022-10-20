@@ -48,75 +48,75 @@ namespace RTC
 	//	}
 	//}
 
-	//void Parameters::Set(Json::Value& data)
-	//{
-	//	//MS_TRACE();
+	void Parameters::Set(Json::Value& data)
+	{
+		//MS_TRACE();
 
-	//	//assert(data.isObject(), "data is not an object");
+		//assert(data.isObject(), "data is not an object");
 
-	//	//for (json::iterator it = data.begin(); it != data.end(); ++it)
-	//	//{
-	//	//	const std::string& key = it.key();
-	//	//	auto& value            = it.value();
+		for (json::iterator it = data.begin(); it != data.end(); ++it)
+		{
+			const std::string& key = it.key();
+			auto& value            = it.value();
 
-	//	//	switch (value.type())
-	//	//	{
-	//	//		case json::value_t::boolean:
-	//	//		{
-	//	//			this->mapKeyValues.emplace(key, Value(value.get<bool>()));
+			switch (value.type())
+			{
+				case json::value_t::boolean:
+				{
+					this->mapKeyValues.emplace(key, Value(value.get<bool>()));
 
-	//	//			break;
-	//	//		}
+					break;
+				}
 
-	//	//		case json::value_t::number_integer:
-	//	//		case json::value_t::number_unsigned:
-	//	//		{
-	//	//			this->mapKeyValues.emplace(key, Value(value.get<int32_t>()));
+				case json::value_t::number_integer:
+				case json::value_t::number_unsigned:
+				{
+					this->mapKeyValues.emplace(key, Value(value.get<int32_t>()));
 
-	//	//			break;
-	//	//		}
+					break;
+				}
 
-	//	//		case json::value_t::number_float:
-	//	//		{
-	//	//			this->mapKeyValues.emplace(key, Value(value.get<double>()));
+				case json::value_t::number_float:
+				{
+					this->mapKeyValues.emplace(key, Value(value.get<double>()));
 
-	//	//			break;
-	//	//		}
+					break;
+				}
 
-	//	//		case json::value_t::string:
-	//	//		{
-	//	//			this->mapKeyValues.emplace(key, Value(value.get<std::string>()));
+				case json::value_t::string:
+				{
+					this->mapKeyValues.emplace(key, Value(value.get<std::string>()));
 
-	//	//			break;
-	//	//		}
+					break;
+				}
 
-	//	//		case json::value_t::array:
-	//	//		{
-	//	//			std::vector<int32_t> arrayOfIntegers;
-	//	//			bool isValid = true;
+				case json::value_t::array:
+				{
+					std::vector<int32_t> arrayOfIntegers;
+					bool isValid = true;
 
-	//	//			for (auto& entry : value)
-	//	//			{
-	//	//				if (!entry.is_number_integer())
-	//	//				{
-	//	//					isValid = false;
+					for (auto& entry : value)
+					{
+						if (!entry.is_number_integer())
+						{
+							isValid = false;
 
-	//	//					break;
-	//	//				}
+							break;
+						}
 
-	//	//				arrayOfIntegers.emplace_back(entry.get<int32_t>());
-	//	//			}
+						arrayOfIntegers.emplace_back(entry.get<int32_t>());
+					}
 
-	//	//			if (!arrayOfIntegers.empty() && isValid)
-	//	//				this->mapKeyValues.emplace(key, Value(arrayOfIntegers));
+					if (!arrayOfIntegers.empty() && isValid)
+						this->mapKeyValues.emplace(key, Value(arrayOfIntegers));
 
-	//	//			break;
-	//	//		}
+					break;
+				}
 
-	//	//		default:; // Just ignore other value types.
-	//	//	}
-	//	//}
-	//}
+				default:; // Just ignore other value types.
+			}
+		}
+	}
 
 Parameters::Parameters()
 	: mapKeyValues()
