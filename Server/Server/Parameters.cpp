@@ -53,49 +53,63 @@ namespace RTC
 		//MS_TRACE();
 
 		//assert(data.isObject(), "data is not an object");
-
-		for (json::iterator it = data.begin(); it != data.end(); ++it)
+		Json::Value::Members mem = data.getMemberNames();
+		for (std::vector<std::string>::iterator iter = mem.begin(); iter != mem.end(); ++iter)
 		{
-			const std::string& key = it.key();
-			auto& value            = it.value();
+			//const std::string& key = it.key();
+			//auto& value            = it.value();
 
-			switch (value.type())
+			switch (/*value.type()*/ data[*iter].type())
 			{
-				case json::value_t::boolean:
+			case Json::booleanValue/*json::value_t::boolean*/:
 				{
-					this->mapKeyValues.emplace(key, Value(value.get<bool>()));
+					this->mapKeyValues.emplace((*iter), Value(data[*iter].asBool()));
 
 					break;
 				}
 
-				case json::value_t::number_integer:
-				case json::value_t::number_unsigned:
+				case Json::intValue /*json::value_t::number_integer*/:
+				case Json::uintValue /*json::value_t::number_unsigned*/:
 				{
-					this->mapKeyValues.emplace(key, Value(value.get<int32_t>()));
+					this->mapKeyValues.emplace((*iter), Value(data[*iter].asInt()));
 
 					break;
 				}
 
-				case json::value_t::number_float:
+				case Json::realValue:// json::value_t::number_float:
 				{
-					this->mapKeyValues.emplace(key, Value(value.get<double>()));
+					this->mapKeyValues.emplace((*iter), Value(data[*iter].asDouble()));
 
 					break;
 				}
 
-				case json::value_t::string:
+				case Json::stringValue: //json::value_t::string:
 				{
-					this->mapKeyValues.emplace(key, Value(value.get<std::string>()));
+					this->mapKeyValues.emplace((*iter), Value(data[*iter].asCString()));
 
 					break;
 				}
 
-				case json::value_t::array:
+				case Json::arrayValue:// json::value_t::array:
 				{
 					std::vector<int32_t> arrayOfIntegers;
 					bool isValid = true;
+					for (int array_index = 0; array_index < data[*iter].size(); ++array_index)
+					{
+						if (!data[(*iter)][array_index].isNumeric())
+						{
+							isValid = false;
+							break;
+						}
+						arrayOfIntegers.emplace_back(data[(*iter)][array_index].asInt());
+					}
 
-					for (auto& entry : value)
+					if (!arrayOfIntegers.empty() && isValid)
+					{
+						this->mapKeyValues.emplace((*iter), Value(arrayOfIntegers));
+					}
+
+					/*for (auto& entry : value)
 					{
 						if (!entry.is_number_integer())
 						{
@@ -105,15 +119,21 @@ namespace RTC
 						}
 
 						arrayOfIntegers.emplace_back(entry.get<int32_t>());
-					}
+					}*/
 
-					if (!arrayOfIntegers.empty() && isValid)
+					/*if (!arrayOfIntegers.empty() && isValid)
+					{
 						this->mapKeyValues.emplace(key, Value(arrayOfIntegers));
+					}*/
 
 					break;
 				}
 
-				default:; // Just ignore other value types.
+				default:
+				{
+					// Just ignore other value types.
+					WARNING_EX_LOG("[key = %s][value = %s]", (*iter).c_str(), data[*iter].asCString());
+				}
 			}
 		}
 	}

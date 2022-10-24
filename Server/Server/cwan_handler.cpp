@@ -209,6 +209,6 @@ namespace chen {
 	}
 	bool   cwan_session::handler_rtc_produce(Json::Value& value)
 	{
-		return true;
+		return g_global_webrtc_mgr.handler_webrtc_produce(m_session_id, value);;
 	}
 }

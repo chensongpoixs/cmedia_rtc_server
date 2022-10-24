@@ -301,6 +301,7 @@ namespace chen {
 	{
 		CGUARD_REPLY(S2C_RtcProduce, session_id);
 		std::string producerId = s_crypto_random.GetRandomString(20);
+		reply["data"]["id"] = producerId;
 		RTC::RtpParameters rtp;
 
 		Json::Value produce_data = value["data"];
@@ -316,6 +317,12 @@ namespace chen {
 		if (!produce_data.isMember("rtpParameters"))
 		{
 			reply["result"] = EShareProtoNotRtpParameters;
+			return false;
+		}
+
+		if (!rtp.parse(produce_data["rtpParameters"]))
+		{
+			reply["result"] = EShareProtoParseProduceFailed;
 			return false;
 		}
 
@@ -398,49 +405,49 @@ namespace chen {
 			// - there is "transport-cc" in codecs RTCP feedback.
 			//
 			// clang-format off
-			//if (
-			//	rtpHeaderExtensionIds.transportWideCc01 != 0u &&
-			//	std::any_of(
-			//		codecs.begin(), codecs.end(), [](const RTC::RtpCodecParameters& codec)
-			//{
-			//	/*return std::any_of(
-			//		codec.rtcpFeedback.begin(), codec.rtcpFeedback.end(), [](const RTC::RtcpFeedback& fb)
-			//	{
-			//		return fb.type == "transport-cc";
-			//	});*/
-			//})
-			//	)
-			//	// clang-format on
-			//{
-			//	NORMAL_EX_LOG("bwe, enabling TransportCongestionControlServer with transport-cc");
+			if (
+				rtpHeaderExtensionIds.transportWideCc01 != 0u &&
+				std::any_of(
+					codecs.begin(), codecs.end(), [](const RTC::RtpCodecParameters& codec)
+			{
+				return std::any_of(
+					codec.rtcpFeedbacks.begin(), codec.rtcpFeedbacks.end(), [](const RTC::RtcpFeedback& fb)
+				{
+					return fb.type == "transport-cc";
+				});
+			})
+				)
+				// clang-format on
+			{
+				NORMAL_EX_LOG("bwe, enabling TransportCongestionControlServer with transport-cc");
 
-			//	createTccServer = true;
-			//	bweType = RTC::BweType::TRANSPORT_CC;
-			//}
+				createTccServer = true;
+				bweType = RTC::BweType::TRANSPORT_CC;
+			}
 			// Use REMB if:
 			// - there is abs-send-time RTP header extension, and
 			// - there is "remb" in codecs RTCP feedback.
 			//
 			// clang-format off
-			//else if (
-			//	rtpHeaderExtensionIds.absSendTime != 0u &&
-			//	std::any_of(
-			//		codecs.begin(), codecs.end(), [](const RTC::RtpCodecParameters& codec)
-			//{
-			//	/*return std::any_of(
-			//		codec.rtcpFeedback.begin(), codec.rtcpFeedback.end(), [](const RTC::RtcpFeedback& fb)
-			//	{
-			//		return fb.type == "goog-remb";
-			//	});*/
-			//})
-			//	)
-			//	// clang-format on
-			//{
-			//	NORMAL_EX_LOG("bwe, enabling TransportCongestionControlServer with REMB");
+			else if (
+				rtpHeaderExtensionIds.absSendTime != 0u &&
+				std::any_of(
+					codecs.begin(), codecs.end(), [](const RTC::RtpCodecParameters& codec)
+			{
+				return std::any_of(
+					codec.rtcpFeedbacks.begin(), codec.rtcpFeedbacks.end(), [](const RTC::RtcpFeedback& fb)
+				{
+					return fb.type == "goog-remb";
+				});
+			})
+				)
+				// clang-format on
+			{
+				NORMAL_EX_LOG("bwe, enabling TransportCongestionControlServer with REMB");
 
-			//	createTccServer = true;
-			//	bweType = RTC::BweType::REMB;
-			//}
+				createTccServer = true;
+				bweType = RTC::BweType::REMB;
+			}
 
 			if (createTccServer)
 			{

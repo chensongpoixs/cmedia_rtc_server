@@ -315,14 +315,14 @@ namespace chen {
 	}
 	void crecv_transport::webrtc_create_all_wait_consumer()
 	{
-		std::list<cDataConsmer>	temp_data = std::move(m_dataconsmers);
+		/*std::list<cDataConsmer>	temp_data = std::move(m_dataconsmers);
 		m_dataconsmers.clear();
 		while (!temp_data.empty())
 		{
 			cDataConsmer cdata = temp_data.front();
 			temp_data.pop_front();
 			webrtc_create_consumer(cdata.m_id, cdata.m_dataconsumerId, cdata.m_lable);
-		}
+		}*/
 	}
 
 	void crecv_transport::add_webrtc_consmer_transport()

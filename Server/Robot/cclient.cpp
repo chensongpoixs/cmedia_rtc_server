@@ -39,7 +39,7 @@ namespace chen {
 
 	static const char * WEBSOCKET_PROBUFFER_MSG_ID = "msg_id";
 
-
+	static const char * WEBSOCKET_RESPONSE = "result";
 
 
 
@@ -57,9 +57,9 @@ namespace chen {
 	static const  int32 OSG_RGBA_HEIGHT = 2000;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define  WEBSOCKET_PROTOO_CHECK_RESPONSE()  if (msg.find(WEBSOCKET_PROTOO_OK) == msg.end())\
+#define  WEBSOCKET_PROTOO_CHECK_RESPONSE()  if (msg.find(WEBSOCKET_RESPONSE) == msg.end())\
 	{\
-		ERROR_EX_LOG(" [msg = %s] not find 'ok' failed !!!", msg.dump().c_str());\
+		ERROR_EX_LOG(" [msg = %s] not find 'result' failed !!!", msg.dump().c_str());\
 		return false;\
 	}\
 	if (msg.find(WEBSOCKET_PROTOO_DATA) == msg.end())\
@@ -67,8 +67,8 @@ namespace chen {
 		ERROR_EX_LOG("  [msg = %s] not find 'data' failed !!!", msg.dump().c_str());\
 		return false;\
 	}\
-	bool  ok = msg[WEBSOCKET_PROTOO_OK].get<bool>();\
-	if (!ok)\
+	int  result = msg[WEBSOCKET_RESPONSE].get<int>();\
+	if (0 != result)\
 	{\
 		ERROR_EX_LOG("  not ok  [msg = %s] !!!", msg.dump().c_str());\
 		return false;\
@@ -1085,6 +1085,7 @@ namespace chen {
 
 	bool cclient:: handler_produce_webrtc_transport(const  nlohmann::json & msg)
 	{
+		WEBSOCKET_PROTOO_CHECK_RESPONSE();
 		nlohmann::json data = msg[WEBSOCKET_PROTOO_DATA];
 		if (data.find("id") == data.end())
 		{

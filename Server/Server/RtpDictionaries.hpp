@@ -158,7 +158,7 @@ namespace RTC
 		explicit RtcpFeedback()
 			: type("")
 			, parameter(""){}//  = default;
-		//explicit RtcpFeedback(Json::Value& data);
+		bool   parse(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
 
@@ -193,7 +193,7 @@ namespace RTC
 	{
 	public:
 		explicit RtpRtxParameters() {}// = default;
-		//explicit RtpRtxParameters(Json::Value& data);
+		bool parse(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;*/
 
@@ -205,7 +205,7 @@ namespace RTC
 	{
 	public:
 		explicit	RtpEncodingParameters();// {}// = default;
-		//explicit RtpEncodingParameters(Json::Value& data);
+		bool parse(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;*/
 
@@ -229,7 +229,7 @@ namespace RTC
 	{
 	public:
 		explicit RtpHeaderExtensionParameters() {} // = default;
-		//explicit RtpHeaderExtensionParameters(Json::Value& data);
+		bool parse(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
 
@@ -245,7 +245,7 @@ namespace RTC
 	{
 	public:
 		explicit RtcpParameters();;// {} // = default;
-		//explicit RtcpParameters(Json::Value& data);
+		bool  parse(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;
 

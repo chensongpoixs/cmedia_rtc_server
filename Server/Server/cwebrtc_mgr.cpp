@@ -85,18 +85,21 @@ namespace chen {
 		Json::Value dtlsParameters = value["data"]["transportId"];
 
 		
-		if (!value["data"].isMember("fingerprints"))
+		if (!value["data"].isMember("dtlsParameters"))
 		{
 			reply["result"] = EShareProtoNotFindDtlsFingerprints;
 			return false;
 		}
+
+		Json::Value DtlsParameters = value["data"]["dtlsParameters"];
+
 		RTC::DtlsTransport::Fingerprint dtlsRemoteFingerprint;
 		RTC::DtlsTransport::Role dtlsRemoteRole;
-		if (!value["data"].isMember("role"))
+		if (DtlsParameters.isMember("role"))
 		{
 			//reply["result"] = EShareProtoNotFindDtlsParametersRole;
 			//return false;
-			dtlsRemoteRole = RTC::DtlsTransport::StringToRole(value["data"]["role"].asCString());
+			dtlsRemoteRole = RTC::DtlsTransport::StringToRole(DtlsParameters["role"].asCString());
 
 			if (dtlsRemoteRole == RTC::DtlsTransport::Role::NONE)
 			{
@@ -110,26 +113,26 @@ namespace chen {
 			dtlsRemoteRole = RTC::DtlsTransport::Role::AUTO;
 		}
 		  //Json::Value dtlsFingerPrint = dtlsParameters["fingerprints"];
-		if (value["data"]["fingerprints"].size() < 1)
+		if (DtlsParameters["fingerprints"].size() < 1)
 		{
 			reply["result"] = EShareProtoNotFindDtlsFingerprints;
 			return false;
 		}
-		for (int i = 0; i < value["data"]["fingerprints"].size(); ++i)
+		for (int i = 0; i < DtlsParameters["fingerprints"].size(); ++i)
 		{
 			// check 
-			if (!value["data"]["fingerprints"][i].isMember("algorithm"))
+			if (!DtlsParameters["fingerprints"][i].isMember("algorithm"))
 			{
 				WARNING_EX_LOG("algorithm");
 				continue;
 			}
-			if (!value["data"]["fingerprints"][i].isMember("value"))
+			if (!DtlsParameters["fingerprints"][i].isMember("value"))
 			{
 				WARNING_EX_LOG("value");
 				continue;
 			}
-			dtlsRemoteFingerprint.algorithm = RTC::DtlsTransport::GetFingerprintAlgorithm(value["data"]["fingerprints"][i]["algorithm"].asString());
-			dtlsRemoteFingerprint.value = value["data"]["fingerprints"][i]["value"].asString() ;
+			dtlsRemoteFingerprint.algorithm = RTC::DtlsTransport::GetFingerprintAlgorithm(DtlsParameters["fingerprints"][i]["algorithm"].asString());
+			dtlsRemoteFingerprint.value = DtlsParameters["fingerprints"][i]["value"].asString() ;
 			break;
 		}
 

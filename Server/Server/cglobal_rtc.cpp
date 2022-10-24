@@ -22,10 +22,15 @@ namespace chen {
 	}
 	bool cglobal_rtc::init()
 	{
+		csrtp_session::init();
+		SYSTEM_LOG("sctp session init OK !!!");
 		if (!g_sctp_association_mgr.init())
 		{
 			return false;
 		}
+
+		
+
 		SYSTEM_LOG("sctp_association_mgr init OK !!!");
 		RTC::DtlsTransport::ClassInit();
 		SYSTEM_LOG("DtlsTransport Init OK !!!");
@@ -37,6 +42,8 @@ namespace chen {
 		SYSTEM_LOG("DtlsTransport destroy OK !!!");
 		g_sctp_association_mgr.destroy();
 		SYSTEM_LOG("sctp_association_mrg destory OK !!!");
+		csrtp_session::destroy();
+		SYSTEM_LOG("srtp_session destroy OK !!!");
 		 
 	}
 

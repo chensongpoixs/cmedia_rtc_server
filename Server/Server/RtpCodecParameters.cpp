@@ -15,34 +15,34 @@ namespace RTC
 	bool RtpCodecParameters::parse(Json::Value& data)
 	{
 		//MS_TRACE();
-		if (data.isMember("mimeType"))
+		if (!data.isMember("mimeType"))
 		{
-			WARNING_EX_LOG("RtpCodecParameters not find `mimeType` failed !!!");
+			WARNING_EX_LOG("RtpCodecParameters not find `mimeType` failed (data = %s) !!!", data.toStyledString().c_str());
 			return false;
 		}
-		if (data.isMember("payloadType"))
+		if (!data.isMember("payloadType"))
 		{
-			WARNING_EX_LOG("RtpCodecParameters not find `payloadType` failed !!!");
+			WARNING_EX_LOG("RtpCodecParameters not find `payloadType` failed (data = %s) !!!", data.toStyledString().c_str());
 			return false;
 		}
-		if (data.isMember("clockRate"))
+		if (!data.isMember("clockRate"))
 		{
-			WARNING_EX_LOG("RtpCodecParameters not find `clockRate` failed !!!");
+			WARNING_EX_LOG("RtpCodecParameters not find `clockRate` failed (data = %s) !!!", data.toStyledString().c_str());
 			return false;
 		}
 		if (data.isMember("channels"))
 		{
-			WARNING_EX_LOG("RtpCodecParameters not find `channels` failed !!!");
+			WARNING_EX_LOG("RtpCodecParameters not find `channels` failed (data = %s) !!!", data.toStyledString().c_str());
 			//return false;
 		}
-		if (data.isMember("parameters"))
+		if (!data.isMember("parameters"))
 		{
-			WARNING_EX_LOG("RtpCodecParameters not find `parameters` failed !!!");
+			WARNING_EX_LOG("RtpCodecParameters not find `parameters` failed (data = %s)!!!", data.toStyledString().c_str());
 			return false;
 		}
-		if (data.isMember("rtcpFeedback"))
+		if (!data.isMember("rtcpFeedback"))
 		{
-			WARNING_EX_LOG("RtpCodecParameters not find `rtcpFeedback` failed !!!");
+			WARNING_EX_LOG("RtpCodecParameters not find `rtcpFeedback` failed (data = %s) !!!", data.toStyledString().c_str());
 			return false;
 		}
 		 
@@ -81,14 +81,16 @@ namespace RTC
 		// rtcpFeedback is optional.
 		if ( data.isMember("rtcpFeedback") && !data["rtcpFeedback"].isArray() /*jsonRtcpFeedbackIt != data.end() && jsonRtcpFeedbackIt->is_array()*/)
 		{
-			this->rtcpFeedback.reserve(data["rtcpFeedback"].size()/*jsonRtcpFeedbackIt->size()*/);
+			this->rtcpFeedbacks.reserve(data["rtcpFeedback"].size()/*jsonRtcpFeedbackIt->size()*/);
 
 			//for (auto& entry : *jsonRtcpFeedbackIt)
-			const Json::Value rtcpFeebackValue = data["rtcpFeedback"];
+			const Json::Value& rtcpFeebackValue = data["rtcpFeedback"];
 			for (auto it : rtcpFeebackValue)
 			{
 				// This may throw due the constructor of RTC::RtcpFeedback.
-				this->rtcpFeedback.emplace_back(RtcpFeedback(it));
+				RtcpFeedback rtcp_feed_back;
+				rtcp_feed_back.parse(it);
+				this->rtcpFeedbacks.emplace_back(rtcp_feed_back);
 			}
 		}
 
