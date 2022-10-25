@@ -374,7 +374,7 @@ a=rtcp-rsize
 			 */
 			 std::string answer = m_remote_sdp->GetSdp();
 
-
+			 NORMAL_EX_LOG("[answer = %s]", answer.c_str());
 			 {
 				 webrtc::SdpParseError error;
 				 webrtc::SessionDescriptionInterface* sessionDescription;
@@ -422,6 +422,7 @@ a=rtcp-rsize
 
 		 desc->ToString(&sdp);
 		 m_offer = sdp;
+		 NORMAL_EX_LOG("[offer = %s]", sdp.c_str());
 		 //nlohmann::json localsdpobject =  sdptransform::parse(sdp);
 		 m_client_ptr->transportofferasner(true, true);
 	 }

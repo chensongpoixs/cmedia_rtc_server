@@ -58,7 +58,7 @@ namespace RTC
 		{
 			//const std::string& key = it.key();
 			//auto& value            = it.value();
-
+			codecs_map.insert(std::make_pair(*iter, data[*iter].asCString()));
 			switch (/*value.type()*/ data[*iter].type())
 			{
 			case Json::booleanValue/*json::value_t::boolean*/:
@@ -168,7 +168,9 @@ bool Parameters::HasBoolean(const std::string& key) const
 		auto it = this->mapKeyValues.find(key);
 
 		if (it == this->mapKeyValues.end())
+		{
 			return false;
+		}
 
 		auto& value = it->second;
 
@@ -309,5 +311,32 @@ bool Parameters::HasBoolean(const std::string& key) const
 		auto& value = it->second;
 
 		return value.arrayOfIntegers;
+	}
+	void Parameters::insert(const char * key, int32_t value)
+	{
+		if (!mapKeyValues.insert(std::make_pair(key, RTC::Parameters::Value(value))).second)
+		{
+			WARNING_EX_LOG("rtp codec parameter install failed (key = `%s`)", key);
+		}
+
+		///////////////
+		if (!codecs_map.insert(std::make_pair(key, std::to_string(value))).second)
+		{
+			WARNING_EX_LOG("rtp codec parameter install failed (key = `%s`)", key);
+		}
+	}
+	void Parameters::insert(const char * key, const char * value)
+	{
+
+		if (!mapKeyValues.insert(std::make_pair(key, RTC::Parameters::Value(value))).second)
+		{
+			WARNING_EX_LOG("rtp codec parameter install failed (key = `%s`)", key);
+		}
+
+		///////////////
+		if (!codecs_map.insert(std::make_pair(key, value)).second)
+		{
+			WARNING_EX_LOG("rtp codec parameter install failed (key = `%s`)", key);
+		}
 	}
 } // namespace RTC

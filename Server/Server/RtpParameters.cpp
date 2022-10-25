@@ -171,7 +171,7 @@ namespace RTC
 		}
 
 		// headerExtensions is optional.
-		if (!data.isMember("headerExtensions") || !data["headerExtensions"].isArray()/*jsonHeaderExtensionsIt != data.end() && jsonHeaderExtensionsIt->is_array()*/)
+		if (data.isMember("headerExtensions") &&data["headerExtensions"].isArray()/*jsonHeaderExtensionsIt != data.end() && jsonHeaderExtensionsIt->is_array()*/)
 		{
 			const Json::Value & headerExtensionsValue = data["headerExtensions"];
 			this->headerExtensions.reserve(headerExtensionsValue.size());

@@ -77,9 +77,13 @@ namespace RTC
 		double GetDouble(const std::string& key) const;
 		const std::string& GetString(const std::string& key) const;
 		const std::vector<int32_t>& GetArrayOfIntegers(const std::string& key) const;
-
+		
+		void insert(const char * key, int32_t value);
+		void insert(const char * key, const char *value);
+		
 	public:
 		std::unordered_map<std::string, Value> mapKeyValues;
+		std::map<std::string, std::string>    codecs_map;
 	};
 } // namespace RTC
 

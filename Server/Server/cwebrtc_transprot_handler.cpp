@@ -325,7 +325,16 @@ namespace chen {
 			reply["result"] = EShareProtoParseProduceFailed;
 			return false;
 		}
-
+		std::unordered_map<std::string, RTC::RtpCodecMimeType::Type>::const_iterator iter = RTC::RtpCodecMimeType::string2Type.find(produce_data["kind"].asCString());
+		if (iter == RTC::RtpCodecMimeType::string2Type.end())
+		{
+			ERROR_EX_LOG("not find kind type 'kind' = %s", produce_data["kind"].asCString());
+		}
+		else
+		{
+			rtp.m_codec_type = iter->second;
+		}
+		
 		RTC::Producer * producer_ptr = new RTC::Producer(producerId, this, rtp);
 		try
 		{

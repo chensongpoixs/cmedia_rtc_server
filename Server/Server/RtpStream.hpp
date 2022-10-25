@@ -1,4 +1,4 @@
-#ifndef MS_RTC_RTP_STREAM_HPP
+﻿#ifndef MS_RTC_RTP_STREAM_HPP
 #define MS_RTC_RTP_STREAM_HPP
 
 //#include "common.hpp"
@@ -51,6 +51,19 @@ namespace RTC
 			bool usePli{ false };
 			bool useFir{ false };
 			bool useInBandFec{ false };
+			/* 
+			TODO@chensong 2022-10-25 
+			OPUS 语音功能支持 DTX
+当不是音乐模式时，即在 VoIP 模式下，当检测到某个时间期间内没有说话声时，为了节省带宽，可以将开启 DTX。
+
+这个时候，在没有检测到通话声音时，OPUS 会定期 400ms 发送静音包，达到降低带宽的目的，WebRTC 默认没有开启这个特性，要开启 DTX，只需要 SDP 协商时，在 a=ftmp 这一行中加入 usedtx=1 即可开启。
+
+WebRTCOPUS_EnableDtx
+WebRTCOPUS_
+OPUS 本?具有很多抗弱网的特性，这些特性再配合丢包重传，可以使音频具备很强的抗弱网能力。
+
+
+			*/
 			bool useDtx{ false };
 			uint8_t spatialLayers{ 1u };
 			uint8_t temporalLayers{ 1u };

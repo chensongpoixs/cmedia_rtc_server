@@ -145,7 +145,7 @@ namespace RTC
 			TOFFSET                = 12
 		};
 
-	private:
+	public:
 		static std::unordered_map<std::string, Type> string2Type;
 
 	public:
@@ -158,6 +158,10 @@ namespace RTC
 		explicit RtcpFeedback()
 			: type("")
 			, parameter(""){}//  = default;
+		explicit RtcpFeedback(const char * t, const char* p)
+			: type(t)
+			, parameter(p)
+		{}
 		bool   parse(Json::Value& data);
 
 		//void FillJson(json& jsonObject) const;

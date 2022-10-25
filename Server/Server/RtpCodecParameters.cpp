@@ -96,6 +96,7 @@ namespace RTC
 
 		// Check codec.
 		CheckCodec();
+		return true;
 	}
 
 	//void RtpCodecParameters::FillJson(json& jsonObject) const

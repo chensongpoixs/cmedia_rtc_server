@@ -193,7 +193,9 @@ namespace RTC
 		//MS_TRACE();
 
 		if (this->params.useNack)
+		{
 			this->nackGenerator.reset(new RTC::NackGenerator(this));
+		}
 
 		// Run the RTP inactivity periodic timer (use a different timeout if DTX is
 		// enabled).
@@ -263,7 +265,9 @@ namespace RTC
 
 		// Process the packet at codec level.
 		if (packet->GetPayloadType() == GetPayloadType())
+		{
 			RTC::Codecs::Tools::ProcessRtpPacket(packet, GetMimeType());
+		}
 
 		// Pass the packet to the NackGenerator.
 		if (this->params.useNack)

@@ -160,6 +160,8 @@
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
+    <ClCompile Include="cortc.cpp" />
+    <ClCompile Include="crandom.cpp" />
     <ClCompile Include="crate_calculator.cpp" />
     <ClCompile Include="crtc_sdp.cpp" />
     <ClCompile Include="crtc_sdp_handler.cpp" />
@@ -189,6 +191,7 @@
     <ClCompile Include="cwebsocket_session.cpp" />
     <ClCompile Include="DtlsTransport.cpp" />
     <ClCompile Include="H264.cpp" />
+    <ClCompile Include="h264_profile_level_id.cc" />
     <ClCompile Include="IceCandidate.cpp" />
     <ClCompile Include="IceServer.cpp" />
     <ClCompile Include="KeyFrameRequestManager.cpp" />
@@ -309,6 +312,9 @@
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnet_define.h" />
+    <ClInclude Include="common_types.h" />
+    <ClInclude Include="cortc.h" />
+    <ClInclude Include="crandom.h" />
     <ClInclude Include="crate_calculator.h" />
     <ClInclude Include="crtc_sdp.h" />
     <ClInclude Include="crtc_sdp_define.h" />
@@ -341,6 +347,7 @@
     <ClInclude Include="cwebsocket_session.h" />
     <ClInclude Include="DtlsTransport.hpp" />
     <ClInclude Include="H264.hpp" />
+    <ClInclude Include="h264_profile_level_id.h" />
     <ClInclude Include="IceCandidate.hpp" />
     <ClInclude Include="IceServer.hpp" />
     <ClInclude Include="KeyFrameRequestManager.hpp" />

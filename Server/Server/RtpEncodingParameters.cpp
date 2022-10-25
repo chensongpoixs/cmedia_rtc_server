@@ -47,7 +47,7 @@ namespace RTC
 		{
 			this->ssrc = data["ssrc"].asUInt(); //jsonSsrcIt->get<uint32_t>();
 		}
-
+		
 		// rid is optional.
 		if ( data.isMember("rid") &&data["rid"].isString() /*jsonRidIt != data.end() && jsonRidIt->is_string()*/)
 		{

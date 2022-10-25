@@ -17,8 +17,8 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
-
-
+#include "crandom.h"
+#include "cortc.h"
 namespace RTC
 {
 	/* Instance methods. */
@@ -39,123 +39,73 @@ namespace RTC
 		paused = false;
 
 		rtpParameters = rtp_Parameter;
-		////////////////////////////////////////////////mid////////////////////////////////////////////////////////
-		//
-		// default video h264 RtpParameters
-		// 1. 
-		//rtpParameters.mid = "0";
+		// Evaluate type.
+		// 根据rtpParameters中encodings中设置编码传输的类型
+		this->type = RTC::RtpParameters::GetType(this->rtpParameters);
+		// 根据客户端 的编码类型 设置每一种编码类型
+		this->rtpStreamByEncodingIdx.resize(this->rtpParameters.encodings.size(), nullptr);
+		this->rtpStreamScores.resize(this->rtpParameters.encodings.size(), 0u);
 
-		///////////////////////////////////////////////////RTCP///////////////////////////////////////////////////////////
-		//// 2. rtcp 
-		//rtpParameters.rtcp.cname = "UgYi3789TL6C/8Zx";
-		//rtpParameters.rtcp.reducedSize = true;
+		auto& encoding = this->rtpParameters.encodings[0];
+		auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
 
-		//////////////////////////////////////////////////codecs///////////////////////////////////////////////////////////
-		//// 3. codecs
-		////	3.1 RTP
-		//RtpCodecParameters  rtpcodecparameter;
-		//rtpcodecparameter.clockRate = 90000;
-		//rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
-		//rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::H264;
-		//rtpcodecparameter.mimeType.mimeType = "video/H264";
-		//rtpcodecparameter.payloadType = 108; 
-		//rtpcodecparameter.parameters.mapKeyValues.emplace("level-asymmetry-allowed", Parameters::Value(1));
-		//rtpcodecparameter.parameters.mapKeyValues.emplace("packetization-mode", Parameters::Value(1));
-		//rtpcodecparameter.parameters.mapKeyValues.emplace("profile-level-id", Parameters::Value("42e01f"));
-		////// 服务质量Qos RTCPfeedback
-		//RtcpFeedback rtcpfeedback;
-
-		//rtcpfeedback.type = "goog-remb";
-		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
-
-		//rtcpfeedback.type = "transport-cc";
-		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
-
-		//rtcpfeedback.type = "ccm";
-		//rtcpfeedback.parameter = "fir";
-		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
-
-		//rtcpfeedback.type = "nack";
-		//rtcpfeedback.parameter = "";
-		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
+		// 检查对编码类型判断传输类型是否准确创建
+		if (!RTC::Codecs::Tools::IsValidTypeForCodec(this->type, mediaCodec->mimeType))
+		{
+			ERROR_EX_LOG(
+				"%s codec not supported for %s",
+				mediaCodec->mimeType.ToString().c_str(),
+				RTC::RtpParameters::GetTypeString(this->type).c_str());
+		}
+		
 
 
-		//rtcpfeedback.type = "nack";
-		//rtcpfeedback.parameter = "pli";
-		//rtpcodecparameter.rtcpFeedbacks.push_back(rtcpfeedback);
-		// 
+		for (const RTC::RtpCodecParameters & p : rtpParameters.codecs)
+		{
+			if (p.mimeType.subtype != RTC::RtpCodecMimeType::Subtype::RTX)
+			{
+				continue;
+			}
+			int32 find_payloadType = ortc::match_codecs(p, g_global_rtc.get_rtp_capabilities().m_codecs);
+			if (find_payloadType == 0)
+			{
+				ERROR_EX_LOG("wrong entry in rtpMapping.codecs (missing mappedPayloadType) not find match_codec id !!!");
+				return ;
+			}
+			rtpMapping.codecs[p.payloadType] = find_payloadType;
+		}
 
-		//rtpParameters.codecs.push_back(rtpcodecparameter);
-		//// RTX RtpCodecParameters  rtpcodecparameter;
-		//RtpCodecParameters  rtx_rtpcodecparameter;
-		//rtx_rtpcodecparameter.clockRate = 90000;
-		//rtx_rtpcodecparameter.mimeType.type = RtpCodecMimeType::Type::VIDEO;
-		//rtx_rtpcodecparameter.mimeType.subtype = RtpCodecMimeType::Subtype::RTX;
-		//rtx_rtpcodecparameter.mimeType.mimeType = "video/rtx";
-		//rtx_rtpcodecparameter.payloadType = 109;
-
-		//rtx_rtpcodecparameter.parameters.mapKeyValues.emplace("apt", Parameters::Value(108));
-		//rtpParameters.codecs.push_back(rtx_rtpcodecparameter);
-
-		///////////////////////////////////encodings////////////////////////////////////////////
-		//RtpEncodingParameters rtpencodingparameter;
-		//rtpencodingparameter.ssrc = 899346955;
-		//rtpencodingparameter.rtx.ssrc = 28746816;
-		//rtpParameters.encodings.push_back(rtpencodingparameter);
-
-
-		//////////////////////////////////////RtpHeaderExtensionParameters///////////////////////////////////////////////////////
-		//RtpHeaderExtensionParameters rtpheaderextensionparameter;
-		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:mid";
-		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		//rtpheaderextensionparameter.id = 3;
-		//rtpheaderextensionparameter.encrypt = false;
-
-		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id";
-		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		//rtpheaderextensionparameter.id = 10;
-		//rtpheaderextensionparameter.encrypt = false;
-
-		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-
-		//////
-		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id";
-		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		//rtpheaderextensionparameter.id = 11;
-		//rtpheaderextensionparameter.encrypt = false;
-
-		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-		//
-		//rtpheaderextensionparameter.uri = "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time";
-		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		//rtpheaderextensionparameter.id = 2;
-		//rtpheaderextensionparameter.encrypt = false;
-
-		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//    对于js中代码 ortc.js 中getProducerRtpParametersMapping方法
+	//    // Generate encodings mapping.
+	//    // 就是一个随机种子 ssrc 
+	//    let mappedSsrc = utils.generateRandomNumber();
+	//    for (const encoding of params.encodings) {
+	//        const mappedEncoding = {};
+	//        mappedEncoding.mappedSsrc = mappedSsrc++;
+	//        if (encoding.rid)
+	//            mappedEncoding.rid = encoding.rid;
+	//        if (encoding.ssrc)
+	//            mappedEncoding.ssrc = encoding.ssrc;
+	//        if (encoding.scalabilityMode)
+	//            mappedEncoding.scalabilityMode = encoding.scalabilityMode;
+	//        rtpMapping.encodings.push(mappedEncoding);
+	//    }
+	//
+	//
+	//
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+		rtpMapping.encodings.reserve(rtpParameters.encodings.size());
 
 
-		//rtpheaderextensionparameter.uri = "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01";
-		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		//rtpheaderextensionparameter.id = 3;
-		//rtpheaderextensionparameter.encrypt = false;
-
-		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-
-		//rtpheaderextensionparameter.uri = "urn:3gpp:video-orientation";
-		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		//rtpheaderextensionparameter.id = 13;
-		//rtpheaderextensionparameter.encrypt = false;
-
-		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-
-		//rtpheaderextensionparameter.uri = "urn:ietf:params:rtp-hdrext:toffset";
-		//rtpheaderextensionparameter.type = RTC::RtpHeaderExtensionUri::GetType(rtpheaderextensionparameter.uri);
-		//rtpheaderextensionparameter.id = 14;
-		//rtpheaderextensionparameter.encrypt = false;
-
-		//rtpParameters.headerExtensions.push_back(rtpheaderextensionparameter);
-
+		for (RTC::RtpEncodingParameters& rtp_encoding_parameters : rtpParameters.encodings)
+		{
+			RtpEncodingMapping& encodingMapping = this->rtpMapping.encodings.back();
+			encodingMapping.ssrc = rtp_encoding_parameters.ssrc;
+			using namespace chen;
+			 encodingMapping.mappedSsrc =    c_rand.rand();
+		}
 		// Fill RTP header extension ids.
 		// This may throw.
 		for (auto& exten : this->rtpParameters.headerExtensions)
@@ -578,7 +528,9 @@ namespace RTC
 			{
 				// May have to announce a new RTP stream to the listener.
 				if (this->mapSsrcRtpStream.size() > numRtpStreamsBefore)
+				{
 					NotifyNewRtpStream(rtpStream);
+				}
 
 				return result;
 			}
@@ -591,12 +543,15 @@ namespace RTC
 
 			// Process the packet.
 			if (!rtpStream->ReceiveRtxPacket(packet))
+			{
 				return result;
+			}
 		}
 		// Should not happen.
 		else
 		{
 			//aserrt("found stream does not match received packet");
+			ERROR_EX_LOG("found stream does not match received packet");
 		}
 
 		if (packet->IsKeyFrame())
@@ -607,7 +562,9 @@ namespace RTC
 
 			// Tell the keyFrameRequestManager.
 			if (this->keyFrameRequestManager)
+			{
 				this->keyFrameRequestManager->KeyFrameReceived(packet->GetSsrc());
+			}
 		}
 
 		// May have to announce a new RTP stream to the listener.
@@ -616,7 +573,9 @@ namespace RTC
 			// Request a key frame for this stream since we may have lost the first packets
 			// (do not do it if this is a key frame).
 			if (this->keyFrameRequestManager && !this->paused && !packet->IsKeyFrame())
+			{
 				this->keyFrameRequestManager->ForceKeyFrameNeeded(packet->GetSsrc());
+			}
 
 			// Update current packet.
 			this->currentRtpPacket = packet;
@@ -629,14 +588,18 @@ namespace RTC
 
 		// If paused stop here.
 		if (this->paused)
+		{
 			return result;
+		}
 
 		// May emit 'trace' event.
 		EmitTraceEventRtpAndKeyFrameTypes(packet, isRtx);
 
 		// Mangle the packet before providing the listener with it.
 		if (!MangleRtpPacket(packet, rtpStream))
+		{
 			return ReceiveRtpPacketResult::DISCARDED;
+		}
 
 		// Post-process the packet.
 		PostProcessRtpPacket(packet);
@@ -860,7 +823,9 @@ namespace RTC
 				auto& encoding = this->rtpParameters.encodings[i];
 
 				if (encoding.rid != rid)
+				{
 					continue;
+				}
 
 				const auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
 				const auto* rtxCodec   = this->rtpParameters.GetRtxCodecForEncoding(encoding);
@@ -1005,7 +970,10 @@ namespace RTC
 		  "RtpStream for given encoding index already exists");
 
 		auto& encoding        = this->rtpParameters.encodings[encodingIdx];
-		auto& encodingMapping = this->rtpMapping.encodings[encodingIdx];
+
+		// TODO@chensong 2022-10-25 payloadType 的映射表
+
+		//auto& encodingMapping = this->rtpMapping.encodings[encodingIdx];
 
 		DEBUG_EX_LOG("rtp, [encodingIdx:%zu, ssrc:%u, rid:%s, payloadType:%hhu]",
 		  encodingIdx,
@@ -1050,7 +1018,7 @@ namespace RTC
 			params.useDtx = true;
 		}
 
-		/*for (const auto& fb : mediaCodec.rtcpFeedback)
+		for (const auto& fb : mediaCodec.rtcpFeedbacks)
 		{
 			if (!params.useNack && fb.type == "nack" && fb.parameter.empty())
 			{
@@ -1070,7 +1038,7 @@ namespace RTC
 
 				params.useFir = true;
 			}
-		}*/
+		}
 
 		// Create a RtpStreamRecv for receiving a media stream.
 		auto* rtpStream = new RTC::RtpStreamRecv(this, params);
@@ -1081,12 +1049,14 @@ namespace RTC
 		this->rtpStreamScores[encodingIdx]        = rtpStream->GetScore();
 
 		// Set the mapped SSRC.
-		this->mapRtpStreamMappedSsrc[rtpStream]             = encodingMapping.mappedSsrc;
-		this->mapMappedSsrcSsrc[encodingMapping.mappedSsrc] = ssrc;
+		//this->mapRtpStreamMappedSsrc[rtpStream]             = encodingMapping.mappedSsrc;
+		//this->mapMappedSsrcSsrc[encodingMapping.mappedSsrc] = ssrc;
 
 		// If the Producer is paused tell it to the new RtpStreamRecv.
 		if (this->paused)
+		{
 			rtpStream->Pause();
+		}
 
 		// Emit the first score event right now.
 		EmitScore();
@@ -1097,11 +1067,16 @@ namespace RTC
 	void Producer::NotifyNewRtpStream(RTC::RtpStreamRecv* rtpStream)
 	{
 		//MS_TRACE();
-
-		auto mappedSsrc = this->mapRtpStreamMappedSsrc.at(rtpStream);
-
+		// 通知消费数据
+		//auto mappedSsrc = this->mapRtpStreamMappedSsrc.at(rtpStream);
+		std::map<RTC::RtpStreamRecv*, uint32_t>::const_iterator iter =  mapRtpStreamMappedSsrc.find(rtpStream);
+		if (iter == mapRtpStreamMappedSsrc.end())
+		{
+			WARNING_EX_LOG("not find rtp stream map ssrc !@!!!");
+			return;
+		}
 		// Notify the listener.
-		this->listener->OnProducerNewRtpStream(this, static_cast<RTC::RtpStream*>(rtpStream), mappedSsrc);
+		this->listener->OnProducerNewRtpStream(this, static_cast<RTC::RtpStream*>(rtpStream), iter->second);
 	}
 
 	inline void Producer::PreProcessRtpPacket(RTC::RtpPacket* packet)
@@ -1151,7 +1126,9 @@ namespace RTC
 
 			// This happens just once.
 			if (extensions.capacity() != 24)
+			{
 				extensions.reserve(24);
+			}
 
 			extensions.clear();
 

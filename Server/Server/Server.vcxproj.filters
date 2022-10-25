@@ -139,6 +139,24 @@
     <Filter Include="reply">
       <UniqueIdentifier>{e2db577d-a684-42e1-9a5f-7dd9cf7179a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ortc">
+      <UniqueIdentifier>{e7b62da2-6b54-4dfa-bdda-cb5c87b951a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtc_util">
+      <UniqueIdentifier>{62a0fabd-1d61-452e-9530-566c52228673}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stun">
+      <UniqueIdentifier>{17b00e60-1e27-4cb4-8f19-dc9bfcdd9de6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="feedback">
+      <UniqueIdentifier>{7a7258e5-6eaf-47a2-aa7a-528c60028cab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="congestion_controller">
+      <UniqueIdentifier>{32d5fee3-16e1-48f1-b0c4-486997aa85d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtc_net">
+      <UniqueIdentifier>{3873831c-7ff7-4f2b-b4a3-d67077519f95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -188,9 +206,6 @@
     </ClCompile>
     <ClCompile Include="croom_mgr.cpp">
       <Filter>room</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_util.cpp">
-      <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="csctp_association.cpp">
       <Filter>sctp</Filter>
@@ -466,15 +481,6 @@
     <ClCompile Include="cuv_util.cpp">
       <Filter>uv_util</Filter>
     </ClCompile>
-    <ClCompile Include="crate_calculator.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="TransportCongestionControlClient.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="TransportCongestionControlServer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="RtpProbationGenerator.cpp">
       <Filter>rtp</Filter>
     </ClCompile>
@@ -487,31 +493,16 @@
     <ClCompile Include="csrtp_session.cpp">
       <Filter>srtp</Filter>
     </ClCompile>
-    <ClCompile Include="StunPacket.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="cuv_ip.cpp">
       <Filter>uv_util</Filter>
     </ClCompile>
     <ClCompile Include="cudp_socket_handler.cpp">
       <Filter>uv_util</Filter>
     </ClCompile>
-    <ClCompile Include="cudp_socket.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="PortManager.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="DtlsTransport.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="TransportTuple.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="IceServer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="IceCandidate.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="cmsg_dispatch.cpp">
@@ -562,11 +553,47 @@
     <ClCompile Include="cwebrtc_transprot_handler.cpp">
       <Filter>handler</Filter>
     </ClCompile>
-    <ClCompile Include="cguard_reply.cpp">
-      <Filter>reply</Filter>
+    <ClCompile Include="cortc.cpp">
+      <Filter>ortc</Filter>
     </ClCompile>
     <ClCompile Include="cglobal_rtc.cpp">
-      <Filter>rtc</Filter>
+      <Filter>rtc_util</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_util.cpp">
+      <Filter>rtc_util</Filter>
+    </ClCompile>
+    <ClCompile Include="crate_calculator.cpp">
+      <Filter>rtc_util</Filter>
+    </ClCompile>
+    <ClCompile Include="IceServer.cpp">
+      <Filter>stun</Filter>
+    </ClCompile>
+    <ClCompile Include="IceCandidate.cpp">
+      <Filter>stun</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportCongestionControlClient.cpp">
+      <Filter>congestion_controller</Filter>
+    </ClCompile>
+    <ClCompile Include="TransportCongestionControlServer.cpp">
+      <Filter>congestion_controller</Filter>
+    </ClCompile>
+    <ClCompile Include="StunPacket.cpp">
+      <Filter>stun</Filter>
+    </ClCompile>
+    <ClCompile Include="cguard_reply.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cudp_socket.cpp">
+      <Filter>rtc_net</Filter>
+    </ClCompile>
+    <ClCompile Include="PortManager.cpp">
+      <Filter>rtc_net</Filter>
+    </ClCompile>
+    <ClCompile Include="h264_profile_level_id.cc">
+      <Filter>codec</Filter>
+    </ClCompile>
+    <ClCompile Include="crandom.cpp">
+      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -635,9 +662,6 @@
     </ClInclude>
     <ClInclude Include="croom_mgr.h">
       <Filter>room</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_util.h">
-      <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="csctp_association.h">
       <Filter>sctp</Filter>
@@ -954,15 +978,6 @@
     <ClInclude Include="cuv_util.h">
       <Filter>uv_util</Filter>
     </ClInclude>
-    <ClInclude Include="crate_calculator.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="TransportCongestionControlClient.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="TransportCongestionControlServer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="BweType.hpp">
       <Filter>rtp</Filter>
     </ClInclude>
@@ -978,31 +993,16 @@
     <ClInclude Include="csrtp_session.h">
       <Filter>srtp</Filter>
     </ClInclude>
-    <ClInclude Include="StunPacket.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="cuv_ip.h">
       <Filter>uv_util</Filter>
     </ClInclude>
     <ClInclude Include="cudp_socket_handler.h">
       <Filter>uv_util</Filter>
     </ClInclude>
-    <ClInclude Include="cudp_socket.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="PortManager.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="DtlsTransport.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="TransportTuple.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="IceServer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="IceCandidate.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="cmsg_dispatch.h">
@@ -1050,11 +1050,50 @@
     <ClInclude Include="cshare_proto_error.h">
       <Filter>msg</Filter>
     </ClInclude>
-    <ClInclude Include="cguard_reply.h">
-      <Filter>reply</Filter>
+    <ClInclude Include="cortc.h">
+      <Filter>ortc</Filter>
     </ClInclude>
     <ClInclude Include="cglobal_rtc.h">
-      <Filter>rtc</Filter>
+      <Filter>rtc_util</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_util.h">
+      <Filter>rtc_util</Filter>
+    </ClInclude>
+    <ClInclude Include="crate_calculator.h">
+      <Filter>rtc_util</Filter>
+    </ClInclude>
+    <ClInclude Include="IceServer.hpp">
+      <Filter>stun</Filter>
+    </ClInclude>
+    <ClInclude Include="IceCandidate.hpp">
+      <Filter>stun</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportCongestionControlClient.hpp">
+      <Filter>congestion_controller</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportCongestionControlServer.hpp">
+      <Filter>congestion_controller</Filter>
+    </ClInclude>
+    <ClInclude Include="StunPacket.hpp">
+      <Filter>stun</Filter>
+    </ClInclude>
+    <ClInclude Include="cguard_reply.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cudp_socket.h">
+      <Filter>rtc_net</Filter>
+    </ClInclude>
+    <ClInclude Include="PortManager.hpp">
+      <Filter>rtc_net</Filter>
+    </ClInclude>
+    <ClInclude Include="h264_profile_level_id.h">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="common_types.h">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="crandom.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
