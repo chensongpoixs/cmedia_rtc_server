@@ -60,19 +60,19 @@ namespace RTC
 		
 
 
-		for (const RTC::RtpCodecParameters & p : rtpParameters.codecs)
+		for (size_t type_index = 0; type_index < rtpParameters.codecs.size(); ++type_index/*const RTC::RtpCodecParameters & p : rtpParameters.codecs*/)
 		{
-			if (p.mimeType.subtype != RTC::RtpCodecMimeType::Subtype::RTX)
+			if (rtpParameters.codecs[type_index].mimeType.subtype == RTC::RtpCodecMimeType::Subtype::RTX)
 			{
 				continue;
 			}
-			int32 find_payloadType = ortc::match_codecs(p, g_global_rtc.get_rtp_capabilities().m_codecs);
+			int32 find_payloadType = ortc::match_codecs(rtpParameters.codecs[type_index], g_global_rtc.get_rtp_capabilities().m_codecs);
 			if (find_payloadType == 0)
 			{
 				ERROR_EX_LOG("wrong entry in rtpMapping.codecs (missing mappedPayloadType) not find match_codec id !!!");
 				return ;
 			}
-			rtpMapping.codecs[p.payloadType] = find_payloadType;
+			rtpMapping.codecs[rtpParameters.codecs[type_index].payloadType] = find_payloadType;
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,15 +96,16 @@ namespace RTC
 	//
 	//
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-		rtpMapping.encodings.reserve(rtpParameters.encodings.size());
+		//rtpMapping.encodings.reserve(rtpParameters.encodings.size());
 
 
 		for (RTC::RtpEncodingParameters& rtp_encoding_parameters : rtpParameters.encodings)
 		{
-			RtpEncodingMapping& encodingMapping = this->rtpMapping.encodings.back();
+			RtpEncodingMapping encodingMapping;// = this->rtpMapping.encodings.back();
 			encodingMapping.ssrc = rtp_encoding_parameters.ssrc;
 			using namespace chen;
 			 encodingMapping.mappedSsrc =    c_rand.rand();
+			 rtpMapping.encodings.push_back(encodingMapping);
 		}
 		// Fill RTP header extension ids.
 		// This may throw.
@@ -973,7 +974,7 @@ namespace RTC
 
 		// TODO@chensong 2022-10-25 payloadType 的映射表
 
-		//auto& encodingMapping = this->rtpMapping.encodings[encodingIdx];
+		auto& encodingMapping = this->rtpMapping.encodings[encodingIdx];
 
 		DEBUG_EX_LOG("rtp, [encodingIdx:%zu, ssrc:%u, rid:%s, payloadType:%hhu]",
 		  encodingIdx,
@@ -1049,8 +1050,8 @@ namespace RTC
 		this->rtpStreamScores[encodingIdx]        = rtpStream->GetScore();
 
 		// Set the mapped SSRC.
-		//this->mapRtpStreamMappedSsrc[rtpStream]             = encodingMapping.mappedSsrc;
-		//this->mapMappedSsrcSsrc[encodingMapping.mappedSsrc] = ssrc;
+		this->mapRtpStreamMappedSsrc[rtpStream]             = encodingMapping.mappedSsrc;
+		this->mapMappedSsrcSsrc[encodingMapping.mappedSsrc] = ssrc;
 
 		// If the Producer is paused tell it to the new RtpStreamRecv.
 		if (this->paused)

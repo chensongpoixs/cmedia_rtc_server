@@ -80,7 +80,7 @@ namespace RTC
 		
 		void insert(const char * key, int32_t value);
 		void insert(const char * key, const char *value);
-		
+		void insert(const char * key,  std::string value);
 	public:
 		std::unordered_map<std::string, Value> mapKeyValues;
 		std::map<std::string, std::string>    codecs_map;

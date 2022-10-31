@@ -392,7 +392,7 @@ namespace chen
 			rtpCodecParameter.payloadType = StartPayloadType++;
 			rtpCodecParameter.parameters.insert("packetization-mode", 1);
 			rtpCodecParameter.parameters.insert("level-asymmetry-allowed", 1);
-			rtpCodecParameter.parameters.insert("profile-level-id", "42e01f");
+			rtpCodecParameter.parameters.insert("profile-level-id", std::string("42e01f"));
 			rtpCodecParameter.parameters.insert("x-google-max-bitrate", 28000);
 			rtpCodecParameter.parameters.insert("x-google-min-bitrate", 5500);
 			rtpCodecParameter.parameters.insert("x-google-start-bitrate", 1000);
@@ -471,7 +471,7 @@ namespace chen
 					ERROR_EX_LOG("not mimType Type = %d", rtp_codec.mimeType.type);
 				}
 
-				codec["mineType"] = rtp_codec.mimeType.mimeType; ;
+				codec["mimeType"] = rtp_codec.mimeType.mimeType; ;
 				codec["clockRate"] = rtp_codec.clockRate;
 				codec["preferredPayloadType"] = rtp_codec.payloadType;
 

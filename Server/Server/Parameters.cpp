@@ -58,13 +58,13 @@ namespace RTC
 		{
 			//const std::string& key = it.key();
 			//auto& value            = it.value();
-			codecs_map.insert(std::make_pair(*iter, data[*iter].asCString()));
+			//codecs_map.insert(std::make_pair(*iter, data[*iter].asCString()));
 			switch (/*value.type()*/ data[*iter].type())
 			{
 			case Json::booleanValue/*json::value_t::boolean*/:
 				{
 					this->mapKeyValues.emplace((*iter), Value(data[*iter].asBool()));
-
+					codecs_map.insert(std::make_pair(*iter, std::to_string(data[*iter].asBool())));
 					break;
 				}
 
@@ -72,21 +72,21 @@ namespace RTC
 				case Json::uintValue /*json::value_t::number_unsigned*/:
 				{
 					this->mapKeyValues.emplace((*iter), Value(data[*iter].asInt()));
-
+					codecs_map.insert(std::make_pair(*iter, std::to_string(data[*iter].asInt())));
 					break;
 				}
 
 				case Json::realValue:// json::value_t::number_float:
 				{
 					this->mapKeyValues.emplace((*iter), Value(data[*iter].asDouble()));
-
+					codecs_map.insert(std::make_pair(*iter, std::to_string(data[*iter].asDouble())));
 					break;
 				}
 
 				case Json::stringValue: //json::value_t::string:
 				{
 					this->mapKeyValues.emplace((*iter), Value(data[*iter].asCString()));
-
+					codecs_map.insert(std::make_pair(*iter,  data[*iter].asCString()));
 					break;
 				}
 
@@ -108,7 +108,7 @@ namespace RTC
 					{
 						this->mapKeyValues.emplace((*iter), Value(arrayOfIntegers));
 					}
-
+					codecs_map.insert(std::make_pair(*iter, data[*iter].asCString()));
 					/*for (auto& entry : value)
 					{
 						if (!entry.is_number_integer())
@@ -328,6 +328,20 @@ bool Parameters::HasBoolean(const std::string& key) const
 	void Parameters::insert(const char * key, const char * value)
 	{
 
+		if (!mapKeyValues.insert(std::make_pair(key, RTC::Parameters::Value(value))).second)
+		{
+			WARNING_EX_LOG("rtp codec parameter install failed (key = `%s`)", key);
+		}
+
+		///////////////
+		if (!codecs_map.insert(std::make_pair(key, value)).second)
+		{
+			WARNING_EX_LOG("rtp codec parameter install failed (key = `%s`)", key);
+		}
+	}
+
+	void Parameters::insert(const char * key, std::string value)
+	{
 		if (!mapKeyValues.insert(std::make_pair(key, RTC::Parameters::Value(value))).second)
 		{
 			WARNING_EX_LOG("rtp codec parameter install failed (key = `%s`)", key);

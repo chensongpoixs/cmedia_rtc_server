@@ -77,9 +77,9 @@ namespace RTC
 		{
 			this->parameters.Set(data["parameters"]);
 		}
-
+		//std::string rss = data.toStyledString();
 		// rtcpFeedback is optional.
-		if ( data.isMember("rtcpFeedback") && !data["rtcpFeedback"].isArray() /*jsonRtcpFeedbackIt != data.end() && jsonRtcpFeedbackIt->is_array()*/)
+		if ( data.isMember("rtcpFeedback") && data["rtcpFeedback"].isArray() /*jsonRtcpFeedbackIt != data.end() && jsonRtcpFeedbackIt->is_array()*/)
 		{
 			this->rtcpFeedbacks.reserve(data["rtcpFeedback"].size()/*jsonRtcpFeedbackIt->size()*/);
 

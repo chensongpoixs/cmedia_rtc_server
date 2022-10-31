@@ -45,7 +45,7 @@ namespace chen {
 						continue;
 					}
 
-					if (webrtc::H264::IsSameH264Profile(media_codec.parameters.codecs_map, rtp_codec_parameter.parameters.codecs_map))
+					if (!webrtc::H264::IsSameH264Profile(media_codec.parameters.codecs_map, rtp_codec_parameter.parameters.codecs_map))
 					{
 						WARNING_EX_LOG("IsSameH264Profile");
 						continue;
