@@ -595,6 +595,15 @@
     <ClCompile Include="crandom.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="Consumer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleConsumer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpStreamSend.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1094,6 +1103,15 @@
     </ClInclude>
     <ClInclude Include="crandom.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="Consumer.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleConsumer.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpStreamSend.hpp">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
