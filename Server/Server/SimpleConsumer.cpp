@@ -20,11 +20,13 @@ namespace RTC
 	  : RTC::Consumer::Consumer(id, producerId, listener, data, RTC::RtpParameters::Type::SIMPLE)
 	{
 		//MS_TRACE();
-		DEBUG_EX_LOG("producerId = %s, data = %s", producerId.c_str(), data.dump().c_str());
+	//	DEBUG_EX_LOG("producerId = %s, data = %s", producerId.c_str(), data.dump().c_str());
 		// Ensure there is a single encoding.
 		if (this->consumableRtpEncodings.size() != 1u)
+		{
 			ERROR_EX_LOG("invalid consumableRtpEncodings with size != 1");
-
+			return;
+		}
 		auto& encoding         = this->rtpParameters.encodings[0];
 		const auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
 
@@ -46,11 +48,11 @@ namespace RTC
 		//MS_TRACE();
 
 		// Call the parent method.
-		RTC::Consumer::FillJson(jsonObject);
+		//RTC::Consumer::FillJson(jsonObject);
 
 		// Add rtpStream.
-		this->rtpStream->FillJson(jsonObject["rtpStream"]);
-		DEBUG_EX_LOG("jsonObject = %s", jsonObject.dump().c_str());
+		//this->rtpStream->FillJson(jsonObject["rtpStream"]);
+		//DEBUG_EX_LOG("jsonObject = %s", jsonObject.dump().c_str());
 	}
 
 	void SimpleConsumer::FillJsonStats(Json::Value& jsonArray) const
@@ -58,33 +60,33 @@ namespace RTC
 	//	MS_TRACE();
 
 		// Add stats of our send stream.
-		jsonArray.emplace_back(json::value_t::object);
-		this->rtpStream->FillJsonStats(jsonArray[0]);
+		//jsonArray.emplace_back(json::value_t::object);
+		//this->rtpStream->FillJsonStats(jsonArray[0]);
 
 		// Add stats of our recv stream.
 		if (this->producerRtpStream)
 		{
-			jsonArray.emplace_back(json::value_t::object);
-			this->producerRtpStream->FillJsonStats(jsonArray[1]);
+			//jsonArray.emplace_back(json::value_t::object);
+		//	this->producerRtpStream->FillJsonStats(jsonArray[1]);
 		}
-		DEBUG_EX_LOG("jsonArray = %s", jsonArray.dump().c_str());
+		//DEBUG_EX_LOG("jsonArray = %s", jsonArray.dump().c_str());
 	}
 
 	void SimpleConsumer::FillJsonScore(Json::Value& jsonObject) const
 	{
-		MS_TRACE();
+		//MS_TRACE();
 
-		MS_ASSERT(this->producerRtpStreamScores, "producerRtpStreamScores not set");
+	//	MS_ASSERT(this->producerRtpStreamScores, "producerRtpStreamScores not set");
 
-		jsonObject["score"] = this->rtpStream->GetScore();
+		//jsonObject["score"] = this->rtpStream->GetScore();
 
-		if (this->producerRtpStream)
-			jsonObject["producerScore"] = this->producerRtpStream->GetScore();
-		else
-			jsonObject["producerScore"] = 0;
+		//if (this->producerRtpStream)
+		//	jsonObject["producerScore"] = this->producerRtpStream->GetScore();
+		//else
+		//	jsonObject["producerScore"] = 0;
 
-		jsonObject["producerScores"] = *this->producerRtpStreamScores;
-		DEBUG_EX_LOG("jsonObject = %s", jsonObject.dump().c_str());
+		//jsonObject["producerScores"] = *this->producerRtpStreamScores;
+		//DEBUG_EX_LOG("jsonObject = %s", jsonObject.dump().c_str());
 	}
 	 
 	/*
@@ -124,14 +126,14 @@ namespace RTC
 	*/
 	void SimpleConsumer::ProducerRtpStream(RTC::RtpStream* rtpStream, uint32_t /*mappedSsrc*/)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 		DEBUG_EX_LOG("");
 		this->producerRtpStream = rtpStream;
 	}
 
 	void SimpleConsumer::ProducerNewRtpStream(RTC::RtpStream* rtpStream, uint32_t /*mappedSsrc*/)
 	{
-		MS_TRACE();
+	//	MS_TRACE();
 		DEBUG_EX_LOG("");
 		this->producerRtpStream = rtpStream;
 
@@ -159,7 +161,7 @@ namespace RTC
 	{
 		//MS_TRACE();
 		DEBUG_EX_LOG("");
-		MS_ASSERT(this->externallyManagedBitrate, "bitrate is not externally managed");
+		//MS_ASSERT(this->externallyManagedBitrate, "bitrate is not externally managed");
 
 		// Audio SimpleConsumer does not play the BWE game.
 		if (this->kind != RTC::Media::Kind::VIDEO)
@@ -175,9 +177,9 @@ namespace RTC
 	{
 		//MS_TRACE();
 		DEBUG_EX_LOG("bitrate = %lu", bitrate);
-		MS_ASSERT(this->externallyManagedBitrate, "bitrate is not externally managed");
-		MS_ASSERT(this->kind == RTC::Media::Kind::VIDEO, "should be video");
-		MS_ASSERT(IsActive(), "should be active");
+		//MS_ASSERT(this->externallyManagedBitrate, "bitrate is not externally managed");
+		//MS_ASSERT(this->kind == RTC::Media::Kind::VIDEO, "should be video");
+		//MS_ASSERT(IsActive(), "should be active");
 
 		// If this is not the first time this method is called within the same iteration,
 		// return 0 since a video SimpleConsumer does not keep state about this.
@@ -188,7 +190,7 @@ namespace RTC
 
 		// Video SimpleConsumer does not really play the BWE game when. However, let's
 		// be honest and try to be nice.
-		auto nowMs          = DepLibUV::GetTimeMs();
+		auto nowMs = uv_util::GetTimeMs(); // DepLibUV::GetTimeMs();
 		auto desiredBitrate = this->producerRtpStream->GetBitrate(nowMs);
 
 		if (desiredBitrate < bitrate)
@@ -201,9 +203,9 @@ namespace RTC
 	{
 		//MS_TRACE();
 
-		MS_ASSERT(this->externallyManagedBitrate, "bitrate is not externally managed");
-		MS_ASSERT(this->kind == RTC::Media::Kind::VIDEO, "should be video");
-		MS_ASSERT(IsActive(), "should be active");
+		//MS_ASSERT(this->externallyManagedBitrate, "bitrate is not externally managed");
+		//MS_ASSERT(this->kind == RTC::Media::Kind::VIDEO, "should be video");
+		//MS_ASSERT(IsActive(), "should be active");
 		DEBUG_EX_LOG("");
 		this->managingBitrate = false;
 
@@ -223,7 +225,7 @@ namespace RTC
 		if (!IsActive())
 			return 0u;
 
-		auto nowMs          = DepLibUV::GetTimeMs();
+		auto nowMs = uv_util::GetTimeMs(); // DepLibUV::GetTimeMs();
 		auto desiredBitrate = this->producerRtpStream->GetBitrate(nowMs);
 
 		// If consumer.rtpParameters.encodings[0].maxBitrate was given and it's
@@ -249,7 +251,7 @@ namespace RTC
 		// in the corresponding Producer.
 		if (this->supportedCodecPayloadTypes.find(payloadType) == this->supportedCodecPayloadTypes.end())
 		{
-			MS_DEBUG_DEV("payload type not supported [payloadType:%" PRIu8 "]", payloadType);
+			//MS_DEBUG_DEV("payload type not supported [payloadType:%" PRIu8 "]", payloadType);
 
 			return;
 		}
@@ -269,7 +271,7 @@ namespace RTC
 		{
 			if (packet->IsKeyFrame())
 			{
-				MS_DEBUG_TAG(rtp, "sync key frame received");
+				//MS_DEBUG_TAG(rtp, "sync key frame received");
 			}
 
 			this->rtpSeqManager.Sync(packet->GetSequenceNumber() - 1);
@@ -292,10 +294,7 @@ namespace RTC
 
 		if (isSyncPacket)
 		{
-			MS_DEBUG_TAG(
-			  rtp,
-			  "sending sync packet [ssrc:%" PRIu32 ", seq:%" PRIu16 ", ts:%" PRIu32
-			  "] from original [seq:%" PRIu16 "]",
+			DEBUG_EX_LOG( "rtp, sending sync packet [ssrc:%u, seq:%hu, ts:%u] from original [seq:%hu]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber(),
 			  packet->GetTimestamp(),
@@ -313,10 +312,7 @@ namespace RTC
 		}
 		else
 		{
-			MS_WARN_TAG(
-			  rtp,
-			  "failed to send packet [ssrc:%" PRIu32 ", seq:%" PRIu16 ", ts:%" PRIu32
-			  "] from original [seq:%" PRIu16 "]",
+			WARNING_EX_LOG("rtp, failed to send packet [ssrc:%u, seq:%hu, ts:%u] from original [seq:%hu]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber(),
 			  packet->GetTimestamp(),
@@ -331,9 +327,9 @@ namespace RTC
 	void SimpleConsumer::GetRtcp(
 	  RTC::RTCP::CompoundPacket* packet, RTC::RtpStreamSend* rtpStream, uint64_t nowMs)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 		DEBUG_EX_LOG("");
-		MS_ASSERT(rtpStream == this->rtpStream, "RTP stream does not match");
+		//MS_ASSERT(rtpStream == this->rtpStream, "RTP stream does not match");
 
 		if (static_cast<float>((nowMs - this->lastRtcpSentTime) * 1.15) < this->maxRtcpInterval)
 			return;
@@ -356,7 +352,7 @@ namespace RTC
 	void SimpleConsumer::NeedWorstRemoteFractionLost(
 	  uint32_t /*mappedSsrc*/, uint8_t& worstRemoteFractionLost)
 	{
-		MS_TRACE();
+		//MS_TRACE();
 		DEBUG_EX_LOG("");
 		if (!IsActive())
 			return;
@@ -430,14 +426,14 @@ namespace RTC
 
 	float SimpleConsumer::GetRtt() const
 	{
-		MS_TRACE();
+		//MS_TRACE();
 		DEBUG_EX_LOG("");
 		return this->rtpStream->GetRtt();
 	}
 
 	void SimpleConsumer::UserOnTransportConnected()
 	{
-		MS_TRACE();
+	//	MS_TRACE();
 		DEBUG_EX_LOG("");
 		this->syncRequired = true;
 
@@ -476,11 +472,10 @@ namespace RTC
 	{
 		//MS_TRACE();
 		DEBUG_EX_LOG("");
-		auto& encoding         = this->rtpParameters.encodings[0];
+		RtpEncodingParameters& encoding         = this->rtpParameters.encodings[0];
 		const auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
 
-		MS_DEBUG_TAG(
-		  rtp, "[ssrc:%" PRIu32 ", payloadType:%" PRIu8 "]", encoding.ssrc, mediaCodec->payloadType);
+		DEBUG_EX_LOG("rtp, [ssrc:%u, payloadType:%hhu]", encoding.ssrc, mediaCodec->payloadType);
 
 		// Set stream params.
 		RTC::RtpStream::Params params;
@@ -494,7 +489,7 @@ namespace RTC
 		// Check in band FEC in codec parameters.
 		if (mediaCodec->parameters.HasInteger("useinbandfec") && mediaCodec->parameters.GetInteger("useinbandfec") == 1)
 		{
-			MS_DEBUG_TAG(rtp, "in band FEC enabled");
+			DEBUG_EX_LOG("rtp, in band FEC enabled");
 
 			params.useInBandFec = true;
 		}
@@ -502,7 +497,7 @@ namespace RTC
 		// Check DTX in codec parameters.
 		if (mediaCodec->parameters.HasInteger("usedtx") && mediaCodec->parameters.GetInteger("usedtx") == 1)
 		{
-			MS_DEBUG_TAG(rtp, "DTX enabled");
+			DEBUG_EX_LOG("rtp, DTX enabled");
 
 			params.useDtx = true;
 		}
@@ -510,28 +505,28 @@ namespace RTC
 		// Check DTX in the encoding.
 		if (encoding.dtx)
 		{
-			MS_DEBUG_TAG(rtp, "DTX enabled");
+			DEBUG_EX_LOG("rtp, DTX enabled");
 
 			params.useDtx = true;
 		}
 
-		for (const auto& fb : mediaCodec->rtcpFeedback)
+		for (const auto& fb : mediaCodec->rtcpFeedbacks)
 		{
 			if (!params.useNack && fb.type == "nack" && fb.parameter.empty())
 			{
-				MS_DEBUG_2TAGS(rtp, rtcp, "NACK supported");
+				DEBUG_EX_LOG("rtp, rtcp, NACK supported");
 
 				params.useNack = true;
 			}
 			else if (!params.usePli && fb.type == "nack" && fb.parameter == "pli")
 			{
-				MS_DEBUG_2TAGS(rtp, rtcp, "PLI supported");
+				DEBUG_EX_LOG("rtp, rtcp, PLI supported");
 
 				params.usePli = true;
 			}
 			else if (!params.useFir && fb.type == "ccm" && fb.parameter == "fir")
 			{
-				MS_DEBUG_2TAGS(rtp, rtcp, "FIR supported");
+				DEBUG_EX_LOG("rtp, rtcp, FIR supported");
 
 				params.useFir = true;
 			}
@@ -569,11 +564,11 @@ namespace RTC
 	{
 		//MS_TRACE();
 
-		json data = json::object();
+		//json data = json::object();
 
-		FillJsonScore(data);
-		DEBUG_EX_LOG("data = %s", data.dump().c_str());
-		Channel::ChannelNotifier::Emit(this->id, "score", data);
+		//FillJsonScore(data);
+		//DEBUG_EX_LOG("data = %s", data.dump().c_str());
+		//Channel::ChannelNotifier::Emit(this->id, "score", data);
 	}
 
 	inline void SimpleConsumer::OnRtpStreamScore(

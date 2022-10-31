@@ -17,50 +17,219 @@ namespace RTC
 	  const std::string& id,
 	  const std::string& producerId,
 	  Listener* listener,
-	  json& data,
+	  Json::Value& data,
 	  RTC::RtpParameters::Type type)
 	  : id(id), producerId(producerId), listener(listener), type(type)
 	{
-		MS_TRACE();
+		//MS_TRACE();
+		/*
+		{
+	"consumableRtpEncodings":[
+		{
+			"active":true,
+			"dtx":false,
+			"maxBitrate":500000,
+			"scalabilityMode":"S1T3",
+			"scaleResolutionDownBy":4,
+			"ssrc":122940398
+		},
+		{
+			"active":true,
+			"dtx":false,
+			"maxBitrate":1000000,
+			"scalabilityMode":"S1T3",
+			"scaleResolutionDownBy":2,
+			"ssrc":122940399
+		},
+		{
+			"active":true,
+			"dtx":false,
+			"maxBitrate":5000000,
+			"scalabilityMode":"S1T3",
+			"scaleResolutionDownBy":1,
+			"ssrc":122940400
+		}
+	],
+	"kind":"video",
+	"paused":true,
+	"rtpParameters":{
+		"codecs":[
+			{
+				"clockRate":90000,
+				"mimeType":"video/H264",
+				"parameters":{
+					"level-asymmetry-allowed":1,
+					"packetization-mode":1,
+					"profile-level-id":"42e01f"
+				},
+				"payloadType":100,
+				"rtcpFeedback":[
+					{
+						"parameter":"",
+						"type":"transport-cc"
+					},
+					{
+						"parameter":"fir",
+						"type":"ccm"
+					},
+					{
+						"parameter":"",
+						"type":"nack"
+					},
+					{
+						"parameter":"pli",
+						"type":"nack"
+					}
+				]
+			},
+			{
+				"clockRate":90000,
+				"mimeType":"video/rtx",
+				"parameters":{
+					"apt":100
+				},
+				"payloadType":101,
+				"rtcpFeedback":[
 
-		auto jsonKindIt = data.find("kind");
+				]
+			}
+		],
+		"encodings":[
+			{
+				"maxBitrate":5000000,
+				"rtx":{
+					"ssrc":810358598
+				},
+				"scalabilityMode":"S3T3",
+				"ssrc":810358597
+			}
+		],
+		"headerExtensions":[
+			{
+				"encrypt":false,
+				"id":1,
+				"parameters":{
 
-		if (jsonKindIt == data.end() || !jsonKindIt->is_string())
-			MS_THROW_TYPE_ERROR("missing kind");
+				},
+				"uri":"urn:ietf:params:rtp-hdrext:sdes:mid"
+			},
+			{
+				"encrypt":false,
+				"id":4,
+				"parameters":{
 
+				},
+				"uri":"http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+			},
+			{
+				"encrypt":false,
+				"id":5,
+				"parameters":{
+
+				},
+				"uri":"http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+			},
+			{
+				"encrypt":false,
+				"id":11,
+				"parameters":{
+
+				},
+				"uri":"urn:3gpp:video-orientation"
+			},
+			{
+				"encrypt":false,
+				"id":12,
+				"parameters":{
+
+				},
+				"uri":"urn:ietf:params:rtp-hdrext:toffset"
+			}
+		],
+		"mid":"0",
+		"rtcp":{
+			"cname":"83e6665b",
+			"mux":true,
+			"reducedSize":true
+		}
+	},
+	"type":"simulcast"
+}
+		*/
+
+		if (!data.isMember("kind") || !data["kind"].isString())
+		{
+			ERROR_EX_LOG("missing kind ");
+			return;
+		}
+
+		if (!data.isMember("rtpParameters") || !data["rtpParameters"].isObject())
+		{
+			ERROR_EX_LOG("missing rtpParameters");
+			return;
+		}
+
+		if (!data.isMember("consumableRtpEncodings") || !data["consumableRtpEncodings"].isArray())
+		{
+			ERROR_EX_LOG("missing consumableRtpEncodings");
+			return;
+		}
 		// This may throw.
-		this->kind = RTC::Media::GetKind(jsonKindIt->get<std::string>());
+		this->kind = RTC::Media::GetKind(data["kind"].asCString());
 
-		if (this->kind == RTC::Media::Kind::ALL)
-			MS_THROW_TYPE_ERROR("invalid empty kind");
 
-		auto jsonRtpParametersIt = data.find("rtpParameters");
+		Json::Value temp_rtpParameter = data["rtpParameters"];
+		//RTC::RtpParameters current_rtpParameters;
+		rtpParameters.parse(temp_rtpParameter);
+		//auto jsonKindIt = data.find("kind");
 
-		if (jsonRtpParametersIt == data.end() || !jsonRtpParametersIt->is_object())
-			MS_THROW_TYPE_ERROR("missing rtpParameters");
+		//if (jsonKindIt == data.end() || !jsonKindIt->is_string())
+		//	MS_THROW_TYPE_ERROR("missing kind");
 
-		// This may throw.
-		this->rtpParameters = RTC::RtpParameters(*jsonRtpParametersIt);
+		//// This may throw.
+		//this->kind = RTC::Media::GetKind(jsonKindIt->get<std::string>());
+
+		//if (this->kind == RTC::Media::Kind::ALL)
+		//	MS_THROW_TYPE_ERROR("invalid empty kind");
+
+		//auto jsonRtpParametersIt = data.find("rtpParameters");
+
+		//if (jsonRtpParametersIt == data.end() || !jsonRtpParametersIt->is_object())
+		//	MS_THROW_TYPE_ERROR("missing rtpParameters");
+
+		//// This may throw.
+		//this->rtpParameters = RTC::RtpParameters(*jsonRtpParametersIt);
 
 		if (this->rtpParameters.encodings.empty())
-			MS_THROW_TYPE_ERROR("empty rtpParameters.encodings");
+		{
+			ERROR_EX_LOG("empty rtpParameters.encodings");
+			return;
+		}
 
 		// All encodings must have SSRCs.
 		for (auto& encoding : this->rtpParameters.encodings)
 		{
 			if (encoding.ssrc == 0)
-				MS_THROW_TYPE_ERROR("invalid encoding in rtpParameters (missing ssrc)");
+			{
+				ERROR_EX_LOG("invalid encoding in rtpParameters (missing ssrc)");
+			}
 			else if (encoding.hasRtx && encoding.rtx.ssrc == 0)
-				MS_THROW_TYPE_ERROR("invalid encoding in rtpParameters (missing rtx.ssrc)");
+			{
+				ERROR_EX_LOG("invalid encoding in rtpParameters (missing rtx.ssrc)");
+			}
 		}
 
 		auto jsonConsumableRtpEncodingsIt = data.find("consumableRtpEncodings");
 
 		if (jsonConsumableRtpEncodingsIt == data.end() || !jsonConsumableRtpEncodingsIt->is_array())
-			MS_THROW_TYPE_ERROR("missing consumableRtpEncodings");
+		{
+			ERROR_EX_LOG("missing consumableRtpEncodings");
+		}
 
 		if (jsonConsumableRtpEncodingsIt->empty())
-			MS_THROW_TYPE_ERROR("empty consumableRtpEncodings");
+		{
+			ERROR_EX_LOG("empty consumableRtpEncodings");
+		}
 
 		this->consumableRtpEncodings.reserve(jsonConsumableRtpEncodingsIt->size());
 
@@ -75,7 +244,9 @@ namespace RTC
 			auto& encoding = this->consumableRtpEncodings[i];
 
 			if (encoding.ssrc == 0u)
-				MS_THROW_TYPE_ERROR("wrong encoding in consumableRtpEncodings (missing ssrc)");
+			{
+				ERROR_EX_LOG("wrong encoding in consumableRtpEncodings (missing ssrc)");
+			}
 		}
 
 		// Fill RTP header extension ids and their mapped values.
@@ -83,7 +254,10 @@ namespace RTC
 		for (auto& exten : this->rtpParameters.headerExtensions)
 		{
 			if (exten.id == 0u)
-				MS_THROW_TYPE_ERROR("RTP extension id cannot be 0");
+			{
+				ERROR_EX_LOG("RTP extension id cannot be 0");
+				return;
+			}
 
 			if (this->rtpHeaderExtensionIds.ssrcAudioLevel == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::SSRC_AUDIO_LEVEL)
 			{
@@ -143,19 +317,25 @@ namespace RTC
 		for (auto& encoding : this->rtpParameters.encodings)
 		{
 			if (encoding.hasRtx)
+			{
 				this->rtxSsrcs.push_back(encoding.rtx.ssrc);
+			}
 		}
 
 		// Set the RTCP report generation interval.
 		if (this->kind == RTC::Media::Kind::AUDIO)
+		{
 			this->maxRtcpInterval = RTC::RTCP::MaxAudioIntervalMs;
+		}
 		else
+		{
 			this->maxRtcpInterval = RTC::RTCP::MaxVideoIntervalMs;
+		}
 	}
 
 	Consumer::~Consumer()
 	{
-		MS_TRACE();
+		//MS_TRACE();
 	}
 
 	void Consumer::FillJson(json& jsonObject) const

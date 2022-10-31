@@ -102,7 +102,7 @@ namespace RTC
 	{
 		//MS_TRACE();
 
-		auto nowMs = //DepLibUV::GetTimeMsInt64();
+		auto nowMs = uv_util::GetTimeMs(); //DepLibUV::GetTimeMsInt64();
 
 		this->bitrates.desiredBitrate          = 0u;
 		this->bitrates.effectiveDesiredBitrate = 0u;

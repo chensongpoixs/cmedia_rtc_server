@@ -62,15 +62,15 @@ namespace RTC
 		  const std::string& id,
 		  const std::string& producerId,
 		  RTC::Consumer::Listener* listener,
-		  json& data,
+		  Json::Value& data,
 		  RTC::RtpParameters::Type type);
 		virtual ~Consumer();
 
 	public:
-		virtual void FillJson(json& jsonObject) const;
-		virtual void FillJsonStats(json& jsonArray) const  = 0;
-		virtual void FillJsonScore(json& jsonObject) const = 0;
-		virtual void HandleRequest(Channel::ChannelRequest* request);
+		//virtual void FillJson(Json::Value& jsonObject) const;
+		virtual void FillJsonStats(Json::Value& jsonArray) const  = 0;
+		virtual void FillJsonScore(Json::Value& jsonObject) const = 0;
+		//virtual void HandleRequest(Channel::ChannelRequest* request);
 		RTC::Media::Kind GetKind() const
 		{
 			return this->kind;
