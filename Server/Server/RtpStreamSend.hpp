@@ -1,8 +1,8 @@
 #ifndef MS_RTC_RTP_STREAM_SEND_HPP
 #define MS_RTC_RTP_STREAM_SEND_HPP
 
-#include "RTC/RateCalculator.hpp"
-#include "RTC/RtpStream.hpp"
+#include "crate_calculator.h"
+#include "RtpStream.hpp"
 #include <vector>
 
 namespace RTC
@@ -37,7 +37,7 @@ namespace RTC
 		  RTC::RtpStreamSend::Listener* listener, RTC::RtpStream::Params& params, size_t bufferSize);
 		~RtpStreamSend() override;
 
-		void FillJsonStats(json& jsonObject) override;
+		//void FillJsonStats(json& jsonObject) override;
 		void SetRtx(uint8_t payloadType, uint32_t ssrc) override;
 		bool ReceivePacket(RTC::RtpPacket* packet) override;
 		void ReceiveNack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket);
@@ -70,7 +70,7 @@ namespace RTC
 		size_t bufferSize{ 0u };
 		std::vector<StorageItem> storage;
 		uint16_t rtxSeq{ 0u };
-		RTC::RtpDataCounter transmissionCounter;
+		chen::RtpDataCounter transmissionCounter;
 	};
 } // namespace RTC
 

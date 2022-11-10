@@ -24,137 +24,137 @@ namespace RTC
 		//MS_TRACE();
 		/*
 		{
-	"consumableRtpEncodings":[
-		{
-			"active":true,
-			"dtx":false,
-			"maxBitrate":500000,
-			"scalabilityMode":"S1T3",
-			"scaleResolutionDownBy":4,
-			"ssrc":122940398
-		},
-		{
-			"active":true,
-			"dtx":false,
-			"maxBitrate":1000000,
-			"scalabilityMode":"S1T3",
-			"scaleResolutionDownBy":2,
-			"ssrc":122940399
-		},
-		{
-			"active":true,
-			"dtx":false,
-			"maxBitrate":5000000,
-			"scalabilityMode":"S1T3",
-			"scaleResolutionDownBy":1,
-			"ssrc":122940400
-		}
-	],
-	"kind":"video",
-	"paused":true,
-	"rtpParameters":{
-		"codecs":[
-			{
-				"clockRate":90000,
-				"mimeType":"video/H264",
-				"parameters":{
-					"level-asymmetry-allowed":1,
-					"packetization-mode":1,
-					"profile-level-id":"42e01f"
+			"consumableRtpEncodings":[
+				{
+					"active":true,
+					"dtx":false,
+					"maxBitrate":500000,
+					"scalabilityMode":"S1T3",
+					"scaleResolutionDownBy":4,
+					"ssrc":122940398
 				},
-				"payloadType":100,
-				"rtcpFeedback":[
+				{
+					"active":true,
+					"dtx":false,
+					"maxBitrate":1000000,
+					"scalabilityMode":"S1T3",
+					"scaleResolutionDownBy":2,
+					"ssrc":122940399
+				},
+				{
+					"active":true,
+					"dtx":false,
+					"maxBitrate":5000000,
+					"scalabilityMode":"S1T3",
+					"scaleResolutionDownBy":1,
+					"ssrc":122940400
+				}
+			],
+			"kind":"video",
+			"paused":true,
+			"rtpParameters":{
+				"codecs":[
 					{
-						"parameter":"",
-						"type":"transport-cc"
+						"clockRate":90000,
+						"mimeType":"video/H264",
+						"parameters":{
+							"level-asymmetry-allowed":1,
+							"packetization-mode":1,
+							"profile-level-id":"42e01f"
+						},
+						"payloadType":100,
+						"rtcpFeedback":[
+							{
+								"parameter":"",
+								"type":"transport-cc"
+							},
+							{
+								"parameter":"fir",
+								"type":"ccm"
+							},
+							{
+								"parameter":"",
+								"type":"nack"
+							},
+							{
+								"parameter":"pli",
+								"type":"nack"
+							}
+						]
 					},
 					{
-						"parameter":"fir",
-						"type":"ccm"
-					},
-					{
-						"parameter":"",
-						"type":"nack"
-					},
-					{
-						"parameter":"pli",
-						"type":"nack"
+						"clockRate":90000,
+						"mimeType":"video/rtx",
+						"parameters":{
+							"apt":100
+						},
+						"payloadType":101,
+						"rtcpFeedback":[
+
+						]
 					}
-				]
+				],
+				"encodings":[
+					{
+						"maxBitrate":5000000,
+						"rtx":{
+							"ssrc":810358598
+						},
+						"scalabilityMode":"S3T3",
+						"ssrc":810358597
+					}
+				],
+				"headerExtensions":[
+					{
+						"encrypt":false,
+						"id":1,
+						"parameters":{
+
+						},
+						"uri":"urn:ietf:params:rtp-hdrext:sdes:mid"
+					},
+					{
+						"encrypt":false,
+						"id":4,
+						"parameters":{
+
+						},
+						"uri":"http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+					},
+					{
+						"encrypt":false,
+						"id":5,
+						"parameters":{
+
+						},
+						"uri":"http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+					},
+					{
+						"encrypt":false,
+						"id":11,
+						"parameters":{
+
+						},
+						"uri":"urn:3gpp:video-orientation"
+					},
+					{
+						"encrypt":false,
+						"id":12,
+						"parameters":{
+
+						},
+						"uri":"urn:ietf:params:rtp-hdrext:toffset"
+					}
+				],
+				"mid":"0",
+				"rtcp":{
+					"cname":"83e6665b",
+					"mux":true,
+					"reducedSize":true
+				}
 			},
-			{
-				"clockRate":90000,
-				"mimeType":"video/rtx",
-				"parameters":{
-					"apt":100
-				},
-				"payloadType":101,
-				"rtcpFeedback":[
-
-				]
-			}
-		],
-		"encodings":[
-			{
-				"maxBitrate":5000000,
-				"rtx":{
-					"ssrc":810358598
-				},
-				"scalabilityMode":"S3T3",
-				"ssrc":810358597
-			}
-		],
-		"headerExtensions":[
-			{
-				"encrypt":false,
-				"id":1,
-				"parameters":{
-
-				},
-				"uri":"urn:ietf:params:rtp-hdrext:sdes:mid"
-			},
-			{
-				"encrypt":false,
-				"id":4,
-				"parameters":{
-
-				},
-				"uri":"http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
-			},
-			{
-				"encrypt":false,
-				"id":5,
-				"parameters":{
-
-				},
-				"uri":"http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
-			},
-			{
-				"encrypt":false,
-				"id":11,
-				"parameters":{
-
-				},
-				"uri":"urn:3gpp:video-orientation"
-			},
-			{
-				"encrypt":false,
-				"id":12,
-				"parameters":{
-
-				},
-				"uri":"urn:ietf:params:rtp-hdrext:toffset"
-			}
-		],
-		"mid":"0",
-		"rtcp":{
-			"cname":"83e6665b",
-			"mux":true,
-			"reducedSize":true
+			"type":"simulcast"
 		}
-	},
-	"type":"simulcast"
-}
 		*/
 
 		if (!data.isMember("kind") || !data["kind"].isString())

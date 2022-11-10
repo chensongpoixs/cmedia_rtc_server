@@ -330,6 +330,8 @@ namespace chen {
 		if (iter == RTC::RtpCodecMimeType::string2Type.end())
 		{
 			ERROR_EX_LOG("not find kind type 'kind' = %s", produce_data["kind"].asCString());
+			reply["result"] =  EShareProtoMediaKindError;
+			return false;
 		}
 		else
 		{

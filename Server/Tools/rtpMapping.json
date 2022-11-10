@@ -1,0 +1,22 @@
+{
+	"codecs": [{
+		"payloadType": 125,
+		"mappedPayloadType": 100
+	}, {
+		"payloadType": 107,
+		"mappedPayloadType": 101
+	}],
+	"encodings": [{
+		"mappedSsrc": 683036785,
+		"rid": "r0",
+		"scalabilityMode": "S1T3"
+	}, {
+		"mappedSsrc": 683036786,
+		"rid": "r1",
+		"scalabilityMode": "S1T3"
+	}, {
+		"mappedSsrc": 683036787,
+		"rid": "r2",
+		"scalabilityMode": "S1T3"
+	}]
+}  

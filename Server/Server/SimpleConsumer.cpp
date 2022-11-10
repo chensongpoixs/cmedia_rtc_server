@@ -1,4 +1,4 @@
-#define MS_CLASS "RTC::SimpleConsumer"
+//#define MS_CLASS "RTC::SimpleConsumer"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "SimpleConsumer.hpp"

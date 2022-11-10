@@ -1,0 +1,99 @@
+{
+	"codecs": [{
+		"mimeType": "video/H264",
+		"payloadType": 125,
+		"clockRate": 90000,
+		"parameters": {
+			"level-asymmetry-allowed": 1,
+			"packetization-mode": 1,
+			"profile-level-id": "42e01f"
+		},
+		"rtcpFeedback": [{
+			"type": "goog-remb",
+			"parameter": ""
+		}, {
+			"type": "transport-cc",
+			"parameter": ""
+		}, {
+			"type": "ccm",
+			"parameter": "fir"
+		}, {
+			"type": "nack",
+			"parameter": ""
+		}, {
+			"type": "nack",
+			"parameter": "pli"
+		}]
+	}, {
+		"mimeType": "video/rtx",
+		"payloadType": 107,
+		"clockRate": 90000,
+		"parameters": {
+			"apt": 125
+		},
+		"rtcpFeedback": []
+	}],
+	"headerExtensions": [{
+		"uri": "urn:ietf:params:rtp-hdrext:sdes:mid",
+		"id": 4,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id",
+		"id": 10,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id",
+		"id": 11,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time",
+		"id": 2,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01",
+		"id": 3,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "urn:3gpp:video-orientation",
+		"id": 13,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "urn:ietf:params:rtp-hdrext:toffset",
+		"id": 14,
+		"encrypt": false,
+		"parameters": {}
+	}],
+	"encodings": [{
+		"active": true,
+		"scaleResolutionDownBy": 4,
+		"maxBitrate": 500000,
+		"rid": "r0",
+		"scalabilityMode": "S1T3",
+		"dtx": false
+	}, {
+		"active": true,
+		"scaleResolutionDownBy": 2,
+		"maxBitrate": 1000000,
+		"rid": "r1",
+		"scalabilityMode": "S1T3",
+		"dtx": false
+	}, {
+		"active": true,
+		"scaleResolutionDownBy": 1,
+		"maxBitrate": 5000000,
+		"rid": "r2",
+		"scalabilityMode": "S1T3",
+		"dtx": false
+	}],
+	"rtcp": {
+		"cname": "d16487e2",
+		"reducedSize": true
+	},
+	"mid": "0"
+}

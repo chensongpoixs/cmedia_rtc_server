@@ -50,7 +50,7 @@ namespace RTC
 		ClearBuffer();
 	}
 
-	void RtpStreamSend::FillJsonStats(json& jsonObject)
+	/*void RtpStreamSend::FillJsonStats(json& jsonObject)
 	{
 		MS_TRACE();
 
@@ -62,7 +62,7 @@ namespace RTC
 		jsonObject["packetCount"] = this->transmissionCounter.GetPacketCount();
 		jsonObject["byteCount"]   = this->transmissionCounter.GetBytes();
 		jsonObject["bitrate"]     = this->transmissionCounter.GetBitrate(nowMs);
-	}
+	}*/
 
 	void RtpStreamSend::SetRtx(uint8_t payloadType, uint32_t ssrc)
 	{
