@@ -43,17 +43,17 @@ namespace RTC
 		delete this->rtpStream;
 	}
 
-	void SimpleConsumer::FillJson(Json::Value& jsonObject) const
-	{
-		//MS_TRACE();
+	//void SimpleConsumer::FillJson(Json::Value& jsonObject) const
+	//{
+	//	//MS_TRACE();
 
-		// Call the parent method.
-		//RTC::Consumer::FillJson(jsonObject);
+	//	// Call the parent method.
+	//	//RTC::Consumer::FillJson(jsonObject);
 
-		// Add rtpStream.
-		//this->rtpStream->FillJson(jsonObject["rtpStream"]);
-		//DEBUG_EX_LOG("jsonObject = %s", jsonObject.dump().c_str());
-	}
+	//	// Add rtpStream.
+	//	//this->rtpStream->FillJson(jsonObject["rtpStream"]);
+	//	//DEBUG_EX_LOG("jsonObject = %s", jsonObject.dump().c_str());
+	//}
 
 	void SimpleConsumer::FillJsonStats(Json::Value& jsonArray) const
 	{

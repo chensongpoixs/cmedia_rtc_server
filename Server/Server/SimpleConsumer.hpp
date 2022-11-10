@@ -18,10 +18,10 @@ namespace RTC
 		~SimpleConsumer() override;
 
 	public:
-		void FillJson(Json::Value& jsonObject) const override;
+		//void FillJson(Json::Value& jsonObject) const override;
 		void FillJsonStats(Json::Value& jsonArray) const override;
 		void FillJsonScore(Json::Value& jsonObject) const override;
-		void HandleRequest(Channel::ChannelRequest* request) override;
+//		void HandleRequest(Channel::ChannelRequest* request) override;
 		bool IsActive() const override
 		{
 			// clang-format off
