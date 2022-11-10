@@ -248,4 +248,10 @@ namespace chen {
 		
 		return true;
 	}
+
+
+	bool cwebrtc_mgr::handler_webrtc_consume(uint64 session_id, Json::Value& value)
+	{
+		return true;
+	}
 }
