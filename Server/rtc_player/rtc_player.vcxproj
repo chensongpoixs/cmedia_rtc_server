@@ -138,7 +138,79 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="casync_log.cpp" />
+    <ClCompile Include="cbase64.cpp" />
+    <ClCompile Include="ccfg.cpp" />
+    <ClCompile Include="cclient.cpp" />
+    <ClCompile Include="cclient_handler.cpp" />
+    <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="cdevice.cpp" />
+    <ClCompile Include="cdigit2str.cpp" />
+    <ClCompile Include="cint2str.cpp" />
+    <ClCompile Include="clog.cpp" />
+    <ClCompile Include="clog_color.cpp" />
+    <ClCompile Include="cmsg_dispatch.cpp" />
+    <ClCompile Include="cnet_types.cpp" />
+    <ClCompile Include="crecv_transport.cpp" />
+    <ClCompile Include="csession_description.cpp" />
+    <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="ctransport.cpp" />
+    <ClCompile Include="cwebscoket_connection.cpp" />
+    <ClCompile Include="cwebsocket_mgr.cpp" />
+    <ClCompile Include="cwebsocket_protoo.cpp" />
+    <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="grammar.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mediasoupclient.cpp" />
+    <ClCompile Include="ortc.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="scalabilityMode.cpp" />
+    <ClCompile Include="sdp\MediaSection.cpp" />
+    <ClCompile Include="sdp\RemoteSdp.cpp" />
+    <ClCompile Include="sdp\Utils.cpp" />
+    <ClCompile Include="writer.cpp" />
+    <ClCompile Include="wsclient.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cassertion_macros.h" />
+    <ClInclude Include="casync_log.h" />
+    <ClInclude Include="cbase64.h" />
+    <ClInclude Include="ccfg.h" />
+    <ClInclude Include="cclient.h" />
+    <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cdevice.h" />
+    <ClInclude Include="cdigit2str.h" />
+    <ClInclude Include="cint2str.h" />
+    <ClInclude Include="clog.h" />
+    <ClInclude Include="clog_color.h" />
+    <ClInclude Include="clog_define.h" />
+    <ClInclude Include="cmsg_base_id.h" />
+    <ClInclude Include="cmsg_dispatch.h" />
+    <ClInclude Include="cnet_types.h" />
+    <ClInclude Include="cnoncopyable.h" />
+    <ClInclude Include="crecv_transport.h" />
+    <ClInclude Include="csession_description.h" />
+    <ClInclude Include="csingleton.h" />
+    <ClInclude Include="ctime_api.h" />
+    <ClInclude Include="ctime_const.h" />
+    <ClInclude Include="ctransport.h" />
+    <ClInclude Include="cwebscoket_connection.h" />
+    <ClInclude Include="cwebsocket_mgr.h" />
+    <ClInclude Include="cwebsocket_protoo.h" />
+    <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="mediasoupclient.hpp" />
+    <ClInclude Include="ortc.hpp" />
+    <ClInclude Include="scalabilityMode.hpp" />
+    <ClInclude Include="sdptransform.hpp" />
+    <ClInclude Include="sdp\MediaSection.hpp" />
+    <ClInclude Include="sdp\RemoteSdp.hpp" />
+    <ClInclude Include="sdp\Utils.hpp" />
+    <ClInclude Include="Utils.hpp" />
+    <ClInclude Include="wsclient.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
