@@ -211,4 +211,8 @@ namespace chen {
 	{
 		return g_global_webrtc_mgr.handler_webrtc_produce(m_session_id, value);;
 	}
+	bool   cwan_session::handler_rtc_consume(Json::Value& value)
+	{
+		return   g_global_webrtc_mgr.handler_webrtc_consume(m_session_id, value);;;
+	}
 }

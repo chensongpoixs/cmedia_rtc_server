@@ -76,8 +76,8 @@ namespace chen {
 		C2S_rtc_produce,
 		S2C_rtc_produce,
 
-		C2S_rtc_consume,
-		S2C_rtc_consume,
+		C2S_RtcConsume,
+		S2C_RtcConsume,
 
 		C2S_rtc_produce_data,
 		S2C_rtc_produce_data,

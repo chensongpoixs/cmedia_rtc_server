@@ -1,0 +1,99 @@
+{
+	"codecs": [{
+		"mimeType": "video/H264",
+		"payloadType": 100,
+		"clockRate": 90000,
+		"parameters": {
+			"level-asymmetry-allowed": 1,
+			"packetization-mode": 1,
+			"profile-level-id": "42e01f"
+		},
+		"rtcpFeedback": [{
+			"type": "nack",
+			"parameter": ""
+		}, {
+			"type": "nack",
+			"parameter": "pli"
+		}, {
+			"type": "ccm",
+			"parameter": "fir"
+		}, {
+			"type": "goog-remb",
+			"parameter": ""
+		}, {
+			"type": "transport-cc",
+			"parameter": ""
+		}]
+	}, {
+		"mimeType": "video/rtx",
+		"payloadType": 101,
+		"clockRate": 90000,
+		"parameters": {
+			"apt": 100
+		},
+		"rtcpFeedback": []
+	}],
+	"headerExtensions": [{
+		"uri": "urn:ietf:params:rtp-hdrext:sdes:mid",
+		"id": 1,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time",
+		"id": 4,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01",
+		"id": 5,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07",
+		"id": 6,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "urn:ietf:params:rtp-hdrext:framemarking",
+		"id": 7,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "urn:3gpp:video-orientation",
+		"id": 11,
+		"encrypt": false,
+		"parameters": {}
+	}, {
+		"uri": "urn:ietf:params:rtp-hdrext:toffset",
+		"id": 12,
+		"encrypt": false,
+		"parameters": {}
+	}],
+	"encodings": [{
+		"active": true,
+		"scaleResolutionDownBy": 4,
+		"maxBitrate": 500000,
+		"scalabilityMode": "S1T3",
+		"dtx": false,
+		"ssrc": 683036785
+	}, {
+		"active": true,
+		"scaleResolutionDownBy": 2,
+		"maxBitrate": 1000000,
+		"scalabilityMode": "S1T3",
+		"dtx": false,
+		"ssrc": 683036786
+	}, {
+		"active": true,
+		"scaleResolutionDownBy": 1,
+		"maxBitrate": 5000000,
+		"scalabilityMode": "S1T3",
+		"dtx": false,
+		"ssrc": 683036787
+	}],
+	"rtcp": {
+		"cname": "d16487e2",
+		"reducedSize": true,
+		"mux": true
+	}
+}

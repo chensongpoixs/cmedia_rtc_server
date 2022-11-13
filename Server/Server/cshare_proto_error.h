@@ -26,6 +26,7 @@ namespace chen {
 		EShareProtoDtlsParametersRoleTypeError,
 		EShareProtoNotFindDtlsFingerprints,
 		EShareProtoMediaNotKind,
+		EShareProtoMediaKindError,
 		EShareProtoNotRtpParameters,
 		EShareProtoParseProduceFailed,
 	};
