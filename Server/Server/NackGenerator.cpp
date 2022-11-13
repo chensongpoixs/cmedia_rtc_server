@@ -1,4 +1,4 @@
-//#define MS_CLASS "RTC::NackGenerator"
+﻿//#define MS_CLASS "RTC::NackGenerator"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "NackGenerator.hpp"
@@ -161,14 +161,12 @@ namespace RTC
 		if (this->nackList.size() + numNewNacks > MaxNackPackets)
 		{
 			// clang-format off
-			while (
-				RemoveNackItemsUntilKeyFrame() &&
-				this->nackList.size() + numNewNacks > MaxNackPackets
-			)
+			while (RemoveNackItemsUntilKeyFrame() && this->nackList.size() + numNewNacks > MaxNackPackets )
 			// clang-format on
 			{
 			}
 
+			//TODO@chensong 2022-11-03 丢包太多了[1000] 就全部删除了， 重新请求关键帧
 			if (this->nackList.size() + numNewNacks > MaxNackPackets)
 			{
 				WARNING_EX_LOG("rtx, NACK list full, clearing it and requesting a key frame [seqEnd:%hu]", seqEnd);
@@ -179,7 +177,7 @@ namespace RTC
 				return;
 			}
 		}
-
+		// TODO@chensong 2022-11-03 查看[seqstart, seqend] 中间哪些包是在rtx中已经接受到了， 接受到就不要在nacklist中添加了
 		for (uint16_t seq = seqStart; seq != seqEnd; ++seq)
 		{
 			assert(this->nackList.find(seq) == this->nackList.end(), "packet already in the NACK list");
@@ -232,13 +230,8 @@ namespace RTC
 			uint16_t seq       = nackInfo.seq;
 
 			// clang-format off
-			if (
-				filter == NackFilter::SEQ &&
-				nackInfo.sentAtMs == 0 &&
-				(
-					nackInfo.sendAtSeq == this->lastSeq ||
-					SeqManager<uint16_t>::IsSeqHigherThan(this->lastSeq, nackInfo.sendAtSeq)
-				)
+			if ( filter == NackFilter::SEQ && nackInfo.sentAtMs == 0 && (
+				nackInfo.sendAtSeq == this->lastSeq || SeqManager<uint16_t>::IsSeqHigherThan(this->lastSeq, nackInfo.sendAtSeq) )
 			)
 			// clang-format on
 			{

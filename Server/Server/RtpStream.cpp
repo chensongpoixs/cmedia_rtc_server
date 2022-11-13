@@ -1,4 +1,4 @@
-//#define MS_CLASS "RTC::RtpStream"
+﻿//#define MS_CLASS "RTC::RtpStream"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "RtpStream.hpp"
@@ -116,6 +116,7 @@ namespace RTC
 		uint16_t seq = packet->GetSequenceNumber();
 
 		// If this is the first packet seen, initialize stuff.
+		// TODO@chensong 2022-11-03 一帧数据开始位置
 		if (!this->started)
 		{
 			InitSeq(seq);
@@ -260,8 +261,8 @@ namespace RTC
 		size_t weight{ 0 };
 		size_t samples{ 0 };
 		size_t totalScore{ 0 };
-		// ��Ȩƽ����  ���� ��
-		// 1. Ȩ��Խ�� �жϵ�ռ�б���Խ��� 
+		// ï¿½ï¿½È¨Æ½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+		// 1. È¨ï¿½ï¿½Ô½ï¿½ï¿½ ï¿½Ð¶Ïµï¿½Õ¼ï¿½Ð±ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ 
 		for (auto score : this->scores)
 		{
 			weight++;
@@ -271,7 +272,7 @@ namespace RTC
 
 		// clang-tidy "thinks" that this can lead to division by zero but we are
 		// smarter.
-		// NOLINTNEXTLINE(clang-analyzer-core.DivideZero) // Round ��������������ȡż��
+		// NOLINTNEXTLINE(clang-analyzer-core.DivideZero) // Round ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡Å¼ï¿½ï¿½
 		this->score = static_cast<uint8_t>(std::round(static_cast<double>(totalScore) / samples));
 
 		// Call the listener if the global score has changed.
