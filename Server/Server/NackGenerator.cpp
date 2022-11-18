@@ -56,14 +56,18 @@ namespace RTC
 			this->lastSeq = seq;
 
 			if (isKeyFrame)
+			{
 				this->keyFrameList.insert(seq);
+			}
 
 			return false;
 		}
 
 		// Obviously never nacked, so ignore.
 		if (seq == this->lastSeq)
+		{
 			return false;
+		}
 
 		// May be an out of order packet, or already handled retransmitted packet,
 		// or a retransmitted packet.
@@ -101,14 +105,18 @@ namespace RTC
 		// newer than the latest seq seen.
 
 		if (isKeyFrame)
+		{
 			this->keyFrameList.insert(seq);
+		}
 
 		// Remove old keyframes.
 		{
 			auto it = this->keyFrameList.lower_bound(seq - MaxPacketAge);
 
 			if (it != this->keyFrameList.begin())
+			{
 				this->keyFrameList.erase(this->keyFrameList.begin(), it);
+			}
 		}
 
 		if (isRecovered)
@@ -119,7 +127,9 @@ namespace RTC
 			auto it = this->recoveredList.lower_bound(seq - MaxPacketAge);
 
 			if (it != this->recoveredList.begin())
+			{
 				this->recoveredList.erase(this->recoveredList.begin(), it);
+			}
 
 			// Do not let a packet pass if it's newer than last seen seq and came via
 			// RTX.
@@ -134,12 +144,16 @@ namespace RTC
 		std::vector<uint16_t> nackBatch = GetNackBatch(NackFilter::SEQ);
 
 		if (!nackBatch.empty())
+		{
 			this->listener->OnNackGeneratorNackRequired(nackBatch);
+		}
 
 		// This is important. Otherwise the running timer (filter:TIME) would be
 		// interrupted and NACKs would never been sent more than once for each seq.
 		if (!/*this->timer->*/IsActive())
+		{
 			MayRunTimer();
+		}
 
 		return false;
 	}
@@ -180,13 +194,17 @@ namespace RTC
 			}
 		}
 
+
+		//TODO@chensong 2022-11-18 统计没有接受的的包的seqnumber
 		for (uint16_t seq = seqStart; seq != seqEnd; ++seq)
 		{
 			assert(this->nackList.find(seq) == this->nackList.end(), "packet already in the NACK list");
 
 			// Do not send NACK for packets that are already recovered by RTX.
 			if (this->recoveredList.find(seq) != this->recoveredList.end())
+			{
 				continue;
+			}
 
 			this->nackList.emplace(std::make_pair(seq, NackInfo{ seq, seq }));
 		}
@@ -224,7 +242,7 @@ namespace RTC
 		uint64_t nowMs = uv_util::GetTimeMs();
 		std::vector<uint16_t> nackBatch;
 
-		auto it = this->nackList.begin();
+		std::map<uint16_t, NackInfo, RTC::SeqManager<uint16_t>::SeqLowerThan>::iterator it = this->nackList.begin();
 
 		while (it != this->nackList.end())
 		{
@@ -232,20 +250,14 @@ namespace RTC
 			uint16_t seq       = nackInfo.seq;
 
 			// clang-format off
-			if (
-				filter == NackFilter::SEQ &&
-				nackInfo.sentAtMs == 0 &&
-				(
-					nackInfo.sendAtSeq == this->lastSeq ||
-					SeqManager<uint16_t>::IsSeqHigherThan(this->lastSeq, nackInfo.sendAtSeq)
-				)
-			)
-			// clang-format on
+			if ( filter == NackFilter::SEQ && nackInfo.sentAtMs == 0 &&
+			( nackInfo.sendAtSeq == this->lastSeq || SeqManager<uint16_t>::IsSeqHigherThan(this->lastSeq, nackInfo.sendAtSeq)) )// clang-format on
 			{
 				nackBatch.emplace_back(seq);
 				nackInfo.retries++;
 				nackInfo.sentAtMs = nowMs;
 
+				// TODO@chensong 2022-11-18   掉包 10 就在nacklist中删除该nack数据是为什么呢 ？？？
 				if (nackInfo.retries >= MaxNackRetries)
 				{
 					WARNING_EX_LOG(" rtx, sequence number removed from the NACK list due to max retries [filter:seq, seq:%hu]",

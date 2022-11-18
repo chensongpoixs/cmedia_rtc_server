@@ -11,10 +11,17 @@ namespace RTC
 	template<typename T>
 	bool SeqManager<T>::SeqLowerThan::operator()(const T lhs, const T rhs) const
 	{
-		return ((rhs > lhs) && (rhs - lhs <= MaxValue / 2)) ||
-		       ((lhs > rhs) && (lhs - rhs > MaxValue / 2));
+		return ((rhs > lhs) && (rhs - lhs <= MaxValue / 2)) || ((lhs > rhs) && (lhs - rhs > MaxValue / 2));
 	}
 
+
+	/*
+	*
+	lhs = 3956483471
+	rhs = 2401618361
+
+	lhs > rhs ===> return true;
+	*/
 	template<typename T>
 	bool SeqManager<T>::SeqHigherThan::operator()(const T lhs, const T rhs) const
 	{
