@@ -1,4 +1,4 @@
-//#define MS_CLASS "RTC::SeqManager"
+﻿//#define MS_CLASS "RTC::SeqManager"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "SeqManager.hpp"
@@ -22,6 +22,9 @@ namespace RTC
 		       ((rhs > lhs) && (rhs - lhs > MaxValue / 2));
 	}
 
+
+
+	// TODO@chensong 2022-11-18 参数模糊化  [operator() 方法]
 	template<typename T>
 	const typename SeqManager<T>::SeqLowerThan SeqManager<T>::isSeqLowerThan{};
 

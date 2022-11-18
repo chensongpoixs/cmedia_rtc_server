@@ -540,12 +540,16 @@ namespace RTC
 
 		// If the Consumer is paused, tell the RtpStreamSend.
 		if (IsPaused() || IsProducerPaused())
+		{
 			this->rtpStream->Pause();
+		}
 
 		const auto* rtxCodec = this->rtpParameters.GetRtxCodecForEncoding(encoding);
 
 		if (rtxCodec && encoding.hasRtx)
+		{
 			this->rtpStream->SetRtx(rtxCodec->payloadType, encoding.rtx.ssrc);
+		}
 	}
 
 	void SimpleConsumer::RequestKeyFrame()

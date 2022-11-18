@@ -281,7 +281,9 @@ const RTC::RtpCodecParameters* RtpParameters::GetCodecForEncoding(RtpEncodingPar
 			auto& codec = *it;
 
 			if (codec.payloadType == payloadType)
+			{
 				return std::addressof(codec);
+			}
 		}
 
 		// This should never happen.
