@@ -505,11 +505,8 @@ namespace chen {
 			return;
 		}
 
-		 DEBUG_EX_LOG(
-		   "RTP packet received [ssrc:%u, payloadType:%hhu, producerId:%s]",
-		   packet->GetSsrc(),
-		   packet->GetPayloadType(),
-		   producer->id.c_str());
+		 DEBUG_EX_LOG("RTP packet received [ssrc:%u, payloadType:%hhu, producerId:%s, SequenceNumber = %hu, Marker = %hhx]",
+		   packet->GetSsrc(), packet->GetPayloadType(), producer->id.c_str(), packet->GetSequenceNumber(), packet->HasMarker());
 
 		// Pass the RTP packet to the corresponding Producer.
 		 RTC::Producer::ReceiveRtpPacketResult result = producer->ReceiveRtpPacket(packet);

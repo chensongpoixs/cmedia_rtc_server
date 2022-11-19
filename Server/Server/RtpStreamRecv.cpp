@@ -805,15 +805,12 @@ namespace RTC
 
 	//	MS_ASSERT(this->params.useNack, "NACK required but not supported");
 
-		DEBUG_EX_LOG("rtx, triggering NACK [ssrc:%u, first seq:%hu, num packets:%zu]",
-		  this->params.ssrc,
-		  seqNumbers[0],
-		  seqNumbers.size());
+		DEBUG_EX_LOG("rtx, triggering NACK [ssrc:%u, first seq:%hu, num packets:%zu]", this->params.ssrc, seqNumbers[0], seqNumbers.size());
 
 		RTC::RTCP::FeedbackRtpNackPacket packet(0, GetSsrc());
 
-		auto it        = seqNumbers.begin();
-		const auto end = seqNumbers.end();
+		std::vector<uint16_t>::const_iterator it			= seqNumbers.begin();
+		std::vector<uint16_t>::const_iterator end			= seqNumbers.end();
 		size_t numPacketsRequested{ 0 };
 
 		while (it != end)
@@ -829,13 +826,15 @@ namespace RTC
 				uint16_t shift = *it - seq - 1;
 
 				if (shift > 15)
+				{
 					break;
+				}
 
 				bitmask |= (1 << shift);
 				++it;
 			}
 
-			auto* nackItem = new RTC::RTCP::FeedbackRtpNackItem(seq, bitmask);
+			RTC::RTCP::FeedbackRtpNackItem* nackItem = new RTC::RTCP::FeedbackRtpNackItem(seq, bitmask);
 
 			packet.AddItem(nackItem);
 
