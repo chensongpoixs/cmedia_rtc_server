@@ -20,8 +20,11 @@ purpose:		crtc_sdp
 #include <ws2tcpip.h>
 #include <windows.h>
 #include <in6addr.h>
+
 #endif // 
+#include "cmedia_error.h"
 //#include <win>
+#include "clog.h"
 namespace chen {
 	//////////////////////////////////////////////////////////////////
 
@@ -179,314 +182,314 @@ namespace chen {
 
 
 
-	static bool IsLineType(const std::string& message,
-		const char type,
-		size_t line_start) {
-		if (message.size() < line_start + kLinePrefixLength) {
-			return false;
-		}
-		const char* cmessage = message.c_str();
-		return (cmessage[line_start] == type &&
-			cmessage[line_start + 1] == kSdpDelimiterEqualChar);
-	}
-	static bool IsLineType(const std::string& line, const char type) {
-		return IsLineType(line, type, 0);
-	}
-	static bool GetLine(const std::string& message,
-		size_t* pos,
-		std::string* line) {
-		size_t line_begin = *pos;
-		size_t line_end = message.find(kNewLine, line_begin);
-		if (line_end == std::string::npos) {
-			return false;
-		}
-		// Update the new start position
-		*pos = line_end + 1;
-		if (line_end > 0 && (message.at(line_end - 1) == kReturnChar)) {
-			--line_end;
-		}
-		*line = message.substr(line_begin, (line_end - line_begin));
-		const char* cline = line->c_str();
-		// RFC 4566
-		// An SDP session description consists of a number of lines of text of
-		// the form:
-		// <type>=<value>
-		// where <type> MUST be exactly one case-significant character and
-		// <value> is structured text whose format depends on <type>.
-		// Whitespace MUST NOT be used on either side of the "=" sign.
-		//
-		// However, an exception to the whitespace rule is made for "s=", since
-		// RFC4566 also says:
-		//
-		//   If a session has no meaningful name, the value "s= " SHOULD be used
-		//   (i.e., a single space as the session name).
-		if (line->length() < 3 || !islower(cline[0]) ||
-			cline[1] != kSdpDelimiterEqualChar ||
-			(cline[0] != kLineTypeSessionName &&
-				cline[2] == kSdpDelimiterSpaceChar)) {
-			*pos = line_begin;
-			return false;
-		}
-		return true;
-	}
-	static bool GetLineWithType(const std::string& message,
-		size_t* pos,
-		std::string* line,
-		const char type) {
-		if (!IsLineType(message, type, *pos)) 
-		{
-			return false;
-		}
+	//static bool IsLineType(const std::string& message,
+	//	const char type,
+	//	size_t line_start) {
+	//	if (message.size() < line_start + kLinePrefixLength) {
+	//		return false;
+	//	}
+	//	const char* cmessage = message.c_str();
+	//	return (cmessage[line_start] == type &&
+	//		cmessage[line_start + 1] == kSdpDelimiterEqualChar);
+	//}
+	//static bool IsLineType(const std::string& line, const char type) {
+	//	return IsLineType(line, type, 0);
+	//}
+	//static bool GetLine(const std::string& message,
+	//	size_t* pos,
+	//	std::string* line) {
+	//	size_t line_begin = *pos;
+	//	size_t line_end = message.find(kNewLine, line_begin);
+	//	if (line_end == std::string::npos) {
+	//		return false;
+	//	}
+	//	// Update the new start position
+	//	*pos = line_end + 1;
+	//	if (line_end > 0 && (message.at(line_end - 1) == kReturnChar)) {
+	//		--line_end;
+	//	}
+	//	*line = message.substr(line_begin, (line_end - line_begin));
+	//	const char* cline = line->c_str();
+	//	// RFC 4566
+	//	// An SDP session description consists of a number of lines of text of
+	//	// the form:
+	//	// <type>=<value>
+	//	// where <type> MUST be exactly one case-significant character and
+	//	// <value> is structured text whose format depends on <type>.
+	//	// Whitespace MUST NOT be used on either side of the "=" sign.
+	//	//
+	//	// However, an exception to the whitespace rule is made for "s=", since
+	//	// RFC4566 also says:
+	//	//
+	//	//   If a session has no meaningful name, the value "s= " SHOULD be used
+	//	//   (i.e., a single space as the session name).
+	//	if (line->length() < 3 || !islower(cline[0]) ||
+	//		cline[1] != kSdpDelimiterEqualChar ||
+	//		(cline[0] != kLineTypeSessionName &&
+	//			cline[2] == kSdpDelimiterSpaceChar)) {
+	//		*pos = line_begin;
+	//		return false;
+	//	}
+	//	return true;
+	//}
+	//static bool GetLineWithType(const std::string& message,
+	//	size_t* pos,
+	//	std::string* line,
+	//	const char type) {
+	//	if (!IsLineType(message, type, *pos)) 
+	//	{
+	//		return false;
+	//	}
 
-		if (!GetLine(message, pos, line))
-		{
-			return false;
-		}
+	//	if (!GetLine(message, pos, line))
+	//	{
+	//		return false;
+	//	}
 
-		return true;
-	}
-	static bool HasAttribute(const std::string& line,
-		const std::string& attribute) {
-		if (line.compare(kLinePrefixLength, attribute.size(), attribute) == 0) {
-			// Make sure that the match is not only a partial match. If length of
-			// strings doesn't match, the next character of the line must be ':' or ' '.
-			// This function is also used for media descriptions (e.g., "m=audio 9..."),
-			// hence the need to also allow space in the end.
-			//RTC_CHECK_LE(kLinePrefixLength + attribute.size(), line.size());
-			if ((kLinePrefixLength + attribute.size()) == line.size() ||
-				line[kLinePrefixLength + attribute.size()] == kSdpDelimiterColonChar ||
-				line[kLinePrefixLength + attribute.size()] == kSdpDelimiterSpaceChar) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-
-	// Get value only from <attribute>:<value>.
-	static bool GetValue(const std::string& message,
-		const std::string& attribute,
-		std::string* value/*,
-		SdpParseError* error*/) 
-	{
-		std::string leftpart;
-		if (!rtc_sdp_util::tokenize_first(message, kSdpDelimiterColonChar, &leftpart, value)) {
-			return false;// ParseFailedGetValue(message, attribute, error);
-		}
-		// The left part should end with the expected attribute.
-		if (leftpart.length() < attribute.length() ||
-			leftpart.compare(leftpart.length() - attribute.length(),
-				attribute.length(), attribute) != 0) 
-		{
-			return false;// ParseFailedGetValue(message, attribute, error);
-		}
-		return true;
-	}
+	//	return true;
+	//}
+	//static bool HasAttribute(const std::string& line,
+	//	const std::string& attribute) {
+	//	if (line.compare(kLinePrefixLength, attribute.size(), attribute) == 0) {
+	//		// Make sure that the match is not only a partial match. If length of
+	//		// strings doesn't match, the next character of the line must be ':' or ' '.
+	//		// This function is also used for media descriptions (e.g., "m=audio 9..."),
+	//		// hence the need to also allow space in the end.
+	//		//RTC_CHECK_LE(kLinePrefixLength + attribute.size(), line.size());
+	//		if ((kLinePrefixLength + attribute.size()) == line.size() ||
+	//			line[kLinePrefixLength + attribute.size()] == kSdpDelimiterColonChar ||
+	//			line[kLinePrefixLength + attribute.size()] == kSdpDelimiterSpaceChar) {
+	//			return true;
+	//		}
+	//	}
+	//	return false;
+	//}
 
 
-	template <typename T,
-		typename std::enable_if<std::is_arithmetic<T>::value &&
-		!std::is_same<T, bool>::value,
-		int>::type = 0>
-		static bool FromString(const std::string& s, T* t) {
-		//RTC_DCHECK(t);
-		absl::optional<T> result =  std::atol(s.c_str())/*StringToNumber<T>(s)*/;
 
-		if (result)
-			*t = *result;
-
-		return result.has_value();
-	}
-
-	template <class T>
-	static bool GetValueFromString(const std::string& line,
-		const std::string& s,
-		T* t ) {
-		if (!FromString(s, t)) 
-		{
-			/*rtc::StringBuilder description;
-			description << "Invalid value: " << s << ".";*/
-			return false; // ParseFailed(line, description.str(), error);
-		}
-		return true;
-	}
+	//// Get value only from <attribute>:<value>.
+	//static bool GetValue(const std::string& message,
+	//	const std::string& attribute,
+	//	std::string* value/*,
+	//	SdpParseError* error*/) 
+	//{
+	//	std::string leftpart;
+	//	if (!rtc_sdp_util::tokenize_first(message, kSdpDelimiterColonChar, &leftpart, value)) {
+	//		return false;// ParseFailedGetValue(message, attribute, error);
+	//	}
+	//	// The left part should end with the expected attribute.
+	//	if (leftpart.length() < attribute.length() ||
+	//		leftpart.compare(leftpart.length() - attribute.length(),
+	//			attribute.length(), attribute) != 0) 
+	//	{
+	//		return false;// ParseFailedGetValue(message, attribute, error);
+	//	}
+	//	return true;
+	//}
 
 
-	static bool IsValidPort(int port) {
-		return port >= 0 && port <= 65535;
-	}
+	//template <typename T,
+	//	typename std::enable_if<std::is_arithmetic<T>::value &&
+	//	!std::is_same<T, bool>::value,
+	//	int>::type = 0>
+	//	static bool FromString(const std::string& s, T* t) {
+	//	//RTC_DCHECK(t);
+	//	absl::optional<T> result =  std::atol(s.c_str())/*StringToNumber<T>(s)*/;
 
-	bool IsValidRtpPayloadType(int payload_type) {
-		return payload_type >= 0 && payload_type <= 127;
-	}
+	//	if (result)
+	//		*t = *result;
 
-	static bool GetPayloadTypeFromString(const std::string& line,
-		const std::string& s,
-		int* payload_type) {
-		return GetValueFromString(line, s, payload_type) &&
-			IsValidRtpPayloadType(*payload_type);
-	}
-	static const size_t SDP_LINE_DATA_SIZE = 1024 * 1024;
-	
-	static uint8_t BUFFER_LIINE[SDP_LINE_DATA_SIZE];
-	crtc_sdp::~crtc_sdp()
-	{
-	}
-	bool crtc_sdp::init(const std::string & sdp)
-	{
-		m_client_sdp = sdp;
-		m_current_pos = 0;
+	//	return result.has_value();
+	//}
 
-		size_t cur_line_data_size = 0;
-		size_t line_size = 0;
-		size_t m_size = 0;
-		//NORMAL_EX_LOG("[sdp = %s]", m_client_sdp.c_str());
-		while (m_current_pos < m_client_sdp.size() && _get_line_data(cur_line_data_size))
-		{
+	//template <class T>
+	//static bool GetValueFromString(const std::string& line,
+	//	const std::string& s,
+	//	T* t ) {
+	//	if (!FromString(s, t)) 
+	//	{
+	//		/*rtc::StringBuilder description;
+	//		description << "Invalid value: " << s << ".";*/
+	//		return false; // ParseFailed(line, description.str(), error);
+	//	}
+	//	return true;
+	//}
 
-			NORMAL_EX_LOG("[line = %lu][cur_line_data_size = %lu][%s]", ++line_size, cur_line_data_size, BUFFER_LIINE);
-			if (BUFFER_LIINE[0] == 'a')
-			{
-				_handler_sdp_a(&BUFFER_LIINE[0], cur_line_data_size);
-			}
-			else if (BUFFER_LIINE[0] == 'm')
-			{
-				if (m_size != 0)
-				{
-					m_media_datas.push_back(m_rtp_parameter);
-				}
-				++m_size;
-				_handler_sdp_m(&BUFFER_LIINE[0], cur_line_data_size);
-			}
-		}
-		if (m_size != m_media_datas.size())
-		{
-			m_media_datas.push_back(m_rtp_parameter);
-		}
-		_config_media();
-		//// 1. Session Description
-		//if (!_parse_session_description(sdp))
-		//{
-		//	// error 
-		//	return false;
-		//}
-		return true;
-	}
-	void crtc_sdp::destroy()
-	{
-		//std::string							m_client_sdp;
-		//size_t								m_current_pos;
-		//std::vector< RTC::RtpParameters>	m_media_datas;
-		//RTC::RtpParameters					m_rtp_parameter;
-		m_media_datas.clear();
-		/// crypto
-		//RTC::DtlsTransport::Fingerprint	    m_finger_print;
-		//m_finger_print;
-	}
-	std::string crtc_sdp::get_webrtc_sdp() const
-	{
-		size_t index = 0;
-		for (size_t i = 0; i < m_media_datas.size(); ++i)
-		{
-			if (m_media_datas[i].m_codec_type == RTC::RtpCodecMimeType::Type::VIDEO)
-			{
-				index = i;
-				break;
-			}
-		}
-		std::ostringstream sdp;
 
-		/*sdp << "v=0\r\n";
-		sdp << "o=chensong 10000 1 IN IP4 0.0.0.0\r\n";
-		sdp << "s=-\r\n";
-		sdp << "t= 0 0\r\n";
-		sdp << "group:BUNDLE " << index << "\r\n";*/
-		sdp << "m=video 7 UDP/TLS/RTP/SAVPF ";
-		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
-		{
-			sdp << std::to_string(m_media_datas[index].codecs[i].payloadType) << " ";
-		}
-		sdp  << /*100 101*/"\r\n"; // TODO@chensong 编码类型
-		sdp << "c=IN IP4 127.0.0.1\r\n";
-		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
-		{
-			sdp << "a=rtpmap:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " " << m_media_datas[index].codecs[i].mimeType.mimeType  <<"\r\n";
-			if (!m_media_datas[index].codecs[i].parameters.mapKeyValues.empty())
-			{
-				sdp << "a=fmtp:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " ";
-				size_t cur_second = 0;
-				for (const std::pair<std::string, RTC::Parameters::Value>& pi : m_media_datas[index].codecs[i].parameters.mapKeyValues)
-				{
-					if (0 != cur_second)
-					{
-						sdp << ";";
-					}
-					++cur_second;;
-					sdp << pi.first << "=" << pi.second.stringValue  ;
-				}
-				
-				sdp << "\r\n";
-			}
-			//for (size_t fmtp_i = 0; fmtp_i < )
-		}
-		//sdp << "a=rtpmap:100 H264/90000\r\n";
-		//sdp << "a=rtpmap:101 rtx/90000\r\n";
-		//sdp << "a=fmtp:100 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f;x-google-max-bitrate=28000;x-google-min-bitrate=5500;x-google-start-bitrate=1000\r\n";
-		//sdp << "a=fmtp:101 apt=100\r\n";
-		for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
-		{
-			for  (const RTC::RtcpFeedback & rtcp_feedback: m_media_datas[index].codecs[i].rtcpFeedbacks )
-			{
-				sdp << "a=rtcp-fb:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " " << rtcp_feedback.type;
-				if (!rtcp_feedback.parameter.empty())
-				{
-					sdp << " " << rtcp_feedback.parameter;
-				}
-				sdp << "\r\n";
-			}
-		}
-		/*sdp << "a=rtcp-fb:100 transport-cc\r\n";
-		sdp << "a=rtcp-fb:100 ccm fir\r\n";
-		sdp << "a=rtcp-fb:100 nack\r\n";
-		sdp << "a=rtcp-fb:100 nack pli\r\n";*/
-		for (size_t i = 0; i < m_media_datas[index].headerExtensions.size(); ++i)
-		{
-			sdp << "a=extmap:" << std::to_string(m_media_datas[index].headerExtensions[i].id) << " " << m_media_datas[index].headerExtensions[i].uri << "\r\n";
-		}
-		//sdp << "a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid\r\n";
-		//sdp << "a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n";
-		//sdp << "a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id\r\n";
-		//sdp << "a=extmap:13 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r\n";
-		//sdp << "a=extmap:2 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\n";
-		//sdp << "a=extmap:8 http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07\r\n";  //  关键帧 服务器的掉包处理
-		//sdp << "a=extmap:12 urn:3gpp:video-orientation\r\n";
-		//sdp << "a=extmap:14 urn:ietf:params:rtp-hdrext:toffset\r\n";
-		sdp << "a=setup:server\r\n";
-		sdp << "a=mid:"<<m_media_datas[index].mid <<"\r\n";
+	//static bool IsValidPort(int port) {
+	//	return port >= 0 && port <= 65535;
+	//}
 
-		return sdp.str();
-	}
-	bool crtc_sdp::_get_line_data(size_t & read_size)
-	{
-		read_size = 0;
-		memset(BUFFER_LIINE, 0, SDP_LINE_DATA_SIZE);
-		while (m_client_sdp.size() > m_current_pos /*&& m_client_sdp[m_current_pos]*/)
-		{
-			// '\r\n' line end 
-			if (m_client_sdp[m_current_pos] == '\r' && m_client_sdp.size() > (m_current_pos + 1))
-			{
-				if (m_client_sdp[m_current_pos + 1] == '\n')
-				{
-					m_current_pos += 2;
-					return true;
-				}
-			}
-			BUFFER_LIINE[read_size++] = m_client_sdp[m_current_pos++];
-		}
-		WARNING_EX_LOG("not find [\r\n] [buffer = %s]", BUFFER_LIINE);
-		return false;
-	}
+	//bool IsValidRtpPayloadType(int payload_type) {
+	//	return payload_type >= 0 && payload_type <= 127;
+	//}
+
+	//static bool GetPayloadTypeFromString(const std::string& line,
+	//	const std::string& s,
+	//	int* payload_type) {
+	//	return GetValueFromString(line, s, payload_type) &&
+	//		IsValidRtpPayloadType(*payload_type);
+	//}
+	//static const size_t SDP_LINE_DATA_SIZE = 1024 * 1024;
+	//
+	//static uint8_t BUFFER_LIINE[SDP_LINE_DATA_SIZE];
+	//crtc_sdp::~crtc_sdp()
+	//{
+	//}
+	//bool crtc_sdp::init(const std::string & sdp)
+	//{
+	//	m_client_sdp = sdp;
+	//	m_current_pos = 0;
+
+	//	size_t cur_line_data_size = 0;
+	//	size_t line_size = 0;
+	//	size_t m_size = 0;
+	//	//NORMAL_EX_LOG("[sdp = %s]", m_client_sdp.c_str());
+	//	while (m_current_pos < m_client_sdp.size() && _get_line_data(cur_line_data_size))
+	//	{
+
+	//		NORMAL_EX_LOG("[line = %lu][cur_line_data_size = %lu][%s]", ++line_size, cur_line_data_size, BUFFER_LIINE);
+	//		if (BUFFER_LIINE[0] == 'a')
+	//		{
+	//			_handler_sdp_a(&BUFFER_LIINE[0], cur_line_data_size);
+	//		}
+	//		else if (BUFFER_LIINE[0] == 'm')
+	//		{
+	//			if (m_size != 0)
+	//			{
+	//				m_media_datas.push_back(m_rtp_parameter);
+	//			}
+	//			++m_size;
+	//			_handler_sdp_m(&BUFFER_LIINE[0], cur_line_data_size);
+	//		}
+	//	}
+	//	if (m_size != m_media_datas.size())
+	//	{
+	//		m_media_datas.push_back(m_rtp_parameter);
+	//	}
+	//	_config_media();
+	//	//// 1. Session Description
+	//	//if (!_parse_session_description(sdp))
+	//	//{
+	//	//	// error 
+	//	//	return false;
+	//	//}
+	//	return true;
+	//}
+	//void crtc_sdp::destroy()
+	//{
+	//	//std::string							m_client_sdp;
+	//	//size_t								m_current_pos;
+	//	//std::vector< RTC::RtpParameters>	m_media_datas;
+	//	//RTC::RtpParameters					m_rtp_parameter;
+	//	m_media_datas.clear();
+	//	/// crypto
+	//	//RTC::DtlsTransport::Fingerprint	    m_finger_print;
+	//	//m_finger_print;
+	//}
+	//std::string crtc_sdp::get_webrtc_sdp() const
+	//{
+	//	size_t index = 0;
+	//	for (size_t i = 0; i < m_media_datas.size(); ++i)
+	//	{
+	//		if (m_media_datas[i].m_codec_type == RTC::RtpCodecMimeType::Type::VIDEO)
+	//		{
+	//			index = i;
+	//			break;
+	//		}
+	//	}
+	//	std::ostringstream sdp;
+
+	//	/*sdp << "v=0\r\n";
+	//	sdp << "o=chensong 10000 1 IN IP4 0.0.0.0\r\n";
+	//	sdp << "s=-\r\n";
+	//	sdp << "t= 0 0\r\n";
+	//	sdp << "group:BUNDLE " << index << "\r\n";*/
+	//	sdp << "m=video 7 UDP/TLS/RTP/SAVPF ";
+	//	for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
+	//	{
+	//		sdp << std::to_string(m_media_datas[index].codecs[i].payloadType) << " ";
+	//	}
+	//	sdp  << /*100 101*/"\r\n"; // TODO@chensong 编码类型
+	//	sdp << "c=IN IP4 127.0.0.1\r\n";
+	//	for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
+	//	{
+	//		sdp << "a=rtpmap:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " " << m_media_datas[index].codecs[i].mimeType.mimeType  <<"\r\n";
+	//		if (!m_media_datas[index].codecs[i].parameters.mapKeyValues.empty())
+	//		{
+	//			sdp << "a=fmtp:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " ";
+	//			size_t cur_second = 0;
+	//			for (const std::pair<std::string, RTC::Parameters::Value>& pi : m_media_datas[index].codecs[i].parameters.mapKeyValues)
+	//			{
+	//				if (0 != cur_second)
+	//				{
+	//					sdp << ";";
+	//				}
+	//				++cur_second;;
+	//				sdp << pi.first << "=" << pi.second.stringValue  ;
+	//			}
+	//			
+	//			sdp << "\r\n";
+	//		}
+	//		//for (size_t fmtp_i = 0; fmtp_i < )
+	//	}
+	//	//sdp << "a=rtpmap:100 H264/90000\r\n";
+	//	//sdp << "a=rtpmap:101 rtx/90000\r\n";
+	//	//sdp << "a=fmtp:100 level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f;x-google-max-bitrate=28000;x-google-min-bitrate=5500;x-google-start-bitrate=1000\r\n";
+	//	//sdp << "a=fmtp:101 apt=100\r\n";
+	//	for (size_t i = 0; i < m_media_datas[index].codecs.size(); ++i)
+	//	{
+	//		for  (const RTC::RtcpFeedback & rtcp_feedback: m_media_datas[index].codecs[i].rtcpFeedbacks )
+	//		{
+	//			sdp << "a=rtcp-fb:" << std::to_string(m_media_datas[index].codecs[i].payloadType) << " " << rtcp_feedback.type;
+	//			if (!rtcp_feedback.parameter.empty())
+	//			{
+	//				sdp << " " << rtcp_feedback.parameter;
+	//			}
+	//			sdp << "\r\n";
+	//		}
+	//	}
+	//	/*sdp << "a=rtcp-fb:100 transport-cc\r\n";
+	//	sdp << "a=rtcp-fb:100 ccm fir\r\n";
+	//	sdp << "a=rtcp-fb:100 nack\r\n";
+	//	sdp << "a=rtcp-fb:100 nack pli\r\n";*/
+	//	for (size_t i = 0; i < m_media_datas[index].headerExtensions.size(); ++i)
+	//	{
+	//		sdp << "a=extmap:" << std::to_string(m_media_datas[index].headerExtensions[i].id) << " " << m_media_datas[index].headerExtensions[i].uri << "\r\n";
+	//	}
+	//	//sdp << "a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid\r\n";
+	//	//sdp << "a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id\r\n";
+	//	//sdp << "a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id\r\n";
+	//	//sdp << "a=extmap:13 http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time\r\n";
+	//	//sdp << "a=extmap:2 http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01\r\n";
+	//	//sdp << "a=extmap:8 http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07\r\n";  //  关键帧 服务器的掉包处理
+	//	//sdp << "a=extmap:12 urn:3gpp:video-orientation\r\n";
+	//	//sdp << "a=extmap:14 urn:ietf:params:rtp-hdrext:toffset\r\n";
+	//	sdp << "a=setup:server\r\n";
+	//	sdp << "a=mid:"<<m_media_datas[index].mid <<"\r\n";
+
+	//	return sdp.str();
+	//}
+	//bool crtc_sdp::_get_line_data(size_t & read_size)
+	//{
+	//	read_size = 0;
+	//	memset(BUFFER_LIINE, 0, SDP_LINE_DATA_SIZE);
+	//	while (m_client_sdp.size() > m_current_pos /*&& m_client_sdp[m_current_pos]*/)
+	//	{
+	//		// '\r\n' line end 
+	//		if (m_client_sdp[m_current_pos] == '\r' && m_client_sdp.size() > (m_current_pos + 1))
+	//		{
+	//			if (m_client_sdp[m_current_pos + 1] == '\n')
+	//			{
+	//				m_current_pos += 2;
+	//				return true;
+	//			}
+	//		}
+	//		BUFFER_LIINE[read_size++] = m_client_sdp[m_current_pos++];
+	//	}
+	//	WARNING_EX_LOG("not find [\r\n] [buffer = %s]", BUFFER_LIINE);
+	//	return false;
+	//}
 
 	//bool crtc_sdp::_parse_session_description(const std::string & session_sdp_description)
 	//{
@@ -1904,8 +1907,99 @@ namespace chen {
 	//	}
 	//	
 
+#define FETCH(is,word, error_code, error_message) \
+if (!(is >> word)) {\
+	WARNING_EX_LOG(error_message); \
+    return error_code; \
+}
 
-	//	if (!codec_ptr)
+#define FETCH_WITH_DELIM(is,word,delim, error_code, error_message) \
+if (!getline(is,word,delim)) {\
+      WARNING_EX_LOG(error_message); \
+    return error_code; \
+}
+
+ int32 crtc_sdp::parse(const std::string sdp_str)
+{
+	// All webrtc SrsSdp annotated example
+   // @see: https://tools.ietf.org/html/draft-ietf-rtcweb-SrsSdp-11
+   // Sdp example
+   // session info
+   // v=
+   // o=
+   // s=
+   // t=
+   // media description
+   // m=
+   // a=
+   // ...
+   // media description
+   // m=
+   // a=
+   // ...
+	int32 err = 0;
+	std::istringstream is(sdp_str);
+	std::string line;
+	while (getline(is, line)) 
+	{
+		NORMAL_EX_LOG("%s", line.c_str());
+		if (line.size() < 2 || line[1] != '=')
+		{
+			WARNING_EX_LOG("invalid sdp line=%s", line.c_str());
+			return EMediaRtcSdpInvalidSdpLineFailed;
+			// return srs_error_new(ERROR_RTC_SDP_DECODE, "invalid sdp line=%s", line.c_str());
+		}
+		if (!line.empty() && line[line.size() - 1] == '\r') 
+		{
+			line.erase(line.size() - 1, 1);
+		}
+
+		// Strip the space of line, for pion WebRTC client.
+		line = rtc_sdp_util::string_trim_end(line, " ");
+
+		if ((err = _parse_line(line)) != 0) 
+		{
+			WARNING_EX_LOG("parse sdp line failed line=%s", line.c_str());
+			return EMediaRtcSdpInvalidSdpLineFailed;
+			//return srs_error_wrap(err, "parse sdp line failed");
+		}
+	}
+
+	// The msid/tracker/mslabel is optional for SSRC, so we copy it when it's empty.
+	for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter) 
+	{
+		cmedia_desc& media_desc = *iter;
+
+		for (size_t i = 0; i < media_desc.m_ssrc_infos.size(); ++i) 
+		{
+			cssrc_info& ssrc_info = media_desc.m_ssrc_infos.at(i);
+
+			if (ssrc_info.m_msid.empty())
+			{
+				ssrc_info.m_msid = media_desc.m_msid;
+			}
+
+			if (ssrc_info.m_msid_tracker.empty())
+			{
+				ssrc_info.m_msid_tracker = media_desc.m_msid_tracker;
+			}
+
+			if (ssrc_info.m_mslabel.empty())
+			{
+				ssrc_info.m_mslabel = media_desc.m_msid;
+			}
+
+			if (ssrc_info.m_label.empty()) 
+			{
+				ssrc_info.m_label = media_desc.m_msid_tracker;
+			}
+		}
+	}
+
+	return 0;
+}
+
+//	if (!codec_ptr)
 	//	{
 	//		return;
 	//	}
@@ -1914,5 +2008,420 @@ namespace chen {
 	//		(*codec_ptr->mutable_params())[entry.first] = entry.second;
 	//	}
 	//}
+
+ int32 crtc_sdp::encode(std::ostringstream & os)
+ {
+	 int32 err = 0;
+	 os << "v=" << m_version << kCRLF;
+	 os << "o=" << m_username << " " << m_session_id  << " " << m_session_version  << " " << m_nettype << " " << m_addrtype  << " " << m_unicast_address  << kCRLF;
+	 os << "s=" << m_session_name  << kCRLF;
+	 // Session level connection data, see https://www.ietf.org/rfc/rfc4566.html#section-5.7
+	 if (!m_connection .empty()) os << m_connection  << kCRLF;
+	 // Timing, see https://www.ietf.org/rfc/rfc4566.html#section-5.9
+	 os << "t=" << m_start_time  << " " << m_end_time  << kCRLF;
+	 // ice-lite is a minimal version of the ICE specification, intended for servers running on a public IP address.
+	 if (!m_ice_lite.empty())
+	 {
+		 os << m_ice_lite << kCRLF;
+	 }
+
+	 if (!m_groups .empty()) {
+		 os << "a=group:" << m_group_policy ;
+		 for (std::vector<std::string>::iterator iter = m_groups .begin(); iter != m_groups .end(); ++iter) {
+			 os << " " << *iter;
+		 }
+		 os << kCRLF;
+	 }
+
+	 if (!m_msid_semantic.empty() || !m_msids.empty()) {
+		 os << "a=msid-semantic: " << m_msid_semantic ;
+		 for (std::vector<std::string>::iterator iter = m_msids .begin(); iter != m_msids .end(); ++iter) {
+			 os << " " << *iter;
+		 }
+		 os << kCRLF;
+	 }
+
+	 if ((err = m_session_info .encode(os)) != 0) 
+	 {
+		 WARNING_EX_LOG("encode session info failed");
+		 return EMediaRtcSdpEncodeSessionInfoFailed;
+		 //return srs_error_wrap(err, "encode session info failed");
+	 }
+
+	 for (std::vector<cmedia_desc>::iterator iter = m_media_descs .begin(); iter != m_media_descs .end(); ++iter) {
+		 if ((err = (*iter).encode(os)) != 0)
+		 {
+			 WARNING_EX_LOG("encode media description failed");
+			 return EMediaRtcSdpEncodeMediaDescription;
+		 //	 return srs_error_wrap(err, "encode media description failed");
+		 }
+	 }
+
+	 return err;
+	 return int32();
+ }
+
+ std::vector<cmedia_desc*> crtc_sdp::find_media_descs(const std::string & type)
+ {
+	 std::vector<cmedia_desc*> descs;
+	 for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter) 
+	 {
+		 cmedia_desc* desc = &(*iter);
+
+		 if (desc->m_type == type)
+		 {
+			 descs.push_back(desc);
+		 }
+	 }
+
+	 return descs;
+	 //return std::vector<cmedia_desc*>();
+ }
+
+ bool crtc_sdp::is_unified() const
+{
+	// TODO: FIXME: Maybe we should consider other situations.
+	return m_media_descs.size() > 2;
+	//return false;
+}
+
+int32 crtc_sdp::update_msid(std::string id)
+{
+	int32 err = 0;
+	m_msids.clear();
+	m_msids.push_back(id);
+
+	for (std::vector<cmedia_desc>::iterator it = m_media_descs.begin(); it != m_media_descs.end(); ++it) 
+	{
+		cmedia_desc& desc = *it;
+
+		if ((err = desc.update_msid(id)) != 0)
+		{
+			WARNING_EX_LOG("desc %s update msid %s", desc.m_mid.c_str(), id.c_str());
+			return EMediaRtcSdpUpdateMsidFailed;
+			//return srs_error_wrap(err, "desc %s update msid %s", desc.mid_.c_str(), id.c_str());
+		}
+	}
+
+	return 0;
+	//return int32();
+}
+
+void crtc_sdp::set_ice_ufrag(const std::string & ufrag)
+{
+	for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter) 
+	{
+		cmedia_desc* desc = &(*iter);
+		desc->m_session_info.m_ice_ufrag = ufrag;
+	}
+}
+
+void crtc_sdp::set_ice_pwd(const std::string & pwd)
+{
+	for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter) 
+	{
+		cmedia_desc* desc = &(*iter);
+		desc->m_session_info.m_ice_pwd = pwd;
+	}
+}
+
+void crtc_sdp::set_dtls_role(const std::string & dtls_role)
+{
+	for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter) {
+		cmedia_desc* desc = &(*iter);
+		desc->m_session_info.m_setup = dtls_role;
+	}
+}
+
+void crtc_sdp::set_fingerprint_algo(const std::string & algo)
+{
+	for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		cmedia_desc* desc = &(*iter);
+		desc->m_session_info.m_fingerprint_algo = algo;
+	}
+}
+
+void crtc_sdp::set_fingerprint(const std::string & fingerprint)
+{
+	for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		cmedia_desc* desc = &(*iter);
+		desc->m_session_info.m_fingerprint = fingerprint;
+	}
+}
+
+void crtc_sdp::add_candidate(const std::string & protocol, const std::string & ip, const int & port, const std::string & type)
+{
+	// @see: https://tools.ietf.org/id/draft-ietf-mmusic-ice-sip-sdp-14.html#rfc.section.5.1
+	ccandidate candidate;
+	candidate.m_protocol = protocol;
+	candidate.m_ip = ip;
+	candidate.m_port = port;
+	candidate.m_type = type;
+
+	for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		cmedia_desc* desc = &(*iter);
+		desc->m_candidates.push_back(candidate);
+	}
+}
+
+std::string crtc_sdp::get_ice_ufrag() const
+{
+	// Becaues we use BUNDLE, so we can choose the first element.
+	for (std::vector<cmedia_desc>::const_iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		const cmedia_desc* desc = &(*iter);
+		return desc->m_session_info.m_ice_ufrag;
+	}
+
+	return "";
+	return std::string();
+}
+
+std::string crtc_sdp::get_ice_pwd() const
+{
+	// Becaues we use BUNDLE, so we can choose the first element.
+	for (std::vector<cmedia_desc>::const_iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		const cmedia_desc* desc = &(*iter);
+		return desc->m_session_info.m_ice_pwd;
+	}
+
+	return "";
+	return std::string();
+}
+
+std::string crtc_sdp::get_dtls_role() const
+{
+	// Becaues we use BUNDLE, so we can choose the first element.
+	for (std::vector<cmedia_desc>::const_iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		const cmedia_desc* desc = &(*iter);
+		return desc->m_session_info.m_setup;
+	}
+
+	return "";
+	return std::string();
+}
+
+int32 crtc_sdp::_parse_line(const std::string& line)
+{
+	std::string content = line.substr(2);
+
+	switch (line[0]) 
+	{
+	case 'o': 
+	{
+		return _parse_origin(content);
+	}
+	case 'v': {
+		return  _parse_version(content);
+	}
+	case 's': {
+		return  _parse_session_name(content);
+	}
+	case 't': {
+		return  _parse_timing(content);
+	}
+	case 'a': {
+		if (m_in_media_session) {
+			return m_media_descs.back().parse_line(line);
+		}
+		return _parse_attribute(content);
+	}
+	case 'y': {
+		return _parse_gb28181_ssrc(content);
+	}
+	case 'm': {
+		return _parse_media_description(content);
+	}
+	case 'c': {
+		// TODO: process c-line
+		break;
+	}
+	default: {
+		NORMAL_EX_LOG("ignore sdp line=%s", line.c_str());
+		break;
+	}
+	}
+
+	return 0;
+}
+
+int32 crtc_sdp::_parse_origin(const std::string & content)
+{
+	// @see: https://tools.ietf.org/html/rfc4566#section-5.2
+	// o=<username> <sess-id> <sess-version> <nettype> <addrtype> <unicast-address>
+	// eg. o=- 9164462281920464688 2 IN IP4 127.0.0.1
+	std::istringstream is(content);
+
+	FETCH(is, m_username, EMediaRtcSdpInvalidOParseUsername, "EMediaRtcSdpInvalidOParseUsername");
+	FETCH(is, m_session_id, EMediaRtcSdpInvalidOParseSessionId, "EMediaRtcSdpInvalidOParseSessionId");
+	FETCH(is, m_session_version, EMediaRtcSdpInvalidOParseSessionVersion, "EMediaRtcSdpInvalidOParseSessionVersion");
+	FETCH(is, m_nettype, EMediaRtcSdpInvalidOParseNetType, "EMediaRtcSdpInvalidOParseNetType");
+	FETCH(is, m_addrtype, EMediaRtcSdpInvalidOParseAddrType, "EMediaRtcSdpInvalidOParseAddrType");
+	FETCH(is, m_unicast_address, EMediaRtcSdpInvalidOParseUnicastAddress, "EMediaRtcSdpInvalidOParseUnicastAddress");
+
+	return 0;
+	return int32();
+}
+
+int32 crtc_sdp::_parse_version(const std::string & content)
+{
+	// @see: https://tools.ietf.org/html/rfc4566#section-5.1
+
+	std::istringstream is(content);
+
+	FETCH(is, m_version, EMediaRtcSdpInvalidVersion, "EMediaRtcSdpInvalidVersion");
+
+	return 0;
+	return int32();
+}
+
+int32 crtc_sdp::_parse_session_name(const std::string & content)
+{
+	// @see: https://tools.ietf.org/html/rfc4566#section-5.3
+	// s=<session name>
+
+	m_session_name = content;
+	return 0;
+	return int32();
+}
+
+int32 crtc_sdp::_parse_timing(const std::string & content)
+{
+	// @see: https://tools.ietf.org/html/rfc4566#section-5.9
+	// t=<start-time> <stop-time>
+
+	std::istringstream is(content);
+
+	FETCH(is, m_start_time, EMediaRtcSdpInvalidTimingStartTime, "EMediaRtcSdpInvalidTimingStartTime");
+	FETCH(is, m_end_time, EMediaRtcSdpInvalidTimingEndTime, "EMediaRtcSdpInvalidTimingEndTime");
+
+	return 0;
+	return int32();
+}
+
+int32 crtc_sdp::_parse_attribute(const std::string & content)
+{
+	// @see: https://tools.ietf.org/html/rfc4566#section-5.13
+	// a=<attribute>
+	// a=<attribute>:<value>
+
+	std::string attribute = "";
+	std::string value = "";
+	size_t pos = content.find_first_of(":");
+
+	if (pos != std::string::npos) {
+		attribute = content.substr(0, pos);
+		value = content.substr(pos + 1);
+	}
+
+	if (attribute == "group") 
+	{
+		return _parse_attr_group(value);
+	}
+	else if (attribute == "msid-semantic") 
+	{
+		std::istringstream is(value);
+		FETCH(is, m_msid_semantic, EMediaRtcSdpInvalidAttributeMsidSemantic, "EMediaRtcSdpInvalidAttributeMsidSemantic");
+
+		std::string msid;
+		while (is >> msid) 
+		{
+			m_msids.push_back(msid);
+		}
+	}
+	else 
+	{
+		return m_session_info.parse_attribute(attribute, value);
+	}
+
+	return 0;
+	return int32();
+}
+
+int32 crtc_sdp::_parse_gb28181_ssrc(const std::string & content)
+{
+	// See AnnexF at page 101 of https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=469659DC56B9B8187671FF08748CEC89
+   // Convert SSRC of GB28181 from:
+   //      y=0100008888
+   // to standard format:
+   //      a=ssrc:0100008888 cname:0100008888
+   //      a=ssrc:0100008888 label:gb28181
+	int32 err = 0;
+	std::string cname = rtc_sdp_util:: fmt("a=ssrc:%s cname:%s", content.c_str(), content.c_str());
+	if ((err = m_media_descs.back().parse_line(cname)) != 0) 
+	{
+		WARNING_EX_LOG("parse gb %s cname", content.c_str());
+		return EMediaRtcSdpInvalidGb28181Ssrc;
+		//return srs_error_wrap(err, "parse gb %s cname", content.c_str());
+	}
+
+	std::string label = rtc_sdp_util:: fmt("a=ssrc:%s label:gb28181", content.c_str());
+	if ((err = m_media_descs.back().parse_line(label)) != 0) 
+	{
+		WARNING_EX_LOG("parse gb %s label", content.c_str());
+		return EMediaRtcSdpInvalidGb28181SsrcLabel;
+		//return srs_error_wrap(err, "parse gb %s label", content.c_str());
+	}
+
+	return err;
+}
+
+int32 crtc_sdp::_parse_media_description(const std::string & content)
+{
+	// @see: https://tools.ietf.org/html/rfc4566#section-5.14
+	// m=<media> <port> <proto> <fmt> ...
+	// m=<media> <port>/<number of ports> <proto> <fmt> ...
+	std::istringstream is(content);
+
+	std::string media;
+	FETCH(is, media, EMediaRtcSdpInvalidMediaMedia, "EMediaRtcSdpInvalidMediaMedia");
+
+	int port;
+	FETCH(is, port, EMediaRtcSdpInvalidMediaPort, "EMediaRtcSdpInvalidMediaPort");
+
+	std::string proto;
+	FETCH(is, proto, EMediaRtcSdpInvalidMediaProto, "EMediaRtcSdpInvalidMediaProto");
+
+	m_media_descs.push_back(cmedia_desc(media));
+	m_media_descs.back().m_protos = proto;
+	m_media_descs.back().m_port = port;
+
+	int fmt;
+	while (is >> fmt) 
+	{
+		m_media_descs.back().m_payload_types.push_back(cmedia_payload_type(fmt));
+	}
+
+	if (!m_in_media_session) 
+	{
+		m_in_media_session = true;
+	}
+
+	return 0;
+	return int32();
+}
+
+int32 crtc_sdp::_parse_attr_group(const std::string & content)
+{
+	// @see: https://tools.ietf.org/html/rfc5888#section-5
+
+	std::istringstream is(content);
+
+	FETCH(is, m_group_policy, EMediaRtcSdpInvalidAttrGroupPolicy, "EMediaRtcSdpInvalidAttrGroupPolicy");
+
+	std::string word;
+	while (is >> word) 
+	{
+		m_groups.push_back(word);
+	}
+
+	return 0;
+	return int32();
+}
 
 }

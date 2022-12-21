@@ -371,5 +371,90 @@ namespace chen {
 			return protocol.find( kMediaProtocolDtlsSctp) != std::string::npos;
 		}
 
+
+		std::string  fmt(const char* fmt, ...)
+		{
+			va_list ap;
+			va_start(ap, fmt);
+
+			static char buf[8192];
+			int r0 = vsnprintf(buf, sizeof(buf), fmt, ap);
+			va_end(ap);
+
+			std::string v;
+			if (r0 > 0 && r0 < (int)sizeof(buf)) {
+				v.append(buf, r0);
+			}
+
+			return v;
+		}
+
+		std::vector<std::string> string_split(std::string s, std::string seperator)
+		{
+			std::vector<std::string> result;
+			if (seperator.empty()) 
+			{
+				result.push_back(s);
+				return result;
+			}
+
+			size_t posBegin = 0;
+			size_t posSeperator = s.find(seperator);
+			while (posSeperator != std::string::npos) 
+			{
+				result.push_back(s.substr(posBegin, posSeperator - posBegin));
+				posBegin = posSeperator + seperator.length(); // next byte of seperator
+				posSeperator = s.find(seperator, posBegin);
+			}
+			// push the last element
+			result.push_back(s.substr(posBegin));
+			return result;
+		}
+
+
+		std::vector<std::string> split_str(const std::string& str, const std::string& delim)
+		{
+			std::vector<std::string> ret;
+			size_t pre_pos = 0;
+			std::string tmp;
+			size_t pos = 0;
+			do {
+				pos = str.find(delim, pre_pos);
+				tmp = str.substr(pre_pos, pos - pre_pos);
+				ret.push_back(tmp);
+				pre_pos = pos + delim.size();
+			} while (pos != std::string::npos);
+
+			return ret;
+		}
+
+		void skip_first_spaces(std::string& str)
+		{
+			while (!str.empty() && str[0] == ' ') 
+			{
+				str.erase(0, 1);
+			}
+		}
+
+		std::string string_trim_end(std::string str, std::string trim_chars)
+		{
+			std::string ret = str;
+
+			for (int i = 0; i < (int)trim_chars.length(); ++i)
+			{
+				char ch = trim_chars.at(i);
+
+				while (!ret.empty() && ret.at(ret.length() - 1) == ch)
+				{
+					ret.erase(ret.end() - 1);
+
+					// ok, matched, should reset the search
+					i = -1;
+				}
+			}
+
+			return ret;
+		}
+
 	}
 }
