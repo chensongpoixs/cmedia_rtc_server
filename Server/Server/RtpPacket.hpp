@@ -1,4 +1,4 @@
-#ifndef MS_RTC_RTP_PACKET_HPP
+﻿#ifndef MS_RTC_RTP_PACKET_HPP
 #define MS_RTC_RTP_PACKET_HPP
 
 ////#include "common.hpp"
@@ -27,6 +27,28 @@ namespace RTC
 	{
 	public:
 		/* Struct for RTP header. */
+		//  0                   1                   2                   3
+		//  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+		// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		// |V=2|P|X|  CC   |M|     PT      |       sequence number         |
+		// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		// |                           timestamp                           |
+		// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		// |           synchronization source (SSRC) identifier            |
+		// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+		// |            Contributing source (CSRC) identifiers             |
+		// |                             ....                              |
+		// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+		// |  header eXtension profile id  |       length in 32bits        |
+		// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		// |                          Extensions                           |
+		// |                             ....                              |
+		// +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+		// |                           Payload                             |
+		// |             ....              :  padding...                   |
+		// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		// |               padding         | Padding size  |
+		// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 		struct Header
 		{
 #if defined(MS_LITTLE_ENDIAN)
@@ -37,11 +59,11 @@ namespace RTC
 			uint8_t payloadType : 7;
 			uint8_t marker : 1;
 #elif defined(MS_BIG_ENDIAN)
-			uint8_t version : 2;
-			uint8_t padding : 1;
-			uint8_t extension : 1;
-			uint8_t csrcCount : 4;
-			uint8_t marker : 1;
+			uint8_t version : 2;// 版本
+			uint8_t padding : 1;// 填充数据位 1: 代表有填充数据   , 0: 没有填充数据
+			uint8_t extension : 1;  // 是否有扩展头  1:代表扩展头   0: 代表没有扩展头
+			uint8_t csrcCount : 4;  // 这个源哪些人生成的csrc 的个数  几个贡献人
+			uint8_t marker : 1;   // 代表视频帧是否是最后一个帧数据 1: 是视频帧的最后一帧  0:不是最后一帧数据
 			uint8_t payloadType : 7;
 #endif
 			uint16_t sequenceNumber;
