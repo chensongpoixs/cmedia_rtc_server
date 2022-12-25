@@ -159,6 +159,7 @@
     <ClCompile Include="cguard_reply.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
+    <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="Consumer.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="crate_calculator.cpp" />
     <ClCompile Include="crtc_sdp.cpp" />
     <ClCompile Include="crtc_sdp_handler.cpp" />
+    <ClCompile Include="crtc_sdp_test.cpp" />
     <ClCompile Include="crtc_sdp_util.cpp" />
     <ClCompile Include="csrtp_session.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
@@ -312,6 +314,8 @@
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
+    <ClInclude Include="cmedia_desc.h" />
+    <ClInclude Include="cmedia_error.h" />
     <ClInclude Include="cmedia_server.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
@@ -323,6 +327,7 @@
     <ClInclude Include="crate_calculator.h" />
     <ClInclude Include="crtc_sdp.h" />
     <ClInclude Include="crtc_sdp_define.h" />
+    <ClInclude Include="crtc_sdp_test.h" />
     <ClInclude Include="crtc_sdp_util.h" />
     <ClInclude Include="cshare_proto_error.h" />
     <ClInclude Include="csrtp_session.h" />

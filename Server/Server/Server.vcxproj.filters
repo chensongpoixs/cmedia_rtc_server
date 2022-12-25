@@ -604,6 +604,12 @@
     <ClCompile Include="RtpStreamSend.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="cmedia_desc.cpp">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_sdp_test.cpp">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1112,6 +1118,15 @@
     </ClInclude>
     <ClInclude Include="RtpStreamSend.hpp">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_desc.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_error.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_sdp_test.h">
+      <Filter>rtc_sdp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
