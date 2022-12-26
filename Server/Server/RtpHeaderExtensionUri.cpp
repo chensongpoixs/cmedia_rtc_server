@@ -1,4 +1,4 @@
-//#define MS_CLASS "RTC::RtpHeaderExtensionUri"
+ï»¿//#define MS_CLASS "RTC::RtpHeaderExtensionUri"
 // #define MS_LOG_DEV_LEVEL 3
 
 //#include "Logger.hpp"
@@ -14,25 +14,25 @@ namespace RTC
 	// clang-format off
 	std::unordered_map<std::string, RtpHeaderExtensionUri::Type> RtpHeaderExtensionUri::string2Type =
 	{
-		//  ÔÚ unified SDP ÃèÊöÖĞ ¡®a=mid¡¯ ÊÇÃ¿¸ö audio/video line µÄ±ØÒªÔªËØ£¬Õâ¸ö header extension ½« SDP ÖĞ ¡®a=mid¡¯ ºóĞÅÏ¢±£´æ£¬
-		// ÓÃÓÚ±êÊ¶Ò»¸ö RTP packet µÄ media ĞÅÏ¢£¬¿ÉÒÔ×÷ÎªÒ»¸ö media µÄÎ¨Ò»±êÊ¶ 
+		//  åœ¨ unified SDP æè¿°ä¸­ â€˜a=midâ€™ æ˜¯æ¯ä¸ª audio/video line çš„å¿…è¦å…ƒç´ ï¼Œè¿™ä¸ª header extension å°† SDP ä¸­ â€˜a=midâ€™ åä¿¡æ¯ä¿å­˜ï¼Œ
+		// ç”¨äºæ ‡è¯†ä¸€ä¸ª RTP packet çš„ media ä¿¡æ¯ï¼Œå¯ä»¥ä½œä¸ºä¸€ä¸ª media çš„å”¯ä¸€æ ‡è¯† 
 		{ "urn:ietf:params:rtp-hdrext:sdes:mid",                                       RtpHeaderExtensionUri::Type::MID                    },
-		// 1. Media Source µÈÍ¬ÓÚ WebRTC ÖĞ Track µÄ¸ÅÄî£¬ÔÚ SDP ÃèÊöÖĞ¿ÉÒÔÊ¹ÓÃ mid ×÷ÎªÎ¨Ò»±êÊ¶
-		// 2. RTP Stream ÊÇ RTP Á÷´«ÊäµÄ×îĞ¡Á÷µ¥Î»£¬ÀıÈçÔÚ Simulcast »ò SVC ³¡¾°ÖĞ£¬Ò»¸ö Media Source ÖĞ°üº¬¶à¸ö RTP Stream£¬ÕâÊ± SDP ÖĞÊ¹ÓÃ ¡®a=rid¡¯ À´ÃèÊöÃ¿¸ö RTP Stream
+		// 1. Media Source ç­‰åŒäº WebRTC ä¸­ Track çš„æ¦‚å¿µï¼Œåœ¨ SDP æè¿°ä¸­å¯ä»¥ä½¿ç”¨ mid ä½œä¸ºå”¯ä¸€æ ‡è¯†
+		// 2. RTP Stream æ˜¯ RTP æµä¼ è¾“çš„æœ€å°æµå•ä½ï¼Œä¾‹å¦‚åœ¨ Simulcast æˆ– SVC åœºæ™¯ä¸­ï¼Œä¸€ä¸ª Media Source ä¸­åŒ…å«å¤šä¸ª RTP Streamï¼Œè¿™æ—¶ SDP ä¸­ä½¿ç”¨ â€˜a=ridâ€™ æ¥æè¿°æ¯ä¸ª RTP Stream
 		{ "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id",                             RtpHeaderExtensionUri::Type::RTP_STREAM_ID          },
-		// ÓÃÓÚÉùÃ÷ÖØ´«Ê±Ê¹ÓÃµÄ rid ±êÊ¶	
+		// ç”¨äºå£°æ˜é‡ä¼ æ—¶ä½¿ç”¨çš„ rid æ ‡è¯†	
 		{ "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id",                    RtpHeaderExtensionUri::Type::REPAIRED_RTP_STREAM_ID },
-		// 1. abs-send-time Îª Ò»¸ö 3 bytes µÄÊ±¼äÊı¾İ
-		// 2. REMB ¼ÆËãĞèÒª RTP ±¨ÎÄÀ©Õ¹Í·²¿ abs-send-time µÄÖ§³Ö£¬ÓÃÒÔ¼ÇÂ¼ RTP Êı¾İ°üÔÚ·¢ËÍ¶ËµÄ¾ø¶Ô·¢ËÍÊ±¼ä
+		// 1. abs-send-time ä¸º ä¸€ä¸ª 3 bytes çš„æ—¶é—´æ•°æ®
+		// 2. REMB è®¡ç®—éœ€è¦ RTP æŠ¥æ–‡æ‰©å±•å¤´éƒ¨ abs-send-time çš„æ”¯æŒï¼Œç”¨ä»¥è®°å½• RTP æ•°æ®åŒ…åœ¨å‘é€ç«¯çš„ç»å¯¹å‘é€æ—¶é—´
 		{ "http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time",                RtpHeaderExtensionUri::Type::ABS_SEND_TIME          },
 		//Transport-wide Congestion Control
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////
-		// ÓĞĞ§Êı¾İÖ»ÓĞ 16 bit£¬¼ÇÂ¼ÁËÒ»¸ö sequence number ³ÆÎª transport-wide sequence number
-		// ·¢ËÍ¶ËÔÚ·¢ËÍ RTP Êı¾İ°üÊ±£¬ÔÚ RTP Í·²¿À©Õ¹ÖĞÉèÖÃ´«Êä²ãĞòÁĞºÅ TransportSequenceNumber£»
-		// Êı¾İ°üµ½´ï½ÓÊÕ¶Ëºó¼ÇÂ¼¸ÃĞòÁĞºÅºÍ°üµ½´ïÊ±¼ä£¬È»ºó½ÓÊÕ¶Ë»ùÓÚ´Ë¹¹Ôì TransportCC ±¨ÎÄ·µ»Øµ½·¢ËÍ¶Ë£»
-		// ·¢ËÍ¶Ë½âÎö¸Ã±¨ÎÄ²¢Ö´ĞĞ SendSide-BWE Ëã·¨£¬¼ÆËãµÃµ½»ùÓÚÑÓ³ÙµÄÂëÂÊ£»
-		// ×îÖÕºÍ»ùÓÚ¶ª°üÂÊµÄÂëÂÊ½øĞĞ±È½ÏµÃµ½×îÖÕÄ¿±êÂëÂÊ
+		// æœ‰æ•ˆæ•°æ®åªæœ‰ 16 bitï¼Œè®°å½•äº†ä¸€ä¸ª sequence number ç§°ä¸º transport-wide sequence number
+		// å‘é€ç«¯åœ¨å‘é€ RTP æ•°æ®åŒ…æ—¶ï¼Œåœ¨ RTP å¤´éƒ¨æ‰©å±•ä¸­è®¾ç½®ä¼ è¾“å±‚åºåˆ—å· TransportSequenceNumberï¼›
+		// æ•°æ®åŒ…åˆ°è¾¾æ¥æ”¶ç«¯åè®°å½•è¯¥åºåˆ—å·å’ŒåŒ…åˆ°è¾¾æ—¶é—´ï¼Œç„¶åæ¥æ”¶ç«¯åŸºäºæ­¤æ„é€  TransportCC æŠ¥æ–‡è¿”å›åˆ°å‘é€ç«¯ï¼›
+		// å‘é€ç«¯è§£æè¯¥æŠ¥æ–‡å¹¶æ‰§è¡Œ SendSide-BWE ç®—æ³•ï¼Œè®¡ç®—å¾—åˆ°åŸºäºå»¶è¿Ÿçš„ç ç‡ï¼›
+		// æœ€ç»ˆå’ŒåŸºäºä¸¢åŒ…ç‡çš„ç ç‡è¿›è¡Œæ¯”è¾ƒå¾—åˆ°æœ€ç»ˆç›®æ ‡ç ç‡
 		{ "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01", RtpHeaderExtensionUri::Type::TRANSPORT_WIDE_CC_01   },
 		// NOTE: Remove this once framemarking draft becomes RFC.
 
@@ -40,19 +40,19 @@ namespace RTC
 		{ "http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07",              RtpHeaderExtensionUri::Type::FRAME_MARKING_07       },
 
 
-		// ÓÉÓÚ WebRTC ÖĞ RTP payload Í¨¹ı SRTP ½øĞĞ¼ÓÃÜ£¬ÕâÑùµ¼ÖÂ RTP packet ÔÚ¾­¹ı½»»»½Úµã»ò×ª·¢½ÚµãÊ±£¬
-		// ÓĞĞ©³¡¾°ÏÂĞèÒªÖªµÀµ±Ç° RTP packet µÄ±àÂëĞÅÏ¢£¬framemarking ÓÃÓÚ¸ø¶¨¸Ã±àÂëĞÅÏ¢ 
+		// ç”±äº WebRTC ä¸­ RTP payload é€šè¿‡ SRTP è¿›è¡ŒåŠ å¯†ï¼Œè¿™æ ·å¯¼è‡´ RTP packet åœ¨ç»è¿‡äº¤æ¢èŠ‚ç‚¹æˆ–è½¬å‘èŠ‚ç‚¹æ—¶ï¼Œ
+		// æœ‰äº›åœºæ™¯ä¸‹éœ€è¦çŸ¥é“å½“å‰ RTP packet çš„ç¼–ç ä¿¡æ¯ï¼Œframemarking ç”¨äºç»™å®šè¯¥ç¼–ç ä¿¡æ¯ 
 		{ "urn:ietf:params:rtp-hdrext:framemarking",                                   RtpHeaderExtensionUri::Type::FRAME_MARKING          },
 
-		// ÓÃÓÚÒôÁ¿µ÷½Ú
+		// ç”¨äºéŸ³é‡è°ƒèŠ‚
 		{ "urn:ietf:params:rtp-hdrext:ssrc-audio-level",                               RtpHeaderExtensionUri::Type::SSRC_AUDIO_LEVEL       },
 
-		// ½ÓÊÕ·½ÊÕµ½ÒÔºó£¬Ò²»áÔÚÏìÓ¦ÖĞ¼ÓÈë¸Ã tag ÊôĞÔ£¬ÕâÑù¾ÍÍê³ÉÁË¸Ã¹¦ÄÜµÄĞ­ÉÌ¡£Tag ÖĞµÄ 7 ÊÇÀ©Õ¹Êı¾İÖ¡µÄÀ©Õ¹ id£¬
-		// ¿ÉÒÔÊÇ 1-15 ÖĞµÄÈÎºÎÒ»¸ö , ÓÃÀ´±êÊ¶¸Ã·½ÏòÊı¾İµÄÎ»ÖÃ£¬¾ßÌå²Î¿¼ RFC5285¡£¸ü¶àÃèÊö²Î¿¼ RCC.07- 2.7.1.2.2¡£
-		// ÒÔÉÏËùÊöµÄÊÓÆµ·½ÏòÆäÊµ°üº¬ÁËÊı¾İµÄ·½ÏòºÍ·¢ËÍ·½ camera µÄÑ¡Ïî£¨Ç°ÖÃ»òÕßºóÖÃ£©£¬ÎªÁË·½±ãÆğ¼û£¬Ò»ÏÂ¶¼³ÆÎªÊÓÆµ·½ÏòÊı¾İ¡£
+		// æ¥æ”¶æ–¹æ”¶åˆ°ä»¥åï¼Œä¹Ÿä¼šåœ¨å“åº”ä¸­åŠ å…¥è¯¥ tag å±æ€§ï¼Œè¿™æ ·å°±å®Œæˆäº†è¯¥åŠŸèƒ½çš„åå•†ã€‚Tag ä¸­çš„ 7 æ˜¯æ‰©å±•æ•°æ®å¸§çš„æ‰©å±• idï¼Œ
+		// å¯ä»¥æ˜¯ 1-15 ä¸­çš„ä»»ä½•ä¸€ä¸ª , ç”¨æ¥æ ‡è¯†è¯¥æ–¹å‘æ•°æ®çš„ä½ç½®ï¼Œå…·ä½“å‚è€ƒ RFC5285ã€‚æ›´å¤šæè¿°å‚è€ƒ RCC.07- 2.7.1.2.2ã€‚
+		// ä»¥ä¸Šæ‰€è¿°çš„è§†é¢‘æ–¹å‘å…¶å®åŒ…å«äº†æ•°æ®çš„æ–¹å‘å’Œå‘é€æ–¹ camera çš„é€‰é¡¹ï¼ˆå‰ç½®æˆ–è€…åç½®ï¼‰ï¼Œä¸ºäº†æ–¹ä¾¿èµ·è§ï¼Œä¸€ä¸‹éƒ½ç§°ä¸ºè§†é¢‘æ–¹å‘æ•°æ®ã€‚
 		{ "urn:3gpp:video-orientation",                                                RtpHeaderExtensionUri::Type::VIDEO_ORIENTATION      },
 
-		// ´«ÊäÊ±¼äÆ«ÒÆ (Transmission Time Offset)£¬offset Îª RTP packet ÖĞ timestamp Óë Êµ¼Ê·¢ËÍÊ±¼äµÄÆ«ÒÆ
+		// ä¼ è¾“æ—¶é—´åç§» (Transmission Time Offset)ï¼Œoffset ä¸º RTP packet ä¸­ timestamp ä¸ å®é™…å‘é€æ—¶é—´çš„åç§»
 		{ "urn:ietf:params:rtp-hdrext:toffset",                                        RtpHeaderExtensionUri::Type::TOFFSET                }
 
 	};
