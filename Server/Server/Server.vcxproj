@@ -159,6 +159,7 @@
     <ClCompile Include="cguard_reply.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
+    <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="Consumer.cpp" />
@@ -312,6 +313,8 @@
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
+    <ClInclude Include="cmedia_desc.h" />
+    <ClInclude Include="cmedia_error.h" />
     <ClInclude Include="cmedia_server.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
