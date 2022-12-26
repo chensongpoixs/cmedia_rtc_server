@@ -138,15 +138,15 @@ namespace chen {
 		std::string get_dtls_role() const;
 	private:
 	private:
-		int32 _parse_line(const std::string& line);
-		int32 _parse_origin(const std::string& content);
-		int32 _parse_version(const std::string& content);
-		int32 _parse_session_name(const std::string& content);
-		int32 _parse_timing(const std::string& content);
-		int32 _parse_attribute(const std::string& content);
-		int32 _parse_gb28181_ssrc(const std::string& content);
-		int32 _parse_media_description(const std::string& content);
-		int32 _parse_attr_group(const std::string& content);
+		int32 _handler_parse_line(const std::string& line);
+		int32 _handler_parse_origin(const std::string& content);
+		int32 _handler_parse_version(const std::string& content);
+		int32 _handler_parse_session_name(const std::string& content);
+		int32 _handler_parse_timing(const std::string& content);
+		int32 _handler_parse_attribute(const std::string& content);
+		int32 _handler_parse_gb28181_ssrc(const std::string& content);
+		int32 _handler_parse_media_description(const std::string& content);
+		int32 _handler_parse_attr_group(const std::string& content);
 	private:
 		bool							m_in_media_session;
 	public:
