@@ -75,7 +75,7 @@ namespace chen {
 		, m_rtpListener()
 		, m_maxIncomingBitrate(0u)
 		, m_maxOutgoingBitrate(0u)
-		, m_client_rtc_sdp()
+		//, m_client_rtc_sdp()
 	{
 
 		//m_ice_server_ptr;

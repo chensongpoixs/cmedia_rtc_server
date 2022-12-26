@@ -252,21 +252,15 @@ namespace RTC
 			uint16_t seq       = nackInfo.seq;
 
 			// clang-format off
-<<<<<<< HEAD
 			if ( filter == NackFilter::SEQ && nackInfo.sentAtMs == 0 && (
 				nackInfo.sendAtSeq == this->lastSeq || SeqManager<uint16_t>::IsSeqHigherThan(this->lastSeq, nackInfo.sendAtSeq) )
 			)
-			// clang-format on
-=======
-			if ( filter == NackFilter::SEQ && nackInfo.sentAtMs == 0 &&
-			( nackInfo.sendAtSeq == this->lastSeq || SeqManager<uint16_t>::IsSeqHigherThan(this->lastSeq, nackInfo.sendAtSeq)) )// clang-format on
->>>>>>> e7c53c323244c384996ff48dc36fc15109b527f0
 			{
 				nackBatch.emplace_back(seq);
 				nackInfo.retries++;
 				nackInfo.sentAtMs = nowMs;
 
-				// TODO@chensong 2022-11-18   µô°ü 10 ¾ÍÔÚnacklistÖÐÉ¾³ý¸ÃnackÊý¾ÝÊÇÎªÊ²Ã´ÄØ £¿£¿£¿
+				// TODO@chensong 2022-11-18   æŽ‰åŒ… 10 å°±åœ¨nacklistä¸­åˆ é™¤è¯¥nackæ•°æ®æ˜¯ä¸ºä»€ä¹ˆå‘¢ ï¼Ÿï¼Ÿï¼Ÿ
 				if (nackInfo.retries >= MaxNackRetries)
 				{
 					WARNING_EX_LOG(" rtx, sequence number removed from the NACK list due to max retries [filter:seq, seq:%hu]",
