@@ -2,6 +2,8 @@
 #include "cmedia_server.h"
 #include <signal.h>
 #include "crtc_sdp.h"
+#include "csocket_util.h"
+#include "cnet_adapter_test.h"
 //------------------------------------------------------------------------------
 void Stop(int i)
 {
@@ -45,6 +47,7 @@ int main(int argc, char* argv[])
 	}
 	bool init = chen::g_media_server.init(log_path, config_filename);
 
+	chen::net_adapter_test();
 	if (init)
 	{
 		init = chen::g_media_server.Loop();
@@ -58,5 +61,5 @@ int main(int argc, char* argv[])
 	}
 	return 0;
 
-	 
+	
 }

@@ -157,11 +157,14 @@
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
+    <ClCompile Include="cip_address.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
+    <ClCompile Include="cnetwork.cpp" />
+    <ClCompile Include="cnet_adapter_test.cpp" />
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
     <ClCompile Include="crandom.cpp" />
@@ -170,6 +173,7 @@
     <ClCompile Include="crtc_sdp_handler.cpp" />
     <ClCompile Include="crtc_sdp_test.cpp" />
     <ClCompile Include="crtc_sdp_util.cpp" />
+    <ClCompile Include="csocket_util.cpp" />
     <ClCompile Include="csrtp_session.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
     <ClCompile Include="cudp_socket_handler.cpp" />
@@ -193,6 +197,7 @@
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
     <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="cwin32.cpp" />
     <ClCompile Include="DtlsTransport.cpp" />
     <ClCompile Include="H264.cpp" />
     <ClCompile Include="h264_profile_level_id.cc" />
@@ -303,7 +308,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BweType.hpp" />
+    <ClInclude Include="carraysize.h" />
     <ClInclude Include="casync_log.h" />
+    <ClInclude Include="cbyte_order.h" />
     <ClInclude Include="ccfg.h" />
     <ClInclude Include="cclient_msg_dispatch.h" />
     <ClInclude Include="cconfig.h" />
@@ -311,6 +318,7 @@
     <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
+    <ClInclude Include="cip_address.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
@@ -319,6 +327,8 @@
     <ClInclude Include="cmedia_server.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
+    <ClInclude Include="cnetwork.h" />
+    <ClInclude Include="cnet_adapter_test.h" />
     <ClInclude Include="cnet_define.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
@@ -330,6 +340,7 @@
     <ClInclude Include="crtc_sdp_test.h" />
     <ClInclude Include="crtc_sdp_util.h" />
     <ClInclude Include="cshare_proto_error.h" />
+    <ClInclude Include="csocket_util.h" />
     <ClInclude Include="csrtp_session.h" />
     <ClInclude Include="cudp_socket.h" />
     <ClInclude Include="cudp_socket_handler.h" />
@@ -355,6 +366,7 @@
     <ClInclude Include="cwebsocket_msg_queue.h" />
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="cwin32.h" />
     <ClInclude Include="DtlsTransport.hpp" />
     <ClInclude Include="H264.hpp" />
     <ClInclude Include="h264_profile_level_id.h" />
@@ -425,6 +437,7 @@
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h" />
     <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h" />
     <ClInclude Include="NackGenerator.hpp" />
+    <ClInclude Include="cnetwork_constants.h" />
     <ClInclude Include="Parameters.hpp" />
     <ClInclude Include="PayloadDescriptorHandler.hpp" />
     <ClInclude Include="PortManager.hpp" />

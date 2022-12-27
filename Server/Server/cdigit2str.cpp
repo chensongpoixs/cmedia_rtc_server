@@ -343,6 +343,12 @@ namespace chen
 		}
 		return sprintf(buf, "%.2g", value);
 	}
+	std::string ToHex(const int i) 
+	{
+		char buffer[50];
+		snprintf(buffer, sizeof(buffer), "%x", i);
 
+		return std::string(buffer);
+	}
 
 } // namespace chen
