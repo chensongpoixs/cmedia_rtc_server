@@ -170,7 +170,7 @@ namespace chen {
 	{
 
 		//std::map<std::string, cnetwork*> current_networks;
-		
+#if defined(_WIN32)
 
 		// MSDN recommends a 15KB buffer for the first try at GetAdaptersAddresses.
 		size_t buffer_size = 16384;
@@ -301,6 +301,18 @@ namespace chen {
 			adapter_info = NULL;
 		}
 		return true;
+#else  defined(__linux__)
+			struct ifaddrs* interfaces;
+		  int32 error = getifaddrs(&interfaces);
+		  if (error != 0) 
+		  {
+			ERROR_EX_LOG("getifaddrs failed to gather interface data: %d", error);					 
+			return false;
+		  }
+		  
+		  
+		return true;
+#endif // linux
 	}
 	const char * inet_ntop(int32 af, const void * src, char * dst, socklen_t size)
 	{

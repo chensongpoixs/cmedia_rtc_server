@@ -162,6 +162,8 @@
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
+    <ClCompile Include="cmedia_source.cpp" />
+    <ClCompile Include="cglobal_media_source_mgr.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnetwork.cpp" />
     <ClCompile Include="cnet_adapter_test.cpp" />
@@ -325,6 +327,8 @@
     <ClInclude Include="cmedia_desc.h" />
     <ClInclude Include="cmedia_error.h" />
     <ClInclude Include="cmedia_server.h" />
+    <ClInclude Include="cmedia_source.h" />
+    <ClInclude Include="cglobal_media_source_mgr.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnetwork.h" />

@@ -22,6 +22,7 @@ namespace chen {
 	std::string MakeNetworkKey(const std::string& name,
 		const cip_address& prefix,
 		int32 prefix_length);
+	// webrtc\src\rtc_base\network.h =>CreateNetworks
 	bool get_network_ips(std::set<std::string> &ips);
 
 	// rtc namespaced wrappers for inet_ntop and inet_pton so we can avoid
