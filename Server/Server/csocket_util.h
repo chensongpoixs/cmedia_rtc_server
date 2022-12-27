@@ -22,6 +22,12 @@ namespace chen {
 	std::string MakeNetworkKey(const std::string& name,
 		const cip_address& prefix,
 		int32 prefix_length);
+
+	// Utility function that attempts to determine an adapter type by an interface
+	// name (e.g., "wlan0"). Can be used by NetworkManager subclasses when other
+	// mechanisms fail to determine the type.
+	AdapterType GetAdapterTypeFromName(const char* network_name);
+
 	// webrtc\src\rtc_base\network.h =>CreateNetworks
 	bool get_network_ips(std::set<std::string> &ips);
 

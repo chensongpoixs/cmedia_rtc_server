@@ -33,6 +33,9 @@ purpose:		socket_util
 #include "cnetwork.h"
 #include <vector>
 #include "clog.h"
+#include "cifaddrs_converter.h"
+#include "cifaddrs_android.h"
+
 namespace chen {
 
 #if !defined(__native_client__)
@@ -63,6 +66,69 @@ namespace chen {
 		return false;
 	}
 #endif  // !defined(__native_client__)
+	// Test if the network name matches the type<number> pattern, e.g. eth0. The
+// matching is case-sensitive.
+	bool MatchTypeNameWithIndexPattern(std::string network_name, std::string type_name) 
+	{
+		return network_name == type_name;
+		/*if (!absl::StartsWith(network_name, type_name)) {
+			return false;
+		}
+		return absl::c_none_of(network_name.substr(type_name.size()),
+			[](char c) { return !isdigit(c); });*/
+	}
+	// A cautious note that this method may not provide an accurate adapter type
+// based on the string matching. Incorrect type of adapters can affect the
+// result of the downstream network filtering, see e.g.
+// BasicPortAllocatorSession::GetNetworks when
+// PORTALLOCATOR_DISABLE_COSTLY_NETWORKS is turned on.
+	AdapterType GetAdapterTypeFromName(const char* network_name) 
+	{
+		if (MatchTypeNameWithIndexPattern(network_name, "lo"))
+		{
+			// Note that we have a more robust way to determine if a network interface
+			// is a loopback interface by checking the flag IFF_LOOPBACK in ifa_flags of
+			// an ifaddr struct. See ConvertIfAddrs in this file.
+			return ADAPTER_TYPE_LOOPBACK;
+		}
+		if (MatchTypeNameWithIndexPattern(network_name, "eth")) {
+			return ADAPTER_TYPE_ETHERNET;
+		}
+
+		if (MatchTypeNameWithIndexPattern(network_name, "ipsec") ||
+			MatchTypeNameWithIndexPattern(network_name, "tun") ||
+			MatchTypeNameWithIndexPattern(network_name, "utun") ||
+			MatchTypeNameWithIndexPattern(network_name, "tap")) {
+			return ADAPTER_TYPE_VPN;
+		}
+#if defined(__APPLE__)
+		// Cell networks are pdp_ipN on iOS.
+		if (MatchTypeNameWithIndexPattern(network_name, "pdp_ip")) {
+			return ADAPTER_TYPE_CELLULAR;
+		}
+		if (MatchTypeNameWithIndexPattern(network_name, "en")) {
+			// This may not be most accurate because sometimes Ethernet interface
+			// name also starts with "en" but it is better than showing it as
+			// "unknown" type.
+			// TODO(honghaiz): Write a proper IOS network manager.
+			return ADAPTER_TYPE_WIFI;
+		}
+#elif defined(__android__)
+		if (MatchTypeNameWithIndexPattern(network_name, "rmnet") ||
+			MatchTypeNameWithIndexPattern(network_name, "rmnet_data") ||
+			MatchTypeNameWithIndexPattern(network_name, "v4-rmnet") ||
+			MatchTypeNameWithIndexPattern(network_name, "v4-rmnet_data") ||
+			MatchTypeNameWithIndexPattern(network_name, "clat")) {
+			return ADAPTER_TYPE_CELLULAR;
+		}
+		if (MatchTypeNameWithIndexPattern(network_name, "wlan")) {
+			return ADAPTER_TYPE_WIFI;
+		}
+#endif
+
+		return ADAPTER_TYPE_UNKNOWN;
+	}
+
 #if defined(_WIN32)
 
 
@@ -117,6 +183,125 @@ namespace chen {
 		*prefix = best_prefix;
 		return best_length;
 	}
+
+
+ #elif defined(__linux__)
+	void  ConvertIfAddrs(struct ifaddrs* interfaces, cifaddrs_converter* ifaddrs_converter, std::set<std::string> & ips) const
+	{
+		//NetworkMap current_networks;
+
+		for (struct ifaddrs* cursor = interfaces; cursor != nullptr; cursor = cursor->ifa_next)
+		{
+			cip_address prefix;
+			cip_address mask;
+			cinterface_address ip;
+			int scope_id = 0;
+
+			// Some interfaces may not have address assigned.
+			if (!cursor->ifa_addr || !cursor->ifa_netmask)
+			{
+				continue;
+			}
+			// Skip ones which are down.
+			if (!(cursor->ifa_flags & IFF_RUNNING))
+			{
+				continue;
+			}
+			// Skip unknown family.
+			if (cursor->ifa_addr->sa_family != AF_INET &&
+				cursor->ifa_addr->sa_family != AF_INET6)
+			{
+				continue;
+			}
+			// Convert to InterfaceAddress.
+			if (!ifaddrs_converter->ConvertIfAddrsToIPAddress(cursor, &ip, &mask))
+			{
+				continue;
+			}
+
+			// Special case for IPv6 address.
+			if (cursor->ifa_addr->sa_family == AF_INET6)
+			{
+				if (IsIgnoredIPv6(ip)) {
+					continue;
+				}
+				scope_id = reinterpret_cast<sockaddr_in6*>(cursor->ifa_addr)->sin6_scope_id;
+			}
+
+			AdapterType adapter_type = ADAPTER_TYPE_UNKNOWN;
+			AdapterType vpn_underlying_adapter_type = ADAPTER_TYPE_UNKNOWN;
+			if (cursor->ifa_flags & IFF_LOOPBACK)
+			{
+				adapter_type = ADAPTER_TYPE_LOOPBACK;
+			}
+			else
+			{
+				// If there is a network_monitor, use it to get the adapter type.
+				// Otherwise, get the adapter type based on a few name matching rules.
+				//if (network_monitor_)
+				//{
+				//	adapter_type = network_monitor_->GetAdapterType(cursor->ifa_name);
+				//}
+				if (adapter_type == ADAPTER_TYPE_UNKNOWN)
+				{
+					adapter_type = GetAdapterTypeFromName(cursor->ifa_name);
+				}
+			}
+
+			/*if (adapter_type == ADAPTER_TYPE_VPN && network_monitor_)
+			{
+				vpn_underlying_adapter_type = network_monitor_->GetVpnUnderlyingAdapterType(cursor->ifa_name);
+			}*/
+			int prefix_length = CountIPMaskBits(mask);
+			prefix = TruncateIP(ip, prefix_length);
+			std::string key = MakeNetworkKey(std::string(cursor->ifa_name), prefix, prefix_length);
+			cnetwork  network_ptr(cursor->ifa_name, cursor->ifa_name, prefix, prefix_length,
+				//			adapter_type);
+
+			network_ptr.set_scope_id(scope_id);
+			network_ptr.AddIP(ip);
+			bool ignored = IsIgnoredNetwork(network_ptr);
+			network_ptr.set_ignored(ignored);
+			NORMAL_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
+			if (network_ptr.ignored() || adapter_type == ADAPTER_TYPE_LOOPBACK)
+			{
+				WARNING_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
+			}
+			else
+			{
+				ips.insert(ip.ToString());
+			}
+			//auto iter = current_networks.find(key);
+			//if (iter == current_networks.end()) {
+			//	// TODO(phoglund): Need to recognize other types as well.
+			//	std::unique_ptr<Network> network(
+			//		new Network(cursor->ifa_name, cursor->ifa_name, prefix, prefix_length,
+			//			adapter_type));
+			//	network->set_default_local_address_provider(this);
+			//	network->set_scope_id(scope_id);
+			//	network->AddIP(ip);
+			//	network->set_ignored(IsIgnoredNetwork(*network));
+			//	network->set_underlying_type_for_vpn(vpn_underlying_adapter_type);
+			//	if (include_ignored || !network->ignored()) {
+			//		current_networks[key] = network.get();
+			//		networks->push_back(network.release());
+			//	}
+			//}
+			//else {
+			//	Network* existing_network = iter->second;
+			//	existing_network->AddIP(ip);
+			//	if (adapter_type != ADAPTER_TYPE_UNKNOWN) {
+			//		existing_network->set_type(adapter_type);
+			//		existing_network->set_underlying_type_for_vpn(
+			//			vpn_underlying_adapter_type);
+			//	}
+			//}
+		}
+	 }
+
+
+ 
+
 #endif // 
 
 	static std::vector<std::string>		g_network_ignore_list;
@@ -271,14 +456,14 @@ namespace chen {
 						adapter_type = ADAPTER_TYPE_UNKNOWN;
 						break;
 					}
-					cnetwork* network_ptr = new cnetwork(name, description, prefix, prefix_length, adapter_type);
+					cnetwork  network_ptr  (name, description, prefix, prefix_length, adapter_type);
 				
-					network_ptr->set_scope_id(scope_id);
-					network_ptr->AddIP(ip);
-					bool ignored = IsIgnoredNetwork(*network_ptr);
-					network_ptr->set_ignored(ignored);
+					network_ptr.set_scope_id(scope_id);
+					network_ptr.AddIP(ip);
+					bool ignored = IsIgnoredNetwork(network_ptr);
+					network_ptr.set_ignored(ignored);
 					NORMAL_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
-					if (network_ptr->ignored() || adapter_type == ADAPTER_TYPE_LOOPBACK)
+					if (network_ptr.ignored() || adapter_type == ADAPTER_TYPE_LOOPBACK)
 					{
 						 WARNING_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
 					}
@@ -310,7 +495,12 @@ namespace chen {
 			return false;
 		  }
 		  
-		  
+		  //std::unique_ptr<IfAddrsConverter> ifaddrs_converter(CreateIfAddrsConverter());
+		   IfAddrsConverter ifaddrs_converter;
+		  ConvertIfAddrs(interfaces, &ifaddrs_converter, ips);
+		   
+		  freeifaddrs(interfaces);
+		  return true;
 		return true;
 #endif // linux
 	}
