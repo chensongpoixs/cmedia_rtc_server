@@ -131,9 +131,4 @@ Server/Server/webrtc_offer_1.sdp
 Server/www/package-lock.json
 Server/Robot/cow.ive
 Server/Robot/log
-Server/Server/*.cpp.bak
-Server/Server/*.h.bak
-Server/Server/*.hpp.bak
-Server/rtc_player/main.cpp.bak
-/Server/Server/Server.vcxproj.filters.bak
-/.gitignore.bak
+ 
