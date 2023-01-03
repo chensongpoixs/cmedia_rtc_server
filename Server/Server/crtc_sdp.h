@@ -186,7 +186,18 @@ namespace chen {
 		std::vector<cmedia_desc>		m_media_descs;
 	};
 
+/*
+   
+
+
+   1. 判断客户端没有连接或者断开  主的update检查心跳包
+   2.  source_mgr ->   source 
+   3.  
  
+
+ 
+ 
+*/
 
 }
 #endif // _C_RTC_SDP_H_

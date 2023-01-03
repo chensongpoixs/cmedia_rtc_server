@@ -1,4 +1,4 @@
-# dep
+﻿# dep
 
 ```asm
 1. usrsctp
@@ -12,3 +12,6 @@ cmake -DCMAKE_INSTALL_PREFIX=/Users/chensong/Work/dep/usrsctp ..
 ./config --prefix=/Users/chensong/Work/dep/openssl
 
 ```
+
+
+
