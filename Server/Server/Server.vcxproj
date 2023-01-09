@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -157,6 +157,8 @@
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
+    <ClCompile Include="cifaddrs_android.cc" />
+    <ClCompile Include="cifaddrs_converter.cc" />
     <ClCompile Include="cip_address.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
@@ -320,6 +322,8 @@
     <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
+    <ClInclude Include="cifaddrs_android.h" />
+    <ClInclude Include="cifaddrs_converter.h" />
     <ClInclude Include="cip_address.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
@@ -491,6 +495,9 @@
     <ClInclude Include="TransportCongestionControlServer.hpp" />
     <ClInclude Include="TransportTuple.hpp" />
     <ClInclude Include="TrendCalculator.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

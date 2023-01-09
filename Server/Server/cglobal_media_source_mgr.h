@@ -39,5 +39,6 @@ namespace chen {
 		ALL_MEDIA_SOURCE					m_media_source;
 	};
 }
-
+//1. rtsp     -->   media_server    -->    webrtc
+//2. webrtc   -->   media_server    -->    webrtc
 #endif // _C_GLOBAL_MEDIA_SOURCE_MGR_H_
