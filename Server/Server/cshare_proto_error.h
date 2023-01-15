@@ -29,6 +29,7 @@ namespace chen {
 		EShareProtoMediaKindError,
 		EShareProtoNotRtpParameters,
 		EShareProtoParseProduceFailed,
+		EShareRtcSdpExchange,
 	};
 }
 

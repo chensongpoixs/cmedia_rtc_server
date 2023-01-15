@@ -79,6 +79,20 @@ namespace chen
 		return 0;
 	}
 
+	std::string crandom::rand_str(int32 len)
+	{
+		static std::string random_table = "01234567890123456789012345678901234567890123456789abcdefghijklmnopqrstuvwxyz";
+
+		std::string ret;
+		ret.reserve(len);
+		for (int32 i = 0; i < len; ++i) 
+		{
+			ret.append(1, random_table[rand() % random_table.size()]);
+		}
+
+		return ret;
+	}
+
 	float crandom::randf()
 	{
 		return (rand() % 100000 + 1) / 100000.f;

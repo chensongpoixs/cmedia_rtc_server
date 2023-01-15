@@ -163,6 +163,15 @@
     <Filter Include="media_source">
       <UniqueIdentifier>{6a43ae28-1e60-4e32-acbd-d3dd5d2c8e2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="api_rtc">
+      <UniqueIdentifier>{c005d72d-ddc2-41ba-b36b-21907191c840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtc_config">
+      <UniqueIdentifier>{55bcd94b-04f6-4591-b574-218acf5fd343}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtc_constants">
+      <UniqueIdentifier>{290348eb-8d88-44fa-a2ff-dfb233b1acff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -212,12 +221,6 @@
     </ClCompile>
     <ClCompile Include="croom_mgr.cpp">
       <Filter>room</Filter>
-    </ClCompile>
-    <ClCompile Include="csctp_association.cpp">
-      <Filter>sctp</Filter>
-    </ClCompile>
-    <ClCompile Include="csctp_association_mgr.cpp">
-      <Filter>sctp</Filter>
     </ClCompile>
     <ClCompile Include="libwebrtc\api\network_state_predictor.cc">
       <Filter>webrtc\api</Filter>
@@ -442,12 +445,6 @@
     <ClCompile Include="SeqManager.cpp">
       <Filter>rtp</Filter>
     </ClCompile>
-    <ClCompile Include="cwebrtc_mgr.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebrtc_transport.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="Parameters.cpp">
       <Filter>rtp</Filter>
     </ClCompile>
@@ -493,9 +490,6 @@
     <ClCompile Include="ccrypto_random.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="TrendCalculator.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="csrtp_session.cpp">
       <Filter>srtp</Filter>
     </ClCompile>
@@ -505,35 +499,8 @@
     <ClCompile Include="cudp_socket_handler.cpp">
       <Filter>uv_util</Filter>
     </ClCompile>
-    <ClCompile Include="DtlsTransport.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="TransportTuple.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="cmsg_dispatch.cpp">
       <Filter>dispatch</Filter>
-    </ClCompile>
-    <ClCompile Include="Producer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStreamRecv.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="NackGenerator.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStream.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtxStream.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyFrameRequestManager.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpListener.cpp">
-      <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="crtc_sdp.cpp">
       <Filter>rtc_sdp</Filter>
@@ -556,9 +523,6 @@
     <ClCompile Include="cwan_handler.cpp">
       <Filter>handler</Filter>
     </ClCompile>
-    <ClCompile Include="cwebrtc_transprot_handler.cpp">
-      <Filter>handler</Filter>
-    </ClCompile>
     <ClCompile Include="cortc.cpp">
       <Filter>ortc</Filter>
     </ClCompile>
@@ -576,9 +540,6 @@
     </ClCompile>
     <ClCompile Include="IceCandidate.cpp">
       <Filter>stun</Filter>
-    </ClCompile>
-    <ClCompile Include="TransportCongestionControlClient.cpp">
-      <Filter>congestion_controller</Filter>
     </ClCompile>
     <ClCompile Include="TransportCongestionControlServer.cpp">
       <Filter>congestion_controller</Filter>
@@ -600,15 +561,6 @@
     </ClCompile>
     <ClCompile Include="crandom.cpp">
       <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="Consumer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleConsumer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStreamSend.cpp">
-      <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="cmedia_desc.cpp">
       <Filter>rtc_sdp</Filter>
@@ -636,6 +588,54 @@
     </ClCompile>
     <ClCompile Include="cglobal_media_source_mgr.cpp">
       <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="capi_rtc_player.cpp">
+      <Filter>api_rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="capi_rtc_publish.cpp">
+      <Filter>api_rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_user_config.cpp">
+      <Filter>rtc_config</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_connection.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_server_mgr.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_source.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_track_description.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="ccodec_payload.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="cvideo_payload.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="caudio_payload.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="cred_payload.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="crtx_paylod_des.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_source_description.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_consumer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_ssrc_generator.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_constants.cpp">
+      <Filter>rtc_constants</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -704,12 +704,6 @@
     </ClInclude>
     <ClInclude Include="croom_mgr.h">
       <Filter>room</Filter>
-    </ClInclude>
-    <ClInclude Include="csctp_association.h">
-      <Filter>sctp</Filter>
-    </ClInclude>
-    <ClInclude Include="csctp_association_mgr.h">
-      <Filter>sctp</Filter>
     </ClInclude>
     <ClInclude Include="libwebrtc\media_helpers.h">
       <Filter>webrtc</Filter>
@@ -999,12 +993,6 @@
     <ClInclude Include="SeqManager.hpp">
       <Filter>rtp</Filter>
     </ClInclude>
-    <ClInclude Include="cwebrtc_mgr.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebrtc_transport.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="Parameters.hpp">
       <Filter>rtp</Filter>
     </ClInclude>
@@ -1029,9 +1017,6 @@
     <ClInclude Include="ccrypto_random.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="TrendCalculator.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="csrtp_session.h">
       <Filter>srtp</Filter>
     </ClInclude>
@@ -1041,38 +1026,11 @@
     <ClInclude Include="cudp_socket_handler.h">
       <Filter>uv_util</Filter>
     </ClInclude>
-    <ClInclude Include="DtlsTransport.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="TransportTuple.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="cmsg_dispatch.h">
       <Filter>dispatch</Filter>
     </ClInclude>
     <ClInclude Include="cmsg_base_id.h">
       <Filter>msg</Filter>
-    </ClInclude>
-    <ClInclude Include="Producer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStreamRecv.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="NackGenerator.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStream.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtxStream.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyFrameRequestManager.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpListener.hpp">
-      <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="crtc_sdp.h">
       <Filter>rtc_sdp</Filter>
@@ -1110,9 +1068,6 @@
     <ClInclude Include="IceCandidate.hpp">
       <Filter>stun</Filter>
     </ClInclude>
-    <ClInclude Include="TransportCongestionControlClient.hpp">
-      <Filter>congestion_controller</Filter>
-    </ClInclude>
     <ClInclude Include="TransportCongestionControlServer.hpp">
       <Filter>congestion_controller</Filter>
     </ClInclude>
@@ -1136,15 +1091,6 @@
     </ClInclude>
     <ClInclude Include="crandom.h">
       <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="Consumer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleConsumer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStreamSend.hpp">
-      <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="cmedia_desc.h">
       <Filter>rtc_sdp</Filter>
@@ -1184,6 +1130,54 @@
     </ClInclude>
     <ClInclude Include="cglobal_media_source_mgr.h">
       <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="capi_rtc_player.h">
+      <Filter>api_rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="capi_rtc_publish.h">
+      <Filter>api_rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_user_config.h">
+      <Filter>rtc_config</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_connection.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_server_mgr.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_source.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_track_description.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="ccodec_payload.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="cvideo_payload.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="caudio_payload.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="cred_payload.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="crtx_paylod_des.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_source_description.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_consumer.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_ssrc_generator.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_constants.h">
+      <Filter>rtc_constants</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
