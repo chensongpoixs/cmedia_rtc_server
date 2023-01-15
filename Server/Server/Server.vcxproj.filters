@@ -583,12 +583,6 @@
     <ClCompile Include="cnet_adapter_test.cpp">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="cmedia_source.cpp">
-      <Filter>media_source</Filter>
-    </ClCompile>
-    <ClCompile Include="cglobal_media_source_mgr.cpp">
-      <Filter>media_source</Filter>
-    </ClCompile>
     <ClCompile Include="capi_rtc_player.cpp">
       <Filter>api_rtc</Filter>
     </ClCompile>
@@ -636,6 +630,9 @@
     </ClCompile>
     <ClCompile Include="crtc_constants.cpp">
       <Filter>rtc_constants</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_source_mgr.cpp">
+      <Filter>media_source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1125,12 +1122,6 @@
     <ClInclude Include="cnet_adapter_test.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="cmedia_source.h">
-      <Filter>media_source</Filter>
-    </ClInclude>
-    <ClInclude Include="cglobal_media_source_mgr.h">
-      <Filter>media_source</Filter>
-    </ClInclude>
     <ClInclude Include="capi_rtc_player.h">
       <Filter>api_rtc</Filter>
     </ClInclude>
@@ -1178,6 +1169,9 @@
     </ClInclude>
     <ClInclude Include="crtc_constants.h">
       <Filter>rtc_constants</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_source_mgr.h">
+      <Filter>media_source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

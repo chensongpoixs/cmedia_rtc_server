@@ -36,7 +36,11 @@ namespace chen {
 			return err;
 		}
 
-
+		if ((err = _serve_client(  &ruc)) != 0)
+		{
+			ERROR_EX_LOG("serve");
+			return err;  
+		}
 
 		return err;
 	}

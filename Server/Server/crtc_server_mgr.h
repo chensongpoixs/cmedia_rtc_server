@@ -30,6 +30,8 @@ namespace chen {
 		int32 create_session(crtc_user_config* ruc, crtc_sdp& local_sdp, crtc_connection** psession);
 	protected:
 	private:
+
+		int32 _do_create_session(crtc_user_config* ruc, crtc_sdp& local_sdp, crtc_connection* session);
 	};
 }
 

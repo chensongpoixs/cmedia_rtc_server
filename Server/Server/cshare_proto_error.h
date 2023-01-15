@@ -30,6 +30,7 @@ namespace chen {
 		EShareProtoNotRtpParameters,
 		EShareProtoParseProduceFailed,
 		EShareRtcSdpExchange,
+		EShareRtcSourceBusy,
 	};
 }
 

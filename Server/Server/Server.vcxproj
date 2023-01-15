@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -166,8 +166,6 @@
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
-    <ClCompile Include="cmedia_source.cpp" />
-    <ClCompile Include="cglobal_media_source_mgr.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnetwork.cpp" />
     <ClCompile Include="cnet_adapter_test.cpp" />
@@ -185,6 +183,7 @@
     <ClCompile Include="crtc_server_mgr.cpp" />
     <ClCompile Include="crtc_source.cpp" />
     <ClCompile Include="crtc_source_description.cpp" />
+    <ClCompile Include="crtc_source_mgr.cpp" />
     <ClCompile Include="crtc_ssrc_generator.cpp" />
     <ClCompile Include="crtc_track_description.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
@@ -328,8 +327,6 @@
     <ClInclude Include="cmedia_desc.h" />
     <ClInclude Include="cmedia_error.h" />
     <ClInclude Include="cmedia_server.h" />
-    <ClInclude Include="cmedia_source.h" />
-    <ClInclude Include="cglobal_media_source_mgr.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnetwork.h" />
@@ -350,6 +347,7 @@
     <ClInclude Include="crtc_server_mgr.h" />
     <ClInclude Include="crtc_source.h" />
     <ClInclude Include="crtc_source_description.h" />
+    <ClInclude Include="crtc_source_mgr.h" />
     <ClInclude Include="crtc_ssrc_generator.h" />
     <ClInclude Include="crtc_track_description.h" />
     <ClInclude Include="crtc_user_config.h" />
