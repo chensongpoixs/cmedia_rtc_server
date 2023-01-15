@@ -6,7 +6,7 @@
 
 #include "cmsg_dispatch.h"
 #include "clog.h"
-#include "cclient.h"
+//#include "cclient.h"
 namespace chen {
 	cmsg_dispatch::cmsg_dispatch()
 	{

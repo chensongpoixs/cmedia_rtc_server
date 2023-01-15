@@ -1,228 +1,193 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="consumer">
+      <UniqueIdentifier>{2b08eddf-dcf5-493e-9ee6-a14cd30f69f5}</UniqueIdentifier>
     </Filter>
     <Filter Include="sdp">
-      <UniqueIdentifier>{52999c24-5376-4b83-b0a4-5a3be6005273}</UniqueIdentifier>
+      <UniqueIdentifier>{617b3d03-a383-4c5c-95de-85c96af4aeeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{662b8441-724d-486d-934b-ef5cd94d4107}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="websocket">
+      <UniqueIdentifier>{4d3861de-a9be-4325-89be-36a150a13d1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{c81dea32-5ace-4a02-848a-c10fa9c5b07f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{18936c04-2219-450b-963a-8d11cae0464e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{9a2d4062-9712-40c1-8efa-f2a8bedb3db9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{8a92707a-664f-480c-86c1-6d8a04888a03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dispatch">
+      <UniqueIdentifier>{502bef3d-3536-48f2-84b1-929b0c275df8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtc">
+      <UniqueIdentifier>{4b9346ab-dde8-4c67-9b43-523283affd3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="player">
+      <UniqueIdentifier>{cc6a4e36-b4b9-4782-bd7b-252cf7a37f3c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="csdp_util.cpp">
+      <Filter>sdp</Filter>
     </ClCompile>
-    <ClCompile Include="casync_log.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cbase64.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ccfg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cclient.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cclient_handler.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cconfig.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cdevice.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cdigit2str.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cint2str.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="clog.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="clog_color.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cmsg_dispatch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cnet_types.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="crecv_transport.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="csession_description.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ctime_api.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ctransport.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebscoket_connection.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebsocket_mgr.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebsocket_protoo.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="cwebsocket_session.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="grammar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="mediasoupclient.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ortc.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="parser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="scalabilityMode.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="cremote_sdp.cpp">
+      <Filter>sdp</Filter>
     </ClCompile>
     <ClCompile Include="writer.cpp">
-      <Filter>源文件</Filter>
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="grammar.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>json</Filter>
     </ClCompile>
     <ClCompile Include="wsclient.cpp">
-      <Filter>源文件</Filter>
+      <Filter>websocket</Filter>
     </ClCompile>
-    <ClCompile Include="sdp\MediaSection.cpp">
-      <Filter>sdp</Filter>
+    <ClCompile Include="cwebsocket_session.cpp">
+      <Filter>websocket</Filter>
     </ClCompile>
-    <ClCompile Include="sdp\RemoteSdp.cpp">
-      <Filter>sdp</Filter>
+    <ClCompile Include="cwebsocket_protoo.cpp">
+      <Filter>websocket</Filter>
     </ClCompile>
-    <ClCompile Include="sdp\Utils.cpp">
-      <Filter>sdp</Filter>
+    <ClCompile Include="cwebscoket_connection.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_mgr.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="ctime_api.cpp">
+      <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="cnet_types.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cint2str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cdigit2str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cbase64.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="clog.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="clog_color.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="casync_log.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="ccfg.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="cconfig.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="cmsg_dispatch.cpp">
+      <Filter>dispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="crtc_player.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="cplayer.cpp">
+      <Filter>player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cassertion_macros.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="cremote_sdp.h">
+      <Filter>sdp</Filter>
     </ClInclude>
-    <ClInclude Include="casync_log.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cbase64.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ccfg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cclient.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cconfig.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cdevice.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cdigit2str.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cint2str.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="clog.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="clog_color.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="clog_define.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cmsg_base_id.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cmsg_dispatch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cnet_types.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cnoncopyable.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="crecv_transport.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="csession_description.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="csingleton.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ctime_api.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ctime_const.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ctransport.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebscoket_connection.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebsocket_mgr.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebsocket_protoo.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="cwebsocket_session.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="json.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="mediasoupclient.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ortc.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="scalabilityMode.hpp">
-      <Filter>头文件</Filter>
+    <ClInclude Include="csdp_util.h">
+      <Filter>sdp</Filter>
     </ClInclude>
     <ClInclude Include="sdptransform.hpp">
-      <Filter>头文件</Filter>
+      <Filter>json</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.hpp">
-      <Filter>头文件</Filter>
+    <ClInclude Include="json.hpp">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebscoket_connection.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_mgr.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_protoo.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_session.h">
+      <Filter>websocket</Filter>
     </ClInclude>
     <ClInclude Include="wsclient.h">
-      <Filter>头文件</Filter>
+      <Filter>websocket</Filter>
     </ClInclude>
-    <ClInclude Include="sdp\MediaSection.hpp">
-      <Filter>sdp</Filter>
+    <ClInclude Include="ctime_api.h">
+      <Filter>time</Filter>
     </ClInclude>
-    <ClInclude Include="sdp\RemoteSdp.hpp">
-      <Filter>sdp</Filter>
+    <ClInclude Include="ctime_const.h">
+      <Filter>time</Filter>
     </ClInclude>
-    <ClInclude Include="sdp\Utils.hpp">
-      <Filter>sdp</Filter>
+    <ClInclude Include="csingleton.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cnoncopyable.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_types.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cdigit2str.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cint2str.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cbase64.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="clog.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog_color.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog_define.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="casync_log.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="ccfg.h">
+      <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="cconfig.h">
+      <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsg_dispatch.h">
+      <Filter>dispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="cmsg_base_id.h">
+      <Filter>dispatch</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_player.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="cplayer.h">
+      <Filter>player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
