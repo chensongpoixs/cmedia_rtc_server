@@ -49,9 +49,19 @@ namespace chen {
 
 		}*/
 		 
-		 
+		std::string fmt(const char* fmt, ...);
+		std::vector<std::string>  string_split(std::string s, std::string seperator);
 
+		// TDOO: FIXME: Rename it, and add utest.
+		std::vector<std::string> split_str(const std::string& str, const std::string& delim);
+
+		void skip_first_spaces(std::string & str);
+
+		std::string string_trim_end(std::string str, std::string trim_chars);
 	}
+
+
+	 
 }
 
 

@@ -44,7 +44,7 @@ namespace chen {
 		m_room_name.clear();
 		m_user_name.clear();
 		m_session_id = 0;
-		m_rtc_sdp.destroy();
+		//m_rtc_sdp.destroy();
 	}
 	void cwan_session::update(uint32 uDeltaTime)
 	{

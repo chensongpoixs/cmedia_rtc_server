@@ -94,7 +94,7 @@ namespace chen {
 		Json::Reader							m_json_reader;					// json解析
 		Json::Value								m_json_response;
 
-		crtc_sdp								m_rtc_sdp;
+		//crtc_sdp								m_rtc_sdp;
 
 	};
 }//namespace chen

@@ -157,6 +157,12 @@
     <Filter Include="rtc_net">
       <UniqueIdentifier>{3873831c-7ff7-4f2b-b4a3-d67077519f95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{af7692e2-78a3-43ca-b184-1b6aa1d0a101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="media_source">
+      <UniqueIdentifier>{6a43ae28-1e60-4e32-acbd-d3dd5d2c8e2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -603,6 +609,33 @@
     </ClCompile>
     <ClCompile Include="RtpStreamSend.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cmedia_desc.cpp">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_sdp_test.cpp">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="csocket_util.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="cip_address.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="cwin32.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="cnetwork.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="cnet_adapter_test.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="cmedia_source.cpp">
+      <Filter>media_source</Filter>
+    </ClCompile>
+    <ClCompile Include="cglobal_media_source_mgr.cpp">
+      <Filter>media_source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1112,6 +1145,45 @@
     </ClInclude>
     <ClInclude Include="RtpStreamSend.hpp">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_desc.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_error.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_sdp_test.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="csocket_util.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cip_address.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cbyte_order.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cwin32.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="carraysize.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cnetwork.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cnetwork_constants.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_adapter_test.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_source.h">
+      <Filter>media_source</Filter>
+    </ClInclude>
+    <ClInclude Include="cglobal_media_source_mgr.h">
+      <Filter>media_source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,7 +23,7 @@ purpose:		cwebrtc_transport_handler
 namespace chen {
 	bool cwebrtc_transport::handler_webrtc_sdp(const std::string & sdp)
 	{
-		m_client_rtc_sdp.init(sdp);
+		//m_client_rtc_sdp.init(sdp);
 		/*
 		{
 					kind       : 'video',
@@ -41,22 +41,22 @@ namespace chen {
 				}
 		*/
 
-		const std::vector< RTC::RtpParameters>& rtp_media_datas = m_client_rtc_sdp.get_rtp_parameters();
-		// video
-		int32 index = 0;
-		for (size_t i = 0; i < rtp_media_datas.size(); ++i)
-		{
-			if (rtp_media_datas[i].m_codec_type == RTC::RtpCodecMimeType::Type::VIDEO)
-			{
-				index = i;
-				break;
-			}
-		}
+		//const std::vector< RTC::RtpParameters>& rtp_media_datas = m_client_rtc_sdp.get_rtp_parameters();
+		//// video
+		//int32 index = 0;
+		//for (size_t i = 0; i < rtp_media_datas.size(); ++i)
+		//{
+		//	if (rtp_media_datas[i].m_codec_type == RTC::RtpCodecMimeType::Type::VIDEO)
+		//	{
+		//		index = i;
+		//		break;
+		//	}
+		//}
 
 
 		std::string producerId = s_crypto_random.GetRandomString(20);
 
-		RTC::Producer * producer_ptr = new RTC::Producer(producerId, this, rtp_media_datas[index]);
+		RTC::Producer * producer_ptr = NULL; // new RTC::Producer(producerId, this, rtp_media_datas[index]);
 		try
 		{
 			m_rtpListener.AddProducer(producer_ptr);

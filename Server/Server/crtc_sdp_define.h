@@ -237,6 +237,27 @@ namespace chen {
 	const size_t kConferenceMaxNumSpatialLayers = 3;
 	const size_t kConferenceMaxNumTemporalLayers = 3;
 	const size_t kConferenceDefaultNumTemporalLayers = 3;
+
+
+	///////////////////////////////////////////////////////////////////////////////
+
+
+
+	// TODO: FIXME: Maybe we should use json.encode to escape it?
+	const char kCRLF[] = "\r\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 #endif //_C_RTC_SDP_UTIL_DEFINE_H_

@@ -339,7 +339,7 @@ namespace chen
 		RTC::RtpListener									m_rtpListener;
 		uint32_t											m_maxIncomingBitrate{ 0u };
 		uint32_t											m_maxOutgoingBitrate{ 0u };
-		crtc_sdp											m_client_rtc_sdp;
+		//crtc_sdp											m_client_rtc_sdp;
 };
 }
 
