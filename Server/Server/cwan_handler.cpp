@@ -198,21 +198,21 @@ namespace chen {
 
 	bool   cwan_session::handler_create_rtc(Json::Value& value)
 	{
-		g_global_webrtc_mgr.handler_create_webrtc(m_session_id, value);
+		//g_global_webrtc_mgr.handler_create_webrtc(m_session_id, value);
 		return true;
 	}
 
 	bool   cwan_session::handler_connect_rtc(Json::Value& value)
 	{
-		g_global_webrtc_mgr.handler_connect_webrtc(m_session_id, value);
+		//g_global_webrtc_mgr.handler_connect_webrtc(m_session_id, value);
 		return true;
 	}
 	bool   cwan_session::handler_rtc_produce(Json::Value& value)
 	{
-		return g_global_webrtc_mgr.handler_webrtc_produce(m_session_id, value);;
+		return true;// g_global_webrtc_mgr.handler_webrtc_produce(m_session_id, value);;
 	}
 	bool   cwan_session::handler_rtc_consume(Json::Value& value)
 	{
-		return   g_global_webrtc_mgr.handler_webrtc_consume(m_session_id, value);;;
+		return   true; // g_global_webrtc_mgr.handler_webrtc_consume(m_session_id, value);;;
 	}
 }

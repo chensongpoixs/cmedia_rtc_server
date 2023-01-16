@@ -79,7 +79,7 @@ namespace chen {
 
 
 		std::string transportId = s_crypto_random.GetRandomString(20);
-		cwebrtc_transport* transport_ptr = new cwebrtc_transport();
+		/*cwebrtc_transport* transport_ptr = new cwebrtc_transport();
 		if (!transport_ptr)
 		{
 			ERROR_EX_LOG("webrtc transport alloc  failed !!!");
@@ -93,7 +93,7 @@ namespace chen {
 			return false;
 		}
 
-		user_info_ptr->producers[transportId] = transport_ptr;
+		user_info_ptr->producers[transportId] = transport_ptr;*/
 
 		return true;
 	}

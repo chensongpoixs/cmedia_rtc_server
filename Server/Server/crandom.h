@@ -42,10 +42,13 @@ namespace chen
 		//输出结果 [0, maxValue)
 		uint32 rand(uint32 maxValue);
 
+		std::string  rand_str(int32 len);
+
 		uint32 operator()()
 		{
 			return rand();
 		}
+		
 
 		uint32 operator()(int32 maxValue)
 		{

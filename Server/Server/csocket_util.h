@@ -12,6 +12,7 @@ purpose:		socket_util
 #define _C_SOCKET_UTIL_H_
 #include "cnet_type.h"
 #include "cip_address.h"
+#include "cnetwork_constants.h"
 #include <set>
 namespace chen {
 
