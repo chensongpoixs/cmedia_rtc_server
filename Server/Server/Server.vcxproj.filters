@@ -634,6 +634,15 @@
     <ClCompile Include="crtc_source_mgr.cpp">
       <Filter>media_source</Filter>
     </ClCompile>
+    <ClCompile Include="cifaddrs_converter.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="cifaddrs_android.cc">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="csrtp_session_test.cpp">
+      <Filter>srtp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1173,5 +1182,17 @@
     <ClInclude Include="crtc_source_mgr.h">
       <Filter>media_source</Filter>
     </ClInclude>
+    <ClInclude Include="cifaddrs_converter.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="cifaddrs_android.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="csrtp_session_test.h">
+      <Filter>srtp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

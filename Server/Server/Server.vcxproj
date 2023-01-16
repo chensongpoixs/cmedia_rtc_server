@@ -192,6 +192,7 @@
     <ClCompile Include="crtx_paylod_des.cpp" />
     <ClCompile Include="csocket_util.cpp" />
     <ClCompile Include="csrtp_session.cpp" />
+    <ClCompile Include="csrtp_session_test.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
     <ClCompile Include="cudp_socket_handler.cpp" />
     <ClCompile Include="cuv_ip.cpp" />
@@ -359,6 +360,7 @@
     <ClInclude Include="cshare_proto_error.h" />
     <ClInclude Include="csocket_util.h" />
     <ClInclude Include="csrtp_session.h" />
+    <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="cudp_socket.h" />
     <ClInclude Include="cudp_socket_handler.h" />
     <ClInclude Include="cuv_ip.h" />

@@ -65,7 +65,7 @@ namespace chen {
 		// first add publisher/player for negotiate sdp media info
 		if (ruc->m_publish) 
 		{
-			if ((err = session->add_publisher(ruc, local_sdp)) != 0) 
+			//if ((err = session->add_publisher(ruc, local_sdp)) != 0) 
 			{
 				ERROR_EX_LOG("add publisher");
 				return err;
@@ -74,7 +74,7 @@ namespace chen {
 		}
 		else
 		{
-			if ((err = session->add_player(ruc, local_sdp)) != 0) 
+			//if ((err = session->add_player(ruc, local_sdp)) != 0) 
 			{
 				ERROR_EX_LOG("add player");
 				return err;
@@ -177,10 +177,10 @@ namespace chen {
 
 
 		// TODO@chensong 2022-01-15 
-		session->set_remote_sdp(ruc->m_remote_sdp);
+		//session->set_remote_sdp(ruc->m_remote_sdp);
 		// We must setup the local SDP, then initialize the session object.
-		session->set_local_sdp(local_sdp);
-		session->set_state_as_waiting_stun();
+		//session->set_local_sdp(local_sdp);
+		//session->set_state_as_waiting_stun();
 
 		return err;
 	}
