@@ -159,6 +159,7 @@
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="ccrypto_random.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
+    <ClCompile Include="cdtls_impl.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
     <ClCompile Include="cifaddrs_android.cc" />
@@ -321,6 +322,7 @@
     <ClInclude Include="cconfig.h" />
     <ClInclude Include="ccrypto_random.h" />
     <ClInclude Include="cdigit2str.h" />
+    <ClInclude Include="cdtls_impl.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
     <ClInclude Include="cifaddrs_android.h" />

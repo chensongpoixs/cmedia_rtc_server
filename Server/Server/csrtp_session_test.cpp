@@ -17,8 +17,8 @@ namespace chen {
 		csrtp_session::init();
 
 		ECRYPTO_SUITE   srtp_crypto_suite;
-		csrtp_session send_session(EOUTBOUND, );
-		csrtp_session recv_session(EINBOUND, );
+		/*csrtp_session send_session(EOUTBOUND, );
+		csrtp_session recv_session(EINBOUND, );*/
 
 		// global destroy
 		csrtp_session::destroy();
