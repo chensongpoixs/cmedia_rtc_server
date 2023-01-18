@@ -4,6 +4,9 @@
 #include "crtc_sdp.h"
 #include "csocket_util.h"
 #include "cnet_adapter_test.h"
+#include "cdtls.h"
+#include "cdtls_test.h"
+#include "cdtls_certificate.h"
 //------------------------------------------------------------------------------
 void Stop(int i)
 {
@@ -15,6 +18,16 @@ void RegisterSignal()
 	signal(SIGINT, Stop);
 	signal(SIGTERM, Stop);
 
+}
+
+
+void moudle_test()
+{
+	//chen::net_adapter_test();
+	chen::cdtls::init();
+
+	chen::cdtls_certificate cdtls_certificate;
+	cdtls_certificate.init();
 }
 
 int main(int argc, char* argv[])
@@ -47,7 +60,8 @@ int main(int argc, char* argv[])
 	}
 	bool init = chen::g_media_server.init(log_path, config_filename);
 
-	chen::net_adapter_test();
+	moudle_test();
+
 	if (init)
 	{
 		init = chen::g_media_server.Loop();

@@ -22,8 +22,16 @@ namespace chen {
 	class cdtls 
 	{
 	public:
+
 		cdtls() {}
 		~cdtls();
+	
+	public:
+		static bool init();
+
+
+		static void destory();
+
 	protected:
 	private:
 	};

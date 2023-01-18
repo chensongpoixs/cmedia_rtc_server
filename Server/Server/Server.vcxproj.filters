@@ -172,6 +172,9 @@
     <Filter Include="rtc_constants">
       <UniqueIdentifier>{290348eb-8d88-44fa-a2ff-dfb233b1acff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dtls">
+      <UniqueIdentifier>{8fc8ed65-1da2-44db-bba2-a7e11f973a2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -642,6 +645,15 @@
     </ClCompile>
     <ClCompile Include="csrtp_session_test.cpp">
       <Filter>srtp</Filter>
+    </ClCompile>
+    <ClCompile Include="cdtls.cpp">
+      <Filter>dtls</Filter>
+    </ClCompile>
+    <ClCompile Include="cdtls_test.cpp">
+      <Filter>dtls</Filter>
+    </ClCompile>
+    <ClCompile Include="cdtls_certificate.cpp">
+      <Filter>dtls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1190,6 +1202,15 @@
     </ClInclude>
     <ClInclude Include="csrtp_session_test.h">
       <Filter>srtp</Filter>
+    </ClInclude>
+    <ClInclude Include="cdtls.h">
+      <Filter>dtls</Filter>
+    </ClInclude>
+    <ClInclude Include="cdtls_test.h">
+      <Filter>dtls</Filter>
+    </ClInclude>
+    <ClInclude Include="cdtls_certificate.h">
+      <Filter>dtls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
