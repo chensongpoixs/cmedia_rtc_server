@@ -10,6 +10,14 @@ purpose:		_C_DTLS_CERTIFICATE_H_
 #include "cdtls_certificate.h"
 #include "crandom.h"
 namespace chen {
+
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
+#pragma GCC diagnostic pop
+
+	cdtls_certificate   g_dtls_certificate;
 	cdtls_certificate::~cdtls_certificate()
 	{
 	}
@@ -170,5 +178,39 @@ namespace chen {
 	}
 	void cdtls_certificate::destroy()
 	{
+		if (m_eckey_ptr)
+		{
+			EC_KEY_free(m_eckey_ptr);
+			m_eckey_ptr = NULL;
+		}
+
+		if (m_private_key_ptr)
+		{
+			EVP_PKEY_free(m_private_key_ptr);
+			m_private_key_ptr = NULL;
+		}
+		 
+		if (m_certificate_ptr)
+		{
+			X509_free(m_certificate_ptr);
+			m_certificate_ptr = NULL;
+		}
+		m_fingerprints.clear();
+	}
+	X509 * cdtls_certificate::get_cert()
+	{
+		return m_certificate_ptr;
+	}
+	EVP_PKEY * cdtls_certificate::get_public_key()
+	{
+		return m_private_key_ptr;
+	}
+	EC_KEY * cdtls_certificate::get_ecdsa_key()
+	{
+		return m_eckey_ptr;
+	}
+	std::string cdtls_certificate::get_fingerprint()
+	{
+		return m_fingerprints;
 	}
 }

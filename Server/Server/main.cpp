@@ -26,8 +26,9 @@ void moudle_test()
 	//chen::net_adapter_test();
 	chen::cdtls::init();
 
-	chen::cdtls_certificate cdtls_certificate;
-	cdtls_certificate.init();
+	/*chen::cdtls_certificate cdtls_certificate;
+	cdtls_certificate.init();*/
+	chen::g_dtls_certificate.init();
 }
 
 int main(int argc, char* argv[])

@@ -45,7 +45,19 @@ namespace chen {
 	public:
 		bool init();
 		void destroy();
+
+
+	public:
+		// dtls_cert
+		X509* get_cert();
+		// public key
+		EVP_PKEY* get_public_key();
+		// ECDSA key
+		EC_KEY* get_ecdsa_key();
+		// certificate fingerprint
+		std::string get_fingerprint();
 	protected:
+
 	private:
 		EC_KEY *					m_eckey_ptr;
 		//X509_NAME*					m_cert_name_ptr;
@@ -53,6 +65,9 @@ namespace chen {
 		EVP_PKEY *					m_private_key_ptr;
 		std::string 				m_fingerprints;
 	};
+
+
+	extern cdtls_certificate   g_dtls_certificate;
 }
 
 #endif // _C_DTLS_CERTIFICATE_H_
