@@ -25,14 +25,18 @@ namespace chen {
 	cdtls::~cdtls()
 	{
 	}
-	bool cdtls::init()
+	//int32 cdtls::init()
+	//{
+	//	DEBUG_EX_LOG("Openssl version: %s", OpenSSL_version(OPENSSL_VERSION));
+	//	//RAND_poll();
+	//	 
+	//	return true;
+	//}
+	//int32 cdtls::on_dtls(char * data, int32 nb_data)
+	//{
+	//	return int32();
+	//}
+	/*void cdtls::destory()
 	{
-		DEBUG_EX_LOG("Openssl version: %s", OpenSSL_version(OPENSSL_VERSION));
-		RAND_poll();
-
-		return true;
-	}
-	void cdtls::destory()
-	{
-	}
+	}*/
 }

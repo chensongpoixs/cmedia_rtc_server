@@ -655,6 +655,12 @@
     <ClCompile Include="cdtls_certificate.cpp">
       <Filter>dtls</Filter>
     </ClCompile>
+    <ClCompile Include="cdtls_session.cpp">
+      <Filter>dtls</Filter>
+    </ClCompile>
+    <ClCompile Include="cstr2digit.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1211,6 +1217,15 @@
     </ClInclude>
     <ClInclude Include="cdtls_certificate.h">
       <Filter>dtls</Filter>
+    </ClInclude>
+    <ClInclude Include="cdtls_define.h">
+      <Filter>dtls</Filter>
+    </ClInclude>
+    <ClInclude Include="cdtls_session.h">
+      <Filter>dtls</Filter>
+    </ClInclude>
+    <ClInclude Include="cstr2digit.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

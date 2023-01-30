@@ -17,23 +17,32 @@ purpose:		_C_DTLS_ _H_
 #include <map>
 #include "crtc_sdp.h"
 #include "cmedia_desc.h"
+#include "cdtls_session.h"
 namespace chen {
 
 	class cdtls 
 	{
 	public:
 
-		cdtls() {}
+		cdtls()
+		{}
+	 
 		~cdtls();
-	
+		
 	public:
-		static bool init();
+		//static bool init();
 
 
-		static void destory();
+	//	static void destory();
+	public:
+
+		
 
 	protected:
 	private:
+
+
+		
 	};
 }
 

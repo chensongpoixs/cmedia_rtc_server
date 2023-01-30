@@ -24,7 +24,7 @@ void RegisterSignal()
 void moudle_test()
 {
 	//chen::net_adapter_test();
-	chen::cdtls::init();
+	//chen::cdtls::init();
 
 	/*chen::cdtls_certificate cdtls_certificate;
 	cdtls_certificate.init();*/

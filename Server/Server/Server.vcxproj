@@ -161,6 +161,7 @@
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cdtls.cpp" />
     <ClCompile Include="cdtls_certificate.cpp" />
+    <ClCompile Include="cdtls_session.cpp" />
     <ClCompile Include="cdtls_test.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="csocket_util.cpp" />
     <ClCompile Include="csrtp_session.cpp" />
     <ClCompile Include="csrtp_session_test.cpp" />
+    <ClCompile Include="cstr2digit.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
     <ClCompile Include="cudp_socket_handler.cpp" />
     <ClCompile Include="cuv_ip.cpp" />
@@ -326,6 +328,8 @@
     <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cdtls.h" />
     <ClInclude Include="cdtls_certificate.h" />
+    <ClInclude Include="cdtls_define.h" />
+    <ClInclude Include="cdtls_session.h" />
     <ClInclude Include="cdtls_test.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
@@ -367,6 +371,7 @@
     <ClInclude Include="csocket_util.h" />
     <ClInclude Include="csrtp_session.h" />
     <ClInclude Include="csrtp_session_test.h" />
+    <ClInclude Include="cstr2digit.h" />
     <ClInclude Include="cudp_socket.h" />
     <ClInclude Include="cudp_socket_handler.h" />
     <ClInclude Include="cuv_ip.h" />
