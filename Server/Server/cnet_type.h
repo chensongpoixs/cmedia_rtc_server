@@ -37,9 +37,9 @@ typedef SSIZE_T ssize_t;
 #include <uv.h>
 #include <string>
 #include <mutex>
-
+#include <cassert>
 //#include "cnet_define.h"
-
+ 
 namespace chen
 {
 	typedef signed char		int8;
@@ -68,6 +68,9 @@ namespace chen
 	typedef std::mutex							clock_type;
 	typedef std::lock_guard<clock_type>			clock_guard;
 
+
+
+	 
 }
 
 

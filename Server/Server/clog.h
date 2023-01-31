@@ -141,6 +141,12 @@ namespace chen {
 #define WARNING_EX_LOG(format, ...)	WARNING_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
 
 #define ERROR_EX_LOG(format, ...)	ERROR_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
+
+
+
+#define cassert(expression)  if (!(!!(expression))) {ERROR_EX_LOG(" %s  " , #expression );  assert(expression);}
+
+
 } // namespace chen
 
 #endif //!#define _C_LOG_H_
