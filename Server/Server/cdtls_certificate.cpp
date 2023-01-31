@@ -9,13 +9,16 @@ purpose:		_C_DTLS_CERTIFICATE_H_
 ************************************************************************************************/
 #include "cdtls_certificate.h"
 #include "crandom.h"
+
+#include <cassert>
+#include <srtp2/srtp.h>
+
 namespace chen {
 
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wdeprecated-declarations" 
+//#pragma GCC diagnostic pop
 
 	cdtls_certificate   g_dtls_certificate;
 	cdtls_certificate::~cdtls_certificate()
@@ -25,6 +28,23 @@ namespace chen {
 	{
 
 		int32 ret = 0;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L // v1.1.x
+		// Initialize SSL library by registering algorithms
+		// The SSL_library_init() and OpenSSL_add_ssl_algorithms() functions were deprecated in OpenSSL 1.1.0 by OPENSSL_init_ssl().
+		// @see https://www.openssl.org/docs/man1.1.0/man3/OpenSSL_add_ssl_algorithms.html
+		// @see https://web.archive.org/web/20150806185102/http://sctp.fh-muenster.de:80/dtls/dtls_udp_echo.c
+		OpenSSL_add_ssl_algorithms();
+#else
+		// As of version 1.1.0 OpenSSL will automatically allocate all resources that it needs so no explicit
+		// initialisation is required. Similarly it will also automatically deinitialise as required.
+		// @see https://www.openssl.org/docs/man1.1.0/man3/OPENSSL_init_ssl.html
+		// OPENSSL_init_ssl();
+#endif
+
+		// Initialize SRTP first.
+		assert(srtp_init() == 0); //======> [ destroy  ===> srtp_shutdown()];
+
 		X509_NAME * cert_name_ptr = NULL;
 		std::string subject = std::string("cmedia_rtc_server") + std::to_string(c_rand.rand(100000, 999999));
 

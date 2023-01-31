@@ -25,6 +25,7 @@ namespace chen {
 	public:
 
 		cdtls()
+			:m_dtls_session_ptr(NULL)
 		{}
 	 
 		~cdtls();
@@ -36,12 +37,21 @@ namespace chen {
 	//	static void destory();
 	public:
 
-		
+		bool init(const std::string  & role);
 
+		void destroy();
+	public:
+		// As DTLS client, start handshake actively, send the ClientHello packet.
+		int32 start_active_handshake();
+		// When got DTLS packet, may handshake packets or application data.
+		// @remark When we are passive(DTLS server), we start handshake when got DTLS packet.
+		int32 on_dtls(char* data, int32 nb_data);
+	public:
+		int32 get_srtp_key(std::string& recv_key, std::string& send_key);
 	protected:
 	private:
 
-
+		cdtls_session    *     m_dtls_session_ptr;
 		
 	};
 }

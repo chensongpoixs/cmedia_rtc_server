@@ -640,6 +640,53 @@ namespace chen {
 	{
 	}
 
+	bool cdtls_server::init()
+	{
+		return false;
+	}
+
+	void cdtls_server::update(uint32 uDeltaTime)
+	{
+	}
+
+	void cdtls_server::destroy()
+	{
+	}
+
+	int32 cdtls_server::start_active_handshake()
+	{
+		return int32();
+	}
+
+	bool cdtls_server::should_reset_timer()
+	{
+		return false;
+	}
+
+	int32 cdtls_server::on_final_out_data(uint8 * data, int size)
+	{
+		return int32();
+	}
+
+	int32 cdtls_server::on_handshake_done()
+	{
+		return int32();
+	}
+
+	bool cdtls_server::is_dtls_client()
+	{
+		return false;
+	}
+
+	int32 cdtls_server::start_arq()
+	{
+		return int32();
+	}
+
+	void cdtls_server::stop_arq()
+	{
+	}
+
 	cdtls_client::~cdtls_client()
 	{
 	}

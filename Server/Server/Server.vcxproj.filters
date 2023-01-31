@@ -661,6 +661,12 @@
     <ClCompile Include="cstr2digit.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="csrtp.cpp">
+      <Filter>srtp</Filter>
+    </ClCompile>
+    <ClCompile Include="csrtp_util.cpp">
+      <Filter>srtp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1226,6 +1232,15 @@
     </ClInclude>
     <ClInclude Include="cstr2digit.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="csrtp.h">
+      <Filter>srtp</Filter>
+    </ClInclude>
+    <ClInclude Include="csrtp_util.h">
+      <Filter>srtp</Filter>
+    </ClInclude>
+    <ClInclude Include="csrtp_define.h">
+      <Filter>srtp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

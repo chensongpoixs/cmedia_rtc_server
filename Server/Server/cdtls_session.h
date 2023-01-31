@@ -141,6 +141,21 @@ namespace chen {
 
 		 
 		virtual ~cdtls_server();
+
+	public:
+		virtual bool init();
+		virtual void update(uint32 uDeltaTime);
+		virtual void destroy();
+		virtual int32 start_active_handshake();
+		virtual bool should_reset_timer();
+	protected:
+		virtual int32 on_final_out_data(uint8* data, int size);
+		virtual int32 on_handshake_done();
+		virtual bool is_dtls_client();
+	private:
+		int32 start_arq();
+		void stop_arq();
+	protected:
 	protected:
 	private:
 	};
