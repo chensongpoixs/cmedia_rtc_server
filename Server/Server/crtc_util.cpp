@@ -23,9 +23,9 @@ namespace chen {
 		{
 			return data[i];
 		}
-		uint16_t get2bytes(const uint8_t * data, size_t i)
+		uint16 get2bytes(const uint8  * data, size_t i)
 		{
-			return uint16_t{ data[i + 1] } | uint16_t{ data[i] } << 8;;
+			return uint16 { data[i + 1] } | uint16 { data[i] } << 8;;
 		}
 		uint32_t get3bytes(const uint8_t * data, size_t i)
 		{

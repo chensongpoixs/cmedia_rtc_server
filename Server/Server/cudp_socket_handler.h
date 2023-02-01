@@ -97,7 +97,7 @@ namespace chen {
 		//struct socketaddr_storage		m_local_addr ;
 		struct sockaddr_storage			m_local_addr;
 		std::string						m_local_ip;
-		uint16_t							m_local_port;
+		uint16							m_local_port;
 	private:
 		// Allocated by this (may be passed by argument).
 		uv_udp_t*						m_uvHandle;// { nullptr };

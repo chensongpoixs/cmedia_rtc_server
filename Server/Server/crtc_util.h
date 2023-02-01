@@ -13,6 +13,8 @@ purpose:		crtc_util
 #include <iostream>
 #include <cstdbool>
 #include <cstdint>
+#include "cnet_type.h"
+
 namespace chen {
 	namespace rtc_byte
 	{
@@ -22,7 +24,7 @@ namespace chen {
 		 */
 		uint8_t  get1byte(const uint8_t * data, size_t i);
 
-		uint16_t get2bytes(const uint8_t* data, size_t i);
+		uint16 get2bytes(const uint8* data, size_t i);
 
 		uint32_t get3bytes(const uint8_t* data, size_t i);
 
