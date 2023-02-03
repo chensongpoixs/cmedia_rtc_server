@@ -14,7 +14,7 @@ purpose:		 rtc stun packet
 #include "cuv_util.h"
 
 #include "crtc_util.h"
-
+#include "ccrc32.h"
 
 namespace chen {
 
@@ -112,44 +112,51 @@ namespace chen {
 		}
 
 
-		/*std::string magic_cookie = rtc_byte::get4bytes((const uint8_t*)buf, 4);
-		transcation_id = stream->read_string(12);*/
+		
+		uint32 magic_cookie = rtc_byte::get4bytes((const uint8_t*)buf, 4);
+		m_transcation_id = rtc_byte::getbytes((const uint8_t*)buf, 8, 12);
 
-
-		while (stream->left() >= 4) 
+		int32 pos = 20; 
+		const char * p = buf + pos;
+		// Ensure there are at least 4 remaining bytes (attribute with 0 length).
+		while (pos +4  <= nb_buf) 
 		{
-			uint16_t type = stream->read_2bytes();
-			uint16_t len = stream->read_2bytes();
+			uint16  type = rtc_byte::get2bytes((const uint8_t*)p, 0); //  stream->read_2bytes();
+			uint16  len = rtc_byte::get2bytes((const uint8_t*)p, 2);// stream->read_2bytes();
 
-			if (stream->left() < len) 
-			{
-				return   error_new(ERROR_RTC_STUN, "invalid stun packet");
-			}
+			//if (stream->left() < nb_buf)
+			//{
+			//	WARNING_EX_LOG("invalid stun packet");
+			//	return -1;
+			//	//return   error_new(ERROR_RTC_STUN, "invalid stun packet");
+			//}
 
-			std::string val = stream->read_string(len);
+			std::string val = rtc_byte::getbytes((const uint8_t*)p, 4, len);// stream->read_string(len);
 			// padding
 			if (len % 4 != 0) 
 			{
-				stream->read_string(4 - (len % 4));
+				//stream->read_string(4 - (len % 4));
 			}
 
 			switch (type) {
 			case EUsername: 
 			{
-				username = val;
+				//username = val;
+				m_username = val;
 				size_t p = val.find(":");
-				if (p != string::npos) {
-					local_ufrag = val.substr(0, p);
-					remote_ufrag = val.substr(p + 1);
-					 verbose("stun packet local_ufrag=%s, remote_ufrag=%s", local_ufrag.c_str(), remote_ufrag.c_str());
+				if (p != std::string::npos) 
+				{
+					m_local_ufrag = val.substr(0, p);
+					m_remote_ufrag = val.substr(p + 1);
+					NORMAL_EX_LOG("stun packet local_ufrag=%s, remote_ufrag=%s", m_local_ufrag.c_str(), m_remote_ufrag.c_str());
 				}
 				break;
 			}
 
 			case EUseCandidate: 
 			{
-				use_candidate = true;
-				 verbose("stun use-candidate");
+				m_use_candidate = true;
+				 NORMAL_EX_LOG("stun use-candidate");
 				break;
 			}
 
@@ -158,58 +165,180 @@ namespace chen {
 							   // role, and the lite agent MUST take the controlled role.  The full
 							   // agent will form check lists, run the ICE state machines, and
 							   // generate connectivity checks.
-			case EIceControlled: {
-				ice_controlled = true;
-				 verbose("stun ice-controlled");
+			case EIceControlled: 
+			{
+				m_ice_controlled = true;
+				 NORMAL_EX_LOG("stun ice-controlled");
 				break;
 			}
 
-			case EIceControlling: {
-				ice_controlling = true;
-				 verbose("stun ice-controlling");
+			case EIceControlling: 
+			{
+				m_ice_controlling = true;
+				NORMAL_EX_LOG("stun ice-controlling");
 				break;
+			}
+			/*case EPriority:
+			{
+				break;
+			}*/
+
+			default:
+			{
+				NORMAL_EX_LOG("stun type=%u, no process", type);
+				break;
+			}
 			}
 
-			default: {
-				 verbose("stun type=%u, no process", type);
-				break;
-			}
-			}
+			// Set next attribute position.
+			pos = static_cast<size_t>( pos + 4 + len);
+			
 		}
+		// Ensure current position matches the total length.
+		if (pos != nb_buf)
+		{
+			WARNING_EX_LOG("ice, computed packet size does not match total size, packet discarded");
 
+			return -1;
+		}
 		//return err;
 
 		return int32();
 	}
 
-	int32 crtc_stun_packet::encode(const std::string & pwd, const char * buffer, const int32 nb_buf)
+	int32 crtc_stun_packet::encode(const std::string & pwd,  cbuffer * buffer)
 	{
-		return int32();
+		if (is_binding_response()) 
+		{
+			return encode_binding_response(pwd, buffer);
+		}
+
+		WARNING_EX_LOG("unknown stun type=%d", get_message_type());
+		return -1;
 	}
 
-	int32 crtc_stun_packet::encode_binding_response(const std::string & pwd, const char * buffer, const int32 nb_buf)
+	int32 crtc_stun_packet::encode_binding_response(const std::string & pwd,  cbuffer* stream)
 	{
-		return int32();
+		uint32 err = 0;
+		std::string property_username = encode_username();
+		std::string mapped_address = encode_mapped_address();
+
+		stream->write_2bytes(EBindingResponse);
+		//rtc_byte::set2bytes((uint8 * )buffer, 0, EBindingResponse);
+		stream->write_2bytes(property_username.size() + mapped_address.size());
+		//rtc_byte::set2bytes((uint8*)buffer, 2, property_username.size() + mapped_address.size());
+		stream->write_4bytes(KStunMagicCookie);
+		//rtc_byte::set4bytes((uint8*)buffer, 4, KStunMagicCookie);
+		stream->write_string(m_transcation_id);
+		//rtc_byte::setbytes((uint8*)buffer, 8, (uint8*)(m_transcation_id.c_str()), m_transcation_id.size());
+
+		stream->write_string(property_username);
+		//rtc_byte::setbytes((uint8*)buffer, 8+m_transcation_id.size(), (uint8*)property_username.c_str(), property_username.size());
+		
+		stream->write_string(mapped_address);
+		//rtc_byte::setbytes((uint8*)buffer, 8 + m_transcation_id.size() + property_username.size(), 
+		//	(uint8*)mapped_address.c_str(), mapped_address.size());
+
+		stream->data()[2] = ((stream->pos() - 20 + 20 + 4) & 0x0000FF00) >> 8;
+		stream->data()[3] = ((stream->pos() - 20 + 20 + 4) & 0x000000FF);
+
+		char hmac_buf[20] = { 0 };
+		unsigned int hmac_buf_len = 0;
+		if ((err = hmac_encode("sha1", pwd.c_str(), pwd.size(), stream->data(), stream->pos(), hmac_buf, hmac_buf_len)) != 0)
+		{
+			WARNING_EX_LOG("hmac encode failed");
+			return err;
+			//return  error_wrap(err, "hmac encode failed");
+		}
+
+		std::string hmac = encode_hmac(hmac_buf, hmac_buf_len);
+
+		stream->write_string(hmac);
+		stream->data()[2] = ((stream->pos() - 20 + 8) & 0x0000FF00) >> 8;
+		stream->data()[3] = ((stream->pos() - 20 + 8) & 0x000000FF);
+
+		uint32_t crc32 = srs_crc32_ieee(stream->data(), stream->pos(), 0) ^ 0x5354554E;
+
+		std::string fingerprint = encode_fingerprint(crc32);
+
+		stream->write_string(fingerprint);
+
+		stream->data()[2] = ((stream->pos() - 20) & 0x0000FF00) >> 8;
+		stream->data()[3] = ((stream->pos() - 20) & 0x000000FF);
+		return err;
 	}
 
 	std::string crtc_stun_packet::encode_username()
 	{
-		return std::string();
+		char buf[1460] = {0};
+		 
+		std::string username = m_remote_ufrag + ":" + m_local_ufrag;
+		rtc_byte::set2bytes((unsigned char *)&buf[0], 0, EUsername);
+		//stream->write_2bytes(EUsername);
+		rtc_byte::set2bytes((unsigned char *)&buf[0], 2, username.size());
+		//stream->write_2bytes(username.size());
+		memcpy(&buf[0] + 4, username.c_str(), username.size());
+		// stream->write_string(username);
+
+		if ((4 + username.size()) % 4 != 0) 
+		{
+			 char padding[4] = { 0 };
+			 memcpy(&buf[0] + 4 + username.size(), &padding[0], 4 - (4 + username.size()) %4);
+			//stream->write_bytes(padding, 4 - (stream->pos() % 4));
+		}
+
+		return buf;
+		//return std::string();
 	}
 
 	std::string crtc_stun_packet::encode_mapped_address()
 	{
-		return std::string();
+		char buf[1460] = {0};
+		 
+		
+		//stream->write_2bytes(EXorMappedAddress);
+		rtc_byte::set2bytes((unsigned char *)&buf[0], 0, EXorMappedAddress);
+		//stream->write_2bytes(8);
+		rtc_byte::set2bytes((unsigned char *)&buf[0], 2, 8);
+		//stream->write_1bytes(0); // ignore this bytes
+		rtc_byte::set1byte((unsigned char *)&buf[0], 4, 0);
+		//stream->write_1bytes(1); // ipv4 family
+		rtc_byte::set1byte((unsigned char *)&buf[0], 5, 1);
+		//stream->write_2bytes(m_mapped_port ^ (kStunMagicCookie >> 16));
+		rtc_byte::set2bytes((unsigned char *)&buf[0], 6, m_mapped_port ^ (KStunMagicCookie >> 16));
+		//stream->write_4bytes(m_mapped_address ^ kStunMagicCookie);
+		rtc_byte::set4bytes((unsigned char *)&buf[0], 8, m_mapped_address ^ KStunMagicCookie);
+		return buf;
+		//return std::string();
 	}
 
 	std::string crtc_stun_packet::encode_hmac(char * hamc_buf, const int32 hmac_buf_len)
 	{
-		return std::string();
+		char buffer[1460] = {0};
+		 
+
+		//stream->write_2bytes(EMessageIntegrity);
+		rtc_byte::set2bytes((uint8  *)&buffer[0], 0, EMessageIntegrity);
+		//stream->write_2bytes(hmac_buf_len);
+		rtc_byte::set2bytes((uint8  *)&buffer[0], 2, hmac_buf_len);
+		//stream->write_bytes(hmac_buf, hmac_buf_len);
+		memcpy((uint8  *)&buffer[0] +4, hamc_buf, hmac_buf_len);
+		//rtc_byte::set2bytes((uint8  *)&buffer[0], 2, hmac_buf_len);
+		return buffer;
 	}
 
 	std::string crtc_stun_packet::encode_fingerprint(uint32 crc32)
 	{
-		return std::string();
+		char buffer[1460] = {0};
+		 
+		
+		///stream->write_2bytes(EFingerprint);
+		rtc_byte::set2bytes((uint8*)&buffer[0], 0, EFingerprint);
+		//stream->write_2bytes(4);
+		rtc_byte::set2bytes((uint8*)&buffer[0], 2, 4);
+		//stream->write_4bytes(crc32);
+		rtc_byte::set4bytes((uint8*)&buffer[0], 4, crc32);
+		return buffer;
 	}
 
 }

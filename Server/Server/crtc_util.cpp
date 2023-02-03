@@ -15,7 +15,8 @@ purpose:		crtc_util
 #include <intrin.h>
 #define __builtin_popcount __popcnt
 #endif
-
+#include <string>
+#include "clog.h"
 namespace chen {
 	namespace rtc_byte
 	{
@@ -39,6 +40,23 @@ namespace chen {
 		{
 			return uint64_t{  get4bytes(data, i) } << 32 |  get4bytes(data, i + 4);
 		}
+		std::string getbytes(const uint8 * data, size_t i, size_t len)
+		{
+			assert(data);
+			std::string value;
+			value.append((char *)(data + i), len);
+			return value;
+		}
+		//std::string get12bytes(const uint8 * data, size_t i)
+		//{
+		//	//char buffer[12] = {0};
+		//	std::string value;
+		//	value.append(( char * )(data + i), 12);
+
+
+		//	return value;
+		//}
+		 
 		void set1byte(uint8_t * data, size_t i, uint8_t value)
 		{
 			data[i] = value;
@@ -71,6 +89,13 @@ namespace chen {
 			data[i + 2] = static_cast<uint8_t>(value >> 40);
 			data[i + 1] = static_cast<uint8_t>(value >> 48);
 			data[i] = static_cast<uint8_t>(value >> 56);
+		}
+		void setbytes(uint8 * data, size_t i, uint8 * p, int32 len)
+		{
+			cassert(data);
+			cassert( p);
+			cassert(len);
+			memcpy(data + i, p, len);
 		}
 		uint16_t padto4bytes(uint16_t size)
 		{

@@ -175,6 +175,12 @@
     <Filter Include="dtls">
       <UniqueIdentifier>{8fc8ed65-1da2-44db-bba2-a7e11f973a2c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="buffer">
+      <UniqueIdentifier>{40d28993-4100-4f60-bf9b-5caf7120cbfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="crc">
+      <UniqueIdentifier>{8153be3d-aa65-4797-86f9-93af491e0df9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -666,6 +672,15 @@
     </ClCompile>
     <ClCompile Include="csrtp_util.cpp">
       <Filter>srtp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_stun_packet.cpp">
+      <Filter>stun</Filter>
+    </ClCompile>
+    <ClCompile Include="cbuffer.cpp">
+      <Filter>buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="ccrc32.cpp">
+      <Filter>crc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1241,6 +1256,18 @@
     </ClInclude>
     <ClInclude Include="csrtp_define.h">
       <Filter>srtp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_stun_packet.h">
+      <Filter>stun</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_stun_define.h">
+      <Filter>stun</Filter>
+    </ClInclude>
+    <ClInclude Include="cbuffer.h">
+      <Filter>buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="ccrc32.h">
+      <Filter>crc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

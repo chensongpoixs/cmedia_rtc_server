@@ -22,8 +22,8 @@ namespace chen {
 	// @see: https://tools.ietf.org/html/rfc5389
 	// The magic cookie field MUST contain the fixed value 0x2112A442 in network byte order
 	// 固定的 魔法数
-	const uint8 kStunMagicCookie[] = { 0x21, 0x12, 0xA4, 0x42 } /*0x2112A442*/;
-
+	const uint8   kStunMagicCookie[] = { 0x21, 0x12, 0xA4, 0x42 } /*0x2112A442*/;
+	const uint32  KStunMagicCookie = 0x2112A442;
 
 
 	enum EStunMessageType

@@ -153,10 +153,12 @@
     <ClCompile Include="capi_rtc_publish.cpp" />
     <ClCompile Include="casync_log.cpp" />
     <ClCompile Include="caudio_payload.cpp" />
+    <ClCompile Include="cbuffer.cpp" />
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cclient_msg_dispatch.cpp" />
     <ClCompile Include="ccodec_payload.cpp" />
     <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="ccrc32.cpp" />
     <ClCompile Include="ccrypto_random.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cdtls.cpp" />
@@ -191,6 +193,7 @@
     <ClCompile Include="crtc_source_description.cpp" />
     <ClCompile Include="crtc_source_mgr.cpp" />
     <ClCompile Include="crtc_ssrc_generator.cpp" />
+    <ClCompile Include="crtc_stun_packet.cpp" />
     <ClCompile Include="crtc_track_description.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
@@ -321,11 +324,13 @@
     <ClInclude Include="carraysize.h" />
     <ClInclude Include="casync_log.h" />
     <ClInclude Include="caudio_payload.h" />
+    <ClInclude Include="cbuffer.h" />
     <ClInclude Include="cbyte_order.h" />
     <ClInclude Include="ccfg.h" />
     <ClInclude Include="cclient_msg_dispatch.h" />
     <ClInclude Include="ccodec_payload.h" />
     <ClInclude Include="cconfig.h" />
+    <ClInclude Include="ccrc32.h" />
     <ClInclude Include="ccrypto_random.h" />
     <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cdtls.h" />
@@ -366,6 +371,8 @@
     <ClInclude Include="crtc_source_description.h" />
     <ClInclude Include="crtc_source_mgr.h" />
     <ClInclude Include="crtc_ssrc_generator.h" />
+    <ClInclude Include="crtc_stun_define.h" />
+    <ClInclude Include="crtc_stun_packet.h" />
     <ClInclude Include="crtc_track_description.h" />
     <ClInclude Include="crtc_user_config.h" />
     <ClInclude Include="crtx_paylod_des.h" />

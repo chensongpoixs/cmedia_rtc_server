@@ -10,7 +10,7 @@ purpose:		cudp_socket_handler
 #ifndef _C_UDP_SOCKET_HANDLER_H_
 #define _C_UDP_SOCKET_HANDLER_H_
 
-//#include "cnet_type.h"
+#include "cnet_type.h"
 
 #include <uv.h>
 #include <functional>

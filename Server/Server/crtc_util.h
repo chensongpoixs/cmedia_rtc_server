@@ -33,6 +33,10 @@ namespace chen {
 
 		uint64_t get8bytes(const uint8_t* data, size_t i);
 
+		 
+
+		std::string getbytes(const uint8 * data, size_t i, size_t len);
+
 		/**
 		* Setters below set value in Network Byte Order.
 		*/
@@ -48,6 +52,7 @@ namespace chen {
 
 		void set8bytes(uint8_t* data, size_t i, uint64_t value);
 
+		void setbytes(uint8 * data, size_t i, uint8 *p, int32 len);
 
 		uint16_t padto4bytes(uint16_t size);
 

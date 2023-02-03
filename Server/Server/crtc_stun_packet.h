@@ -11,7 +11,7 @@ purpose:		 rtc——stun packet
 #define _C_RTC_STUN_PACKET_H_
 #include "cnet_type.h"
 #include "crtc_stun_define.h"
-
+#include "cbuffer.h"
 
 
 namespace chen {
@@ -75,9 +75,9 @@ namespace chen {
 		void set_mapped_address(const uint32 & addr) { m_mapped_address = addr; };
 		void set_mapped_port(const uint32 & port) { m_mapped_port = port; };
 		int32 decode(const char* buf, const int32 nb_buf);
-		int32 encode(const std::string& pwd,  const char * buffer, const int32 nb_buf);
+		int32 encode(const std::string& pwd,   cbuffer* buffer);
 	private:
-		int32 encode_binding_response(const std::string& pwd, const char * buffer, const int32 nb_buf);
+		int32 encode_binding_response(const std::string& pwd,  cbuffer* buffer);
 		std::string encode_username();
 		std::string encode_mapped_address();
 		std::string encode_hmac(char* hamc_buf, const int32 hmac_buf_len);
