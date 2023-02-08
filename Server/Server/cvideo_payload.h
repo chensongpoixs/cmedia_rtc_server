@@ -48,6 +48,9 @@ namespace chen {
 
 	public:
 		virtual cmedia_payload_type generate_media_payload_type();
+
+	public:
+		virtual ccodec_payload * copy();
 	public:
 
 		int32  set_h264_param_desc(std::string fmtp);

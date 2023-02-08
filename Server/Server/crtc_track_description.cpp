@@ -123,4 +123,26 @@ namespace chen {
 		return 0;
 	}
 
+	crtc_track_description * crtc_track_description::copy()
+	{
+		crtc_track_description* cp = new crtc_track_description();
+
+		cp->m_type = m_type;
+		cp->m_id = m_id;
+		cp->m_ssrc = m_ssrc;
+		cp->m_fec_ssrc = m_fec_ssrc;
+		cp->m_rtx_ssrc = m_rtx_ssrc;
+		cp->m_extmaps = m_extmaps;
+		cp->m_direction = m_direction;
+		cp->m_mid = m_mid;
+		cp->m_msid = m_msid;
+		cp->m_is_active = m_is_active;
+		cp->m_media_ptr = m_media_ptr ? m_media_ptr->copy() : NULL;
+		cp->m_red_ptr = m_red_ptr ? m_red_ptr->copy() : NULL;
+		cp->m_rtx_ptr = m_rtx_ptr ? m_rtx_ptr->copy() : NULL;
+		cp->m_ulpfec_ptr = m_ulpfec_ptr ? m_ulpfec_ptr->copy() : NULL;
+
+		return cp;
+	}
+
 }

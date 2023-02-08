@@ -45,6 +45,23 @@ namespace chen {
 		return media_payload_type;
 		//return cmedia_payload_type();
 	}
+
+	chen::ccodec_payload * caudio_payload::copy()
+	{
+		caudio_payload* cp = new caudio_payload();
+
+		cp->m_type = m_type;
+		cp->m_pt = m_pt;
+		cp->m_pt_of_publisher = m_pt_of_publisher;
+		cp->m_name = m_name;
+		cp->m_sample = m_sample;
+		cp->m_rtcp_fbs = m_rtcp_fbs;
+		cp->m_channel = m_channel;
+		cp->m_opus_param = m_opus_param;
+
+		return cp;
+	}
+
 	int32 caudio_payload::set_opus_param_desc(std::string fmtp)
 	{
 		int32 err = 0;

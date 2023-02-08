@@ -29,6 +29,10 @@ namespace chen
 	// TODO(jonasolsson): replace with absl::Hex when that becomes available.
 	std::string ToHex(const int i);
 
+
+
+	std::string  digit2str_dec(int64 value);
+
 #ifdef _MSC_VER
 
 	inline std::wstring ToUtf16(const char* utf8, size_t len) {

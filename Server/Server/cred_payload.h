@@ -39,6 +39,9 @@ namespace chen {
 
 	public:
 		virtual cmedia_payload_type generate_media_payload_type();
+
+		virtual ccodec_payload * copy();
+
 	protected:
 	private:
 

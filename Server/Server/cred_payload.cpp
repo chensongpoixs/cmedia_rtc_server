@@ -28,4 +28,21 @@ namespace chen {
 		return media_payload_type;
 		//return cmedia_payload_type();
 	}
+
+	chen::ccodec_payload * cred_paylod::copy()
+	{
+		cred_paylod* cp = new cred_paylod();
+
+		cp->m_type = m_type;
+		cp->m_pt = m_pt;
+		cp->m_pt_of_publisher = m_pt_of_publisher;
+		cp->m_name = m_name;
+		cp->m_sample = m_sample;
+		cp->m_rtcp_fbs = m_rtcp_fbs;
+		cp->m_channel = m_channel;
+		//cp->m_opus_param = m_opus_param;
+
+		return cp;
+	}
+
 }

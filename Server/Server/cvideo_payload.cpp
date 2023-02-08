@@ -41,6 +41,18 @@ namespace chen {
 
 		//return cmedia_payload_type();
 	}
+	ccodec_payload * cvideo_payload::copy()
+	{
+		cvideo_payload* cp = new cvideo_payload();
+
+		cp->m_type = m_type;
+		cp->m_pt = m_pt;
+		cp->m_pt_of_publisher = m_pt_of_publisher;
+		cp->m_name = m_name;
+		cp->m_sample = m_sample;
+		cp->m_rtcp_fbs = m_rtcp_fbs;
+		cp->m_h264_param = m_h264_param;
+	}
 	int32 cvideo_payload::set_h264_param_desc(std::string fmtp)
 	{
 		int32 err = 0;

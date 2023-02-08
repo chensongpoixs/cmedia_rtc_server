@@ -9,7 +9,7 @@ purpose:	字符串处理工具类
 #include "cdigit2str.h"
 #include <algorithm>
 #include <cstdio>
-
+#include "crtc_sdp_util.h"
 #ifdef _MSC_VER
 #pragma warning (disable:4996)
 #endif
@@ -349,6 +349,11 @@ namespace chen
 		snprintf(buffer, sizeof(buffer), "%x", i);
 
 		return std::string(buffer);
+	}
+
+	std::string digit2str_dec(int64 value)
+	{
+		return rtc_sdp_util::fmt("%s" PRId64, value);;
 	}
 
 } // namespace chen

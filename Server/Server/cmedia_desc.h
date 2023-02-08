@@ -200,13 +200,14 @@ namespace chen {
 
 
 		int32 encode(std::ostringstream & os);
-
+		
 		const std::map<int, std::string>& get_extmaps() const { return m_extmaps; }
 		int32 update_msid(std::string id);
 
 		bool is_audio() const { return m_type == "audio"; }
 		bool is_video() const { return m_type == "video"; }
 	public:
+		std::vector<cmedia_payload_type> find_media_with_encoding_name(const std::string& encoding_name) const;
 
 		cmedia_payload_type * find_media_with_payload_type(int32 payload_type);
 

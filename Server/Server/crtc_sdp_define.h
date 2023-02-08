@@ -116,6 +116,10 @@ namespace chen {
 	const char RtpExtension_kGenericFrameDescriptorUri[] =
 		"http://www.webrtc.org/experiments/rtp-hdrext/generic-frame-descriptor-00";
 
+
+
+	const std::string kTWCCExt = "http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01";
+
 	const char RtpExtension_kEncryptHeaderExtensionsUri[] =
 		"urn:ietf:params:rtp-hdrext:encrypt";
 

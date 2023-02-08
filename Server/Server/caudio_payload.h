@@ -59,7 +59,7 @@ namespace chen {
 	public:
 		virtual cmedia_payload_type  generate_media_payload_type();
 
-
+		virtual ccodec_payload * copy();
 	public:
 		int32 set_opus_param_desc(std::string fmtp);
 	protected:

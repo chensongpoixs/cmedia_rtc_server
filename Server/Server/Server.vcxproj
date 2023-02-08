@@ -195,6 +195,7 @@
     <ClCompile Include="crtc_ssrc_generator.cpp" />
     <ClCompile Include="crtc_stun_packet.cpp" />
     <ClCompile Include="crtc_track_description.cpp" />
+    <ClCompile Include="crtc_transport.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
     <ClCompile Include="csocket_util.cpp" />
@@ -374,6 +375,7 @@
     <ClInclude Include="crtc_stun_define.h" />
     <ClInclude Include="crtc_stun_packet.h" />
     <ClInclude Include="crtc_track_description.h" />
+    <ClInclude Include="crtc_transport.h" />
     <ClInclude Include="crtc_user_config.h" />
     <ClInclude Include="crtx_paylod_des.h" />
     <ClInclude Include="cshare_proto_error.h" />

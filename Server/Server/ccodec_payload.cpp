@@ -25,4 +25,17 @@ namespace chen {
 		return media_payload_type;
 		//return cmedia_payload_type();
 	}
+	ccodec_payload * ccodec_payload::copy()
+	{
+		ccodec_payload* cp = new ccodec_payload();
+
+		cp->m_type = m_type;
+		cp->m_pt = m_pt;
+		cp->m_pt_of_publisher = m_pt_of_publisher;
+		cp->m_name = m_name;
+		cp->m_sample = m_sample;
+		cp->m_rtcp_fbs = m_rtcp_fbs;
+
+		return cp;
+	}
 }

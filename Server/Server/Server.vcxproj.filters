@@ -682,6 +682,9 @@
     <ClCompile Include="ccrc32.cpp">
       <Filter>crc</Filter>
     </ClCompile>
+    <ClCompile Include="crtc_transport.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1268,6 +1271,9 @@
     </ClInclude>
     <ClInclude Include="ccrc32.h">
       <Filter>crc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_transport.h">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

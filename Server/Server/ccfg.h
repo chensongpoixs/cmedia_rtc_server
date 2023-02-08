@@ -10,7 +10,14 @@
 //#include "cconfig.h"
 #include "cconfig.h"
 //#include "csingleton.h"
+
+
 namespace chen {
+
+ 
+#define MEDIA_RTC_SERVER   "media_rtc_server"
+
+
 	enum ECNGIndex
 	{
 
