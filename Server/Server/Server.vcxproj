@@ -204,6 +204,7 @@
     <ClCompile Include="csrtp_session_test.cpp" />
     <ClCompile Include="csrtp_util.cpp" />
     <ClCompile Include="cstr2digit.cpp" />
+    <ClCompile Include="ctransport_util.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
     <ClCompile Include="cudp_socket_handler.cpp" />
     <ClCompile Include="cuv_ip.cpp" />
@@ -386,6 +387,7 @@
     <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="csrtp_util.h" />
     <ClInclude Include="cstr2digit.h" />
+    <ClInclude Include="ctransport_util.h" />
     <ClInclude Include="cudp_socket.h" />
     <ClInclude Include="cudp_socket_handler.h" />
     <ClInclude Include="cuv_ip.h" />

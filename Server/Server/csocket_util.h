@@ -39,6 +39,18 @@ namespace chen {
 
 	bool HasIPv4Enabled();
 	bool HasIPv6Enabled();
+
+
+	// Split the host:port to host and port.
+// @remark the hostport format in <host[:port]>, where port is optional.
+	void parse_hostport(std::string hostport, std::string& host, int32& port);
+
+
+	// Whether domain is an IPv4 address.
+	 bool  is_ipv4(std::string domain);
+
+	  // The dns resolve utility, return the resolved ip address.
+	 std::string  dns_resolve(std::string host, int32& family);
 }
 
 #endif // _C_SOCKET_UTIL_H_

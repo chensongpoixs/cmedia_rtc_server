@@ -41,7 +41,15 @@ namespace chen
 
 		//输出结果 [0, maxValue)
 		uint32 rand(uint32 maxValue);
-
+		 
+		//************************************
+		// Method:    rand_str
+		// FullName:  chen::crandom::rand_str
+		// Access:    public 
+		// Returns:   std::string
+		// Qualifier: 
+		// Parameter: int32 len
+		//************************************
 		std::string  rand_str(int32 len);
 
 		uint32 operator()()

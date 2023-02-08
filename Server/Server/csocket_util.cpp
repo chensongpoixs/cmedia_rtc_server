@@ -599,6 +599,96 @@ namespace chen {
 		return true;
 #endif
 	}
+	void parse_hostport(std::string hostport, std::string & host, int32 & port)
+	{
+
+		// No host or port.
+		if (hostport.empty()) 
+		{
+			return;
+		}
+
+		size_t pos = std::string::npos;
+
+		// Host only for ipv4.
+		if ((pos = hostport.rfind(":")) == std::string::npos) 
+		{
+			host = hostport;
+			return;
+		}
+
+		// For ipv4(only one colon), host:port.
+		if (hostport.find(":") == pos) 
+		{
+			host = hostport.substr(0, pos);
+			std::string p = hostport.substr(pos + 1);
+			if (!p.empty() && p != "0") 
+			{
+				port = ::atoi(p.c_str());
+			}
+			return;
+		}
+
+		// Host only for ipv6.
+		if (hostport.at(0) != '[' || (pos = hostport.rfind("]:")) == std::string::npos)
+		{
+			host = hostport;
+			return;
+		}
+
+		// For ipv6, [host]:port.
+		host = hostport.substr(1, pos - 1);
+		std::string p = hostport.substr(pos + 2);
+		if (!p.empty() && p != "0") 
+		{
+			port = ::atoi(p.c_str());
+		}
+	}
+	bool  is_ipv4(std::string domain)
+	{
+		for (int32 i = 0; i < (int32)domain.length(); ++i ) 
+		{
+			char ch = domain.at(i);
+			if (ch == '.') 
+			{
+				continue;
+			}
+			if (ch >= '0' && ch <= '9') 
+			{
+				continue;
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+	std::string dns_resolve(std::string host, int32 & family)
+	{
+		addrinfo hints;
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_family = family;
+
+		addrinfo* r = NULL;
+		//SrsAutoFreeH(addrinfo, r, freeaddrinfo);
+		if (getaddrinfo(host.c_str(), NULL, &hints, &r))
+		{
+			return "";
+		}
+
+		char shost[64];
+		memset(shost, 0, sizeof(shost));
+		if (getnameinfo(r->ai_addr, r->ai_addrlen, shost, sizeof(shost), NULL, 0, NI_NUMERICHOST)) 
+		{
+			freeaddrinfo(r);
+			return "";
+		}
+
+		family = r->ai_family;
+		freeaddrinfo(r);
+		r = NULL;
+		return std::string(shost);
+	}
 }
 
  

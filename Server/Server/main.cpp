@@ -7,6 +7,7 @@
 #include "cdtls.h"
 #include "cdtls_test.h"
 #include "cdtls_certificate.h"
+#include "crtc_transport.h"
 //------------------------------------------------------------------------------
 void Stop(int i)
 {
@@ -53,7 +54,10 @@ int main(int argc, char* argv[])
 	fflush(out_file_ptr);
 
 
+	chen::crtc_transport rtc;
 
+	std::string local_sdp;
+	rtc.init(offer_sdp, local_sdp);
 
 	chen::crtc_sdp rtc_sdp;
 	rtc_sdp.parse(offer_sdp);

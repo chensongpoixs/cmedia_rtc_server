@@ -15,7 +15,10 @@ purpose:		crtc_transport
 #include "ccfg.h"
 
 #include "cdigit2str.h"
-
+#include "crandom.h"
+#include "cdtls_certificate.h"
+#include <set>
+#include "csocket_util.h"
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -24,6 +27,109 @@ namespace chen {
 	}
 	bool crtc_transport::init(const std::string & remote_sdp, std::string & local_sdp)
 	{
+		crtc_source_description stream_desc;
+		m_remote_sdp.parse(remote_sdp);
+		_negotiate_publish_capability(&stream_desc);
+
+		_generate_publish_local_sdp( m_local_sdp, &stream_desc, m_remote_sdp.is_unified(), true);
+
+		// All tracks default as inactive, so we must enable them.
+	//	session->set_all_tracks_status(req->get_stream_url(), ruc->publish_, true);
+
+		std::string local_pwd = c_rand.rand_str(32);
+		std::string local_ufrag = "";
+		// TODO: FIXME: Rename for a better name, it's not an username.
+		std::string username = "";
+		while (true) 
+		{
+			local_ufrag = c_rand.rand_str(8);
+
+			username = local_ufrag + ":" + m_remote_sdp.get_ice_ufrag();
+
+			//if (!_srs_rtc_manager->find_by_name(username))
+			{
+				break;
+			}
+		}
+
+		m_local_sdp.set_ice_ufrag(local_ufrag);
+		m_local_sdp.set_ice_pwd(local_pwd);
+		m_local_sdp.set_fingerprint_algo("sha-256");
+		m_local_sdp.set_fingerprint(g_dtls_certificate.get_fingerprint());
+
+		// We allows to mock the eip of server.
+		if (true) 
+		{
+			int32 udp_port = 0;//_srs_config->get_rtc_server_listen();
+			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
+			std::string protocol = "udp";//_srs_config->get_rtc_server_protocol();
+
+			std::set<std::string> candidates = {"192.168.1.175"};;// = discover_candidates(ruc);
+			for (std::set<std::string>::iterator it = candidates.begin(); it != candidates.end(); ++it) 
+			{
+				std::string hostname;
+				int32 uport = udp_port; 
+				parse_hostport(*it, hostname, uport);
+				int32 tport = tcp_port; 
+				parse_hostport(*it, hostname, tport);
+
+				if (protocol == "udp") 
+				{
+					m_local_sdp.add_candidate("udp", hostname, uport, "host");
+				}
+				else if (protocol == "tcp")
+				{
+					m_local_sdp.add_candidate("tcp", hostname, tport, "host");
+				}
+				else 
+				{
+					m_local_sdp.add_candidate("udp", hostname, uport, "host");
+					m_local_sdp.add_candidate("tcp", hostname, tport, "host");
+				}
+			}
+
+			std::vector<std::string> v = std::vector<std::string>(candidates.begin(), candidates.end());
+			NORMAL_EX_LOG("RTC: Use candidates  = , protocol=%s", /*srs_join_vector_string(v, ", ").c_str(),*/ protocol.c_str());
+		}
+
+		// Setup the negotiate DTLS by config.
+		m_local_sdp.m_session_negotiate = m_local_sdp.m_session_config;
+
+		// Setup the negotiate DTLS role.
+		if (m_remote_sdp.get_dtls_role() == "active") 
+		{
+			m_local_sdp.m_session_negotiate.m_dtls_role = "passive";
+		}
+		else if (m_remote_sdp.get_dtls_role() == "passive") 
+		{
+			m_local_sdp.m_session_negotiate.m_dtls_role = "active";
+		}
+		else if (m_remote_sdp.get_dtls_role() == "actpass")
+		{
+			m_local_sdp.m_session_negotiate.m_dtls_role = m_local_sdp.m_session_config.m_dtls_role;
+		}
+		else 
+		{
+			// @see: https://tools.ietf.org/html/rfc4145#section-4.1
+			// The default value of the setup attribute in an offer/answer exchange
+			// is 'active' in the offer and 'passive' in the answer.
+			m_local_sdp.m_session_negotiate.m_dtls_role = "passive";
+		}
+		m_local_sdp.set_dtls_role(m_local_sdp.m_session_negotiate.m_dtls_role);
+
+		//session->set_remote_sdp(ruc->remote_sdp_);
+		// We must setup the local SDP, then initialize the session object.
+		//session->set_local_sdp(local_sdp);
+	//	session->set_state_as_waiting_stun();
+
+		// Before session initialize, we must setup the local SDP.
+		//if ((err = session->initialize(req, ruc->dtls_, ruc->srtp_, username)) != 0) 
+		{
+		//	return srs_error_wrap(err, "init");
+		}
+
+		// We allows username is optional, but it never empty here.
+		//_srs_rtc_manager->add_with_name(username, session);
 		return true;
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
@@ -299,7 +405,6 @@ namespace chen {
 			}
 
 			// TODO: FIXME: use one parse payload from sdp.
-
 			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("red"));
 			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("rtx"));
 			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("ulpfec"));
@@ -330,6 +435,7 @@ namespace chen {
 					{
 						delete track_desc_copy;
 						track_desc_copy = NULL;
+						NORMAL_EX_LOG("not find track_id  delete  track_desc_copy object [track_id = %s][ssrc_info.m_msid_tracker = %s]", track_id.c_str(), ssrc_info.m_msid_tracker.c_str());
 					//	srs_freep(track_desc_copy);
 					}
 				}
@@ -421,10 +527,109 @@ namespace chen {
 	}
 	bool crtc_transport::_generate_publish_local_sdp_for_audio(crtc_sdp & local_sdp, crtc_source_description * stream_desc)
 	{
-		return false;
+
+		//srs_error_t err = srs_success;
+
+		// generate audio media desc
+		if (stream_desc->m_audio_track_desc_ptr) 
+		{
+			crtc_track_description* audio_track = stream_desc->m_audio_track_desc_ptr;
+
+			local_sdp.m_media_descs.push_back(cmedia_desc("audio"));
+			cmedia_desc& local_media_desc = local_sdp.m_media_descs.back();
+
+			local_media_desc.m_port = 9;
+			local_media_desc.m_protos = "UDP/TLS/RTP/SAVPF";
+			local_media_desc.m_rtcp_mux = true;
+			local_media_desc.m_rtcp_rsize = true;
+
+			local_media_desc.m_mid = audio_track->m_mid;
+			local_sdp.m_groups.push_back(local_media_desc.m_mid);
+
+			// anwer not need set stream_id and track_id;
+			// local_media_desc.msid_ = stream_id;
+			// local_media_desc.msid_tracker_ = audio_track->id_;
+			local_media_desc.m_extmaps = audio_track->m_extmaps;
+
+			if (audio_track->m_direction == "recvonly") 
+			{
+				local_media_desc.m_recvonly = true;
+			}
+			else if (audio_track->m_direction == "sendonly") 
+			{
+				local_media_desc.m_sendonly = true;
+			}
+			else if (audio_track->m_direction == "sendrecv") 
+			{
+				local_media_desc.m_sendrecv  = true;
+			}
+			else if (audio_track->m_direction == "inactive") 
+			{
+				local_media_desc.m_inactive  = true;
+			}
+
+			caudio_payload* payload = dynamic_cast<caudio_payload*>(audio_track->m_media_ptr);
+			local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
+		}
+
+		return true; 
+		//return false;
 	}
 	bool crtc_transport::_generate_publish_local_sdp_for_video(crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan)
 	{
-		return false;
+		//srs_error_t err = srs_success;
+
+		for (int32 i = 0; i < (int32)stream_desc->m_video_track_descs.size(); ++i) {
+			crtc_track_description* video_track = stream_desc->m_video_track_descs.at(i);
+
+			local_sdp.m_media_descs.push_back(cmedia_desc("video"));
+			cmedia_desc& local_media_desc = local_sdp.m_media_descs.back();
+
+			local_media_desc.m_port = 9;
+			local_media_desc.m_protos = "UDP/TLS/RTP/SAVPF";
+			local_media_desc.m_rtcp_mux = true;
+			local_media_desc.m_rtcp_rsize = true;
+
+			local_media_desc.m_mid = video_track->m_mid;
+			local_sdp.m_groups.push_back(local_media_desc.m_mid);
+
+			// anwer not need set stream_id and track_id;
+			//local_media_desc.msid_ = stream_id;
+			//local_media_desc.msid_tracker_ = video_track->id_;
+			local_media_desc.m_extmaps = video_track->m_extmaps;
+
+			if (video_track->m_direction == "recvonly") 
+			{
+				local_media_desc.m_recvonly = true;
+			}
+			else if (video_track->m_direction == "sendonly")
+			{
+				local_media_desc.m_sendonly = true;
+			}
+			else if (video_track->m_direction == "sendrecv")
+			{
+				local_media_desc.m_sendrecv = true;
+			}
+			else if (video_track->m_direction == "inactive")
+			{
+				local_media_desc.m_inactive = true;
+			}
+
+			cvideo_payload* payload =  dynamic_cast<cvideo_payload*>(video_track->m_media_ptr);
+			local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
+
+			if (video_track->m_red_ptr) 
+			{
+				cred_paylod* payload =  dynamic_cast<cred_paylod*>(video_track->m_red_ptr);
+				local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
+			}
+
+			if (!unified_plan) 
+			{
+				// For PlanB, only need media desc info, not ssrc info;
+				break;
+			}
+		}
+		return true;
 	}
 }

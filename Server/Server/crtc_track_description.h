@@ -63,6 +63,9 @@ namespace chen {
 		void set_fec_ssrc(uint32 ssrc);
 		void set_mid(std::string mid);
 		int32 get_rtp_extension_id(std::string uri);
+
+	public:
+		crtc_track_description * copy();
 	protected:
 	private:
 
