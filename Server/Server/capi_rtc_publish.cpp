@@ -59,7 +59,7 @@ namespace chen {
 		rtc_remote_sdp.parse(remote_sdp);
 		_negotiate_publish_capability(rtc_remote_sdp, &stream_desc);
 
-		_generate_publish_local_sdp(rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
+		_generate_publish_local_sdp(rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), false);
 
 		// All tracks default as inactive, so we must enable them.
 	//	session->set_all_tracks_status(req->get_stream_url(), ruc->publish_, true);
