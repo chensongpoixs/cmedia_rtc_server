@@ -30,6 +30,10 @@ namespace chen {
 				iter->second->update(uDeltaTime);
 			}
 		}
+
+		// stream url 说明ice 密钥协商成功 之后在放到 stream_url_map中
+
+
 	}
 	void ctransport_mgr::destroy()
 	{
@@ -39,6 +43,7 @@ namespace chen {
 			delete iter->second;
 		}
 		m_all_transport_map.clear();
+		m_all_stream_url_map.clear();
 	}
 	crtc_transport * ctransport_mgr::find_username(const std::string & username)
 	{
@@ -69,7 +74,7 @@ namespace chen {
 			return false;
 		}
 		 
-		return false;
+		return true;
 	}
 	bool ctransport_mgr::remove_username(const std::string & username)
 	{
@@ -85,7 +90,57 @@ namespace chen {
 		delete transport_ptr;
 		transport_ptr = NULL;
 
-		return false;
+		return true;
+	}
+	crtc_transport * ctransport_mgr::find_stream_name(const std::string & stream_url)
+	{
+		STREAM_URL_MAP::iterator iter = m_all_stream_url_map.find(stream_url);
+
+		if (iter != m_all_stream_url_map.end())
+		{
+			return iter->second;
+		}
+		return nullptr;
+	}
+	const crtc_transport * ctransport_mgr::find_stream_name(const std::string & stream_url) const
+	{
+		STREAM_URL_MAP::const_iterator iter = m_all_stream_url_map.find(stream_url);
+
+		if (iter != m_all_stream_url_map.end())
+		{
+			return iter->second;
+		}
+		return nullptr;
+	}
+	bool ctransport_mgr::insert_stream_name(const std::string & stream_url, crtc_transport * transport)
+	{
+		if (!m_all_stream_url_map.insert(std::make_pair(stream_url, transport)).second)
+		{
+			WARNING_EX_LOG("insert  stream url  map failed !!! [stream_url = %s]", stream_url.c_str());
+			return false;
+		}
+
+		return true;
+	}
+	bool ctransport_mgr::remove_stream_name(const std::string & stream_url)
+	{
+		crtc_transport * transport_ptr = find_username(stream_url);
+		if (!transport_ptr)
+		{
+			WARNING_EX_LOG("all stream url  map not find key [stream_url = %s]", stream_url.c_str());
+			return  false;
+		}
+		size_t size = m_all_transport_map.erase(stream_url);
+		NORMAL_EX_LOG("delete key [stream_url = %s][size = %llu]", stream_url.c_str(), size);
+
+		// TODO@chensong 2023-02-10 删除一个网络对象有两个map管理的需要在username中管理非常好
+
+
+		//transport_ptr->destroy();
+		//delete transport_ptr;
+		//transport_ptr = NULL;
+
+		return true;
 	}
 }
 

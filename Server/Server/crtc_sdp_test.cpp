@@ -34,13 +34,15 @@ namespace chen {
 			//};*/
 			//chen::crtc_sdp rtc_sdp;
 			//chen::int32 ret = rtc_sdp.parse(offer_sdp);
+			std::string roomname = "chensong";
+			std::string peerid = "chensong";
 			std::ifstream  input("../bin/sdp/test_offer.sdp");
 			if (!input)
 			{
 				// ERROR_EX_LOG("open config file fail file = %s", file_name);
 				return false;
 			}
-			std::string line, key, value;
+			std::string line;
 			std::string remote;
 			while (getline(input, line))
 			{
@@ -67,7 +69,7 @@ namespace chen {
 			chen::capi_rtc_publish rtc_publish;
 
 
-			rtc_publish.do_serve_client(remote);
+			rtc_publish.do_serve_client(remote, roomname, peerid);
 
 			return 0;
 		}

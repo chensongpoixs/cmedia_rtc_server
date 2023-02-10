@@ -31,11 +31,11 @@ namespace chen {
 
 
 
-		int32 do_serve_client(const std::string &remote_sdp);
+		int32 do_serve_client(const std::string &remote_sdp, const std::string & roomname, const std::string & peerid);
 	public:
 		// publish -> remote sdp 
 		bool _negotiate_publish_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc);
-		bool _generate_publish_local_sdp(crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan, bool audio_before_video);
+		bool _generate_publish_local_sdp(const std::string & roomname, const std::string & peerid, crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan, bool audio_before_video);
 
 		bool _generate_publish_local_sdp_for_audio(crtc_sdp& local_sdp, crtc_source_description* stream_desc);
 		bool _generate_publish_local_sdp_for_video(crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan);

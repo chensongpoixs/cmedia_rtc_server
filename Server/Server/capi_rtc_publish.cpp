@@ -22,34 +22,9 @@ namespace chen {
 	capi_rtc_publish::~capi_rtc_publish()
 	{
 	}
-	int32 capi_rtc_publish::do_serve_client(const std::string & remote_sdp)
+	int32 capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname, const std::string & peerid)
 	{
-		//int32 err = 0;
-		//crtc_user_config ruc;
-
-		//ruc.m_api = "";
-
-		//ruc.m_eip = "127.0.0.1"; // candidate eip  of server 
-
-		//ruc.m_codec = ""; // 
-		//ruc.m_publish = true;
-		//ruc.m_dtls = true;
-
-		//ruc.m_remote_sdp_str = remote_sdp;
-
-
-		//if ((err = ruc.m_remote_sdp.parse(remote_sdp)) != 0)
-		//{
-		//	ERROR_EX_LOG("parse sdp failed: %s", remote_sdp.c_str());
-		//	return err;
-		//}
-
-		//if ((err = _serve_client(  &ruc)) != 0)
-		//{
-		//	ERROR_EX_LOG("serve");
-		//	return err;  
-		//}
-
+		 
 		crtc_source_description stream_desc;
 		crtc_sdp rtc_remote_sdp;
 		crtc_sdp rtc_local_sdp;
@@ -59,7 +34,7 @@ namespace chen {
 		rtc_remote_sdp.parse(remote_sdp);
 		_negotiate_publish_capability(rtc_remote_sdp, &stream_desc);
 
-		_generate_publish_local_sdp(rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
+		_generate_publish_local_sdp(roomname, peerid, rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
 
 		// All tracks default as inactive, so we must enable them.
 	//	session->set_all_tracks_status(req->get_stream_url(), ruc->publish_, true);
@@ -77,10 +52,6 @@ namespace chen {
 			{
 				break;
 			}
-			//if (!_srs_rtc_manager->find_by_name(username))
-			//{
-			//	//break;
-			//}
 		}
 
 		rtc_local_sdp.set_ice_ufrag(local_ufrag);
@@ -506,7 +477,7 @@ namespace chen {
 
 		return true;
 	}
-	bool capi_rtc_publish::_generate_publish_local_sdp(crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan, bool audio_before_video)
+	bool capi_rtc_publish::_generate_publish_local_sdp(const std::string & roomname, const std::string & peerid, crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan, bool audio_before_video)
 	{
 		int32 err = 0;
 		if (!stream_desc)
@@ -529,7 +500,9 @@ namespace chen {
 
 		local_sdp.m_msid_semantic = "WMS";
 		// TODO@chensong 2023-03-08   default -> video stream address url  
-		std::string stream_id = "test";;// req->app + "/" + req->stream;
+		// url [roomname + username]
+		std::string stream_id = roomname + "/" + peerid; //"test";;// req->app + "/" + req->stream;
+
 		local_sdp.m_msids.push_back(stream_id);
 
 		local_sdp.m_group_policy = "BUNDLE";

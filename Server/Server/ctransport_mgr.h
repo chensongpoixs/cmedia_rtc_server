@@ -22,10 +22,12 @@ namespace chen {
 	private:
 		typedef std::unordered_map<std::string, crtc_transport*>   TRANSPORT_MAP;
 									
+		typedef std::unordered_map<std::string, crtc_transport*>   STREAM_URL_MAP;
 	public:
 
 		explicit ctransport_mgr()
-		: m_all_transport_map(){}
+		: m_all_transport_map()
+		, m_all_stream_url_map(){}
 
 		virtual ~ctransport_mgr();
 
@@ -39,11 +41,23 @@ namespace chen {
 	public:
 
 
+		// ice username
 		crtc_transport * find_username(const std::string & username);
 		const crtc_transport* find_username(const std::string & username)const ;
 		bool   insert_username(const std::string & username, crtc_transport* transport);
 
 		bool   remove_username(const std::string& username);
+
+
+	public:
+		// stream url 
+		crtc_transport * find_stream_name(const std::string & stream_url);
+		const crtc_transport* find_stream_name(const std::string & stream_url)const;
+		bool   insert_stream_name(const std::string & stream_url, crtc_transport* transport);
+
+		bool   remove_stream_name(const std::string& stream_url);
+
+
 	protected:
 	private:
 
@@ -57,8 +71,8 @@ namespace chen {
 		//typedef TRANSPORT_MAP::iterator					iterator
 	private:
 
-		TRANSPORT_MAP									m_all_transport_map;
-
+		TRANSPORT_MAP										m_all_transport_map;
+		STREAM_URL_MAP										m_all_stream_url_map;
 	};
 
 
