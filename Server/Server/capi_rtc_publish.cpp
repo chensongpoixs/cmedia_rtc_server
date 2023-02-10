@@ -59,7 +59,7 @@ namespace chen {
 		rtc_remote_sdp.parse(remote_sdp);
 		_negotiate_publish_capability(rtc_remote_sdp, &stream_desc);
 
-		_generate_publish_local_sdp(rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), false);
+		_generate_publish_local_sdp(rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
 
 		// All tracks default as inactive, so we must enable them.
 	//	session->set_all_tracks_status(req->get_stream_url(), ruc->publish_, true);
@@ -536,12 +536,12 @@ namespace chen {
 
 		if (audio_before_video)
 		{
-			if ((err = _generate_publish_local_sdp_for_audio(local_sdp, stream_desc)) != 0)
+			if ( ! _generate_publish_local_sdp_for_audio(local_sdp, stream_desc)  )
 			{
 				ERROR_EX_LOG("_generate_publish_local_sdp_for_audio failed !!!");
 				return false;
 			}
-			if ((err = _generate_publish_local_sdp_for_video(local_sdp, stream_desc, unified_plan)) != 0)
+			if ( ! _generate_publish_local_sdp_for_video(local_sdp, stream_desc, unified_plan) )
 			{
 				ERROR_EX_LOG("_generate_publish_local_sdp_for_video failed !!!");
 				return false;
@@ -549,12 +549,12 @@ namespace chen {
 		}
 		else
 		{
-			if ((err = _generate_publish_local_sdp_for_video(local_sdp, stream_desc, unified_plan)) != 0)
+			if (! _generate_publish_local_sdp_for_video(local_sdp, stream_desc, unified_plan) )
 			{
 				ERROR_EX_LOG("_generate_publish_local_sdp_for_video failed !!!");
 				return false;
 			}
-			if ((err = _generate_publish_local_sdp_for_audio(local_sdp, stream_desc)) != 0)
+			if (! _generate_publish_local_sdp_for_audio(local_sdp, stream_desc) )
 			{
 				ERROR_EX_LOG("_generate_publish_local_sdp_for_audio failed !!!");
 				return false;

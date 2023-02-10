@@ -188,7 +188,7 @@ namespace chen {
 			, m_msid_tracker("")
 			, m_protos("")
 			, m_payload_types()
-			, m_connection("")
+			, m_connection("c=IN IP4 0.0.0.0")
 			, m_candidates()
 			, m_ssrc_groups()
 			, m_ssrc_infos()
