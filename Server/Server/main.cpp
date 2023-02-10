@@ -8,6 +8,7 @@
 #include "cdtls_test.h"
 #include "cdtls_certificate.h"
 #include "crtc_transport.h"
+#include "capi_rtc_publish.h"
 //------------------------------------------------------------------------------
 void Stop(int i)
 {
@@ -56,8 +57,15 @@ int main(int argc, char* argv[])
 
 	chen::crtc_transport rtc;
 
+
+	chen::capi_rtc_publish rtc_publish;
+
+
+	rtc_publish.do_serve_client(offer_sdp);
+
+
 	std::string local_sdp;
-	rtc.init(offer_sdp, local_sdp);
+	//rtc.init(offer_sdp, local_sdp);
 
 	chen::crtc_sdp rtc_sdp;
 	rtc_sdp.parse(offer_sdp);

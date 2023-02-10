@@ -52,6 +52,7 @@ namespace chen {
 		cp->m_sample = m_sample;
 		cp->m_rtcp_fbs = m_rtcp_fbs;
 		cp->m_h264_param = m_h264_param;
+		return cp;
 	}
 	int32 cvideo_payload::set_h264_param_desc(std::string fmtp)
 	{

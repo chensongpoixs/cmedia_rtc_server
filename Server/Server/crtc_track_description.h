@@ -42,7 +42,8 @@ namespace chen {
 		, m_red_ptr(NULL)
 		, m_rtx_ptr(NULL)
 		, m_ulpfec_ptr(NULL){}
-		~crtc_track_description();
+	
+		virtual ~crtc_track_description();
 
 
 	public:

@@ -685,6 +685,15 @@
     <ClCompile Include="crtc_transport.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="ctransport_mgr.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="csdp_util.cpp">
+      <Filter>rtc_sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="ctransport_util.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1273,6 +1282,18 @@
       <Filter>crc</Filter>
     </ClInclude>
     <ClInclude Include="crtc_transport.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="ctransport_mgr.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="csdp_util.h">
+      <Filter>rtc_sdp</Filter>
+    </ClInclude>
+    <ClInclude Include="ctransport_util.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_transport_define.h">
       <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>

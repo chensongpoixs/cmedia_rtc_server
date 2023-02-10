@@ -16,7 +16,7 @@ purpose:		api_rtc_publish
 #include <vector>
 #include <map>
 #include "crtc_sdp.h"
-
+#include "crtc_source_description.h"
 namespace chen {
 
 	class crtc_user_config;
@@ -32,6 +32,13 @@ namespace chen {
 
 
 		int32 do_serve_client(const std::string &remote_sdp);
+	public:
+		// publish -> remote sdp 
+		bool _negotiate_publish_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc);
+		bool _generate_publish_local_sdp(crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan, bool audio_before_video);
+
+		bool _generate_publish_local_sdp_for_audio(crtc_sdp& local_sdp, crtc_source_description* stream_desc);
+		bool _generate_publish_local_sdp_for_video(crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan);
 
 	protected:
 	private:

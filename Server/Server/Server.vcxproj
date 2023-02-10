@@ -198,12 +198,14 @@
     <ClCompile Include="crtc_transport.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
+    <ClCompile Include="csdp_util.cpp" />
     <ClCompile Include="csocket_util.cpp" />
     <ClCompile Include="csrtp.cpp" />
     <ClCompile Include="csrtp_session.cpp" />
     <ClCompile Include="csrtp_session_test.cpp" />
     <ClCompile Include="csrtp_util.cpp" />
     <ClCompile Include="cstr2digit.cpp" />
+    <ClCompile Include="ctransport_mgr.cpp" />
     <ClCompile Include="ctransport_util.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
     <ClCompile Include="cudp_socket_handler.cpp" />
@@ -377,8 +379,10 @@
     <ClInclude Include="crtc_stun_packet.h" />
     <ClInclude Include="crtc_track_description.h" />
     <ClInclude Include="crtc_transport.h" />
+    <ClInclude Include="crtc_transport_define.h" />
     <ClInclude Include="crtc_user_config.h" />
     <ClInclude Include="crtx_paylod_des.h" />
+    <ClInclude Include="csdp_util.h" />
     <ClInclude Include="cshare_proto_error.h" />
     <ClInclude Include="csocket_util.h" />
     <ClInclude Include="csrtp.h" />
@@ -387,6 +391,7 @@
     <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="csrtp_util.h" />
     <ClInclude Include="cstr2digit.h" />
+    <ClInclude Include="ctransport_mgr.h" />
     <ClInclude Include="ctransport_util.h" />
     <ClInclude Include="cudp_socket.h" />
     <ClInclude Include="cudp_socket_handler.h" />

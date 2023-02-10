@@ -353,7 +353,7 @@ namespace chen
 
 	std::string digit2str_dec(int64 value)
 	{
-		return rtc_sdp_util::fmt("%s" PRId64, value);;
+		return rtc_sdp_util::fmt("%" PRId64, value);;
 	}
 
 } // namespace chen

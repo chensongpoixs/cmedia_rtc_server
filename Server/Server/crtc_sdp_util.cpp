@@ -377,7 +377,7 @@ namespace chen {
 			va_list ap;
 			va_start(ap, fmt);
 
-			static char buf[8192];
+			char buf[8192] = {0};
 			int r0 = vsnprintf(buf, sizeof(buf), fmt, ap);
 			va_end(ap);
 
