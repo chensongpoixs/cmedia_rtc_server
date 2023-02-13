@@ -203,7 +203,7 @@ namespace chen {
 		}
 		//return err;
 
-		return int32();
+		return 0;
 	}
 
 	int32 crtc_stun_packet::encode(const std::string & pwd,  cbuffer * buffer)

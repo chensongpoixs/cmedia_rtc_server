@@ -140,13 +140,21 @@ namespace chen {
 		g_transport_mgr.insert_username(username, transport_ptr);
 
 
-		FILE * out_sdp_file = fopen("api_rtc_sdp.sdp", "wb+");
+
 		std::ostringstream    sdp;
 		rtc_local_sdp.encode(sdp);
-		fprintf(out_sdp_file, "%s=============\n", sdp.str().c_str());
-		fflush(out_sdp_file);
-		fclose(out_sdp_file);
-		out_sdp_file = NULL;
+
+
+		NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
+
+
+		/*FILE * out_sdp_file = ::fopen("api_rtc_sdp.sdp", "wb+");
+		std::ostringstream    sdp;
+		rtc_local_sdp.encode(sdp);
+		::fprintf(out_sdp_file, "%s=============\n", sdp.str().c_str());
+		::fflush(out_sdp_file);
+		::fclose(out_sdp_file);
+		out_sdp_file = NULL;*/
 
 
 		return 0;

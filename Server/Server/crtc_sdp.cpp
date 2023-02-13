@@ -2206,5 +2206,31 @@ std::string crtc_sdp::get_dtls_role() const
 	return std::string();
 }
 
+ccandidate crtc_sdp::get_candidate() const
+{
+	/*for (std::vector<cmedia_desc>::iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		cmedia_desc* desc = &(*iter);
+		desc->m_candidates.push_back(candidate);
+	}
+	return ccandidate();*/
+	ccandidate candidate;
+	for (std::vector<cmedia_desc>::const_iterator iter = m_media_descs.begin(); iter != m_media_descs.end(); ++iter)
+	{
+		const cmedia_desc* desc = &(*iter);
+		//return desc->m_session_info.m_setup;
+		if (desc->m_candidates.empty())
+		{
+			WARNING_EX_LOG("not find canndidate ");
+			return candidate;
+		}
+		return desc->m_candidates[0];
+	}
+
+	WARNING_EX_LOG("not find canndidate ");
+	return candidate;
+	
+}
+
 
 }

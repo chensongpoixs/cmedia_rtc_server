@@ -19,7 +19,7 @@ namespace chen {
 		class Listener
 		{
 		public:
-			virtual ~Listener() = default;
+		//	virtual ~Listener() = default;
 
 		public:
 			virtual void OnUdpSocketPacketReceived(

@@ -17,15 +17,15 @@ var options = {
 var server=http.createServer(app);
 var io= socketIo(server);//将socket.io注入express模块
 
-app.use(serveIndex('./app'));
-app.use(express.static('./app'));
+app.use(serveIndex('./publish'));
+app.use(express.static('./publish'));
 
  
-app.get("/app",function (req,res,next) {
-    res.sendFile(__dirname+"/app/room.html");
+app.get("/publish",function (req,res,next) {
+    res.sendFile(__dirname+"/publish/room.html");
 });
  
-server.listen(8088);//express 监听 8080 端口，因为本机80端口已被暂用
+server.listen(8010);//express 监听 8080 端口，因为本机80端口已被暂用
  
 
 var log4js = require('log4js');
@@ -75,7 +75,7 @@ io.on('connection', (socket)=> {
 		if(users < USERCOUNT)
 		{
 			socket.emit('joined', room, socket.id); //发给除自己之外的房间内的所有人
-			//if(users >= 1)
+			if(users >= 1)
 			{
 				socket.to(room).emit('other_join', room, socket.id);
 				logger.debug('the -----> user number of room (' + room + ') is: ' + users);

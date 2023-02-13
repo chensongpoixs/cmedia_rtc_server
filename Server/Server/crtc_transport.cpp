@@ -20,6 +20,8 @@ purpose:		crtc_transport
 #include <set>
 #include "csocket_util.h"
 #include  "ctransport_mgr.h"
+#include "crtc_stun_packet.h"
+
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -31,6 +33,11 @@ namespace chen {
 		m_remote_sdp = remote_sdp;
 		m_local_sdp = local_sdp;
 		
+		ccandidate candidate =  m_local_sdp.get_candidate();
+
+		m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
+
+
 		return true;
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
@@ -38,6 +45,79 @@ namespace chen {
 	}
 	void crtc_transport::destroy()
 	{
+	}
+	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	{
+		// Increase receive transmission.
+		//RTC::Transport::DataReceived(len);
+
+		// Check if it's STUN.
+		if (crtc_stun_packet::is_stun(data, len))
+		{
+			//<<<<<<< HEAD
+			//			DEBUG_EX_LOG("stun");
+			//=======
+			//DEBUG_EX_ID_LOG("stun");
+			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			//OnStunDataReceived(tuple, data, len);
+		}
+		// Check if it's RTCP.
+		else if (RTC::RTCP::Packet::IsRtcp(data, len))
+		{
+			//<<<<<<< HEAD
+			//			DEBUG_EX_LOG("IsRtcp");
+			//=======
+			//DEBUG_EX_ID_LOG("IsRtcp");
+			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			//OnRtcpDataReceived(tuple, data, len);
+		}
+		// Check if it's RTP.
+		else if (RTC::RtpPacket::IsRtp(data, len))
+		{
+			//<<<<<<< HEAD
+			//			DEBUG_EX_LOG("IsRtp");
+			//=======
+			//DEBUG_EX_ID_LOG("IsRtp");
+			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			//OnRtpDataReceived(tuple, data, len);
+		}
+		// Check if it's DTLS.
+		else if (RTC::DtlsTransport::IsDtls(data, len))
+		{
+			//<<<<<<< HEAD
+			//			DEBUG_EX_LOG("IsDtls");
+			//=======
+			//<<<<<<< HEAD
+			//			DEBUG_EX_LOG("IsDtls");
+			//=======
+			//DEBUG_EX_ID_LOG("IsDtls"); // 这边修改DTLS的状态的哈 ？？
+//>>>>>>> 69463cce016535ae4b8531ff725a35bc270954e5
+//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			//OnDtlsDataReceived(tuple, data, len);
+		}
+		else
+		{
+			//<<<<<<< HEAD
+			//			DEBUG_EX_LOG("error type");
+			//=======
+			//DEBUG_EX_ID_LOG("error type");
+			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			WARNING_EX_LOG("ignoring received packet of unknown type");
+		}
+	}
+	void crtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	{
+		OnPacketReceived(socket, data, len, remoteAddr);
+	}
+	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	{
+
+		crtc_stun_packet stun_packet;
+		if (0 != stun_packet.decode((const char *)(data), len) )
+		{
+			WARNING_EX_LOG("stun decode packet failed !!!");
+			return ;
+		}
 	}
 	//bool crtc_transport::_negotiate_publish_capability(crtc_source_description * stream_desc)
 	//{

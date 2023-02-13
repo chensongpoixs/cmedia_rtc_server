@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="websocket">
+      <UniqueIdentifier>{0a2e0e77-128e-4865-b79b-d48a29ee351c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{12359561-24e5-47e8-af19-f9f10cbbd0d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{bab60fc3-9dc2-436a-8215-8e01f5771af8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{a9bd8418-db02-4a61-87d0-7fb9a08f5bd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util\NewFilter1">
+      <UniqueIdentifier>{fab7957b-0be8-42d7-9c6e-d6342170b525}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="base">
+      <UniqueIdentifier>{50916d42-58c8-47f7-849b-a53597cd087e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtc">
+      <UniqueIdentifier>{0e8ccc4d-abcd-41ea-829d-4f614f491a67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="publisher">
+      <UniqueIdentifier>{9ba30a47-ff3a-4154-89e5-4cd636896e7f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="wsclient.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="casync_log.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="clog.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="clog_color.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="ctime_api.cpp">
+      <Filter>time</Filter>
+    </ClCompile>
+    <ClCompile Include="cdigit2str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cint2str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cbase64.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_publisher.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="wsclient.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="casync_log.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog_color.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="clog_define.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="ctime_api.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="ctime_const.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="cdigit2str.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cint2str.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="csingleton.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cbase64.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_publisher.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -4,6 +4,7 @@
   "description": "chen web server",
   "scripts": {
     "start": "node server.js"
+	"publish_server": "node publish_server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
