@@ -18,6 +18,10 @@ purpose:	网络数据的收发
 #include "cmsg_dispatch.h"
 #include "cshare_proto_error.h"
 #include "cglobal_rtc.h"
+#include "capi_rtc_publish.h"
+
+
+
 namespace chen {
 
 	void cwan_session::handler_msg(uint64_t session_id, const void* p, uint32 size)
@@ -36,10 +40,6 @@ namespace chen {
 		}
 		// TODO@chensong 20220812 管理的比较漏
 		const uint32 msg_id = m_json_response["msg_id"].asUInt();
-
-		if ((msg_id < S2C_WebrtcMessageUpdate) || (msg_id < Msg_Client_Max && msg_id > S2C_LevalRoomUpdate))
-		{
-
 			cclient_msg_handler * client_msg_handler = g_client_msg_dispatch.get_msg_handler(msg_id);
 			if (!client_msg_handler || !client_msg_handler->handler)
 			{
@@ -49,35 +49,47 @@ namespace chen {
 			m_session_id = session_id;
 			++client_msg_handler->handle_count;
 			(this->*(client_msg_handler->handler))(m_json_response);
+		//if ((msg_id < S2C_WebrtcMessageUpdate) || (msg_id < Msg_Client_Max && msg_id > S2C_LevalRoomUpdate))
+		//{
 
-		}
-		else if (msg_id < C2S_CreateRtc)
-		{
-			Json::Value reply;
-			if (!m_json_response["data"].isMember("room_name") || !m_json_response["data"]["room_name"].isString())
-			{
-				WARNING_EX_LOG("[session_id = %llu]not find room_name  , [value = %s] !!! ", m_session_id, m_json_response.asCString());
-				send_msg(msg_id+1, EShareProtoRoomName, reply);
-				return  ;
-			}
-			cmsg_handler *msg_handler = g_msg_dispatch.get_msg_handler(msg_id);
-			if (!msg_handler || !msg_handler->handler)
-			{
-				
-				WARNING_EX_LOG("[session_id = %llu]not find msg_id= %u callback !!!", session_id, msg_id);
-				return;
-			}
-			++msg_handler->handle_count;
+		//	cclient_msg_handler * client_msg_handler = g_client_msg_dispatch.get_msg_handler(msg_id);
+		//	if (!client_msg_handler || !client_msg_handler->handler)
+		//	{
+		//		WARNING_EX_LOG("[session_id = %llu]not find msg_id= %u callback !!!", session_id, msg_id);
+		//		return;
+		//	}
+		//	m_session_id = session_id;
+		//	++client_msg_handler->handle_count;
+		//	(this->*(client_msg_handler->handler))(m_json_response);
 
-			g_room_mgr.join_room(session_id,  m_json_response["data"]["room_name"].asCString(), m_user_name);
+		//}
+		//else if (msg_id < C2S_CreateRtc)
+		//{
+		//	Json::Value reply;
+		//	if (!m_json_response["data"].isMember("room_name") || !m_json_response["data"]["room_name"].isString())
+		//	{
+		//		WARNING_EX_LOG("[session_id = %llu]not find room_name  , [value = %s] !!! ", m_session_id, m_json_response.asCString());
+		//		send_msg(msg_id+1, EShareProtoRoomName, reply);
+		//		return  ;
+		//	}
+		//	cmsg_handler *msg_handler = g_msg_dispatch.get_msg_handler(msg_id);
+		//	if (!msg_handler || !msg_handler->handler)
+		//	{
+		//		
+		//		WARNING_EX_LOG("[session_id = %llu]not find msg_id= %u callback !!!", session_id, msg_id);
+		//		return;
+		//	}
+		//	++msg_handler->handle_count;
+
+		//	g_room_mgr.join_room(session_id,  m_json_response["data"]["room_name"].asCString(), m_user_name);
 
 
-			//(this->*(msg_handler->handler))(session_id, m_json_response);
-		} 
-		else
-		{
-			WARNING_EX_LOG("not find [msg_id = %u][msg = %s]", msg_id, p);
-		}
+		//	//(this->*(msg_handler->handler))(session_id, m_json_response);
+		//} 
+		//else
+		//{
+		//	WARNING_EX_LOG("not find [msg_id = %u][msg = %s]", msg_id, p);
+		//}
 
 		 
 	}
@@ -214,5 +226,34 @@ namespace chen {
 	bool   cwan_session::handler_rtc_consume(Json::Value& value)
 	{
 		return   true; // g_global_webrtc_mgr.handler_webrtc_consume(m_session_id, value);;;
+	}
+	bool cwan_session::handler_rtc_publisher(Json::Value & value)
+	{
+
+		Json::Value reply;
+		if (!value.isMember("sdp") || !value.isMember("roomname") || !value.isMember("peerid") )
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] failed !!! ", m_session_id, value.asCString());
+			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
+			return false;
+		}
+		//g_room_mgr.webrtc_message(m_room_name, m_session_id, value["data"]);
+		//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+		{
+			capi_rtc_publish publisher;
+
+
+			std::string sdp = value["sdp"].asCString();
+			std::string roomname = value["roomname"].asCString();
+			std::string peerid = value["peerid"].asCString();
+
+			std::string local_sdp;
+
+			publisher.do_serve_client(sdp, roomname, peerid, local_sdp);
+			reply["answer"] = local_sdp;
+			send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
+			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+		}
+		return true;
 	}
 }

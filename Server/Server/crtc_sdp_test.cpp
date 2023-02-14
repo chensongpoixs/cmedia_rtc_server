@@ -68,8 +68,8 @@ namespace chen {
 
 			chen::capi_rtc_publish rtc_publish;
 
-
-			rtc_publish.do_serve_client(remote, roomname, peerid);
+			std::string local_sdp;
+			rtc_publish.do_serve_client(remote, roomname, peerid, local_sdp);
 
 			return 0;
 		}

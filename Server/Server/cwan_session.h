@@ -67,6 +67,11 @@ namespace chen {
 		bool   handler_rtc_produce(Json::Value& value);
 		bool   handler_rtc_consume(Json::Value& value);
 
+
+		//////////////////////
+		bool   handler_rtc_publisher(Json::Value & value);
+
+
 	private:
 		//void   _collecion_update_mediasoup_type(EMediasoupType type);
 	public:

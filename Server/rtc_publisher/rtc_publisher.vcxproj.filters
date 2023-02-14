@@ -37,6 +37,15 @@
     <Filter Include="publisher">
       <UniqueIdentifier>{9ba30a47-ff3a-4154-89e5-4cd636896e7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="desktop">
+      <UniqueIdentifier>{954b2394-6864-419e-873d-f52dff300361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="capturer">
+      <UniqueIdentifier>{d31f4186-a5f9-4560-be82-f622c879c926}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="session_description">
+      <UniqueIdentifier>{df9e3ffc-77b7-4222-8415-8c4092a8a57d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,6 +77,18 @@
     </ClCompile>
     <ClCompile Include="crtc_publisher.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="desktop_capture.cc">
+      <Filter>desktop</Filter>
+    </ClCompile>
+    <ClCompile Include="desktop_capture_source.cc">
+      <Filter>desktop</Filter>
+    </ClCompile>
+    <ClCompile Include="ccapturer_track_source.cpp">
+      <Filter>capturer</Filter>
+    </ClCompile>
+    <ClCompile Include="cdummysetsession_description_observer.cpp">
+      <Filter>session_description</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +127,18 @@
     </ClInclude>
     <ClInclude Include="crtc_publisher.h">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="desktop_capture.h">
+      <Filter>desktop</Filter>
+    </ClInclude>
+    <ClInclude Include="desktop_capture_source.h">
+      <Filter>desktop</Filter>
+    </ClInclude>
+    <ClInclude Include="ccapturer_track_source.h">
+      <Filter>capturer</Filter>
+    </ClInclude>
+    <ClInclude Include="cdummysetsession_description_observer.h">
+      <Filter>session_description</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

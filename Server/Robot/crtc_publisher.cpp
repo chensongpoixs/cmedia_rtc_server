@@ -9,7 +9,7 @@ purpose:		api_rtc_publish
 ************************************************************************************************/
 
 #include "crtc_publisher.h"
-#include "cdummysetsession_description_observer.h"
+
 #include "absl/memory/memory.h"
 #include "absl/types/optional.h"
 #include "api/audio/audio_mixer.h"
@@ -35,36 +35,9 @@ purpose:		api_rtc_publish
 #include "rtc_base/logging.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/rtc_certificate_generator.h"
-
-#include "absl/memory/memory.h"
-#include "absl/types/optional.h"
-#include "api/audio/audio_mixer.h"
-#include "api/audio_codecs/audio_decoder_factory.h"
-#include "api/audio_codecs/audio_encoder_factory.h"
-#include "api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "api/audio_options.h"
-#include "api/create_peerconnection_factory.h"
-#include "api/rtp_sender_interface.h"
-#include "api/video_codecs/builtin_video_decoder_factory.h"
-#include "api/video_codecs/builtin_video_encoder_factory.h"
-#include "api/video_codecs/video_decoder_factory.h"
-#include "api/video_codecs/video_encoder_factory.h"
-//#include "examples/peerconnection/desktop/defaults.h"
-#include "modules/audio_device/include/audio_device.h"
-#include "modules/audio_processing/include/audio_processing.h"
-#include "modules/video_capture/video_capture.h"
-#include "modules/video_capture/video_capture_factory.h"
-#include "p2p/base/port_allocator.h"
-#include "pc/video_track_source.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/ref_counted_object.h"
-#include "rtc_base/rtc_certificate_generator.h"
-#include "ccapturer_track_source.h"
-#include "clog.h"
-
-
+ 
+//#include "ccapturer_track_source.h"
+#include "ccapturer_tracksource.h"
 namespace chen {
 
 
@@ -94,8 +67,8 @@ namespace chen {
 	bool crtc_publisher::InitializePeerConnection()
 	{
 		  networkThread = rtc::Thread::CreateWithSocketServer();
-		  signalingThread = rtc::Thread::Create();
-		  workerThread = rtc::Thread::Create();
+		   signalingThread = rtc::Thread::Create();
+		   workerThread = rtc::Thread::Create();
 		 
 			  networkThread->SetName("network_thread", nullptr);
 		  signalingThread->SetName("signaling_thread", nullptr);
@@ -140,14 +113,14 @@ namespace chen {
 	{
 		webrtc::PeerConnectionInterface::RTCConfiguration config;
 		config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan; //这个 
-		//config.enable_dtls_srtp = dtls; //是否加密
+		config.enable_dtls_srtp = dtls; //是否加密
 		//webrtc::PeerConnectionInterface::IceServer server;
 		//server.uri = GetPeerConnectionString();
 		//config.servers.push_back(server);
 		printf("[%s][%d] config.sdp_semantics = %d\n", __FUNCTION__, __LINE__, config.sdp_semantics);
 
 		peer_connection_ = peer_connection_factory_->CreatePeerConnection(config, nullptr, nullptr, this);
-		//RTC_LOG(INFO) << "[%s][%d] fff  config.sdp_semantics = %d\n", __FUNCTION__, __LINE__  config.sdp_semantics;
+		printf("[%s][%d] fff  config.sdp_semantics = %d\n", __FUNCTION__, __LINE__, config.sdp_semantics);
 
 		return peer_connection_ != nullptr;
 	}
@@ -162,19 +135,11 @@ namespace chen {
 	}
 	void crtc_publisher::OnIceCandidate(const webrtc::IceCandidateInterface * candidate)
 	{
-		NORMAL_EX_LOG(" candidate --->");
 	}
 	void crtc_publisher::OnSuccess(webrtc::SessionDescriptionInterface * desc)
 	{
-		// 得到本地视频基本信息 先设置本地 SDP 鸭
-		peer_connection_->SetLocalDescription(cdummysetsession_description_observer::Create(), desc);
 
-		std::string sdp;
-		desc->ToString(&sdp);
-		//RTC_LOG(INFO) << "[" << __FUNCTION__ << "][ offer sdp = " << sdp  << "]";
-		//printf("[%s][%d][][]\n", __FUNCTION__, __LINE__);
-		NORMAL_EX_LOG("[offer sdp = %s]", sdp.c_str());
-
+		printf("[%s][%d][][]\n", __FUNCTION__, __LINE__);
 	}
 	void crtc_publisher::OnFailure(webrtc::RTCError error)
 	{
@@ -203,7 +168,7 @@ namespace chen {
 				<< result_or_error.error().message();
 		}
 		//////////////////////////////////////////VIDEO////////////////////////////////////////////////////////////////
-		rtc::scoped_refptr<ccapturer_track_source> video_device = ccapturer_track_source::Create();
+		rtc::scoped_refptr<ProxyVideoTrackSource> video_device = ProxyVideoTrackSource::Create();
 		if (video_device)
 		{
 			rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track_proxy_ptr = peer_connection_factory_->CreateVideoTrack(kVideoLabel, video_device);

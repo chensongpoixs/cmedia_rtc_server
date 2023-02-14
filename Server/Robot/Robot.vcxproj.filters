@@ -10,6 +10,9 @@
     <Filter Include="sdp">
       <UniqueIdentifier>{6c28c4fe-7ab2-47a5-a32c-f04ff853c573}</UniqueIdentifier>
     </Filter>
+    <Filter Include="publisher">
+      <UniqueIdentifier>{13586067-d83b-4c37-9263-f7f6f16f9026}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmsg_base_id.h">
@@ -73,6 +76,9 @@
     <ClInclude Include="sdp\Utils.hpp">
       <Filter>sdp</Filter>
     </ClInclude>
+    <ClInclude Include="crtc_publisher.h">
+      <Filter>publisher</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cmsg_dispatch.cpp">
@@ -126,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="sdp\Utils.cpp">
       <Filter>sdp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_publisher.cpp">
+      <Filter>publisher</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

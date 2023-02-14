@@ -148,19 +148,25 @@
   <ItemGroup>
     <ClCompile Include="casync_log.cpp" />
     <ClCompile Include="cbase64.cpp" />
+    <ClCompile Include="ccapturer_track_source.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
+    <ClCompile Include="cdummysetsession_description_observer.cpp" />
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="crtc_publisher.cpp" />
     <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="desktop_capture.cc" />
+    <ClCompile Include="desktop_capture_source.cc" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="wsclient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="casync_log.h" />
     <ClInclude Include="cbase64.h" />
+    <ClInclude Include="ccapturer_track_source.h" />
     <ClInclude Include="cdigit2str.h" />
+    <ClInclude Include="cdummysetsession_description_observer.h" />
     <ClInclude Include="cint2str.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
@@ -169,6 +175,8 @@
     <ClInclude Include="csingleton.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
+    <ClInclude Include="desktop_capture.h" />
+    <ClInclude Include="desktop_capture_source.h" />
     <ClInclude Include="wsclient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

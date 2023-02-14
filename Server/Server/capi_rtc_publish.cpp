@@ -22,7 +22,7 @@ namespace chen {
 	capi_rtc_publish::~capi_rtc_publish()
 	{
 	}
-	int32 capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname, const std::string & peerid)
+	int32 capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname, const std::string & peerid, std::string & local_sdp)
 	{
 		 
 		crtc_source_description stream_desc;
@@ -143,6 +143,10 @@ namespace chen {
 
 		std::ostringstream    sdp;
 		rtc_local_sdp.encode(sdp);
+
+
+		local_sdp = sdp.str();
+
 
 
 		NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());

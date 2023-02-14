@@ -168,6 +168,11 @@ namespace chen {
 		C2S_rtc_data_consumer_set_buffered_amount_low_threshold,
 		S2C_rtc_data_consumer_set_buffered_amount_low_threshold,
 
+
+
+		C2S_rtc_publisher,
+		S2C_rtc_publisher,
+
 		Msg_Client_Max = 125000,
 
 		

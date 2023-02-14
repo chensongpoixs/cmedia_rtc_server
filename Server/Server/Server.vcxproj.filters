@@ -694,6 +694,9 @@
     <ClCompile Include="ctransport_util.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="cice_server.cpp">
+      <Filter>stun</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1295,6 +1298,9 @@
     </ClInclude>
     <ClInclude Include="crtc_transport_define.h">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cice_server.h">
+      <Filter>stun</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

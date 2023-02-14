@@ -154,7 +154,7 @@ namespace chen {
 		if (iter != m_session_map.end())
 		{
 			WARNING_EX_LOG("find session id = %u", session_id);
-			iter->second->init(); // login --->>
+			//iter->second->init(); // login --->>
 			return;
 		}
 		cwan_session * session_ptr = new cwan_session();

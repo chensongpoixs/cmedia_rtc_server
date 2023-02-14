@@ -43,7 +43,7 @@ namespace chen {
 #endif
 
 		// Initialize SRTP first.
-		cassert(srtp_init() == 0); //======> [ destroy  ===> srtp_shutdown()];
+		//cassert(srtp_init() == 0); //======> [ destroy  ===> srtp_shutdown()];
 
 		X509_NAME * cert_name_ptr = NULL;
 		std::string subject = std::string("cmedia_rtc_server") + std::to_string(c_rand.rand(100000, 999999));

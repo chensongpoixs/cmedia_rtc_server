@@ -31,7 +31,7 @@ namespace chen {
 
 
 
-		int32 do_serve_client(const std::string &remote_sdp, const std::string & roomname, const std::string & peerid);
+		int32 do_serve_client(const std::string &remote_sdp, const std::string & roomname, const std::string & peerid, std::string & local_sdp);
 	public:
 		// publish -> remote sdp 
 		bool _negotiate_publish_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc);

@@ -20,6 +20,9 @@ purpose:		cmedia_server
 #include "cclient_msg_dispatch.h"
 #include "csctp_association_mgr.h"
 #include "cglobal_rtc.h"
+#include "cdtls_certificate.h"
+
+
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -75,8 +78,15 @@ namespace chen {
 		}
 		uv_util::print_version();
 
-
 		SYSTEM_LOG("room mgr init ...");
+
+		if (!g_dtls_certificate.init())
+		{
+			return false;
+		}
+
+		SYSTEM_LOG("dtls certificate init ");
+
 		if (!g_room_mgr.init())
 		{
 			return false;

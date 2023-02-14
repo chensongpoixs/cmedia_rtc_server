@@ -167,6 +167,7 @@
     <ClCompile Include="cdtls_test.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
+    <ClCompile Include="cice_server.cpp" />
     <ClCompile Include="cifaddrs_android.cc" />
     <ClCompile Include="cifaddrs_converter.cc" />
     <ClCompile Include="cip_address.cpp" />
@@ -344,6 +345,7 @@
     <ClInclude Include="cdtls_test.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
+    <ClInclude Include="cice_server.h" />
     <ClInclude Include="cifaddrs_android.h" />
     <ClInclude Include="cifaddrs_converter.h" />
     <ClInclude Include="cip_address.h" />
