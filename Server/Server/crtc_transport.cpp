@@ -48,60 +48,47 @@ namespace chen {
 	}
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
+		NORMAL_EX_LOG("---->");
 		// Increase receive transmission.
 		//RTC::Transport::DataReceived(len);
 
 		// Check if it's STUN.
 		if (crtc_stun_packet::is_stun(data, len))
 		{
-			//<<<<<<< HEAD
-			//			DEBUG_EX_LOG("stun");
-			//=======
-			//DEBUG_EX_ID_LOG("stun");
-			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			NORMAL_EX_LOG("is_stun");
+			 
 			//OnStunDataReceived(tuple, data, len);
+			/*m_rtc_stun_packet.decode((const char *)(data), len);
+			if (!m_rtc_stun_packet.is_binding_request())
+			{
+				WARNING_EX_LOG("stun not binding request failed !!!");
+				return;
+			}*/
+			_on_stun_data_received(socket, data, len, remoteAddr);
 		}
 		// Check if it's RTCP.
 		else if (RTC::RTCP::Packet::IsRtcp(data, len))
 		{
-			//<<<<<<< HEAD
-			//			DEBUG_EX_LOG("IsRtcp");
-			//=======
-			//DEBUG_EX_ID_LOG("IsRtcp");
-			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			NORMAL_EX_LOG("IsRtcp");
+			 
 			//OnRtcpDataReceived(tuple, data, len);
 		}
 		// Check if it's RTP.
 		else if (RTC::RtpPacket::IsRtp(data, len))
 		{
-			//<<<<<<< HEAD
-			//			DEBUG_EX_LOG("IsRtp");
-			//=======
-			//DEBUG_EX_ID_LOG("IsRtp");
-			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			NORMAL_EX_LOG("IsRtp");
+			 
 			//OnRtpDataReceived(tuple, data, len);
 		}
 		// Check if it's DTLS.
 		else if (RTC::DtlsTransport::IsDtls(data, len))
 		{
-			//<<<<<<< HEAD
-			//			DEBUG_EX_LOG("IsDtls");
-			//=======
-			//<<<<<<< HEAD
-			//			DEBUG_EX_LOG("IsDtls");
-			//=======
-			//DEBUG_EX_ID_LOG("IsDtls"); // 这边修改DTLS的状态的哈 ？？
-//>>>>>>> 69463cce016535ae4b8531ff725a35bc270954e5
-//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			NORMAL_EX_LOG("IsDtls");
 			//OnDtlsDataReceived(tuple, data, len);
 		}
 		else
 		{
-			//<<<<<<< HEAD
-			//			DEBUG_EX_LOG("error type");
-			//=======
-			//DEBUG_EX_ID_LOG("error type");
-			//>>>>>>> d40fa1c367378f962a8c8dd093974a106997055a
+			 
 			WARNING_EX_LOG("ignoring received packet of unknown type");
 		}
 	}
@@ -118,6 +105,29 @@ namespace chen {
 			WARNING_EX_LOG("stun decode packet failed !!!");
 			return ;
 		}
+		if (!stun_packet.is_binding_request())
+		{
+			WARNING_EX_LOG("stun not binding request failed !!!");
+			return;
+		} 
+
+		char buf[1500] = {0};
+		cbuffer  stream(buf, sizeof(buf));
+		{
+			crtc_stun_packet stun_response;
+			stun_response.set_message_type(EBindingResponse);
+			stun_response.set_local_ufrag(stun_packet.get_remote_ufrag());
+			stun_response.set_remote_ufrag(stun_packet.get_local_ufrag());
+			stun_response.set_transcation_id(stun_packet.get_transcation_id());
+			// FIXME: inet_addr is deprecated, IPV6 support
+			stun_response.set_mapped_address(be32toh(inet_addr(m_update_socket_ptr->GetLocalIp().c_str())));
+			stun_response.set_mapped_port(m_update_socket_ptr->GetLocalPort());
+			stun_response.encode(m_local_sdp.get_ice_pwd(), &stream);
+			m_update_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
+
+		}
+
+
 	}
 	//bool crtc_transport::_negotiate_publish_capability(crtc_source_description * stream_desc)
 	//{

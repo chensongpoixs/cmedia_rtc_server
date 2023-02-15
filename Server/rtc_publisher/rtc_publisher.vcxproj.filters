@@ -46,6 +46,9 @@
     <Filter Include="session_description">
       <UniqueIdentifier>{df9e3ffc-77b7-4222-8415-8c4092a8a57d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="client">
+      <UniqueIdentifier>{97ef2c7c-ae87-4e1f-8f5f-401961559e9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,6 +92,12 @@
     </ClCompile>
     <ClCompile Include="cdummysetsession_description_observer.cpp">
       <Filter>session_description</Filter>
+    </ClCompile>
+    <ClCompile Include="cwebsocket_mgr.cpp">
+      <Filter>websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="cclient.cpp">
+      <Filter>client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +148,12 @@
     </ClInclude>
     <ClInclude Include="cdummysetsession_description_observer.h">
       <Filter>session_description</Filter>
+    </ClInclude>
+    <ClInclude Include="cwebsocket_mgr.h">
+      <Filter>websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="cclient.h">
+      <Filter>client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

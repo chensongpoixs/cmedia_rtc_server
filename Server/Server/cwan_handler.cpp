@@ -231,9 +231,28 @@ namespace chen {
 	{
 
 		Json::Value reply;
-		if (!value.isMember("sdp") || !value.isMember("roomname") || !value.isMember("peerid") )
+		if (!value.isMember("data") || !value["data"].isObject())
 		{
-			WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] failed !!! ", m_session_id, value.asCString());
+			WARNING_EX_LOG("[session_id = %llu]not find data type, [value = %s] !!! ", m_session_id, value.toStyledString().c_str());
+			send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+			return false;
+		}
+
+		if (!value["data"].isMember("offer")  )
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find offer type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str() );
+			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
+			return false;
+		}
+		if ( !value["data"].isMember("roomname")  )
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find roomname type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
+			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
+			return false;
+		}
+		if (  !value["data"].isMember("peerid"))
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find peerid type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
 			return false;
 		}
@@ -243,14 +262,15 @@ namespace chen {
 			capi_rtc_publish publisher;
 
 
-			std::string sdp = value["sdp"].asCString();
-			std::string roomname = value["roomname"].asCString();
-			std::string peerid = value["peerid"].asCString();
+			std::string sdp = value["data"]["offer"].asCString();
+			std::string roomname = value["data"]["roomname"].asCString();
+			std::string peerid = value["data"]["peerid"].asCString();
 
 			std::string local_sdp;
 
 			publisher.do_serve_client(sdp, roomname, peerid, local_sdp);
-			reply["answer"] = local_sdp;
+			reply["sdp"] = local_sdp;
+			reply["type"] = "answer";
 			send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
 			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
 		}

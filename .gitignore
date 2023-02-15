@@ -135,6 +135,5 @@ Server/Robot/log
 Server/Server.VC.db
 Server/Server/webrtc_offer555.sdp
 Server/Server/api_rtc_sdp.sdp
-Server/www/node_modules_old/
-Server/rtc_publisher/log/20230214161648_rtc_native.log
+Server/www/node_modules_old/ 
 Server/rtc_publisher/log/

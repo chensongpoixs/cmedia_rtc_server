@@ -15,6 +15,7 @@ purpose:		crtc_transport
 #include "crtc_source_description.h"
 #include "crtc_transport_define.h"
 #include "cudp_socket.h"
+#include "crtc_stun_packet.h"
 namespace chen {
 
 
@@ -25,7 +26,8 @@ namespace chen {
 		: m_local_sdp ()
 		, m_remote_sdp ()
 		, m_rtc_net_state(ERtcNetworkStateInit)
-		, m_update_socket_ptr(NULL){}
+		, m_update_socket_ptr(NULL)
+		 {}
 
 		virtual ~crtc_transport();
 
@@ -60,7 +62,7 @@ namespace chen {
 		bool _generate_publish_local_sdp_for_audio(crtc_sdp& local_sdp, crtc_source_description* stream_desc);
 		bool _generate_publish_local_sdp_for_video(crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan);
 */
-
+		
 	private:
 		crtc_sdp			 			m_local_sdp ;
 		crtc_sdp			 			m_remote_sdp ;
@@ -73,7 +75,7 @@ namespace chen {
 		cudp_socket		*				m_update_socket_ptr;
 
 
-
+		//crtc_stun_packet				m_rtc_stun_packet;
 
 
 		// 1000000LL * 30

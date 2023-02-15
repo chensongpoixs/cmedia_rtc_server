@@ -136,62 +136,113 @@ namespace chen {
 			if (len % 4 != 0) 
 			{
 				//stream->read_string(4 - (len % 4));
+				//WARNING_EX_LOG("stun padding ---- >>>>");
+				p += (4 - (len % 4));
+				pos += (4 - (len % 4));
+
 			}
 
 			switch (type) {
-			case EUsername: 
-			{
-				//username = val;
-				m_username = val;
-				size_t p = val.find(":");
-				if (p != std::string::npos) 
+				case EUsername: 
 				{
-					m_local_ufrag = val.substr(0, p);
-					m_remote_ufrag = val.substr(p + 1);
-					NORMAL_EX_LOG("stun packet local_ufrag=%s, remote_ufrag=%s", m_local_ufrag.c_str(), m_remote_ufrag.c_str());
+					//username = val;
+					m_username = val;
+
+					size_t p = val.find(":");
+					if (p != std::string::npos) 
+					{
+						m_local_ufrag = val.substr(0, p);
+						m_remote_ufrag = val.substr(p + 1);
+						NORMAL_EX_LOG("stun packet local_ufrag=%s, remote_ufrag=%s", m_local_ufrag.c_str(), m_remote_ufrag.c_str());
+					}
+					break;
 				}
-				break;
-			}
+				case EPriority:
+				{
+					// Ensure attribute length is 4 bytes.
+					if (len != 4)
+					{
+						WARNING_EX_LOG("ice, attribute PRIORITY must be 4 bytes length, packet discarded");
 
-			case EUseCandidate: 
-			{
-				m_use_candidate = true;
-				 NORMAL_EX_LOG("stun use-candidate");
-				break;
-			}
+						//delete packet;
+						return -1;
+					}
 
-							   // @see: https://tools.ietf.org/html/draft-ietf-ice-rfc5245bis-00#section-5.1.2
-							   // One agent full, one lite:  The full agent MUST take the controlling
-							   // role, and the lite agent MUST take the controlled role.  The full
-							   // agent will form check lists, run the ICE state machines, and
-							   // generate connectivity checks.
-			case EIceControlled: 
-			{
-				m_ice_controlled = true;
-				 NORMAL_EX_LOG("stun ice-controlled");
-				break;
-			}
+					//packet->SetPriority(Utils::Byte::Get4Bytes(attrValuePos, 0));
+					DEBUG_EX_LOG("stun EPriority" );
+					break;
+					break;
+				}
+				case EUseCandidate: 
+				{
+					m_use_candidate = true;
+					 NORMAL_EX_LOG("stun use-candidate");
+					break;
+				}
 
-			case EIceControlling: 
-			{
-				m_ice_controlling = true;
-				NORMAL_EX_LOG("stun ice-controlling");
-				break;
-			}
-			/*case EPriority:
-			{
-				break;
-			}*/
+				// @see: https://tools.ietf.org/html/draft-ietf-ice-rfc5245bis-00#section-5.1.2
+				// One agent full, one lite:  The full agent MUST take the controlling
+				// role, and the lite agent MUST take the controlled role.  The full
+				// agent will form check lists, run the ICE state machines, and
+				// generate connectivity checks.
+				case EIceControlled: 
+				{
+					m_ice_controlled = true;
+					 NORMAL_EX_LOG("stun ice-controlled");
+					break;
+				}
 
-			default:
-			{
-				NORMAL_EX_LOG("stun type=%u, no process", type);
-				break;
-			}
+				case EIceControlling: 
+				{
+					m_ice_controlling = true;
+					NORMAL_EX_LOG("stun ice-controlling");
+					break;
+				}
+				case EMessageIntegrity:
+				{
+					// Ensure attribute length is 20 bytes.
+					if (len != 20)
+					{
+						WARNING_EX_LOG("ice, attribute MESSAGE-INTEGRITY must be 20 bytes length, packet discarded");
+
+						 
+						return -1;
+					}
+
+					//hasMessageIntegrity = true;
+					//packet->SetMessageIntegrity(attrValuePos);
+					DEBUG_EX_LOG("stun MessageIntegrity  " );
+					break;
+				}
+				 
+				case EFingerprint:
+				{
+					// Ensure attribute length is 4 bytes.
+					if (len != 4)
+					{
+						WARNING_EX_LOG(  " ice attribute FINGERPRINT must be 4 bytes length, packet discarded");
+
+						 
+						return -1;
+					}
+
+					/*hasFingerprint = true;
+					fingerprintAttrPos = pos;
+					fingerprint = Utils::Byte::Get4Bytes(attrValuePos, 0);
+					packet->SetFingerprint();*/
+					NORMAL_EX_LOG("stun EFingerprint");
+					break;
+				}
+				default:
+				{
+					NORMAL_EX_LOG("stun type=%u, no process", type);
+					break;
+				}
 			}
 
 			// Set next attribute position.
 			pos = static_cast<size_t>( pos + 4 + len);
+			p += 4 + len;
 			
 		}
 		// Ensure current position matches the total length.
