@@ -39,7 +39,7 @@ namespace chen {
 		// As of version 1.1.0 OpenSSL will automatically allocate all resources that it needs so no explicit
 		// initialisation is required. Similarly it will also automatically deinitialise as required.
 		// @see https://www.openssl.org/docs/man1.1.0/man3/OPENSSL_init_ssl.html
-		// OPENSSL_init_ssl();
+		//OPENSSL_init_ssl();
 #endif
 
 		// Initialize SRTP first.
@@ -107,11 +107,14 @@ namespace chen {
 		X509_set_version(m_certificate_ptr, 2);
 
 		// Set serial number (avoid default 0).
-		ASN1_INTEGER_set( X509_get_serialNumber(m_certificate_ptr), static_cast<uint64_t>(9999999));
+		ASN1_INTEGER_set( X509_get_serialNumber(m_certificate_ptr), static_cast<uint64_t>(c_rand.rand(100000, 9999999)));
 
 		// Set valid period.
-		X509_gmtime_adj(X509_get_notBefore(m_certificate_ptr), -315360000); // -10 years.
-		X509_gmtime_adj(X509_get_notAfter(m_certificate_ptr), 315360000);   // 10 years.
+		int32 expire_day = 365;
+		const int64 cert_duration = 60 * 60 * 24 * expire_day;
+
+		X509_gmtime_adj(X509_get_notBefore(m_certificate_ptr), 0);  
+		X509_gmtime_adj(X509_get_notAfter(m_certificate_ptr), cert_duration);    
 
 		// Set the public key for the certificate using the key.
 		ret = X509_set_pubkey(m_certificate_ptr, m_private_key_ptr);
@@ -121,9 +124,8 @@ namespace chen {
 			WARNING_EX_LOG("X509_set_pubkey() failed");
 			return false;
 		}
-
 		// Set certificate fields.
-		 cert_name_ptr = X509_get_subject_name(m_certificate_ptr);
+		cert_name_ptr = X509_get_subject_name(m_certificate_ptr);
 
 		if (!cert_name_ptr)
 		{
@@ -131,23 +133,26 @@ namespace chen {
 
 			return false;
 		}
+		
 
-		X509_NAME_add_entry_by_txt(
-			cert_name_ptr, "O", MBSTRING_ASC, reinterpret_cast<const uint8_t*>(subject.c_str()), -1, -1, 0);
+		 X509_NAME_add_entry_by_txt(
+		 	cert_name_ptr, "O", MBSTRING_ASC, reinterpret_cast<const uint8_t*>(subject.c_str()), -1, -1, 0);
 		X509_NAME_add_entry_by_txt(
 			cert_name_ptr, "CN", MBSTRING_ASC, reinterpret_cast<const uint8_t*>(subject.c_str()), -1, -1, 0);
 
 		// It is self-signed so set the issuer name to be the same as the subject.
 		ret = X509_set_issuer_name(m_certificate_ptr, cert_name_ptr);
-
-		if (ret == 0)
+		
+		 if (ret == 0)
 		{
 			WARNING_EX_LOG("X509_set_issuer_name() failed");
 			X509_NAME_free(cert_name_ptr);
 			cert_name_ptr = NULL;
 			return false;
-		}
+		} 
 
+		 
+		
 		// Sign the certificate with its own private key.
 		ret = X509_sign(m_certificate_ptr  , m_private_key_ptr, EVP_sha1());
 
@@ -158,8 +163,8 @@ namespace chen {
 			cert_name_ptr = NULL;
 			return false;
 		}
-		X509_NAME_free(cert_name_ptr);
-		cert_name_ptr = NULL;
+	//	X509_NAME_free(cert_name_ptr);
+		//cert_name_ptr = NULL;
 
 
 
@@ -168,7 +173,7 @@ namespace chen {
 		{
 			char fp[100] = { 0 };
 			char *p = fp;
-			unsigned char md[EVP_MAX_MD_SIZE];
+			unsigned char md[EVP_MAX_MD_SIZE] = {0};
 			unsigned int n = 0;
 
 			// TODO: FIXME: Unused variable.
@@ -179,11 +184,11 @@ namespace chen {
 				sprintf(p, "%02X", md[i]);
 				p += 2;
 
-				if (i < (n - 1)) 
+				if (i < (n - 1))
 				{
 					*p = ':';
 				}
-				else 
+				else
 				{
 					*p = '\0';
 				}

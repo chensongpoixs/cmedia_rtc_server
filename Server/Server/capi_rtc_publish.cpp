@@ -28,6 +28,16 @@ namespace chen {
 		crtc_source_description stream_desc;
 		crtc_sdp rtc_remote_sdp;
 		crtc_sdp rtc_local_sdp;
+		// RFC 4145 - http://tools.ietf.org/html/rfc4145#section-4
+		// 'active':  The endpoint will initiate an outgoing connection.
+		// 'passive': The endpoint will accept an incoming connection.
+		// 'actpass': The endpoint is willing to accept an incoming
+		//            connection or to initiate an outgoing connection.
+		/*a = setup 主要是表示dtls的协商过程中角色的问题，谁是客户端，谁是服务器
+		a = setup:actpass 既可以是客户端，也可以是服务器
+		a = setup : active 客户端
+		a = setup : passive 服务器
+		由客户端先发起client hello*/
 		rtc_local_sdp.m_session_config.m_dtls_role = "passive";
 		rtc_local_sdp.m_session_config.m_dtls_version = "auto";
 

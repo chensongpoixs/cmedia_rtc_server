@@ -26,15 +26,15 @@ namespace chen {
 	{
 	}
 
-	bool cdtls::init(const std::string  & role)
+	bool cdtls::init(const std::string  & role, crtc_transportlinster * callback)
 	{
 		if (role == "active")
 		{
-			m_dtls_session_ptr = new cdtls_client( );
+			m_dtls_session_ptr = new cdtls_client(callback);
 		}
 		else 
 		{
-			m_dtls_session_ptr = new cdtls_server( );
+			m_dtls_session_ptr = new cdtls_server(callback);
 		}
 
 		return m_dtls_session_ptr->init( );

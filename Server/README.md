@@ -12,7 +12,18 @@
 x64
 
 ```
-perl Configure VC-WIN64A no-asm  no-shared  --prefix=D:/dep/openssl_1.1.0
+#release版本命令
+
+perl Configure  VC-WIN64A no-asm  shared  no-shared --prefix=D:/dep/openssl_1.1.0
+
+# debug版本命令
+
+perl Configure debug-VC-WIN64A no-asm  shared  no-shared --prefix=D:/dep/openssl_1.1.0
+
+
+
+
+////
 ```
 
 

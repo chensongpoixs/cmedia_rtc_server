@@ -19,6 +19,7 @@ purpose:		_C_DTLS_CERTIFICATE_H_
 #include "crtc_sdp.h"
 #include "cdtls_define.h"
 #include "cmedia_desc.h"
+#include "crtc_transport.h"
 namespace chen {
 
 
@@ -33,13 +34,14 @@ namespace chen {
 		// Returns:   
 		// Qualifier:
 		//************************************
-		explicit cdtls_session() 
+		explicit cdtls_session(crtc_transportlinster * callback)
 			: m_dtls_ctx_ptr(NULL)
 			, m_dtls_ptr(NULL)
 			, m_bio_in_ptr(NULL)
 			, m_bio_out_ptr(NULL)
 			, m_handshake_done_for_us(false)
-			, m_nn_arq_packets(0) {}
+			, m_nn_arq_packets(0)
+			, m_callback_ptr(callback){}
 		//************************************
 		// Method:    ~cdtls_session
 		// FullName:  chen::cdtls_session::~cdtls_session
@@ -123,6 +125,8 @@ namespace chen {
 
 		// The stat for ARQ packets.
 		int32			m_nn_arq_packets;
+
+		crtc_transportlinster *				m_callback_ptr;
 	private:
 	};
 
@@ -136,8 +140,8 @@ namespace chen {
 	public:
 
 		 
-		explicit cdtls_server()
-			: cdtls_session() {}
+		explicit cdtls_server(crtc_transportlinster *callback)
+			: cdtls_session(callback) {}
 
 		 
 		virtual ~cdtls_server();
@@ -164,8 +168,8 @@ namespace chen {
 	public:
 
 		 
-		explicit cdtls_client()
-			: cdtls_session()
+		explicit cdtls_client(crtc_transportlinster *callback)
+			: cdtls_session(callback)
 		, m_state(EDtlsStateInit)
 		, m_arq_max_retry(12* 2)   // the max dtls retry num is 12 in openssl.// Max ARQ limit shared for ClientHello and Certificate.
 		, m_reset_timer(true){}

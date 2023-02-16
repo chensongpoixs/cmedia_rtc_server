@@ -37,7 +37,7 @@ namespace chen {
 	//	static void destory();
 	public:
 
-		bool init(const std::string  & role);
+		bool init(const std::string  & role, crtc_transportlinster * callback);
 
 		void destroy();
 	public:

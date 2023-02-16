@@ -18,8 +18,17 @@ purpose:		crtc_transport
 #include "crtc_stun_packet.h"
 namespace chen {
 
+	class cdtls_session;
 
-	class crtc_transport : public cudp_socket::Listener
+	class crtc_transportlinster
+	{
+	public:
+
+		virtual int32 write_dtls_data(void* data, int size) = 0;
+		virtual int32 on_dtls_handshake_done() = 0;
+	};
+
+	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster
 	{
 	public:
 		explicit crtc_transport()
@@ -27,6 +36,8 @@ namespace chen {
 		, m_remote_sdp ()
 		, m_rtc_net_state(ERtcNetworkStateInit)
 		, m_update_socket_ptr(NULL)
+		, m_dtls_ptr(NULL)
+			 
 		 {}
 
 		virtual ~crtc_transport();
@@ -38,7 +49,10 @@ namespace chen {
 
 		void destroy();
 
-		
+	public:
+		// virtual
+		virtual int32 write_dtls_data(void* data, int size);
+		virtual int32 on_dtls_handshake_done();
 	public:
 		void set_state_as_waiting_stun() { m_rtc_net_state = ERtcNetworkStateWaitingStun; };
 	protected:
@@ -73,7 +87,9 @@ namespace chen {
 
 		// 
 		cudp_socket		*				m_update_socket_ptr;
+		cdtls_session *					m_dtls_ptr;
 
+		sockaddr 						m_remote_addr;
 
 		//crtc_stun_packet				m_rtc_stun_packet;
 

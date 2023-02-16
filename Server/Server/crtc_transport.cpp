@@ -21,7 +21,7 @@ purpose:		crtc_transport
 #include "csocket_util.h"
 #include  "ctransport_mgr.h"
 #include "crtc_stun_packet.h"
-
+#include "cdtls_session.h"
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -38,6 +38,10 @@ namespace chen {
 		m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
 
 
+		m_dtls_ptr = new cdtls_client(this);
+
+		//m_dtls_ptr->init();
+
 		return true;
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
@@ -46,11 +50,27 @@ namespace chen {
 	void crtc_transport::destroy()
 	{
 	}
+	int32 crtc_transport::write_dtls_data(void * data, int size)
+	{
+
+		m_update_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+		return 0;
+	}
+
+	chen::int32 crtc_transport::on_dtls_handshake_done()
+	{
+		NORMAL_EX_LOG("");
+		return 0;
+	}
+
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
 		NORMAL_EX_LOG("---->");
 		// Increase receive transmission.
 		//RTC::Transport::DataReceived(len);
+
+
+		memcpy(&m_remote_addr, remoteAddr, sizeof(*remoteAddr));
 
 		// Check if it's STUN.
 		if (crtc_stun_packet::is_stun(data, len))
@@ -120,12 +140,29 @@ namespace chen {
 			stun_response.set_remote_ufrag(stun_packet.get_local_ufrag());
 			stun_response.set_transcation_id(stun_packet.get_transcation_id());
 			// FIXME: inet_addr is deprecated, IPV6 support
-			stun_response.set_mapped_address(be32toh(inet_addr(m_update_socket_ptr->GetLocalIp().c_str())));
-			stun_response.set_mapped_port(m_update_socket_ptr->GetLocalPort());
+			int32 family;
+			uint16_t port;
+			std::string ip;
+
+			uv_ip::GetAddressInfo(remoteAddr, family, ip, port);
+			NORMAL_EX_LOG("[remote_ip = %s][remote_port = %u]",  ip.c_str(), port);
+			NORMAL_EX_LOG(" [localip = %s][localport = %u]",  m_update_socket_ptr->GetLocalIp().c_str(), m_update_socket_ptr->GetLocalPort());
+			stun_response.set_mapped_address(be32toh(inet_addr(ip.c_str())));
+			stun_response.set_mapped_port(port);
 			stun_response.encode(m_local_sdp.get_ice_pwd(), &stream);
 			m_update_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
-
+			
 		}
+
+
+		if (m_rtc_net_state != ERtcNetworkStateDtls)
+		{
+			m_rtc_net_state = ERtcNetworkStateDtls;
+			cdtls_client * dtls_client_ptr = dynamic_cast<cdtls_client*>(m_dtls_ptr);
+			dtls_client_ptr->init();
+				m_dtls_ptr->start_active_handshake();
+		}
+		
 
 
 	}

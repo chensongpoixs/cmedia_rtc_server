@@ -49,6 +49,9 @@
     <Filter Include="client">
       <UniqueIdentifier>{97ef2c7c-ae87-4e1f-8f5f-401961559e9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{4c82de1c-70f0-4652-8449-23b1893ff6a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -98,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="cclient.cpp">
       <Filter>client</Filter>
+    </ClCompile>
+    <ClCompile Include="cconfig.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="ccfg.cpp">
+      <Filter>config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="cclient.h">
       <Filter>client</Filter>
+    </ClInclude>
+    <ClInclude Include="cconfig.h">
+      <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="ccfg.h">
+      <Filter>config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

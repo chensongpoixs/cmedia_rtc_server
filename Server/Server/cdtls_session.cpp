@@ -41,7 +41,7 @@ namespace chen {
 	{
 		cdtls_session * dtsl_session_ptr = static_cast<cdtls_session*>(SSL_get_ex_data(dtls_ptr, 0));
 
-		assert(dtsl_session_ptr);
+		cassert(dtsl_session_ptr);
 
 
 
@@ -81,7 +81,7 @@ namespace chen {
 		//static_cast<dtlsv1x*>(SSL_get_ex_data(ssl, 0))->OnSslInfo(where, ret);
 		cdtls_session * dtsl_session_ptr = static_cast<cdtls_session*>(SSL_get_ex_data(dtls_ptr, 0));
 
-		assert(dtsl_session_ptr);
+		cassert(dtsl_session_ptr);
 
 		const char* method;
 		int32 w = where & ~SSL_ST_MASK;
@@ -225,17 +225,18 @@ namespace chen {
 			// We use "ALL", while you can use "DEFAULT" means "ALL:!EXPORT:!LOW:!aNULL:!eNULL:!SSLv2"
 			// @see https://www.openssl.org/docs/man1.0.2/man1/ciphers.html
 
-			assert(SSL_CTX_set_cipher_list(dtls_ptr, "DEFAULT:!NULL:!aNULL:!SHA256:!SHA384:!aECDH:!AESGCM+AES256:!aPSK") == 1);
+			cassert(SSL_CTX_set_cipher_list(dtls_ptr, "ALL") == 1);
 
 
 			// 2. Setup the certificate.
-			assert(SSL_CTX_use_certificate(dtls_ptr, g_dtls_certificate.get_cert()) == 1);
-			assert(SSL_CTX_use_PrivateKey(dtls_ptr, g_dtls_certificate.get_public_key()) == 1);
+			 
+			cassert(SSL_CTX_use_certificate(dtls_ptr, g_dtls_certificate.get_cert()) == 1);
+			cassert(SSL_CTX_use_PrivateKey(dtls_ptr, g_dtls_certificate.get_public_key()) == 1);
 
 
 			// 3. check SSL 
 			// @see https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_check_private_key.html
-			assert(SSL_CTX_check_private_key(dtls_ptr) == 1);
+			cassert(SSL_CTX_check_private_key(dtls_ptr) == 1);
 
 			// 4. Set options.
 			// @see https://www.openssl.org/docs/man1.0.2/man3/SSL_CTX_set_options.html
@@ -289,7 +290,7 @@ namespace chen {
 			// @see https://bugs.chromium.org/p/chromium/issues/detail?id=713701
 			// @see https://groups.google.com/forum/#!topic/discuss-webrtc/PvCbWSetVAQ
 			// @remark Only support SRTP_AES128_CM_SHA1_80, please read ssl/d1_srtp.c
-			assert( SSL_CTX_set_tlsext_use_srtp(dtls_ptr, "SRTP_AES128_CM_SHA1_80") == 0);
+			cassert( SSL_CTX_set_tlsext_use_srtp(dtls_ptr, "SRTP_AES128_CM_SHA1_80") == 0);
 		}
 
 
@@ -517,7 +518,7 @@ namespace chen {
 		// Do handshake and get the result.
 		int32 r0 = SSL_do_handshake(m_dtls_ptr);
 		int32 r1 = SSL_get_error(m_dtls_ptr, r0);
-
+		NORMAL_EX_LOG("SSL_do_handshake ");
 		// Fatal SSL error, for example, no available suite when peer is DTLS 1.0 while we are DTLS 1.2.
 		if (r0 < 0 && (r1 != SSL_ERROR_NONE && r1 != SSL_ERROR_WANT_READ && r1 != SSL_ERROR_WANT_WRITE)) 
 		{
@@ -546,7 +547,7 @@ namespace chen {
 			 
 		}
 		// 
-		if (size > 0 /*&& (err = callback_->write_dtls_data(data, size)) != 0*/) 
+		if (size > 0  && (err = m_callback_ptr->write_dtls_data(data, size)) != 0)
 		{
 			WARNING_EX_LOG(  "dtls send size=%u, data=[%s]", size, str2hex((char*)data, size, 32).c_str());
 			return err;
