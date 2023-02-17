@@ -199,10 +199,18 @@ namespace chen {
 		}
 
 
+
+		
+
+
+
+
+
 		return true;
 	}
 	void cdtls_certificate::destroy()
 	{
+		
 		if (m_eckey_ptr)
 		{
 			EC_KEY_free(m_eckey_ptr);
@@ -221,12 +229,22 @@ namespace chen {
 			m_certificate_ptr = NULL;
 		}
 		m_fingerprints.clear();
+		_destroy_global_ssl_ctx();
+	}
+	
+	void cdtls_certificate::_destroy_global_ssl_ctx()
+	{
+		if (m_ssl_ctx_ptr)
+		{
+			SSL_CTX_free(m_ssl_ctx_ptr);
+			m_ssl_ctx_ptr = NULL;
+		}
 	}
 	X509 * cdtls_certificate::get_cert()
 	{
 		return m_certificate_ptr;
 	}
-	EVP_PKEY * cdtls_certificate::get_public_key()
+	EVP_PKEY * cdtls_certificate::get_private_key()
 	{
 		return m_private_key_ptr;
 	}
@@ -237,5 +255,9 @@ namespace chen {
 	std::string cdtls_certificate::get_fingerprint()
 	{
 		return m_fingerprints;
+	}
+	SSL_CTX * cdtls_certificate::get_ssl_ctx()
+	{
+		return m_ssl_ctx_ptr;
 	}
 }

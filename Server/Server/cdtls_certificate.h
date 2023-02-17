@@ -40,22 +40,28 @@ namespace chen {
 		//, m_cert_name_ptr(NULL)
 		, m_certificate_ptr(NULL)
 		, m_private_key_ptr(NULL)
-		, m_fingerprints(""){}
+		, m_fingerprints("")
+		/*, m_ssl_ctx_ptr(NULL)*/{}
 		~cdtls_certificate();
 	public:
 		bool init();
 		void destroy();
 
+	public:
 
+		bool _init_global_ssl_ctx();
+		void _destroy_global_ssl_ctx();
 	public:
 		// dtls_cert
 		X509* get_cert();
 		// public key
-		EVP_PKEY* get_public_key();
+		EVP_PKEY* get_private_key();
 		// ECDSA key
 		EC_KEY* get_ecdsa_key();
 		// certificate fingerprint
 		std::string get_fingerprint();
+
+		SSL_CTX *  get_ssl_ctx();
 	protected:
 
 	private:
@@ -64,6 +70,11 @@ namespace chen {
 		X509*						m_certificate_ptr;
 		EVP_PKEY *					m_private_key_ptr;
 		std::string 				m_fingerprints;
+		
+
+		///////////////////////global SSL_CTX/////////////////
+
+		SSL_CTX *					m_ssl_ctx_ptr;
 	};
 
 

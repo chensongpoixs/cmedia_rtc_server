@@ -697,6 +697,9 @@
     <ClCompile Include="cice_server.cpp">
       <Filter>stun</Filter>
     </ClCompile>
+    <ClCompile Include="crtc_dtls.cpp">
+      <Filter>dtls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1301,6 +1304,9 @@
     </ClInclude>
     <ClInclude Include="cice_server.h">
       <Filter>stun</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_dtls.h">
+      <Filter>dtls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

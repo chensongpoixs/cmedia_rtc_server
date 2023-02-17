@@ -16,6 +16,7 @@ purpose:		crtc_transport
 #include "crtc_transport_define.h"
 #include "cudp_socket.h"
 #include "crtc_stun_packet.h"
+#include "crtc_dtls.h"
 namespace chen {
 
 	class cdtls_session;
@@ -24,8 +25,9 @@ namespace chen {
 	{
 	public:
 
-		virtual int32 write_dtls_data(void* data, int size) = 0;
+		virtual int32 write_dtls_data(void* data, int32 size) = 0;
 		virtual int32 on_dtls_handshake_done() = 0;
+		virtual void  on_dtls_application_data(const uint8* data, int32 size) = 0;
 	};
 
 	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster
@@ -53,6 +55,7 @@ namespace chen {
 		// virtual
 		virtual int32 write_dtls_data(void* data, int size);
 		virtual int32 on_dtls_handshake_done();
+		virtual void  on_dtls_application_data(const uint8* data, int32 size);
 	public:
 		void set_state_as_waiting_stun() { m_rtc_net_state = ERtcNetworkStateWaitingStun; };
 	protected:
@@ -67,7 +70,7 @@ namespace chen {
 	private:
 
 		void _on_stun_data_received(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
-
+		void _on_dtls_data_received(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
 	private:
 		// publish -> remote sdp 
 		/*bool _negotiate_publish_capability(crtc_source_description * stream_desc);
@@ -87,8 +90,8 @@ namespace chen {
 
 		// 
 		cudp_socket		*				m_update_socket_ptr;
-		cdtls_session *					m_dtls_ptr;
-
+		//cdtls_session *					m_dtls_ptr;
+		crtc_dtls	*					m_dtls_ptr;
 		sockaddr 						m_remote_addr;
 
 		//crtc_stun_packet				m_rtc_stun_packet;

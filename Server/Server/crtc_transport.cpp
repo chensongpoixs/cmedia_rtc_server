@@ -38,10 +38,11 @@ namespace chen {
 		m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
 
 
-		m_dtls_ptr = new cdtls_client(this);
+		//m_dtls_ptr = new cdtls_client(this);
 
 		//m_dtls_ptr->init();
-
+		m_dtls_ptr = new crtc_dtls(this);
+		m_dtls_ptr->init();
 		return true;
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
@@ -61,6 +62,11 @@ namespace chen {
 	{
 		NORMAL_EX_LOG("");
 		return 0;
+	}
+
+	void crtc_transport::on_dtls_application_data(const uint8 * data, int32 size)
+	{
+		NORMAL_EX_LOG("application data --> data channel -->>>>>>>");
 	}
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
@@ -105,6 +111,7 @@ namespace chen {
 		{
 			NORMAL_EX_LOG("IsDtls");
 			//OnDtlsDataReceived(tuple, data, len);
+			_on_dtls_data_received(socket, data, len, remoteAddr);
 		}
 		else
 		{
@@ -158,14 +165,25 @@ namespace chen {
 		if (m_rtc_net_state != ERtcNetworkStateDtls)
 		{
 			m_rtc_net_state = ERtcNetworkStateDtls;
-			cdtls_client * dtls_client_ptr = dynamic_cast<cdtls_client*>(m_dtls_ptr);
-			dtls_client_ptr->init();
-				m_dtls_ptr->start_active_handshake();
+			//cdtls_client * dtls_client_ptr = dynamic_cast<cdtls_client*>(m_dtls_ptr);
+			//dtls_client_ptr->init();
+			m_dtls_ptr->start_active_handshake("server");
 		}
 		
 
 
 	}
+
+	void crtc_transport::_on_dtls_data_received(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr)
+	{
+		// TODO@chensong 2023-02-17 
+		 // DTLS 的状态是否在连接中   connecting -> connected
+		if (true/* connected  conecting*/)
+		{
+			m_dtls_ptr->process_dtls_data(data, len);
+		}
+	}
+
 	//bool crtc_transport::_negotiate_publish_capability(crtc_source_description * stream_desc)
 	//{
 	// 

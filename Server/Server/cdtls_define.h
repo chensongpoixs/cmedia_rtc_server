@@ -36,6 +36,12 @@ namespace chen {
 		EDtlsStateServerDone, // We are in the second ARQ state.
 		EDtlsStateClientDone, // Done.
 	};
+
+
+
+
+	const int32  DTLSMTU = 1350;
+
 }
 
 #endif // _C_DTLS_DEFINE_H_

@@ -231,7 +231,7 @@ namespace chen {
 			// 2. Setup the certificate.
 			 
 			cassert(SSL_CTX_use_certificate(dtls_ptr, g_dtls_certificate.get_cert()) == 1);
-			cassert(SSL_CTX_use_PrivateKey(dtls_ptr, g_dtls_certificate.get_public_key()) == 1);
+			cassert(SSL_CTX_use_PrivateKey(dtls_ptr, g_dtls_certificate.get_private_key()) == 1);
 
 
 			// 3. check SSL 
