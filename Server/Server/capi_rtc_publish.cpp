@@ -79,7 +79,7 @@ namespace chen {
 			//std::set<std::string> candidates = {"192.168.1.175"};;// = discover_candidates(ruc);
 			//for (std::set<std::string>::iterator it = candidates.begin(); it != candidates.end(); ++it) 
 			{
-				std::string hostname = "192.168.1.175";
+				std::string hostname = "127.0.0.1";
 				int32 uport = udp_port++;
 				//parse_hostport(*it, hostname, uport);
 				//int32 tport = tcp_port; 
