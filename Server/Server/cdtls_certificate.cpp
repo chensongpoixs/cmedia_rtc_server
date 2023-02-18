@@ -199,14 +199,14 @@ namespace chen {
 		}
 
 
-
+		
 		
 
+		return _init_global_ssl_ctx();
 
 
 
-
-		return true;
+		//return true;
 	}
 	void cdtls_certificate::destroy()
 	{

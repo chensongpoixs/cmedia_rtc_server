@@ -273,7 +273,7 @@ namespace chen {
 		uint32 err = 0;
 		std::string property_username = encode_username();
 		std::string mapped_address = encode_mapped_address();
-
+		NORMAL_EX_LOG("stun encode --> [property_username = %s, len = %u][mapped_address = %s]", property_username.c_str(), property_username.length(), mapped_address.c_str());
 		stream->write_2bytes(EBindingResponse);
 		//rtc_byte::set2bytes((uint8 * )buffer, 0, EBindingResponse);
 		stream->write_2bytes(property_username.size() + mapped_address.size());
@@ -323,22 +323,28 @@ namespace chen {
 	{
 		char buf[1460] = {0};
 		 
+		
 		std::string username = m_remote_ufrag + ":" + m_local_ufrag;
-		rtc_byte::set2bytes((unsigned char *)&buf[0], 0, EUsername);
-		//stream->write_2bytes(EUsername);
-		rtc_byte::set2bytes((unsigned char *)&buf[0], 2, username.size());
-		//stream->write_2bytes(username.size());
-		memcpy(&buf[0] + 4, username.c_str(), username.size());
-		// stream->write_string(username);
+		
 
-		if ((4 + username.size()) % 4 != 0) 
+		NORMAL_EX_LOG("[remote_ufrag = %s][local_ufrag = %s]", m_remote_ufrag.c_str(), m_local_ufrag.c_str());
+		
+		cbuffer stream(&buf[0], sizeof(buf));
+		//rtc_byte::set2bytes((unsigned char *)&buf[0], 0, EUsername);
+		stream.write_2bytes(EUsername);
+		//rtc_byte::set2bytes((unsigned char *)&buf[0], 2, username.size());
+		stream.write_2bytes(username.size());
+		//memcpy(&buf[0] + 4, username.c_str(), username.size());
+		stream.write_string(username);
+
+		if (stream.pos() %4 != 0/*(4 + username.size()) % 4 != 0*/) 
 		{
 			 char padding[4] = { 0 };
-			 memcpy(&buf[0] + 4 + username.size(), &padding[0], 4 - (4 + username.size()) %4);
-			//stream->write_bytes(padding, 4 - (stream->pos() % 4));
+			 //memcpy(&buf[0] + 4 + username.size(), &padding[0], 4 - (4 + username.size()) %4);
+			stream.write_bytes(padding, 4 - (stream.pos() % 4));
 		}
-
-		return buf;
+		NORMAL_EX_LOG("stream pos = %u", stream.pos());
+		return std::string(stream.data(), stream.pos());
 		//return std::string();
 	}
 
