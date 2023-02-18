@@ -95,7 +95,7 @@ namespace chen {
 		// Check if it's RTCP.
 		else if (RTC::RTCP::Packet::IsRtcp(data, len))
 		{
-			NORMAL_EX_LOG("IsRtcp");
+			NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			 
 			//OnRtcpDataReceived(tuple, data, len);
 		}
@@ -182,6 +182,14 @@ namespace chen {
 		{
 			m_dtls_ptr->process_dtls_data(data, len);
 		}
+	}
+
+	void crtc_transport::_on_rtp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
+	{
+	}
+
+	void crtc_transport::_on_rtcp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
+	{
 	}
 
 	//bool crtc_transport::_negotiate_publish_capability(crtc_source_description * stream_desc)

@@ -139,3 +139,5 @@ Server/www/node_modules_old/
 Server/rtc_publisher/log/
 Server/www/test/node_modules/*
 /Server/www/test/node_modules
+Server/enc_temp_folder/876bc5794ac9cbfafa1ac26d411af93f/crtc_transport.h
+Server/enc_temp_folder/b3d7b36eee8380feb2fa660629e177c/crtc_transport.cpp
