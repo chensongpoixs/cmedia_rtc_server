@@ -273,7 +273,7 @@ namespace chen {
 		uint32 err = 0;
 		std::string property_username = encode_username();
 		std::string mapped_address = encode_mapped_address();
-		NORMAL_EX_LOG("stun encode --> [property_username = %s, len = %u][mapped_address = %s]", property_username.c_str(), property_username.length(), mapped_address.c_str());
+		NORMAL_EX_LOG("stun encode --> [property_username = %s, size = %u][mapped_address = %s, size = %u]", property_username.c_str(), property_username.length(), mapped_address.c_str(), mapped_address.length());
 		stream->write_2bytes(EBindingResponse);
 		//rtc_byte::set2bytes((uint8 * )buffer, 0, EBindingResponse);
 		stream->write_2bytes(property_username.size() + mapped_address.size());
@@ -308,7 +308,7 @@ namespace chen {
 		stream->data()[2] = ((stream->pos() - 20 + 8) & 0x0000FF00) >> 8;
 		stream->data()[3] = ((stream->pos() - 20 + 8) & 0x000000FF);
 
-		uint32_t crc32 = srs_crc32_ieee(stream->data(), stream->pos(), 0) ^ 0x5354554E;
+		uint32 crc32 = srs_crc32_ieee(stream->data(), stream->pos(), 0) ^ 0x5354554E;
 
 		std::string fingerprint = encode_fingerprint(crc32);
 
@@ -369,33 +369,35 @@ namespace chen {
 		//return std::string();
 	}
 
-	std::string crtc_stun_packet::encode_hmac(char * hamc_buf, const int32 hmac_buf_len)
+	std::string crtc_stun_packet::encode_hmac(char * hmac_buf, const int32 hmac_buf_len)
 	{
 		char buffer[1460] = {0};
 		 
-
-		//stream->write_2bytes(EMessageIntegrity);
-		rtc_byte::set2bytes((uint8  *)&buffer[0], 0, EMessageIntegrity);
-		//stream->write_2bytes(hmac_buf_len);
-		rtc_byte::set2bytes((uint8  *)&buffer[0], 2, hmac_buf_len);
-		//stream->write_bytes(hmac_buf, hmac_buf_len);
-		memcpy((uint8  *)&buffer[0] +4, hamc_buf, hmac_buf_len);
+		cbuffer stream(&buffer[0], sizeof(buffer));
+		stream.write_2bytes(EMessageIntegrity);
+		//rtc_byte::set2bytes((uint8  *)&buffer[0], 0, EMessageIntegrity);
+		stream.write_2bytes(hmac_buf_len);
 		//rtc_byte::set2bytes((uint8  *)&buffer[0], 2, hmac_buf_len);
-		return buffer;
+		stream.write_bytes(hmac_buf, hmac_buf_len);
+		//memcpy((uint8  *)&buffer[0] +4, hmac_buf, hmac_buf_len);
+		//rtc_byte::set2bytes((uint8  *)&buffer[0], 2, hmac_buf_len);
+		//return buffer;
+		return std::string(stream.data(), stream.pos());
 	}
 
 	std::string crtc_stun_packet::encode_fingerprint(uint32 crc32)
 	{
 		char buffer[1460] = {0};
 		 
-		
-		///stream->write_2bytes(EFingerprint);
-		rtc_byte::set2bytes((uint8*)&buffer[0], 0, EFingerprint);
-		//stream->write_2bytes(4);
-		rtc_byte::set2bytes((uint8*)&buffer[0], 2, 4);
-		//stream->write_4bytes(crc32);
-		rtc_byte::set4bytes((uint8*)&buffer[0], 4, crc32);
-		return buffer;
+		cbuffer stream(&buffer[0], sizeof(buffer));
+		stream.write_2bytes(EFingerprint);
+		//rtc_byte::set2bytes((uint8*)&buffer[0], 0, EFingerprint);
+		stream.write_2bytes(4);
+		//rtc_byte::set2bytes((uint8*)&buffer[0], 2, 4);
+		stream.write_4bytes(crc32);
+		//rtc_byte::set4bytes((uint8*)&buffer[0], 4, crc32);
+		//return buffer;
+		return std::string(stream.data(), stream.pos());
 	}
 
 }
