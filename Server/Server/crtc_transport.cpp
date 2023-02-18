@@ -33,11 +33,16 @@ namespace chen {
 		m_remote_sdp = remote_sdp;
 		m_local_sdp = local_sdp;
 		
-		ccandidate candidate =  m_local_sdp.get_candidate();
+		std::vector<ccandidate> candidates =  m_local_sdp.get_candidate();
 
-		m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
+		//m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
 
-
+		for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
+		{
+			cudp_socket * socket_ptr = new   cudp_socket(this, (*iter).m_ip, (*iter).m_port);
+			m_udp_sockets.push_back(socket_ptr);
+			socket_ptr = NULL;
+		}
 		//m_dtls_ptr = new cdtls_client(this);
 
 		//m_dtls_ptr->init();
@@ -50,11 +55,19 @@ namespace chen {
 	}
 	void crtc_transport::destroy()
 	{
+		/*if (std::vector<cudp_socket*>::iterator iter = m_udp_sockets.begin(); iter != m_udp_sockets.end(); ++iter)
+		{
+			delete *iter;
+		}*/
+		m_udp_sockets.clear();
 	}
 	int32 crtc_transport::write_dtls_data(void * data, int size)
 	{
-
-		m_update_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+		if (m_current_socket_ptr)
+		{
+			m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+		}
+		
 		return 0;
 	}
 
@@ -77,7 +90,7 @@ namespace chen {
 
 
 		memcpy(&m_remote_addr, remoteAddr, sizeof(*remoteAddr));
-
+		m_current_socket_ptr = socket;
 		// Check if it's STUN.
 		if (crtc_stun_packet::is_stun(data, len))
 		{
@@ -153,11 +166,11 @@ namespace chen {
 
 			uv_ip::GetAddressInfo(remoteAddr, family, ip, port);
 			NORMAL_EX_LOG("[remote_ip = %s][remote_port = %u]",  ip.c_str(), port);
-			NORMAL_EX_LOG(" [localip = %s][localport = %u]",  m_update_socket_ptr->GetLocalIp().c_str(), m_update_socket_ptr->GetLocalPort());
+			NORMAL_EX_LOG(" [localip = %s][localport = %u]",  m_current_socket_ptr->GetLocalIp().c_str(), m_current_socket_ptr->GetLocalPort());
 			stun_response.set_mapped_address(be32toh(inet_addr(ip.c_str())));
 			stun_response.set_mapped_port(port);
 			stun_response.encode(m_local_sdp.get_ice_pwd(), &stream);
-			m_update_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
+			m_current_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
 			
 		}
 

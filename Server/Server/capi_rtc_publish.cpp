@@ -18,6 +18,7 @@ purpose:		api_rtc_publish
 #include "ctransport_mgr.h"
 #include "crandom.h"
 #include "cdtls_certificate.h"
+#include "cglobal_config.h"
 namespace chen {
 	capi_rtc_publish::~capi_rtc_publish()
 	{
@@ -76,10 +77,11 @@ namespace chen {
 			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
 			std::string protocol = "udp";//_srs_config->get_rtc_server_protocol();
 
-			//std::set<std::string> candidates = {"192.168.1.175"};;// = discover_candidates(ruc);
+		   //std::set<std::string> candidates = {"192.168.1.175"};;// = discover_candidates(ruc);
 			//for (std::set<std::string>::iterator it = candidates.begin(); it != candidates.end(); ++it) 
+			for (std::set<std::string>::const_iterator iter  = g_global_config.get_all_ips().begin(); iter != g_global_config.get_all_ips().end(); ++iter)
 			{
-				std::string hostname = "172.20.10.2";
+				std::string hostname = *iter;/*"172.20.10.2";*/
 				int32 uport = udp_port++;
 				//parse_hostport(*it, hostname, uport);
 				//int32 tport = tcp_port; 

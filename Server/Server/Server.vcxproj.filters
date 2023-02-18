@@ -181,6 +181,9 @@
     <Filter Include="crc">
       <UniqueIdentifier>{8153be3d-aa65-4797-86f9-93af491e0df9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="global_config">
+      <UniqueIdentifier>{1cc8ffb4-ab17-45f2-9725-4a7ac1425dc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -699,6 +702,9 @@
     </ClCompile>
     <ClCompile Include="crtc_dtls.cpp">
       <Filter>dtls</Filter>
+    </ClCompile>
+    <ClCompile Include="cglobal_config.cpp">
+      <Filter>global_config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1307,6 +1313,9 @@
     </ClInclude>
     <ClInclude Include="crtc_dtls.h">
       <Filter>dtls</Filter>
+    </ClInclude>
+    <ClInclude Include="cglobal_config.h">
+      <Filter>global_config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

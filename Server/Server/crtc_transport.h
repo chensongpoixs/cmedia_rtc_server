@@ -37,7 +37,8 @@ namespace chen {
 		: m_local_sdp ()
 		, m_remote_sdp ()
 		, m_rtc_net_state(ERtcNetworkStateInit)
-		, m_update_socket_ptr(NULL)
+		, m_udp_sockets()
+		, m_current_socket_ptr(NULL)
 		, m_dtls_ptr(NULL)
 			 
 		 {}
@@ -95,13 +96,14 @@ namespace chen {
 		// ice server
 
 		// 
-		cudp_socket		*				m_update_socket_ptr;
+		
+		std::vector<cudp_socket*>		m_udp_sockets;
+		
+		sockaddr 						m_remote_addr;
+		cudp_socket		*				m_current_socket_ptr;
+		//crtc_stun_packet				m_rtc_stun_packet;
 		//cdtls_session *					m_dtls_ptr;
 		crtc_dtls	*					m_dtls_ptr;
-		sockaddr 						m_remote_addr;
-
-		//crtc_stun_packet				m_rtc_stun_packet;
-
 
 		// 1000000LL * 30
 	};

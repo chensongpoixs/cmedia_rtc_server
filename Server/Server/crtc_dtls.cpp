@@ -475,6 +475,16 @@ namespace chen {
 		}
 	}
 
+	bool crtc_dtls::process_handshake()
+	{
+		if (!_check_remote_fingerprintf())
+		{
+			WARNING_EX_LOG("check remote fingerprintf failed !!!");
+			return false;
+		}
+		return true;
+	}
+
 	void crtc_dtls::on_ssl_info(int32 where, int32 ret)
 	{
 		int w = where & -SSL_ST_MASK;
@@ -646,6 +656,132 @@ namespace chen {
 		//{
 		//	return true;
 		//}
+		return true;
+	}
+
+	bool crtc_dtls::_check_remote_fingerprintf()
+	{
+
+		//
+
+		X509* certificate;
+		uint8_t binaryFingerprint[EVP_MAX_MD_SIZE];
+		unsigned int size{ 0 };
+		char hexFingerprint[(EVP_MAX_MD_SIZE * 3) + 1] = {0};
+		const EVP_MD* hashFunction;
+		int ret;
+
+		certificate = SSL_get_peer_certificate(m_ssl_ptr);
+
+		if (!certificate)
+		{
+			WARNING_EX_LOG("no certificate was provided by the peer");
+
+			return false;
+		}
+		hashFunction = EVP_sha256();
+		/*switch (this->remoteFingerprint.algorithm)
+		{
+		case FingerprintAlgorithm::SHA1:
+			hashFunction = EVP_sha1();
+			break;
+
+		case FingerprintAlgorithm::SHA224:
+			hashFunction = EVP_sha224();
+			break;
+
+		case FingerprintAlgorithm::SHA256:
+			hashFunction = EVP_sha256();
+			break;
+
+		case FingerprintAlgorithm::SHA384:
+			hashFunction = EVP_sha384();
+			break;
+
+		case FingerprintAlgorithm::SHA512:
+			hashFunction = EVP_sha512();
+			break;
+
+		default:
+			MS_ABORT("unknown algorithm");
+		}*/
+
+		// Compare the remote fingerprint with the value given via signaling.
+		ret = X509_digest(certificate, hashFunction, binaryFingerprint, &size);
+
+		if (ret == 0)
+		{
+			ERROR_EX_LOG("X509_digest() failed");
+
+			X509_free(certificate);
+
+			return false;
+		}
+
+		// Convert to hexadecimal format in uppercase with colons.
+		for (unsigned int i{ 0 }; i < size; ++i)
+		{
+			std::sprintf(hexFingerprint + (i * 3), "%.2X:", binaryFingerprint[i]);
+		}
+		hexFingerprint[(size * 3) - 1] = '\0';
+
+		// TODO@chensong 2023-02-18 验证客户都的sdp中密钥是否一致
+
+		/*if (this->remoteFingerprint.value != hexFingerprint)
+		{
+			MS_WARN_TAG(
+				dtls,
+				"fingerprint in the remote certificate (%s) does not match the announced one (%s)",
+				hexFingerprint,
+				this->remoteFingerprint.value.c_str());
+
+			X509_free(certificate);
+
+			return false;
+		}*/
+
+		NORMAL_EX_LOG("valid remote fingerprint [hexFingerprint = %s]", hexFingerprint );
+
+		// Get the remote certificate in PEM format.
+
+		BIO* bio = BIO_new(BIO_s_mem());
+
+		// Ensure the underlying BUF_MEM structure is also freed.
+		// NOTE: Avoid stupid "warning: value computed is not used [-Wunused-value]" since
+		// BIO_set_close() always returns 1.
+		(void)BIO_set_close(bio, BIO_CLOSE);
+
+		ret = PEM_write_bio_X509(bio, certificate);
+
+		if (ret != 1)
+		{
+			ERROR_EX_LOG("PEM_write_bio_X509() failed");
+
+			X509_free(certificate);
+			BIO_free(bio);
+
+			return false;
+		}
+
+		BUF_MEM* mem;
+
+		BIO_get_mem_ptr(bio, &mem); // NOLINT[cppcoreguidelines-pro-type-cstyle-cast]
+
+		if (!mem || !mem->data || mem->length == 0u)
+		{
+			ERROR_EX_LOG("BIO_get_mem_ptr() failed");
+
+			X509_free(certificate);
+			BIO_free(bio);
+
+			return false;
+		}
+
+		m_remote_cert = std::string(mem->data, mem->length);
+
+		X509_free(certificate);
+		BIO_free(bio);
+
 		return true;
 	}
 

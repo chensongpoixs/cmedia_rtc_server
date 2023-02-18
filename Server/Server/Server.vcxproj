@@ -166,6 +166,7 @@
     <ClCompile Include="cdtls_certificate.cpp" />
     <ClCompile Include="cdtls_session.cpp" />
     <ClCompile Include="cdtls_test.cpp" />
+    <ClCompile Include="cglobal_config.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
     <ClCompile Include="cice_server.cpp" />
@@ -345,6 +346,7 @@
     <ClInclude Include="cdtls_define.h" />
     <ClInclude Include="cdtls_session.h" />
     <ClInclude Include="cdtls_test.h" />
+    <ClInclude Include="cglobal_config.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
     <ClInclude Include="cice_server.h" />

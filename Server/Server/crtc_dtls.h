@@ -44,7 +44,8 @@ namespace chen {
 		 , m_ssl_bio_write_network_ptr(NULL)
 		 , m_dtls_status(EDtlsStateInit)
 		 , m_handshake_done_for_us(false)
-		 , m_role(""){}
+		 , m_role("")
+		 , m_remote_cert(""){}
 		virtual  ~crtc_dtls();
 
 	 public:
@@ -74,6 +75,9 @@ namespace chen {
 		 void send_pending_outgoing_dtlsdata();
 
 		 inline bool set_timeout();
+
+	 public:
+		 inline bool process_handshake();
 	 public:
 
 		 // callbacks fired by OpenSSL events 
@@ -82,6 +86,7 @@ namespace chen {
 
 	 private:
 		 inline bool _check_status(int32 return_code);
+		 inline bool _check_remote_fingerprintf();
 	 protected:
 	 private:
 		 crtc_transportlinster	*			m_callback_ptr;
@@ -94,6 +99,7 @@ namespace chen {
 		// @remark For us only, means peer maybe not done, we also need to handle the DTLS packet.
 		 bool								m_handshake_done_for_us;
 		 std::string						m_role;
+		 std::string						m_remote_cert;
 
 	 };
 }

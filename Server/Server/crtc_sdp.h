@@ -136,7 +136,7 @@ namespace chen {
 		std::string get_ice_ufrag() const;
 		std::string get_ice_pwd() const;
 		std::string get_dtls_role() const;
-		ccandidate get_candidate() const;
+		std::vector<ccandidate> get_candidate() const;
 
 	private:
 	private:

@@ -21,6 +21,7 @@ purpose:		cmedia_server
 #include "csctp_association_mgr.h"
 #include "cglobal_rtc.h"
 #include "cdtls_certificate.h"
+#include "cglobal_config.h"
 
 
 namespace chen {
@@ -54,6 +55,14 @@ namespace chen {
 		ctime_base_api::set_time_adjust(g_cfg.get_int32(ECI_TimeAdjust));
 		SYSTEM_LOG("dispatch init ...");
 
+		SYSTEM_LOG("global config  init ...");
+		if (!g_global_config.init())
+		{
+			return false;
+		}
+		SYSTEM_LOG("global config init OK !!!");
+
+		SYSTEM_LOG("global rtc init ...");
 		if (!g_global_rtc.init())
 		{
 			return false;
@@ -172,6 +181,11 @@ namespace chen {
 
 		g_global_rtc.destory();
 		SYSTEM_LOG("global rtc destory OK !!!");
+
+		g_global_config.destroy();
+		SYSTEM_LOG("global config destroy OK !!!");
+
+
 		//1 log
 		LOG::destroy();
 		printf("Log Destroy OK!\n");

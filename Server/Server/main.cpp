@@ -26,7 +26,7 @@ void RegisterSignal()
 
 void moudle_test()
 {
-	//chen::net_adapter_test();
+	chen::net_adapter_test();
 	//chen::cdtls::init();
 
 	/*chen::cdtls_certificate cdtls_certificate;
@@ -35,7 +35,7 @@ void moudle_test()
 
 
 
-	chen::test::test_rtc_sdp();
+	//chen::test::test_rtc_sdp();
 }
 
 
@@ -46,7 +46,8 @@ void test_cassert()
  
 int main(int argc, char* argv[])
 {
-
+	
+	
 	 
 	RegisterSignal();
 
@@ -63,6 +64,7 @@ int main(int argc, char* argv[])
 	 
 	bool init = chen::g_media_server.init(log_path, config_filename);
 	 
+	moudle_test();
 	if (init)
 	{
 		init = chen::g_media_server.Loop();
