@@ -13,21 +13,9 @@ purpose:		csrtp_session
 
 #include "cnet_type.h"
 #include <srtp2/srtp.h>
-
+#include "csrtp_define.h"
 namespace chen {
-	enum   ECRYPTO_SUITE
-	{
-		ECRYPTO_NONE = 0,
-		ECRYPTO_AES_CM_128_HMAC_SHA1_80 = 1,
-		ECRYPTO_AES_CM_128_HMAC_SHA1_32,
-		ECRYPTO_AEAD_AES_256_GCM,
-		ECRYPTO_AEAD_AES_128_GCM
-	};
-	enum   EType
-	{
-		EINBOUND = 1,
-		EOUTBOUND
-	};
+	
 
 	class csrtp_session
 	{
@@ -37,7 +25,7 @@ namespace chen {
 
 
 	public:
-		static void init();
+		static bool init();
 		static void destroy();
 		static bool IsError(srtp_err_status_t code)
 		{

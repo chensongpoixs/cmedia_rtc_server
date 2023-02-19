@@ -41,7 +41,8 @@ void moudle_test()
 
 void test_cassert()
 {
-	cassert((5 == 9));
+	cassert((5==9));
+	cassert_desc((5 == 9), "(5 == 9)");
 }
  
 int main(int argc, char* argv[])

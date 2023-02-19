@@ -95,9 +95,9 @@ namespace chen {
 			}
 		}
 
-		/*MS_ASSERT(
+		cassert_desc(
 			(int)keyLen == policy.rtp.cipher_key_len,
-			"given keyLen does not match policy.rtp.cipher_keyLen");*/
+			"given keyLen does not match policy.rtp.cipher_keyLen"); 
 
 		switch (type)
 		{
@@ -111,7 +111,10 @@ namespace chen {
 		}
 
 		policy.ssrc.value = 0;
+		//uint8 * send_key_ptr = static_cast<uint8*>(::malloc(sizeof(uint8) * keyLen));
+		//memcpy(send_key_ptr, key, keyLen);
 		policy.key = key;
+		//NORMAL_EX_LOG("[create srtp key = %s]", key);
 		// Required for sending RTP retransmission without RTX.
 		policy.allow_repeat_tx = 1;
 		policy.window_size = 1024;
@@ -128,7 +131,7 @@ namespace chen {
 	csrtp_session::~csrtp_session()
 	{
 	}
-	void csrtp_session::init()
+	bool csrtp_session::init()
 	{
 		clock_guard lock(g_srtp_global_sync_mutex);
 		if (0 == g_srtp_global_instances)
@@ -140,9 +143,11 @@ namespace chen {
 			if (csrtp_session::IsError(err))
 			{
 				ERROR_EX_LOG("srtp_init() failed: %s",  csrtp_session::GetErrorString(err));
+				return false;
 			}
 		}
 		++g_srtp_global_instances;
+		return true;
 	}
 	void csrtp_session::destroy()
 	{

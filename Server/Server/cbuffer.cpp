@@ -50,9 +50,9 @@ namespace chen {
 	}
 	void cbuffer::skip(int32 size)
 	{
-		cassert(m_position_ptr);
-		cassert(m_position_ptr + size >= m_bytes_ptr);
-		cassert(m_position_ptr + size <= m_bytes_ptr + m_nb_bytes);
+		cassert_desc(m_position_ptr, "m_position_ptr");
+		cassert_desc(m_position_ptr + size >= m_bytes_ptr, "m_position_ptr + size >= m_bytes_ptr");
+		cassert_desc(m_position_ptr + size <= m_bytes_ptr + m_nb_bytes, "m_position_ptr + size <= m_bytes_ptr + m_nb_bytes");
 
 		m_position_ptr += size;
 	}
@@ -204,7 +204,7 @@ namespace chen {
 	}
 	void cbuffer::write_le2bytes(int16 value)
 	{
-		cassert(require(2));
+		cassert_desc(require(2), "require(2)");
 
 		char* pp = (char*)&value;
 		*m_position_ptr++ = pp[0];
@@ -212,7 +212,7 @@ namespace chen {
 	}
 	void cbuffer::write_4bytes(int32 value)
 	{
-		cassert(require(4));
+		cassert_desc(require(4), "require(4)");
 
 		char* pp = (char*)&value;
 		*m_position_ptr++ = pp[3];
@@ -222,7 +222,7 @@ namespace chen {
 	}
 	void cbuffer::write_le4bytes(int32 value)
 	{
-		cassert(require(4));
+		cassert_desc(require(4), "require(4)");
 
 		char* pp = (char*)&value;
 		*m_position_ptr++ = pp[0];
@@ -232,7 +232,7 @@ namespace chen {
 	}
 	void cbuffer::write_3bytes(int32 value)
 	{
-		cassert(require(3));
+		cassert_desc(require(3), "require(3)");
 
 		char* pp = (char*)&value;
 		*m_position_ptr++ = pp[2];
@@ -241,7 +241,7 @@ namespace chen {
 	}
 	void cbuffer::write_le3bytes(int32 value)
 	{
-		cassert(require(3));
+		cassert_desc(require(3), "require(3)");
 
 		char* pp = (char*)&value;
 		*m_position_ptr++ = pp[0];
@@ -250,7 +250,7 @@ namespace chen {
 	}
 	void cbuffer::write_8bytes(int64 value)
 	{
-		cassert(require(8));
+		cassert_desc(require(8), "require(8)");
 
 		char* pp = (char*)&value;
 		*m_position_ptr++ = pp[7];
@@ -264,7 +264,7 @@ namespace chen {
 	}
 	void cbuffer::write_le8bytes(int64 value)
 	{
-		cassert(require(8));
+		cassert_desc(require(8), "require(8)");
 
 		char* pp = (char*)&value;
 		*m_position_ptr++ = pp[0];

@@ -39,8 +39,8 @@ namespace chen {
 	public:
 		int32 protect_rtp(void* packet, int32* nb_cipher);
 		int32 protect_rtcp(void* packet, int32* nb_cipher);
-		int32 unprotect_rtp(void* packet, int32* nb_plaintext);
-		int32 unprotect_rtcp(void* packet, int32* nb_plaintext);
+		bool unprotect_rtp(void* packet, int32* nb_plaintext);
+		bool unprotect_rtcp(void* packet, int32* nb_plaintext);
 	protected:
 	private:
 

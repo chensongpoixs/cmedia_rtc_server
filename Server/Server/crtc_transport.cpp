@@ -82,6 +82,67 @@ namespace chen {
 		NORMAL_EX_LOG("application data --> data channel -->>>>>>>");
 	}
 
+	void crtc_transport::on_dtls_transport_connected(ECRYPTO_SUITE srtp_crypto_suite, uint8 * srtp_local_key, size_t srtp_local_key_len, uint8 * srtp_remote_key, size_t srtp_remote_key_len)
+	{
+		//std::string local_key((char *)srtp_local_key, srtp_local_key_len);
+		if (!m_srtp.init(std::string((char *)srtp_local_key, srtp_local_key_len), std::string((char *)srtp_remote_key, srtp_remote_key_len)))
+		{
+			WARNING_EX_LOG("srtp send recv init failed !!!");
+		}
+		NORMAL_EX_LOG("srtp send recv create init OK ---->");
+		// Close it if it was already set and update it.
+		//if (m_srtp_send_session_ptr)
+		//{
+		//	delete m_srtp_send_session_ptr;
+		//	m_srtp_send_session_ptr = nullptr;
+		//}
+		//
+		//if (m_srtp_recv_session_ptr)
+		//{
+		//	delete m_srtp_recv_session_ptr;
+		//	m_srtp_recv_session_ptr = nullptr;
+		//}
+		// 
+		// 
+
+		//try
+		//{
+		//	m_srtp_send_session_ptr = new csrtp_session(
+		//		EOUTBOUND, srtp_crypto_suite, srtp_local_key, srtp_local_key_len);
+		//}
+		//catch (const std::exception& error)
+		//{
+		//	ERROR_EX_LOG("error creating SRTP sending session: %s", error.what());
+		//}
+
+		//try
+		//{
+		//	m_srtp_recv_session_ptr = new csrtp_session(
+		//		EINBOUND, srtp_crypto_suite, srtp_remote_key, srtp_remote_key_len);
+
+		//	// Notify the Node WebRtcTransport.
+		//	/*json data = json::object();
+
+		//	data["dtlsState"] = "connected";
+		//	data["dtlsRemoteCert"] = remoteCert;
+
+		//	Channel::ChannelNotifier::Emit(this->id, "dtlsstatechange", data);
+		//	DEBUG_EX_LOG("data = %s", data.dump().c_str());*/
+		//	// Tell the parent class.
+		//	//RTC::Transport::Connected();
+		//}
+		//catch (const std::exception& error)
+		//{
+		//	ERROR_EX_LOG("error creating SRTP receiving session: %s", error.what());
+
+		//	if (m_srtp_send_session_ptr)
+		//	{
+		//		delete m_srtp_send_session_ptr;
+		//		m_srtp_send_session_ptr = nullptr;
+		//	}
+		//}
+	}
+
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
 		NORMAL_EX_LOG("---->");
@@ -111,6 +172,7 @@ namespace chen {
 			NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			 
 			//OnRtcpDataReceived(tuple, data, len);
+			_on_rtcp_data_received(socket, data, len, remoteAddr);
 		}
 		// Check if it's RTP.
 		else if (RTC::RtpPacket::IsRtp(data, len))
@@ -118,6 +180,7 @@ namespace chen {
 			NORMAL_EX_LOG("IsRtp");
 			 
 			//OnRtpDataReceived(tuple, data, len);
+			_on_rtp_data_received(socket, data, len, remoteAddr);
 		}
 		// Check if it's DTLS.
 		else if (RTC::DtlsTransport::IsDtls(data, len))
@@ -199,10 +262,26 @@ namespace chen {
 
 	void crtc_transport::_on_rtp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
 	{
+		if (!m_srtp.unprotect_rtp(/*static_cast<void*>*//*const_cast<void*>*//*(void *)(data)*/const_cast<uint8_t*>(data), reinterpret_cast<int32*>(&len)))
+		{
+			WARNING_EX_LOG("rtp unprotect rtp failed !!!-------->>>>>>>");
+		}
+		else
+		{
+			WARNING_EX_LOG("rtp unprotect rtp OK !!!-------->>>>>>>");
+		}
 	}
 
 	void crtc_transport::_on_rtcp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
 	{
+		if (!m_srtp.unprotect_rtcp(/*static_cast<void*>*//*(void *)(data)*/const_cast<uint8_t*>(data), reinterpret_cast<int32*>(&len)))
+		{
+			WARNING_EX_LOG("rtcp unprotect rtcp failed !!!-------->>>>>>>");
+		}
+		else
+		{
+			WARNING_EX_LOG("rtcp unprotect rtcp OK !!!-------->>>>>>>");
+		}
 	}
 
 	//bool crtc_transport::_negotiate_publish_capability(crtc_source_description * stream_desc)

@@ -33,7 +33,7 @@ namespace chen {
 
 		policy.ssrc.value = 0;
 		// TODO: adjust window_size
-		policy.window_size = 8192;
+		policy.window_size = 8192; // 8192; // 1024
 		policy.allow_repeat_tx = 1;
 		policy.next = NULL;
 
@@ -63,7 +63,7 @@ namespace chen {
 			return  false;
 		}
 
-		return err;
+		return true;
 	}
 	void csrtp::destroy()
 	{
@@ -129,7 +129,7 @@ namespace chen {
 
 		return err;
 	}
-	int32 csrtp::unprotect_rtp(void * packet, int32 * nb_plaintext)
+	bool csrtp::unprotect_rtp(void * packet, int32 * nb_plaintext)
 	{
 		int32 err = 0;
 
@@ -137,36 +137,39 @@ namespace chen {
 		if (!m_recv_ctx_ptr) 
 		{
 			WARNING_EX_LOG("recv ctx ptr not ready");
-			return ESrtpUnProject;
-			 
+			//return ESrtpUnProject;
+			return false;
 		}
 
 		srtp_err_status_t r0 = srtp_err_status_ok;
 		if ((r0 = srtp_unprotect(m_recv_ctx_ptr, packet, nb_plaintext)) != srtp_err_status_ok)
 		{
-			WARNING_EX_LOG("rtp unprotect r0=%u", r0);
-			return ESrtpUnProject; 
+			WARNING_EX_LOG("rtp unprotect r0=%u, [len = %u]", r0, *nb_plaintext);
+			//return ESrtpUnProject; 
+			return false;
 		}
-
+		return true;
 		return err;
 	}
-	int32 csrtp::unprotect_rtcp(void * packet, int32 * nb_plaintext)
+	bool csrtp::unprotect_rtcp(void * packet, int32 * nb_plaintext)
 	{
 		int32  err = 0;
 		// If DTLS/SRTP is not ready, fail.
 		if (!m_recv_ctx_ptr) 
 		{
 			WARNING_EX_LOG("recv ctx ptr not ready");
-			return ESrtpUnProject;
+			//return ESrtpUnProject;
+			return false;
 		}
 
 		srtp_err_status_t r0 = srtp_err_status_ok;
 		if ((r0 = srtp_unprotect_rtcp(m_recv_ctx_ptr, packet, nb_plaintext)) != srtp_err_status_ok) 
 		{
 			WARNING_EX_LOG("rtp unprotect r0=%u", r0);
-			return ESrtpUnProject;
+			//return ESrtpUnProject;
+			return false;
 		}
-
-		return err;
+		return true;
+		//return err;
 	}
 }

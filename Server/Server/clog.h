@@ -143,8 +143,19 @@ namespace chen {
 #define ERROR_EX_LOG(format, ...)	ERROR_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
 
 
+#define cassert(expression )  \
+		if (!(!!(expression))) \
+		{ \
+			ERROR_EX_LOG("assert : %s   " , #expression  ); \
+			assert(expression); \
+		}
 
-#define cassert(expression)  if (!(!!(expression))) {ERROR_EX_LOG(" %s  " , #expression );  assert(expression);}
+#define cassert_desc(expression, desc, ...)  \
+		if (!(!!(expression))) \
+		{ \
+			ERROR_EX_LOG(" %s  , failed assert '%s'" , #expression, desc, ##__VA_ARGS__ ); \
+			assert(expression); \
+		}
 
 
 } // namespace chen

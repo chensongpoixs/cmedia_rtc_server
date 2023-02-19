@@ -18,6 +18,13 @@ purpose:		_C_DTLS_ _H_
 #include <openssl/bio.h>
 #include "crtc_transport.h"
 namespace chen {
+	static const std::vector< SrtpCryptoSuiteMapEntry> g_srtpCryptoSuites =
+	{
+		{ ECRYPTO_AEAD_AES_256_GCM, "SRTP_AEAD_AES_256_GCM" },
+	{ ECRYPTO_AEAD_AES_128_GCM, "SRTP_AEAD_AES_128_GCM" },
+	{ ECRYPTO_AES_CM_128_HMAC_SHA1_80, "SRTP_AES128_CM_SHA1_80" },
+	{ ECRYPTO_AES_CM_128_HMAC_SHA1_32, "SRTP_AES128_CM_SHA1_32" }
+	};
 	static const int32  g_ssl_read_buffer_size = 65536;
 	static uint8        g_ssl_read_buffer[g_ssl_read_buffer_size] = {0};
 	inline static void on_ssl_info(const SSL* ssl, int32 where, int32 ret)
@@ -482,7 +489,25 @@ namespace chen {
 			WARNING_EX_LOG("check remote fingerprintf failed !!!");
 			return false;
 		}
-		return true;
+		// Get the negotiated SRTP crypto suite.
+		ECRYPTO_SUITE srtpCryptoSuite = _get_netotiated_srtp_crypto_suite();
+		if (srtpCryptoSuite != ECRYPTO_NONE)
+		{
+			// Extract the SRTP keys (will notify the listener with them).
+			_extract_srtp_keys(srtpCryptoSuite);
+			return true;
+		}
+
+		// NOTE: We assume that "use_srtp" DTLS extension is required even if
+		// there is no audio/video.
+		WARNING_EX_LOG("dtls, srtp,  SRTP crypto suite not negotiated");
+
+		//Reset();
+
+		// Set state and notify the listener.
+		//this->state = DtlsState::FAILED;
+		//this->listener->OnDtlsTransportFailed(this);
+		return false;
 	}
 
 	void crtc_dtls::on_ssl_info(int32 where, int32 ret)
@@ -559,6 +584,7 @@ namespace chen {
 
 			//this->handshakeDoneNow = true;
 			m_handshake_done_for_us = true;
+			process_handshake();
 		}
 
 		// NOTE: checking SSL_get_shutdown(this->ssl) & SSL_RECEIVED_SHUTDOWN here upon
@@ -783,6 +809,160 @@ namespace chen {
 		BIO_free(bio);
 
 		return true;
+	}
+
+	inline ECRYPTO_SUITE crtc_dtls::_get_netotiated_srtp_crypto_suite()
+	{
+
+		ECRYPTO_SUITE negotiatedSrtpCryptoSuite = ECRYPTO_NONE;
+		// Ensure that the SRTP crypto suite has been negotiated.
+		// NOTE: This is a OpenSSL type.
+		SRTP_PROTECTION_PROFILE* sslSrtpCryptoSuite = SSL_get_selected_srtp_profile(m_ssl_ptr);
+
+
+		if (!sslSrtpCryptoSuite)
+		{
+			return negotiatedSrtpCryptoSuite;
+		}
+
+
+		// Get the negotiated SRTP crypto suite.
+		for (const  SrtpCryptoSuiteMapEntry& srtpCryptoSuite : g_srtpCryptoSuites)
+		{
+			//SrtpCryptoSuiteMapEntry* cryptoSuiteEntry = std::addressof(srtpCryptoSuite);
+
+			if (std::strcmp(sslSrtpCryptoSuite->name, srtpCryptoSuite.name) == 0)
+			{
+				DEBUG_EX_LOG( "chosen SRTP crypto suite: %s", srtpCryptoSuite.name);
+
+				negotiatedSrtpCryptoSuite = srtpCryptoSuite.cryptoSuite;
+			}
+		}
+		cassert_desc(negotiatedSrtpCryptoSuite != ECRYPTO_NONE,
+			"chosen SRTP crypto suite is not an available one");
+		return negotiatedSrtpCryptoSuite;
+	}
+
+	void crtc_dtls::_extract_srtp_keys(ECRYPTO_SUITE srtpCryptoSuite)
+	{
+		size_t srtpKeyLength{ 0 };
+		size_t srtpSaltLength{ 0 };
+		size_t srtpMasterLength{ 0 };
+
+		switch (srtpCryptoSuite)
+		{//ECRYPTO_AES_CM_128_HMAC_SHA1_80
+			case ECRYPTO_AES_CM_128_HMAC_SHA1_80:
+			case ECRYPTO_AES_CM_128_HMAC_SHA1_32:
+			{
+				srtpKeyLength = SrtpMasterKeyLength;
+				srtpSaltLength = SrtpMasterSaltLength;
+				srtpMasterLength = SrtpMasterLength;
+
+				break;
+			}
+
+			case  ECRYPTO_AEAD_AES_256_GCM:
+			{
+				srtpKeyLength = SrtpAesGcm256MasterKeyLength;
+				srtpSaltLength = SrtpAesGcm256MasterSaltLength;
+				srtpMasterLength = SrtpAesGcm256MasterLength;
+
+				break;
+			}
+
+			case ECRYPTO_AEAD_AES_128_GCM:
+			{
+				srtpKeyLength = SrtpAesGcm128MasterKeyLength;
+				srtpSaltLength = SrtpAesGcm128MasterSaltLength;
+				srtpMasterLength = SrtpAesGcm128MasterLength;
+
+				break;
+			}
+
+			default:
+			{
+				ERROR_EX_LOG("unknown SRTP crypto suite");
+			}
+		}
+
+		auto* srtpMaterial = new uint8_t[srtpMasterLength * 2];
+		uint8_t* srtpLocalKey{ nullptr };
+		uint8_t* srtpLocalSalt{ nullptr };
+		uint8_t* srtpRemoteKey{ nullptr };
+		uint8_t* srtpRemoteSalt{ nullptr };
+		auto* srtpLocalMasterKey = new uint8_t[srtpMasterLength];
+		auto* srtpRemoteMasterKey = new uint8_t[srtpMasterLength];
+		int ret;
+
+		ret = SSL_export_keying_material(
+			m_ssl_ptr, srtpMaterial, srtpMasterLength * 2, "EXTRACTOR-dtls_srtp", 19, nullptr, 0, 0);
+
+		cassert_desc(ret != 0, "SSL_export_keying_material() failed");
+		if (m_role == "server")
+		{
+			srtpRemoteKey = srtpMaterial;
+			srtpLocalKey = srtpRemoteKey + srtpKeyLength;
+			srtpRemoteSalt = srtpLocalKey + srtpKeyLength;
+			srtpLocalSalt = srtpRemoteSalt + srtpSaltLength;
+		}
+		else if (m_role == "client")
+		{
+			srtpLocalKey = srtpMaterial;
+			srtpRemoteKey = srtpLocalKey + srtpKeyLength;
+			srtpLocalSalt = srtpRemoteKey + srtpKeyLength;
+			srtpRemoteSalt = srtpLocalSalt + srtpSaltLength;
+		}
+		else
+		{
+			ERROR_EX_LOG("no DTLS role set");
+		}
+		//switch (m_role)
+		//{
+		//	case /*Role::SERVER*/"server":
+		//	{
+		//		srtpRemoteKey = srtpMaterial;
+		//		srtpLocalKey = srtpRemoteKey + srtpKeyLength;
+		//		srtpRemoteSalt = srtpLocalKey + srtpKeyLength;
+		//		srtpLocalSalt = srtpRemoteSalt + srtpSaltLength;
+
+		//		break;
+		//	}
+
+		//	case Role::CLIENT:
+		//	{
+		//		srtpLocalKey = srtpMaterial;
+		//		srtpRemoteKey = srtpLocalKey + srtpKeyLength;
+		//		srtpLocalSalt = srtpRemoteKey + srtpKeyLength;
+		//		srtpRemoteSalt = srtpLocalSalt + srtpSaltLength;
+
+		//		break;
+		//	}
+
+		//	default:
+		//	{
+		//		MS_ABORT("no DTLS role set");
+		//	}
+		//}
+
+		// Create the SRTP local master key.
+		std::memcpy(srtpLocalMasterKey, srtpLocalKey, srtpKeyLength);
+		std::memcpy(srtpLocalMasterKey + srtpKeyLength, srtpLocalSalt, srtpSaltLength);
+		// Create the SRTP remote master key.
+		std::memcpy(srtpRemoteMasterKey, srtpRemoteKey, srtpKeyLength);
+		std::memcpy(srtpRemoteMasterKey + srtpKeyLength, srtpRemoteSalt, srtpSaltLength);
+		NORMAL_EX_LOG("");
+		// Set state and notify the listener.
+		//this->state = DtlsState::CONNECTED;
+		m_callback_ptr->on_dtls_transport_connected( 
+			srtpCryptoSuite,
+			srtpLocalMasterKey,
+			srtpMasterLength,
+			srtpRemoteMasterKey,
+			srtpMasterLength);
+
+		delete[] srtpMaterial;
+		delete[] srtpLocalMasterKey;
+		delete[] srtpRemoteMasterKey;
 	}
 
 }

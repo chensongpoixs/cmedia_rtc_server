@@ -28,6 +28,7 @@ namespace chen {
 		virtual int32 write_dtls_data(void* data, int32 size) = 0;
 		virtual int32 on_dtls_handshake_done() = 0;
 		virtual void  on_dtls_application_data(const uint8* data, int32 size) = 0;
+		virtual void  on_dtls_transport_connected(ECRYPTO_SUITE srtp_crypto_suite, uint8* srtp_local_key, size_t srtp_local_key_len, uint8* srtp_remote_key, size_t srtp_remote_key_len) = 0;
 	};
 
 	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster
@@ -40,7 +41,9 @@ namespace chen {
 		, m_udp_sockets()
 		, m_current_socket_ptr(NULL)
 		, m_dtls_ptr(NULL)
-			 
+		//, m_srtp_send_session_ptr(NULL)
+		//, m_srtp_recv_session_ptr(NULL)
+			, m_srtp()
 		 {}
 
 		virtual ~crtc_transport();
@@ -57,6 +60,7 @@ namespace chen {
 		virtual int32 write_dtls_data(void* data, int size);
 		virtual int32 on_dtls_handshake_done();
 		virtual void  on_dtls_application_data(const uint8* data, int32 size);
+		virtual void  on_dtls_transport_connected(ECRYPTO_SUITE srtp_crypto_suite, uint8* srtp_local_key, size_t srtp_local_key_len, uint8* srtp_remote_key, size_t srtp_remote_key_len);
 	public:
 		void set_state_as_waiting_stun() { m_rtc_net_state = ERtcNetworkStateWaitingStun; };
 	protected:
@@ -104,7 +108,9 @@ namespace chen {
 		//crtc_stun_packet				m_rtc_stun_packet;
 		//cdtls_session *					m_dtls_ptr;
 		crtc_dtls	*					m_dtls_ptr;
-
+		csrtp							m_srtp;
+		//csrtp_session *					m_srtp_send_session_ptr;
+		//csrtp_session*					m_srtp_recv_session_ptr;
 		// 1000000LL * 30
 	};
 

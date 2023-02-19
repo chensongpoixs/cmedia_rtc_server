@@ -22,6 +22,7 @@ purpose:		cmedia_server
 #include "cglobal_rtc.h"
 #include "cdtls_certificate.h"
 #include "cglobal_config.h"
+#include "csrtp_session.h"
 
 
 namespace chen {
@@ -93,6 +94,13 @@ namespace chen {
 		{
 			return false;
 		}
+		SYSTEM_LOG("srtp init ...");
+
+		if (!csrtp_session::init())
+		{
+			return false;
+		}
+		SYSTEM_LOG("srtp init OK !!!");
 
 		SYSTEM_LOG("dtls certificate init ");
 
@@ -178,6 +186,9 @@ namespace chen {
 
 		g_msg_dispatch.destroy();
 		SYSTEM_LOG("msg dispath destroy OK !!!");
+
+		csrtp_session::destroy();
+		SYSTEM_LOG("srtp destroy OK !!!");
 
 		g_global_rtc.destory();
 		SYSTEM_LOG("global rtc destory OK !!!");

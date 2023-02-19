@@ -32,6 +32,9 @@ purpose:		_C_DTLS_ _H_
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
 #include "cdtls_define.h"
+#include "csrtp.h"
+#include "csrtp_session.h"
+#include "csrtp_define.h"
 namespace chen {
 	class crtc_transportlinster;
 	 class crtc_dtls 
@@ -87,6 +90,8 @@ namespace chen {
 	 private:
 		 inline bool _check_status(int32 return_code);
 		 inline bool _check_remote_fingerprintf();
+		 inline ECRYPTO_SUITE _get_netotiated_srtp_crypto_suite();
+		 void _extract_srtp_keys(ECRYPTO_SUITE srtpCryptoSuite);
 	 protected:
 	 private:
 		 crtc_transportlinster	*			m_callback_ptr;
