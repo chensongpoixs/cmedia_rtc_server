@@ -284,6 +284,14 @@ namespace chen {
 		else
 		{
 			NORMAL_EX_LOG("rtp unprotect rtp OK !!!-------->>>>>>>");
+			RTC::RtpPacket* packet = RTC::RtpPacket::Parse(data, len);
+
+			if (!packet)
+			{
+				WARNING_EX_LOG("rtp, received data is not a valid RTP packet");
+
+				return;
+			}
 		}
 	}
 
@@ -297,13 +305,407 @@ namespace chen {
 		//{
 		//	WARNING_EX_LOG("rtcp unprotect rtcp OK !!!-------->>>>>>>");
 		//}
-		if (!m_srtp_recv_session_ptr->DecryptSrtp((uint8_t *)data, &len))
+		if (!m_srtp_recv_session_ptr->DecryptSrtcp((uint8_t *)data, &len))
 		{
 			WARNING_EX_LOG("rtcp unprotect rtp failed !!!-------->>>>>>>");
 		}
 		else
+
 		{
 			NORMAL_EX_LOG("rtcp unprotect rtp OK !!!-------->>>>>>>");
+			RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
+
+			if (!packet)
+			{
+				WARNING_EX_LOG("rtcp received data is not a valid RTCP compound or single packet"); 
+				return;
+			}
+			// Pass the packet to the parent transport.
+			// Handle each RTCP packet.
+			while (packet)
+			{
+				//HandleRtcpPacket(packet);
+				_handler_rtcp_packet(packet);
+				auto* previousPacket = packet;
+
+				packet = packet->GetNext();
+
+				delete previousPacket;
+			}
+		}
+	}
+
+	void crtc_transport::_handler_rtcp_packet(RTC::RTCP::Packet * packet)
+	{
+		switch (packet->GetType())
+		{
+			case RTC::RTCP::Type::RR:
+			{
+				DEBUG_EX_LOG("RTC::RTCP::Type::RR");
+				RTC::RTCP::ReceiverReportPacket* rr = static_cast<RTC::RTCP::ReceiverReportPacket*>(packet);
+				rr->Dump();
+				for (auto it = rr->Begin(); it != rr->End(); ++it)
+				{
+					auto& report = *it;
+					//auto* consumer = GetConsumerByMediaSsrc(report->GetSsrc());
+
+					//if (!consumer)
+					//{
+					//	// Special case for the RTP probator.
+					//	if (report->GetSsrc() == RTC::RtpProbationSsrc)
+					//	{
+					//		continue;
+					//	}
+
+					//	MS_DEBUG_TAG(
+					//		rtcp,
+					//		"no Consumer found for received Receiver Report [ssrc:%" PRIu32 "]",
+					//		report->GetSsrc());
+
+					//	continue;
+					//}
+
+					//consumer->ReceiveRtcpReceiverReport(report);
+				}
+
+				//if (this->tccClient && !this->mapConsumers.empty())
+				//{
+				//	float rtt = 0;
+
+				//	// Retrieve the RTT from the first active consumer.
+				//	for (auto& kv : this->mapConsumers)
+				//	{
+				//		auto* consumer = kv.second;
+
+				//		if (consumer->IsActive())
+				//		{
+				//			rtt = consumer->GetRtt();
+
+				//			break;
+				//		}
+				//	}
+
+				//	this->tccClient->ReceiveRtcpReceiverReport(rr, rtt, DepLibUV::GetTimeMsInt64());
+				//}
+
+				break;
+			}
+
+			case RTC::RTCP::Type::PSFB:
+			{
+				DEBUG_EX_LOG("RTC::RTCP::Type::PSFB");
+				auto* feedback = static_cast<RTC::RTCP::FeedbackPsPacket*>(packet);
+
+				switch (feedback->GetMessageType())
+				{
+				case RTC::RTCP::FeedbackPs::MessageType::PLI:
+				{
+					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::PLI");
+					/*auto* consumer = GetConsumerByMediaSsrc(feedback->GetMediaSsrc());
+
+					if (feedback->GetMediaSsrc() == RTC::RtpProbationSsrc)
+					{
+						break;
+					}
+					else if (!consumer)
+					{
+						MS_DEBUG_TAG(
+							rtcp,
+							"no Consumer found for received PLI Feedback packet "
+							"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+							feedback->GetSenderSsrc(),
+							feedback->GetMediaSsrc());
+
+						break;
+					}
+*/
+					NORMAL_EX_LOG(
+						"rtcp PLI received, requesting key frame for Consumer "
+						"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+						feedback->GetSenderSsrc(),
+						feedback->GetMediaSsrc());
+
+					//consumer->ReceiveKeyFrameRequest(
+					//	RTC::RTCP::FeedbackPs::MessageType::PLI, feedback->GetMediaSsrc());
+
+					break;
+				}
+
+				case RTC::RTCP::FeedbackPs::MessageType::FIR:
+				{
+					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::FIR");
+					// Must iterate FIR items.
+					auto* fir = static_cast<RTC::RTCP::FeedbackPsFirPacket*>(packet);
+
+					for (auto it = fir->Begin(); it != fir->End(); ++it)
+					{
+						/*auto& item = *it;
+						auto* consumer = GetConsumerByMediaSsrc(item->GetSsrc());
+
+						if (item->GetSsrc() == RTC::RtpProbationSsrc)
+						{
+							continue;
+						}
+						else if (!consumer)
+						{
+							MS_DEBUG_TAG(
+								rtcp,
+								"no Consumer found for received FIR Feedback packet "
+								"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 ", item ssrc:%" PRIu32 "]",
+								feedback->GetSenderSsrc(),
+								feedback->GetMediaSsrc(),
+								item->GetSsrc());
+
+							continue;
+						}*/
+
+						NORMAL_EX_LOG(" rtcp, FIR received, requesting key frame for Consumer "
+							"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 ", item ssrc: "   "]",
+							feedback->GetSenderSsrc(),
+							feedback->GetMediaSsrc());// ,
+							/*item->GetSsrc())*/;
+
+						//consumer->ReceiveKeyFrameRequest(feedback->GetMessageType(), item->GetSsrc());
+					}
+
+					break;
+				}
+
+				case RTC::RTCP::FeedbackPs::MessageType::AFB:
+				{
+					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::AFB");
+					//auto* afb = static_cast<RTC::RTCP::FeedbackPsAfbPacket*>(feedback);
+
+					//// Store REMB info.
+					//if (afb->GetApplication() == RTC::RTCP::FeedbackPsAfbPacket::Application::REMB)
+					//{
+					//	auto* remb = static_cast<RTC::RTCP::FeedbackPsRembPacket*>(afb);
+
+					//	// Pass it to the TCC client.
+					//	// clang-format off
+					//	if (
+					//		this->tccClient &&
+					//		this->tccClient->GetBweType() == RTC::BweType::REMB
+					//		)
+					//		// clang-format on
+					//	{
+					//		this->tccClient->ReceiveEstimatedBitrate(remb->GetBitrate());
+					//	}
+
+					//	break;
+					//}
+					//else
+					//{
+					//	MS_DEBUG_TAG(
+					//		rtcp,
+					//		"ignoring unsupported %s Feedback PS AFB packet "
+					//		"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+					//		RTC::RTCP::FeedbackPsPacket::MessageType2String(feedback->GetMessageType()).c_str(),
+					//		feedback->GetSenderSsrc(),
+					//		feedback->GetMediaSsrc());
+
+					//	break;
+					//}
+				}
+
+				default:
+				{
+					NORMAL_EX_LOG("rtcp, ignoring unsupported %s Feedback packet "
+						"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+						RTC::RTCP::FeedbackPsPacket::MessageType2String(feedback->GetMessageType()).c_str(),
+						feedback->GetSenderSsrc(),
+						feedback->GetMediaSsrc());
+				}
+				}
+
+				break;
+			}
+
+			case RTC::RTCP::Type::RTPFB:
+			{
+				DEBUG_EX_LOG("RTC::RTCP::Type::RTPFB");
+				auto* feedback = static_cast<RTC::RTCP::FeedbackRtpPacket*>(packet);
+				//auto* consumer = GetConsumerByMediaSsrc(feedback->GetMediaSsrc());
+
+				//// If no Consumer is found and this is not a Transport Feedback for the
+				//// probation SSRC or any Consumer RTX SSRC, ignore it.
+				////
+				//// clang-format off
+				//if (
+				//	!consumer &&
+				//	feedback->GetMessageType() != RTC::RTCP::FeedbackRtp::MessageType::TCC &&
+				//	(
+				//		feedback->GetMediaSsrc() != RTC::RtpProbationSsrc ||
+				//		!GetConsumerByRtxSsrc(feedback->GetMediaSsrc())
+				//		)
+				//	)
+				//	// clang-format on
+				//{
+				//	MS_DEBUG_TAG(
+				//		rtcp,
+				//		"no Consumer found for received Feedback packet "
+				//		"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+				//		feedback->GetSenderSsrc(),
+				//		feedback->GetMediaSsrc());
+
+				//	break;
+				//}
+
+				switch (feedback->GetMessageType())
+				{
+					case RTC::RTCP::FeedbackRtp::MessageType::NACK:
+					{
+						DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::NACK");
+						/*if (!consumer)
+						{
+							MS_DEBUG_TAG(
+								rtcp,
+								"no Consumer found for received NACK Feedback packet "
+								"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+								feedback->GetSenderSsrc(),
+								feedback->GetMediaSsrc());
+
+							break;
+						}
+
+						auto* nackPacket = static_cast<RTC::RTCP::FeedbackRtpNackPacket*>(packet);
+
+						consumer->ReceiveNack(nackPacket);*/
+
+						break;
+					}
+
+					case RTC::RTCP::FeedbackRtp::MessageType::TCC:
+					{
+						DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::TCC");
+		//				auto* feedback = static_cast<RTC::RTCP::FeedbackRtpTransportPacket*>(packet);
+
+		//				if (this->tccClient)
+		//					this->tccClient->ReceiveRtcpTransportFeedback(feedback);
+
+		//#ifdef ENABLE_RTC_SENDER_BANDWIDTH_ESTIMATOR
+		//				// Pass it to the SenderBandwidthEstimator client.
+		//				if (this->senderBwe)
+		//					this->senderBwe->ReceiveRtcpTransportFeedback(feedback);
+		//#endif
+
+						break;
+					}
+
+					default:
+					{
+						NORMAL_EX_LOG(" rtcp, ignoring unsupported %s Feedback packet "
+							"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+							RTC::RTCP::FeedbackRtpPacket::MessageType2String(feedback->GetMessageType()).c_str(),
+							feedback->GetSenderSsrc(),
+							feedback->GetMediaSsrc());
+					}
+				}
+
+				break;
+			}
+
+			case RTC::RTCP::Type::SR:
+			{
+				RTC::RTCP::SenderReportPacket* sr = static_cast<RTC::RTCP::SenderReportPacket*>(packet);
+				DEBUG_EX_LOG("RTC::RTCP::Type::SR");
+				sr->Dump();
+				// Even if Sender Report packet can only contains one report.
+				/*for (auto it = sr->Begin(); it != sr->End(); ++it)
+				{
+					auto& report = *it;
+					auto* producer = this->rtpListener.GetProducer(report->GetSsrc());
+
+					if (!producer)
+					{
+						MS_DEBUG_TAG(
+							rtcp,
+							"no Producer found for received Sender Report [ssrc:%" PRIu32 "]",
+							report->GetSsrc());
+
+						continue;
+					}
+
+					producer->ReceiveRtcpSenderReport(report);
+				}*/
+
+				break;
+			}
+
+			case RTC::RTCP::Type::SDES:
+			{
+				DEBUG_EX_LOG("RTC::RTCP::Type::SDES");
+				// According to RFC 3550 section 6.1 "a CNAME item MUST be included in
+				// in each compound RTCP packet". So this is true even for compound
+				// packets sent by endpoints that are not sending any RTP stream to us
+				// (thus chunks in such a SDES will have an SSCR does not match with
+				// any Producer created in this Transport).
+				// Therefore, and given that we do nothing with SDES, just ignore them.
+
+				break;
+			}
+
+			case RTC::RTCP::Type::BYE:
+			{
+				DEBUG_EX_LOG("RTC::RTCP::Type::BYE");
+				NORMAL_EX_LOG("rtcp, ignoring received RTCP BYE");
+
+				break;
+			}
+
+			case RTC::RTCP::Type::XR:
+			{
+				DEBUG_EX_LOG("RTC::RTCP::Type::XR");
+				auto* xr = static_cast<RTC::RTCP::ExtendedReportPacket*>(packet);
+
+				for (auto it = xr->Begin(); it != xr->End(); ++it)
+				{
+					auto& report = *it;
+
+					switch (report->GetType())
+					{
+					case RTC::RTCP::ExtendedReportBlock::Type::DLRR:
+					{
+						auto* dlrr = static_cast<RTC::RTCP::DelaySinceLastRr*>(report);
+
+						for (auto it2 = dlrr->Begin(); it2 != dlrr->End(); ++it2)
+						{
+							auto& ssrcInfo = *it2;
+
+							// SSRC should be filled in the sub-block.
+							if (ssrcInfo->GetSsrc() == 0)
+								ssrcInfo->SetSsrc(xr->GetSsrc());
+
+							/*auto* producer = this->rtpListener.GetProducer(ssrcInfo->GetSsrc());
+
+							if (!producer)
+							{
+								MS_DEBUG_TAG(
+									rtcp,
+									"no Producer found for received Sender Extended Report [ssrc:%" PRIu32 "]",
+									ssrcInfo->GetSsrc());
+
+								continue;
+							}*/
+
+							//producer->ReceiveRtcpXrDelaySinceLastRr(ssrcInfo);
+						}
+
+						break;
+					}
+
+					default:;
+					}
+				}
+
+				break;
+			}
+
+			default:
+			{
+				NORMAL_EX_LOG("rtcp, unhandled RTCP type received [type:%"  "]",
+					static_cast<uint8_t>(packet->GetType()));
+			}
 		}
 	}
 

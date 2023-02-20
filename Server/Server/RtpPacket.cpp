@@ -794,7 +794,9 @@ namespace RTC
 		if (this->payloadDescriptorHandler->Process(context, this->payload, marker))
 		{
 			if (marker)
+			{
 				SetMarker(true);
+			}
 
 			return true;
 		}

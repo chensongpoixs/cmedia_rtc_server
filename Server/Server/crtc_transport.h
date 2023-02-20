@@ -90,7 +90,8 @@ namespace chen {
 		bool _generate_publish_local_sdp_for_audio(crtc_sdp& local_sdp, crtc_source_description* stream_desc);
 		bool _generate_publish_local_sdp_for_video(crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan);
 */
-		
+	private:
+		void _handler_rtcp_packet(RTC::RTCP::Packet* packet);
 	private:
 		crtc_sdp			 			m_local_sdp ;
 		crtc_sdp			 			m_remote_sdp ;
