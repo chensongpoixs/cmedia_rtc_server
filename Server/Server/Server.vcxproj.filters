@@ -184,6 +184,9 @@
     <Filter Include="global_config">
       <UniqueIdentifier>{1cc8ffb4-ab17-45f2-9725-4a7ac1425dc1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rtp_rtcp">
+      <UniqueIdentifier>{5346d05d-a2b4-45f6-a68d-e9488beef75d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -705,6 +708,12 @@
     </ClCompile>
     <ClCompile Include="cglobal_config.cpp">
       <Filter>global_config</Filter>
+    </ClCompile>
+    <ClCompile Include="cencoder.cpp">
+      <Filter>codec</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_rtcp.cpp">
+      <Filter>rtp_rtcp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1316,6 +1325,15 @@
     </ClInclude>
     <ClInclude Include="cglobal_config.h">
       <Filter>global_config</Filter>
+    </ClInclude>
+    <ClInclude Include="cencoder.h">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_rtcp.h">
+      <Filter>rtp_rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_rtcp_define.h">
+      <Filter>rtp_rtcp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

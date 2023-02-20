@@ -166,6 +166,7 @@
     <ClCompile Include="cdtls_certificate.cpp" />
     <ClCompile Include="cdtls_session.cpp" />
     <ClCompile Include="cdtls_test.cpp" />
+    <ClCompile Include="cencoder.cpp" />
     <ClCompile Include="cglobal_config.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
@@ -201,6 +202,7 @@
     <ClCompile Include="crtc_track_description.cpp" />
     <ClCompile Include="crtc_transport.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
+    <ClCompile Include="crtp_rtcp.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
     <ClCompile Include="csdp_util.cpp" />
     <ClCompile Include="csocket_util.cpp" />
@@ -346,6 +348,7 @@
     <ClInclude Include="cdtls_define.h" />
     <ClInclude Include="cdtls_session.h" />
     <ClInclude Include="cdtls_test.h" />
+    <ClInclude Include="cencoder.h" />
     <ClInclude Include="cglobal_config.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
@@ -388,6 +391,8 @@
     <ClInclude Include="crtc_transport.h" />
     <ClInclude Include="crtc_transport_define.h" />
     <ClInclude Include="crtc_user_config.h" />
+    <ClInclude Include="crtp_rtcp.h" />
+    <ClInclude Include="crtp_rtcp_define.h" />
     <ClInclude Include="crtx_paylod_des.h" />
     <ClInclude Include="csdp_util.h" />
     <ClInclude Include="cshare_proto_error.h" />

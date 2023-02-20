@@ -22,6 +22,8 @@ purpose:		crtc_transport
 #include  "ctransport_mgr.h"
 #include "crtc_stun_packet.h"
 #include "cdtls_session.h"
+#include "crtp_rtcp.h"
+#include "cstr2digit.h"
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -313,25 +315,37 @@ namespace chen {
 
 		{
 			NORMAL_EX_LOG("rtcp unprotect rtp OK !!!-------->>>>>>>");
-			RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
 
-			if (!packet)
+
+			cbuffer buffer((char *)data, len);
+
+			crtcp_compound rtcp_compound;
+			if (!rtcp_compound.decode(&buffer))
 			{
-				WARNING_EX_LOG("rtcp received data is not a valid RTCP compound or single packet"); 
+				WARNING_EX_LOG("decode rtcp plaintext=%u, bytes=[%s], at=%s", len,
+					str2hex((  char *)data, len, 8).c_str(),
+					str2hex((  char *)buffer.head(), buffer.left(), 8).c_str());
 				return;
 			}
-			// Pass the packet to the parent transport.
-			// Handle each RTCP packet.
-			while (packet)
-			{
-				//HandleRtcpPacket(packet);
-				_handler_rtcp_packet(packet);
-				auto* previousPacket = packet;
+			//RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
 
-				packet = packet->GetNext();
+			//if (!packet)
+			//{
+			//	WARNING_EX_LOG("rtcp received data is not a valid RTCP compound or single packet"); 
+			//	return;
+			//}
+			//// Pass the packet to the parent transport.
+			//// Handle each RTCP packet.
+			//while (packet)
+			//{
+			//	//HandleRtcpPacket(packet);
+			//	_handler_rtcp_packet(packet);
+			//	auto* previousPacket = packet;
 
-				delete previousPacket;
-			}
+			//	packet = packet->GetNext();
+
+			//	delete previousPacket;
+			//}
 		}
 	}
 
