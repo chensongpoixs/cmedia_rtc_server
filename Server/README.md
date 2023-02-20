@@ -197,3 +197,22 @@ Protection Length:此级别所保护的数据的长度
 
 mask: 保护掩码，长度为2给字节或者6个字节（由fec header的L标志位决定）
 
+
+
+
+## openssl win上静态库编译报错问题
+
+
+```
+libcrypto.lib(e_capi.obj) : error LNK2019: 无法解析的外部符号 __imp_CertOpenStore，该符号在函数 capi_open_store 中被引用
+2>libcrypto.lib(e_capi.obj) : error LNK2019: 无法解析的外部符号 __imp_CertCloseStore，该符号在函数 capi_find_key 中被引用
+2>libcrypto.lib(e_capi.obj) : error LNK2019: 无法解析的外部符号 __imp_CertEnumCertificatesInStore，该符号在函数 capi_find_cert 中被引用
+2>libcrypto.lib(e_capi.obj) : error LNK2019: 无法解析的外部符号 __imp_CertFindCertificateInStore，该符号在函数 capi_find_cert 中被引用
+2>libcrypto.lib(e_capi.obj) : error LNK2019: 无法解析的外部符号 __imp_CertDuplicateCertificateContext，该符号在函数 capi_load_ssl_client_cert 中被引用
+2>libcrypto.lib(e_capi.obj) : error LNK2019: 无法解析的外部符号 __imp_CertFreeCertificateContext，该符号在函数 capi_find_key 中被引用
+2>libcrypto.lib(e_capi.obj) : error LNK2019: 无法解析的外部符号 __imp_CertGetCertificateContextProperty，该符号在函数 capi_cert_get_fname 中被引用 
+
+ 
+```
+
+解决方法： 添加依赖 Crypt32.lib、User32.lib、Advapi32.lib

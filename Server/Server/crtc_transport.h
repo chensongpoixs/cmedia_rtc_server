@@ -41,9 +41,9 @@ namespace chen {
 		, m_udp_sockets()
 		, m_current_socket_ptr(NULL)
 		, m_dtls_ptr(NULL)
-		//, m_srtp_send_session_ptr(NULL)
-		//, m_srtp_recv_session_ptr(NULL)
-			, m_srtp()
+		, m_srtp_send_session_ptr(NULL)
+		, m_srtp_recv_session_ptr(NULL)
+			//, m_srtp()
 		 {}
 
 		virtual ~crtc_transport();
@@ -108,9 +108,9 @@ namespace chen {
 		//crtc_stun_packet				m_rtc_stun_packet;
 		//cdtls_session *					m_dtls_ptr;
 		crtc_dtls	*					m_dtls_ptr;
-		csrtp							m_srtp;
-		//csrtp_session *					m_srtp_send_session_ptr;
-		//csrtp_session*					m_srtp_recv_session_ptr;
+		//csrtp							m_srtp;
+		csrtp_session *					m_srtp_send_session_ptr;
+		csrtp_session*					m_srtp_recv_session_ptr;
 		// 1000000LL * 30
 	};
 
