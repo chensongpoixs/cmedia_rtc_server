@@ -173,6 +173,9 @@ namespace chen {
 		C2S_rtc_publisher,
 		S2C_rtc_publisher,
 
+		C2S_rtc_player,
+		S2C_rtc_player,
+	
 		Msg_Client_Max = 125000,
 
 		

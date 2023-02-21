@@ -182,7 +182,7 @@ namespace chen {
 	}
 	void cbuffer::read_bytes(char * data, int32 size)
 	{
-		cassert(require(size));
+		cassert_desc(require(size), "require(size) size = %u", size);
 
 		memcpy(data, m_position_ptr, size);
 

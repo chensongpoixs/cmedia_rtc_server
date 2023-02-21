@@ -20,7 +20,7 @@ purpose:	网络数据的收发
 #include "cglobal_rtc.h"
 #include "capi_rtc_publish.h"
 
-
+#include "capi_rtc_player.h"
 
 namespace chen {
 
@@ -272,6 +272,62 @@ namespace chen {
 			reply["sdp"] = local_sdp;
 			reply["type"] = "answer";
 			send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
+			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+		}
+		return true;
+	}
+
+	bool cwan_session::handler_rtc_player(Json::Value & value)
+	{
+		Json::Value reply;
+		if (!value.isMember("data") || !value["data"].isObject())
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find data type, [value = %s] !!! ", m_session_id, value.toStyledString().c_str());
+			send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+			return false;
+		}
+
+		if (!value["data"].isMember("offer"))
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find offer type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
+			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
+			return false;
+		}
+		if (!value["data"].isMember("roomname"))
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find roomname type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
+			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
+			return false;
+		}
+		if (!value["data"].isMember("video_peerid"))
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find video_peerid type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
+			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
+			return false;
+		}
+		if (!value["data"].isMember("peerid"))
+		{
+			WARNING_EX_LOG("[session_id = %llu]not find peerid type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
+			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
+			return false;
+		}
+		//g_room_mgr.webrtc_message(m_room_name, m_session_id, value["data"]);
+		//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
+		{
+			capi_rtc_player player;
+
+
+			std::string sdp = value["data"]["offer"].asCString();
+			std::string roomname = value["data"]["roomname"].asCString();
+			std::string video_peerid = value["data"]["video_peerid"].asCString();
+			std::string peerid = value["data"]["peerid"].asCString();
+
+			std::string local_sdp;
+
+			player.do_serve_client(sdp, roomname,  peerid, video_peerid,  local_sdp);
+			reply["sdp"] = local_sdp;
+			reply["type"] = "answer";
+			send_msg(S2C_rtc_player, EShareProtoOk, reply);
 			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
 		}
 		return true;

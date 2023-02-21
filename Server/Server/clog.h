@@ -153,6 +153,7 @@ namespace chen {
 #define cassert_desc(expression, desc, ...)  \
 		if (!(!!(expression))) \
 		{ \
+			ERROR_EX_LOG(desc, ##__VA_ARGS__); \
 			ERROR_EX_LOG(" %s  , failed assert '%s'" , #expression, desc, ##__VA_ARGS__ ); \
 			assert(expression); \
 		}

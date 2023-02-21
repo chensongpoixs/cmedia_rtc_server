@@ -147,7 +147,7 @@ namespace chen {
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-		NORMAL_EX_LOG("---->");
+		//NORMAL_EX_LOG("---->");
 		// Increase receive transmission.
 		//RTC::Transport::DataReceived(len);
 
@@ -171,7 +171,7 @@ namespace chen {
 		// Check if it's RTCP.
 		else if (RTC::RTCP::Packet::IsRtcp(data, len))
 		{
-			NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			//NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			 
 			//OnRtcpDataReceived(tuple, data, len);
 			_on_rtcp_data_received(socket, data, len, remoteAddr);
@@ -179,7 +179,7 @@ namespace chen {
 		// Check if it's RTP.
 		else if (RTC::RtpPacket::IsRtp(data, len))
 		{
-			NORMAL_EX_LOG("IsRtp");
+			//NORMAL_EX_LOG("IsRtp");
 			 
 			//OnRtpDataReceived(tuple, data, len);
 			_on_rtp_data_received(socket, data, len, remoteAddr);
@@ -187,7 +187,7 @@ namespace chen {
 		// Check if it's DTLS.
 		else if (RTC::DtlsTransport::IsDtls(data, len))
 		{
-			NORMAL_EX_LOG("IsDtls");
+			//NORMAL_EX_LOG("IsDtls");
 			//OnDtlsDataReceived(tuple, data, len);
 			_on_dtls_data_received(socket, data, len, remoteAddr);
 		}
@@ -285,7 +285,7 @@ namespace chen {
 		}
 		else
 		{
-			NORMAL_EX_LOG("rtp unprotect rtp OK !!!-------->>>>>>>");
+			//NORMAL_EX_LOG("rtp unprotect rtp OK !!!-------->>>>>>>");
 			RTC::RtpPacket* packet = RTC::RtpPacket::Parse(data, len);
 
 			if (!packet)
@@ -326,6 +326,25 @@ namespace chen {
 					str2hex((  char *)data, len, 8).c_str(),
 					str2hex((  char *)buffer.head(), buffer.left(), 8).c_str());
 				return;
+			}
+
+			crtcp_common* rtcp = NULL;
+			while (NULL != (rtcp = rtcp_compound.get_next_rtcp()))
+			{
+				bool success  = _dispatch_rtcp(rtcp);
+			//	SrsAutoFree(SrsRtcpCommon, rtcp);
+				if (rtcp)
+				{
+					delete rtcp;
+					rtcp = NULL;
+				}
+				if (success != true)
+				{
+					WARNING_EX_LOG("plaintext=%u, bytes=[%s], rtcp=(%u,%u,%u,%u)", len,
+						str2hex(rtcp->data(), rtcp->size(), rtcp->size()).c_str(),
+						rtcp->get_rc(), rtcp->type(), rtcp->get_ssrc(), rtcp->size());
+					return;
+				}
 			}
 			//RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
 
@@ -721,6 +740,115 @@ namespace chen {
 					static_cast<uint8_t>(packet->GetType()));
 			}
 		}
+	}
+
+	bool crtc_transport::_dispatch_rtcp(crtcp_common * rtcp)
+	{
+		// For TWCC packet.
+		if (ERtcpType_rtpfb == rtcp->type() && 15 == rtcp->get_rc())
+		{
+			return _on_rtcp_feedback_twcc(rtcp->data(), rtcp->size());
+		}
+
+		// For REMB packet.
+		if (ERtcpType_psfb == rtcp->type())
+		{
+			crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
+			if (15 == psfb->get_rc()) 
+			{
+				return _on_rtcp_feedback_remb(psfb);
+			}
+		}
+
+		// Ignore special packet.
+		if (ERtcpType_rr == rtcp->type()) 
+		{
+			crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
+			if (rr->get_rb_ssrc() == 0) 
+			{ //for native client
+				return true;
+			}
+		}
+
+		// The feedback packet for specified SSRC.
+		// For example, if got SR packet, we required a publisher to handle it.
+		uint32_t required_publisher_ssrc = 0, required_player_ssrc = 0;
+		if (ERtcpType_sr == rtcp->type()) 
+		{
+			required_publisher_ssrc = rtcp->get_ssrc();
+		}
+		else if (ERtcpType_rr == rtcp->type())
+		{
+			crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
+			required_player_ssrc = rr->get_rb_ssrc();
+		}
+		else if (ERtcpType_rtpfb == rtcp->type()) 
+		{
+			if (1 == rtcp->get_rc()) 
+			{
+				crtcp_nack* nack = dynamic_cast<crtcp_nack*>(rtcp);
+				required_player_ssrc = nack->get_media_ssrc();
+			}
+		}
+		else if (ERtcpType_psfb == rtcp->type()) 
+		{
+			crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
+			required_player_ssrc = psfb->get_media_ssrc();
+		}
+
+		// Find the publisher or player by SSRC, always try to got one.
+		//RtcPlayStream* player = NULL;
+		//RtcPublishStream* publisher = NULL;
+		//if (true) 
+		//{
+		//	uint32  ssrc = required_publisher_ssrc ? required_publisher_ssrc : rtcp->get_ssrc();
+		//	std::map<uint32, RtcPublishStream*>::iterator it = publishers_ssrc_map_.find(ssrc);
+		//	if (it != publishers_ssrc_map_.end()) 
+		//	{
+		//		publisher = it->second;
+		//	}
+		//}
+
+		//if (true) {
+		//	uint32 ssrc = required_player_ssrc ? required_player_ssrc : rtcp->get_ssrc();
+		//	std::map<uint32, RtcPlayStream*>::iterator it = players_ssrc_map_.find(ssrc);
+		//	if (it != players_ssrc_map_.end()) {
+		//		player = it->second;
+		//	}
+		//}
+
+		//// Ignore if packet is required by publisher or player.
+		//if (required_publisher_ssrc && !publisher)
+		//{
+		//	WARNING_EX_LOG("no ssrc %u in publishers. rtcp type:%u", required_publisher_ssrc, rtcp->type());
+		//	return err;
+		//}
+		//if (required_player_ssrc && !player) 
+		//{
+		//	WARNING_EX_LOG("no ssrc %u in players. rtcp type:%u", required_player_ssrc, rtcp->type());
+		//	return err;
+		//}
+
+		//// Handle packet by publisher or player.
+		//if (publisher && srs_success != (err = publisher->on_rtcp(rtcp))) 
+		//{
+		//	return srs_error_wrap(err, "handle rtcp");
+		//}
+		//if (player && srs_success != (err = player->on_rtcp(rtcp))) {
+		//	return srs_error_wrap(err, "handle rtcp");
+		//}
+		return true;
+	}
+
+	bool crtc_transport::_on_rtcp_feedback_twcc(char * data, int32 nb_data)
+	{
+		return true;
+	}
+
+	bool crtc_transport::_on_rtcp_feedback_remb(crtcp_psfb_common * rtcp)
+	{
+		//ignore REMB
+		return true;
 	}
 
 	//bool crtc_transport::_negotiate_publish_capability(crtc_source_description * stream_desc)

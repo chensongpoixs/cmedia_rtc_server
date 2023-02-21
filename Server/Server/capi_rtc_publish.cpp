@@ -23,7 +23,7 @@ namespace chen {
 	capi_rtc_publish::~capi_rtc_publish()
 	{
 	}
-	int32 capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname, const std::string & peerid, std::string & local_sdp)
+	int32 capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname,  const std::string & peerid,  std::string & local_sdp)
 	{
 		 
 		crtc_source_description stream_desc;

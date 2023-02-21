@@ -77,7 +77,7 @@ if (!getline(is,word,delim)) {\
 	int32 cssrc_info::encode(std::ostringstream & os)
 	{
 
-		if (0 != m_ssrc)
+		if (0 == m_ssrc)
 		{
 			WARNING_EX_LOG("invalid ssrc");
 			return EMediaRtcSdpInvalidSsrc;

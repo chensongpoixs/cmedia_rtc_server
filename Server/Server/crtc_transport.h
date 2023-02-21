@@ -17,6 +17,7 @@ purpose:		crtc_transport
 #include "cudp_socket.h"
 #include "crtc_stun_packet.h"
 #include "crtc_dtls.h"
+#include "crtp_rtcp.h"
 namespace chen {
 
 	class cdtls_session;
@@ -92,6 +93,15 @@ namespace chen {
 */
 	private:
 		void _handler_rtcp_packet(RTC::RTCP::Packet* packet);
+
+
+		bool _dispatch_rtcp(crtcp_common* rtcp);
+
+	private:
+		// p2p net 
+		bool _on_rtcp_feedback_twcc(char * data, int32 nb_data);
+		// 老版本的代码 不需要处理了
+		bool _on_rtcp_feedback_remb(crtcp_psfb_common * rtcp);
 	private:
 		crtc_sdp			 			m_local_sdp ;
 		crtc_sdp			 			m_remote_sdp ;
@@ -112,6 +122,7 @@ namespace chen {
 		//csrtp							m_srtp;
 		csrtp_session *					m_srtp_send_session_ptr;
 		csrtp_session*					m_srtp_recv_session_ptr;
+		
 		// 1000000LL * 30
 	};
 
