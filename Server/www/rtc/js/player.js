@@ -560,7 +560,7 @@ function getOffer(desc)
 								offer : desc.sdp,
 								roomname : "chensong",
 								video_peerid: "chensong",
-								peerid : "chensong1"
+								peerid : Math.round(Math.random()*10000).toString()
 						   } 
 				}
 			 );
