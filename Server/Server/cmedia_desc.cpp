@@ -492,6 +492,7 @@ if (!getline(is,word,delim)) {\
 		{
 			attribute = content.substr(0, pos);
 			value = content.substr(pos + 1);
+			//DEBUG_EX_LOG("[attribute = %s][value = %s]", attribute.c_str(), value.c_str());
 		}
 		else 
 		{

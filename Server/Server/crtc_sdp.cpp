@@ -1942,7 +1942,7 @@ if (!getline(is,word,delim)) {\
 	std::string line;
 	while (getline(is, line)) 
 	{
-		NORMAL_EX_LOG("%s", line.c_str());
+	//	NORMAL_EX_LOG("%s", line.c_str());
 		if (line.size() < 2 || line[1] != '=')
 		{
 			WARNING_EX_LOG("invalid sdp line=%s", line.c_str());

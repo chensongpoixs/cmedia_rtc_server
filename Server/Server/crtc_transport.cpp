@@ -147,7 +147,7 @@ namespace chen {
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-		//NORMAL_EX_LOG("---->");
+		NORMAL_EX_LOG("---->");
 		// Increase receive transmission.
 		//RTC::Transport::DataReceived(len);
 

@@ -58,7 +58,7 @@ namespace chen {
 
 			audio_track_desc->m_type = "audio";
 			audio_track_desc->m_id = "audio-" + c_rand.rand_str(8);
-			 audio_track_desc->m_mid = "0";
+			 //audio_track_desc->m_mid = "0";
 			uint32_t audio_ssrc = c_rtc_ssrc_generator.generate_ssrc();
 			audio_track_desc->m_ssrc = audio_ssrc;
 			audio_track_desc->m_direction = "sendonly";
@@ -73,7 +73,7 @@ namespace chen {
 
 			video_track_desc->m_type = "video";
 			video_track_desc->m_id = "video-" + c_rand.rand_str(8);
-			video_track_desc->m_mid = "1";
+			//video_track_desc->m_mid = "1";
 			uint32_t video_ssrc = c_rtc_ssrc_generator.generate_ssrc();
 			video_track_desc->m_ssrc = video_ssrc;
 			video_track_desc->m_direction = "sendonly";
@@ -92,18 +92,31 @@ namespace chen {
 			WARNING_EX_LOG("no play relations");
 			return false;
 		}
-
+		{
+			if (stream_desc.m_audio_track_desc_ptr)
+			{
+				delete stream_desc.m_audio_track_desc_ptr;
+				stream_desc.m_audio_track_desc_ptr = NULL;
+			}
+			for (crtc_track_description* trak_ptr : stream_desc.m_video_track_descs)
+			{
+				delete trak_ptr;
+			}
+			stream_desc.m_video_track_descs.clear();
+		}
 		std::map<uint32_t, crtc_track_description*>::iterator it = play_sub_relations.begin();
+		
 		while (it != play_sub_relations.end()) {
 			crtc_track_description* track_desc = it->second;
-
+			
 			// TODO: FIXME: we only support one audio track.
-			if (track_desc->m_type == "audio" && !stream_desc.m_audio_track_desc_ptr)
+			if (track_desc->m_type == "audio" /*&& !stream_desc.m_audio_track_desc_ptr*/)
 			{
+				
 				stream_desc.m_audio_track_desc_ptr = track_desc->copy();
 			}
 
-			if (track_desc->m_type == "video" && stream_desc.m_video_track_descs.empty()) {
+			if (track_desc->m_type == "video" /*&& stream_desc.m_video_track_descs.empty()*/) {
 				stream_desc.m_video_track_descs.push_back(track_desc->copy());
 			}
 			++it;
@@ -282,6 +295,69 @@ namespace chen {
 
 				remote_payload = payloads.at(0);
 			   track_descs = _get_track_desc(stream_desc, "audio", "opus");
+				//if (true)
+				//{
+				//	crtc_track_description track_desc;
+				//	track_desc.set_direction("sendonly");
+				//	track_desc.set_mid(remote_media_desc.m_mid);
+				//	if (twcc_enabled && remote_twcc_id)
+				//	{
+				//		track_desc.add_rtp_extension_desc(remote_twcc_id, kTWCCExt);
+				//	}
+
+				//	// TODO: check opus format specific param
+				//	std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("opus");
+				//	if (payloads.empty())
+				//	{
+				//		ERROR_EX_LOG("no valid found opus payload type");
+				//		return false;
+				//	}
+
+				//	for (int32 j = 0; j < (int32)payloads.size(); j++)
+				//	{
+				//		const cmedia_payload_type& payload = payloads.at(j);
+
+				//		// if the payload is opus, and the encoding_param_ is channel
+				//		caudio_payload* audio_payload = new caudio_payload(payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate, ::atol(payload.m_encoding_param.c_str()));
+				//		audio_payload->set_opus_param_desc(payload.m_format_specific_param);
+				//		// AudioPayload* audio_payload = new SrsAudioPayload(payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate, ::atol(payload.m_encoding_param.c_str()));
+				//		//audio_payload->set_opus_param_desc(payload.format_specific_param_);
+
+				//		// TODO: FIXME: Only support some transport algorithms.
+				//		for (int32 k = 0; k < (int32)payload.m_rtcp_fb.size(); ++k)
+				//		{
+				//			const std::string& rtcp_fb = payload.m_rtcp_fb.at(k);
+
+				//			// 掉包重传的协议
+				//			if (nack_enabled)
+				//			{
+				//				if (rtcp_fb == "nack" || rtcp_fb == "nack pli")
+				//				{
+				//					audio_payload->m_rtcp_fbs.push_back(rtcp_fb);
+				//				}
+				//			}
+				//			// 网络带宽评估的协议
+				//			if (twcc_enabled && remote_twcc_id)
+				//			{
+				//				if (rtcp_fb == "transport-cc")
+				//				{
+				//					audio_payload->m_rtcp_fbs.push_back(rtcp_fb);
+				//				}
+				//			}
+				//		}
+
+				//		track_desc.m_type = "audio";
+				//		track_desc.set_codec_payload(audio_payload);
+				//	}
+
+				//	
+
+				//	// TODO: FIXME: use one parse payload from sdp.
+				//	track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("red"));
+				//	track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("rtx"));
+				//	track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("ulpfec"));
+				//	track_descs.push_back(track_desc.copy());
+				//}
 			}
 			//else if (remote_media_desc.is_video() && ruc->codec_ == "av1") {
 			//	std::vector<SrsMediaPayloadType> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
@@ -772,14 +848,13 @@ namespace chen {
 			local_media_desc.m_rtcp_mux = true;
 			local_media_desc.m_rtcp_rsize = true;
 
+			local_media_desc.m_extmaps = audio_track->m_extmaps;
+
 			local_media_desc.m_mid = audio_track->m_mid;
 			local_sdp.m_groups.push_back(local_media_desc.m_mid);
 
-			// anwer not need set stream_id and track_id;
-			// local_media_desc.msid_ = stream_id;
-			// local_media_desc.msid_tracker_ = audio_track->id_;
-			local_media_desc.m_extmaps = audio_track->m_extmaps;
-
+			 
+			
 			if (audio_track->m_direction == "recvonly")
 			{
 				local_media_desc.m_recvonly = true;
@@ -796,7 +871,10 @@ namespace chen {
 			{
 				local_media_desc.m_inactive = true;
 			}
-
+			if (audio_track->m_red_ptr) {
+				cred_paylod* red_payload = (cred_paylod*)audio_track->m_red_ptr;
+				local_media_desc.m_payload_types .push_back(red_payload->generate_media_payload_type());
+			}
 			caudio_payload* payload = dynamic_cast<caudio_payload*>(audio_track->m_media_ptr);
 			local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
 

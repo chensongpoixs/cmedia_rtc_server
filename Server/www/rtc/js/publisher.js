@@ -227,6 +227,7 @@ function conn()
 
         let msg = JSON.parse(event.data);
         // 
+		console.log('recv message  = ', msg);
         if (msg.msg_id === 1073) // S2C_Login
         {
         	 answer.value = msg.data.sdp;
@@ -583,7 +584,36 @@ function createPeerConnection()
 		//创建PeerConnection对象
 		pc = new RTCPeerConnection(null);
 		
+		  console.log(' new mediasoup core debugger  iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
 		 
+		 pc.addEventListener('iceconnectionstatechange', () => {
+			console.log(' +++ mediasoup core debugger  iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+               
+            switch (pc.iceConnectionState) {
+				 case 'checking':
+                  console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+					//this.emit('@connectionstatechange', 'connecting');
+					
+                    break;
+                case 'connected':
+                case 'completed':
+					console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                    //this.emit('@connectionstatechange', 'connected');
+                    break;
+                case 'failed':
+				console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'failed');
+                    break;
+                case 'disconnected':
+				console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                  //  this.emit('@connectionstatechange', 'disconnected');
+                    break;
+                case 'closed':
+				console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'closed');
+                    break;
+            }
+        });
 		/**
 		 当PeerConnection 对象收到远端音视频流时
 		 触发ontrack事件
