@@ -584,10 +584,10 @@ function createPeerConnection()
 		//创建PeerConnection对象
 		pc = new RTCPeerConnection(null);
 		
-		  console.log(' new mediasoup core debugger  iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+		  console.log(' new rtc sdk core debugger  iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
 		 
 		 pc.addEventListener('iceconnectionstatechange', () => {
-			console.log(' +++ mediasoup core debugger  iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+			console.log(' +++ rtc sdk core debugger  iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
                
             switch (pc.iceConnectionState) {
 				 case 'checking':
