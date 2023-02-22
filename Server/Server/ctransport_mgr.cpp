@@ -114,11 +114,12 @@ namespace chen {
 	}
 	bool ctransport_mgr::insert_stream_name(const std::string & stream_url, crtc_transport * transport)
 	{
-		if (!m_all_stream_url_map.insert(std::make_pair(stream_url, transport)).second)
+		m_all_stream_url_map[stream_url] = transport;
+		/*if (!m_all_stream_url_map.insert(std::make_pair(stream_url, transport)).second)
 		{
 			WARNING_EX_LOG("insert  stream url  map failed !!! [stream_url = %s]", stream_url.c_str());
 			return false;
-		}
+		}*/
 
 		return true;
 	}

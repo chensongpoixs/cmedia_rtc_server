@@ -56,6 +56,12 @@ namespace chen {
 
 		void destroy();
 
+
+	public:
+		void send_rtp_data(void * data, int32 size);
+		void send_rtp_data(RTC::RtpPacket* packet);
+		void send_rtp_audio_data(RTC::RtpPacket* packet);
+		void send_rtp_video_data(RTC::RtpPacket* packet);
 	public:
 		// virtual
 		virtual int32 write_dtls_data(void* data, int size);

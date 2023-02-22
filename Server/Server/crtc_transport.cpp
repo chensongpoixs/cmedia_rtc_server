@@ -63,6 +63,117 @@ namespace chen {
 		}*/
 		m_udp_sockets.clear();
 	}
+	void crtc_transport::send_rtp_data(void * data, int32 size)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			if (m_srtp_send_session_ptr->EncryptRtp((const uint8_t**)&data, (size_t *)&size))
+			{
+				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+				return;
+			}
+			NORMAL_EX_LOG("rtp data size = %u", size);
+			m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+		}
+	}
+	void crtc_transport::send_rtp_data(RTC::RtpPacket * packet)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			{
+				for (const cmedia_desc& media : m_local_sdp.m_media_descs)
+				{
+					if (media.m_type != "audio")
+					{
+						continue;
+					}
+					//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
+					if (media.m_ssrc_groups.size())
+					{
+						DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_groups[0].m_ssrcs);
+						packet->SetSsrc(media.m_ssrc_groups[0].m_ssrcs[0]);
+						break;
+					}
+					//if (media)
+				}
+			}
+			
+			const uint8_t* data = packet->GetData();
+			size_t len = packet->GetSize();
+			if (!m_srtp_send_session_ptr->EncryptRtp( &data,  &len))
+			{
+				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+				return;
+			}
+			NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
+		}
+	}
+	void crtc_transport::send_rtp_audio_data(RTC::RtpPacket * packet)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			{
+				for (const cmedia_desc& media : m_local_sdp.m_media_descs)
+				{
+					if (media.m_type != "audio")
+					{
+						continue;
+					}
+					//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
+					if (media.m_ssrc_infos.size())
+					{
+						DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
+						packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
+						break;
+					}
+					//if (media)
+				}
+			}
+			//packet->SetSsrc(1);
+			const uint8_t* data = packet->GetData();
+			size_t len = packet->GetSize();
+			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+			{
+				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+				return;
+			}
+			NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		}
+	}
+	void crtc_transport::send_rtp_video_data(RTC::RtpPacket * packet)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			{
+				for (const cmedia_desc& media : m_local_sdp.m_media_descs)
+				{
+					if (media.m_type != "video")
+					{
+						continue;
+					}
+					//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
+					if (media.m_ssrc_infos.size())
+					{
+						DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
+						packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
+						break;
+					}
+					//if (media)
+				}
+			}
+			const uint8_t* data = packet->GetData();
+			size_t len = packet->GetSize();
+			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+			{
+				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+				return;
+			}
+			NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		}
+	}
 	int32 crtc_transport::write_dtls_data(void * data, int size)
 	{
 		if (m_current_socket_ptr)
@@ -153,7 +264,15 @@ namespace chen {
 
 
 		memcpy(&m_remote_addr, remoteAddr, sizeof(*remoteAddr));
-		m_current_socket_ptr = socket;
+		/*for ( cudp_socket * temp : m_udp_sockets)
+		{
+			if (temp == socket)
+			{
+				m_current_socket_ptr = temp;
+				DEBUG_EX_LOG(" find cur dup socket Ok !!");
+			}
+		}*/
+		m_current_socket_ptr  = socket;
 		// Check if it's STUN.
 		if (crtc_stun_packet::is_stun(data, len))
 		{
@@ -294,6 +413,48 @@ namespace chen {
 
 				return;
 			}
+			bool send_audio = true;
+			for (const cmedia_desc & media_ : m_remote_sdp.m_media_descs)
+			{
+				for (const cssrc_group& ssrc_group : media_.m_ssrc_groups)
+				{
+					for (const uint32 ssrc : ssrc_group.m_ssrcs)
+					{
+						if (ssrc == packet->GetSsrc())
+						{
+							if (media_.m_type == "audio")
+							{
+
+								
+							}
+							else
+							{
+								send_audio = false;
+							}
+							break;
+						}
+					}
+				}
+			}
+			for (const std::string & stream_name : g_transport_mgr.m_all_consumer_map[m_local_sdp.m_msids[0]])
+			{
+				crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
+				if (!rtc_ptr)
+				{
+					WARNING_EX_LOG("not find stream_name = %s", stream_name.c_str());
+					continue;
+				}
+				if (send_audio)
+				{
+					rtc_ptr->send_rtp_audio_data(packet);
+				}
+				else
+				{
+					rtc_ptr->send_rtp_video_data(packet);
+				}
+				
+			}
+			
 		}
 	}
 

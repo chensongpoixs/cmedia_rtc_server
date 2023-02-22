@@ -150,7 +150,7 @@ namespace chen {
 		// We allows to mock the eip of server.
 		if (true)
 		{
-			static  int32 udp_port = 1000;//_srs_config->get_rtc_server_listen();
+			static  int32 udp_port = 4000;//_srs_config->get_rtc_server_listen();
 			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
 			std::string protocol = "udp";//_srs_config->get_rtc_server_protocol();
 
@@ -228,7 +228,8 @@ namespace chen {
 		// We allows username is optional, but it never empty here.
 		//_srs_rtc_manager->add_with_name(username, session);
 		g_transport_mgr.insert_username(username, transport_ptr);
-
+		g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
+		g_transport_mgr.m_all_consumer_map[roomname + "/" + video_peerid].insert(roomname + "/" + peerid);
 
 
 		std::ostringstream    sdp;

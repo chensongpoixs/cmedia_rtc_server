@@ -234,7 +234,7 @@ function conn()
 				
 				//进行媒体协商
 				//{type: 'answer', sdp: session.sdp}
-		     	pc.setRemoteDescription(new RTCSessionDescription(msg.data));
+		     	pc.setRemoteDescription(new RTCSessionDescription({type: 'answer', sdp: msg.data.sdp}));
 			
 			//console.log(ww);
 			

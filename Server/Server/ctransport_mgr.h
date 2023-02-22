@@ -25,12 +25,14 @@ namespace chen {
 		typedef std::unordered_map<std::string, crtc_transport*>   STREAM_URL_MAP;
 		////////////////////////////////////////////////////////////////////////////////
 
+		typedef std::unordered_map<std::string, std::set<std::string>> CONSUMER_MAP;
 
 	public:
 
 		explicit ctransport_mgr()
 		: m_all_transport_map()
-		, m_all_stream_url_map(){}
+		, m_all_stream_url_map()
+		, m_all_consumer_map(){}
 
 		virtual ~ctransport_mgr();
 
@@ -76,6 +78,8 @@ namespace chen {
 
 		TRANSPORT_MAP										m_all_transport_map;
 		STREAM_URL_MAP										m_all_stream_url_map;
+	public:
+		CONSUMER_MAP										m_all_consumer_map;
 	};
 
 

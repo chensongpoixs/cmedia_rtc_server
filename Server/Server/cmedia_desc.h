@@ -229,7 +229,7 @@ namespace chen {
 
 	public:
 		csession_info						m_session_info;
-		std::string							m_type;
+		std::string							m_type; // audio  or video
 		int32								m_port;
 		
 		bool								m_rtcp_mux;

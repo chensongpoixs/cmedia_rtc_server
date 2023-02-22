@@ -150,7 +150,7 @@ namespace chen {
 		// We allows username is optional, but it never empty here.
 		//_srs_rtc_manager->add_with_name(username, session);
 		g_transport_mgr.insert_username(username, transport_ptr);
-
+		g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
 
 
 		std::ostringstream    sdp;
