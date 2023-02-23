@@ -38,6 +38,48 @@ enum ERtcpType
 	ERtcpType_xr = 207,
 };
 
+
+enum EFeedbackPs
+{
+	EPSPLI = 1,
+	EPSSLI = 2,
+	EPSRPSI = 3,
+	EPSFIR = 4,
+	EPSTSTR = 5,
+	EPSTSTN = 6,
+	EPSVBCM = 7,
+	EPSPSLEI = 8,
+	EPSROI = 9,
+	EPSAFB = 15,
+	EPSEXT = 31
+};
+
+enum EFeedbackRtp
+{
+	ERtpfbNACK = 1,
+	ERtpfbTMMBR = 3,
+	ERtpfbTMMBN = 4,
+	ERtpfbSR_REQ = 5,
+	ERtpfbRAMS = 6,
+	ERtpfbTLLEI = 7,
+	ERtpfbECN = 8,
+	ERtpfbPS = 9,
+	ERtpfbTCC = 15,
+	ERtpfbEXT = 31
+};
+
+// webrtc 中rtcp中xr扩展类型
+enum EExtendedReportBlock
+{
+	EExtendedLRLE = 1,
+	EExtendedDRLE = 2,
+	EExtendedPRT = 3,
+	EExtendedRRT = 4,
+	EExtendedDLRR = 5,
+	EExtendedSS = 6,
+	EExtendedVM = 7
+};
+
 // @see: https://tools.ietf.org/html/rfc4585#section-6.3
 const uint8_t kPLI  = 1;
 const uint8_t kSLI  = 2;

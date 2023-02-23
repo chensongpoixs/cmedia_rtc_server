@@ -107,8 +107,9 @@ namespace chen {
             i420_buffer_->StrideU(), i420_buffer_->MutableDataV(),
             i420_buffer_->StrideV(), 0, 0, width, height, width,
             height, libyuv::kRotate0, libyuv::FOURCC_ARGB); 
-
-
+	  //static  FILE * out_file_ptr = fopen("yuv_write.yuv", "wb+");
+	  //fwrite(i420_buffer_->DataY(),1,  width * height * 1.5, out_file_ptr);
+	  //fflush(out_file_ptr);
         // seting 马流的信息
 
         webrtc::VideoFrame captureFrame =
@@ -144,7 +145,7 @@ namespace chen {
 
             while (start_flag_) {
                 dc_->CaptureFrame();
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 60));
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 30));
             }
             }));
     }

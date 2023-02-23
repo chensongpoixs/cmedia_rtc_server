@@ -12,6 +12,7 @@
 //#include "cdesktop_capture.h"
 #include "cmediasoup_mgr.h"
 #include "cmsg_base_id.h"
+#include "crtc_publisher.h"
 namespace chen {
 	class DesktopCapture;
 	class csend_transport;
@@ -112,7 +113,7 @@ namespace chen {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 		// 客户端请求服务器
 	public:
-		bool _send_login();
+		bool _send_login(const std::string & sdp);
 		bool _send_create_webrtc_transport();
 		bool _send_connect_webrtc_transport(nlohmann::json dtlsparameters);
 		bool _send_produce_webrtc_transport();
@@ -202,6 +203,7 @@ namespace chen {
 		cmediasoup::mediasoup_status_update_cb		m_mediasoup_status_callback;
 		uint32							m_websocket_timer;
 		bool							m_send_produce_video_msg;
+		rtc::scoped_refptr < chen::crtc_publisher>					m_rtc_publisher_ptr;
 	};
 //#define  s_client chen::csingleton<chen::cclient>::get_instance()
 }

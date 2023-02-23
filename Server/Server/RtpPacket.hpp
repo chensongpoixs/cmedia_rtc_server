@@ -51,7 +51,7 @@ namespace RTC
 		// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 		struct Header
 		{
-#if defined(MS_LITTLE_ENDIAN)
+#if defined(MS_LITTLE_ENDIAN) // 16bit 对齐方式
 			uint8_t csrcCount : 4;
 			uint8_t extension : 1;
 			uint8_t padding : 1;
@@ -75,9 +75,9 @@ namespace RTC
 		/* Struct for RTP header extension. */
 		struct HeaderExtension
 		{
-			uint16_t id;
-			uint16_t length; // Size of value in multiples of 4 bytes.
-			uint8_t value[1];
+			uint16_t id;   // rtp 头中扩展信息头 prifile id
+			uint16_t length; // Size of value in multiples of 4 bytes.   扩展信息的大小
+			uint8_t value[1];   // 扩展信息的地址
 		};
 
 	private:

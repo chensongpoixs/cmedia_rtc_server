@@ -550,14 +550,15 @@ function getOffer(desc)
 	//offer_desc.roomname = "chensong";
 	//offer_desc.peerid = "chensong";
 	//将Offer SDP 发送给对端
-	
+	var room_name = getQueryVariable('roomname');
+	var videopeerid	= getQueryVariable('videopeerid');
 	sendMessage(
 				{
 					msg_id: 1072,
 					data:  {
 								offer : desc.sdp,
-								roomname : "chensong",
-								peerid : "chensong"
+								roomname : room_name.toString(),
+								peerid : videopeerid.toString()
 						   } 
 				}
 			 );

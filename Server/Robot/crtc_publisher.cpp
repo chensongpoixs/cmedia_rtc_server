@@ -35,19 +35,31 @@ purpose:		api_rtc_publish
 #include "rtc_base/logging.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/rtc_certificate_generator.h"
- 
+#include "cclient.h"
 //#include "ccapturer_track_source.h"
 #include "ccapturer_tracksource.h"
 namespace chen {
 
-
+	class DummySetSessionDescriptionObserver
+		: public webrtc::SetSessionDescriptionObserver {
+	public:
+		static DummySetSessionDescriptionObserver* Create() {
+			return new rtc::RefCountedObject<DummySetSessionDescriptionObserver>();
+		}
+		virtual void OnSuccess() { RTC_LOG(INFO) << __FUNCTION__; }
+		virtual void OnFailure(webrtc::RTCError error) {
+			RTC_LOG(INFO) << __FUNCTION__ << " " << ToString(error.type()) << ": "
+				<< error.message();
+		}
+	};
 	//const char kAudioLabel[] = "";
 	
 	const char kAudioLabel[] = "audio_label";
 	const char kVideoLabel[] = "video_label";
 	const char kStreamId[] = "stream_id";
 
-	crtc_publisher::crtc_publisher()
+	crtc_publisher::crtc_publisher(cclient * ptr)
+		: m_callback_ptr(ptr)
 	{
 	}
 
@@ -97,7 +109,7 @@ namespace chen {
 		}
 		
 		// 设置SDP  ->马流是否加密哈DTLS
-		if (!CreatePeerConnection(/*dtls=*/false))
+		if (!CreatePeerConnection(/*dtls=*/true))
 		{
 			/*main_wnd_->MessageBox("Error", "CreatePeerConnection failed", true);
 			DeletePeerConnection();*/
@@ -124,6 +136,22 @@ namespace chen {
 
 		return peer_connection_ != nullptr;
 	}
+	void crtc_publisher::set_remoter_description(std::string sdp)
+	{
+		// Replace message type from "offer" to "answer"
+		std::unique_ptr<webrtc::SessionDescriptionInterface> session_description =
+			webrtc::CreateSessionDescription(webrtc::SdpType::kAnswer, sdp);
+		peer_connection_->SetRemoteDescription(
+			DummySetSessionDescriptionObserver::Create(),
+			session_description.release());
+	}
+	void crtc_publisher::onframe(const webrtc::VideoFrame & frame)
+	{
+		if (m_video_track_source_ptr)
+		{
+			m_video_track_source_ptr->OnFrame(frame);
+		}
+	}
 	void crtc_publisher::OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverInterface> receiver, const std::vector<rtc::scoped_refptr<webrtc::MediaStreamInterface>>& streams)
 	{
 		     
@@ -138,8 +166,16 @@ namespace chen {
 	}
 	void crtc_publisher::OnSuccess(webrtc::SessionDescriptionInterface * desc)
 	{
+		// 得到本地视频基本信息 先设置本地 SDP 鸭
+		peer_connection_->SetLocalDescription(DummySetSessionDescriptionObserver::Create(), desc);
 
-		printf("[%s][%d][][]\n", __FUNCTION__, __LINE__);
+		std::string sdp;
+		desc->ToString(&sdp);
+		printf("[%s][%d][][sdp = %s]\n", __FUNCTION__, __LINE__, sdp.c_str());
+		if (m_callback_ptr)
+		{
+			m_callback_ptr->_send_login(sdp);
+		}
 	}
 	void crtc_publisher::OnFailure(webrtc::RTCError error)
 	{
@@ -168,10 +204,10 @@ namespace chen {
 				<< result_or_error.error().message();
 		}
 		//////////////////////////////////////////VIDEO////////////////////////////////////////////////////////////////
-		rtc::scoped_refptr<ProxyVideoTrackSource> video_device = ProxyVideoTrackSource::Create();
-		if (video_device)
+		/*rtc::scoped_refptr<ProxyVideoTrackSource> video_device*/m_video_track_source_ptr = ProxyVideoTrackSource::Create();
+		if (m_video_track_source_ptr)
 		{
-			rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track_proxy_ptr = peer_connection_factory_->CreateVideoTrack(kVideoLabel, video_device);
+			rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track_proxy_ptr = peer_connection_factory_->CreateVideoTrack(kVideoLabel, m_video_track_source_ptr);
 
 			//main_wnd_->StartLocalRenderer(video_track_proxy_ptr);
 

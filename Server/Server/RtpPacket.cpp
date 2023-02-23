@@ -1,4 +1,4 @@
-//#define MS_CLASS "RTC::RtpPacket"
+﻿//#define MS_CLASS "RTC::RtpPacket"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "RtpPacket.hpp"
@@ -52,6 +52,8 @@ namespace RTC
 		HeaderExtension* headerExtension{ nullptr };
 		size_t extensionValueSize{ 0u };
 
+		// 判断rtp中是否有扩展头   扩展头分为两种类型
+		//   1. 
 		if (header->extension == 1u)
 		{
 			// The header extension is at least 4 bytes.
@@ -83,9 +85,10 @@ namespace RTC
 		size_t payloadLength = len - (ptr - data);
 		uint8_t payloadPadding{ 0 };
 
-		//MS_ASSERT(len >= static_cast<size_t>(ptr - data), "payload has negative size");
+		cassert_desc(len >= static_cast<size_t>(ptr - data), "payload has negative size");
 
 		// Check padding field.
+		 // 是否有填充数据
 		if (header->padding != 0u)
 		{
 			// Must be at least a single payload byte.
@@ -113,10 +116,10 @@ namespace RTC
 			payloadLength -= size_t{ payloadPadding };
 		}
 
-		/*MS_ASSERT(
+		cassert_desc(
 		  len == sizeof(Header) + csrcListSize + (headerExtension ? 4 + extensionValueSize : 0) +
 		           payloadLength + size_t{ payloadPadding },
-		  "packet's computed size does not match received size");*/
+		  "packet's computed size does not match received size"); 
 
 		auto* packet =
 		  new RtpPacket(header, headerExtension, payload, payloadLength, payloadPadding, len);
@@ -139,7 +142,9 @@ namespace RTC
 		//MS_TRACE();
 
 		if (this->header->csrcCount != 0u)
+		{
 			this->csrcList = reinterpret_cast<uint8_t*>(header) + sizeof(Header);
+		}
 
 		// Parse RFC 5285 header extension.
 		ParseExtensions();

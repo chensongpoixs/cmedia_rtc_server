@@ -146,6 +146,9 @@ namespace chen {
 	{
 		if (m_current_socket_ptr && m_srtp_send_session_ptr)
 		{
+			NORMAL_EX_LOG("[payload_type = %u]", packet->GetPayloadType());
+			 packet->SetPayloadType(106);
+			// TODO@chensong 2023-02-23 每个ssrc媒体源需要单独处理
 			{
 				for (const cmedia_desc& media : m_local_sdp.m_media_descs)
 				{
@@ -413,6 +416,7 @@ namespace chen {
 
 				return;
 			}
+			NORMAL_EX_LOG("[rtp ][ssrc = %u][GetSequenceNumber = %u][GetPayloadType = %u]", packet->GetSsrc(),  packet->GetSequenceNumber(), packet->GetPayloadType());
 			bool send_audio = true;
 			for (const cmedia_desc & media_ : m_remote_sdp.m_media_descs)
 			{
@@ -506,6 +510,22 @@ namespace chen {
 						rtcp->get_rc(), rtcp->type(), rtcp->get_ssrc(), rtcp->size());
 					return;
 				}
+			}
+
+			{
+				//for (const cmedia_desc & media_desc : m_local_sdp.m_media_descs)
+				//{
+				//	for (const cssrc_info & ssrc_info : media_desc.m_ssrc_infos)
+				//	{
+				//		// keyframe
+				//		RTC::RTCP::FeedbackPsPliPacket packetfir(ssrc_info.m_ssrc, ssrc_info.m_ssrc);
+
+				//		packetfir.Serialize(RTC::RTCP::Buffer);
+				//		write_dtls_data((void*)packetfir.GetData(), packetfir.GetSize());
+				//	}
+				//}
+				
+			
 			}
 			//RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
 
@@ -905,57 +925,160 @@ namespace chen {
 
 	bool crtc_transport::_dispatch_rtcp(crtcp_common * rtcp)
 	{
-		// For TWCC packet.
-		if (ERtcpType_rtpfb == rtcp->type() && 15 == rtcp->get_rc())
-		{
-			return _on_rtcp_feedback_twcc(rtcp->data(), rtcp->size());
-		}
-
-		// For REMB packet.
-		if (ERtcpType_psfb == rtcp->type())
-		{
-			crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
-			if (15 == psfb->get_rc()) 
-			{
-				return _on_rtcp_feedback_remb(psfb);
-			}
-		}
-
-		// Ignore special packet.
-		if (ERtcpType_rr == rtcp->type()) 
-		{
-			crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
-			if (rr->get_rb_ssrc() == 0) 
-			{ //for native client
-				return true;
-			}
-		}
-
 		// The feedback packet for specified SSRC.
 		// For example, if got SR packet, we required a publisher to handle it.
-		uint32_t required_publisher_ssrc = 0, required_player_ssrc = 0;
-		if (ERtcpType_sr == rtcp->type()) 
+		uint32 required_publisher_ssrc = 0;
+		uint32 required_player_ssrc = 0;
+		switch (rtcp->type())
 		{
-			required_publisher_ssrc = rtcp->get_ssrc();
-		}
-		else if (ERtcpType_rr == rtcp->type())
-		{
-			crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
-			required_player_ssrc = rr->get_rb_ssrc();
-		}
-		else if (ERtcpType_rtpfb == rtcp->type()) 
-		{
-			if (1 == rtcp->get_rc()) 
+			case ERtcpType_rr:
 			{
-				crtcp_nack* nack = dynamic_cast<crtcp_nack*>(rtcp);
-				required_player_ssrc = nack->get_media_ssrc();
+				crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
+				if (rr->get_rb_ssrc() == 0)
+				{ //for native client
+					return true;
+				}
+				break;
+			}
+			case ERtcpType_psfb:
+			{
+				crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
+				switch (psfb->get_rc())
+				{
+					case EPSAFB:
+					{
+						return _on_rtcp_feedback_remb(psfb);
+						break;
+					}
+					default:
+					{
+						WARNING_EX_LOG("psfb type = %u", psfb->get_rc());
+						break;
+					}
+				}
+				break;
+			}
+			case ERtcpType_rtpfb:
+			{
+				switch (rtcp->get_rc())
+				{
+					case ERtpfbTCC:
+					{
+						return _on_rtcp_feedback_twcc(rtcp->data(), rtcp->size());
+						break;
+					}
+					case ERtpfbNACK:
+					{
+						//crtcp_nack* nack = dynamic_cast<crtcp_nack*>(rtcp);
+						//required_player_ssrc = nack->get_media_ssrc();
+						break;
+					}
+					default:
+					{
+						WARNING_EX_LOG("rtcp ftpfb subtype = %u", rtcp->get_rc());
+						break;
+					}
+				}
+				break;
+			}
+			case ERtcpType_sr:
+			{
+				required_publisher_ssrc = rtcp->get_ssrc();
+				break;
+			}
+			case ERtcpType_sdes:
+			{
+				// According to RFC 3550 section 6.1 "a CNAME item MUST be included in
+				// in each compound RTCP packet". So this is true even for compound
+				// packets sent by endpoints that are not sending any RTP stream to us
+				// (thus chunks in such a SDES will have an SSCR does not match with
+				// any Producer created in this Transport).
+				// Therefore, and given that we do nothing with SDES, just ignore them.
+
+				break;
+			}
+			case ERtcpType_bye:
+			{ 
+				NORMAL_EX_LOG("ignoring received RTCP BYE");
+				break;
+			}
+			case ERtcpType_xr:
+			{
+				switch (rtcp->get_rc())
+				{
+					case EExtendedDLRR:
+					{
+						break;
+					}
+					default:
+					{
+						WARNING_EX_LOG("rtcp xr sub type = %u", rtcp->get_rc());
+						break;
+					}
+				}
+				break;
+			}
+			default:
+			{
+				WARNING_EX_LOG("rtcp type = %u", rtcp->type());
+				break;
 			}
 		}
-		else if (ERtcpType_psfb == rtcp->type()) 
-		{
-			crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
-			required_player_ssrc = psfb->get_media_ssrc();
-		}
+
+		(void)required_publisher_ssrc;
+		(void)required_player_ssrc;
+
+
+
+		// For TWCC packet.
+		//if (ERtcpType_rtpfb == rtcp->type() && ETCC == rtcp->get_rc())
+		//{
+		//	return _on_rtcp_feedback_twcc(rtcp->data(), rtcp->size());
+		//}
+
+		//// For REMB packet.
+		//if (ERtcpType_psfb == rtcp->type())
+		//{
+		//	crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
+		//	if (EAFB == psfb->get_rc())
+		//	{
+		//		return _on_rtcp_feedback_remb(psfb);
+		//	}
+		//}
+
+		//// Ignore special packet.
+		//if (ERtcpType_rr == rtcp->type()) 
+		//{
+		//	crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
+		//	if (rr->get_rb_ssrc() == 0) 
+		//	{ //for native client
+		//		return true;
+		//	}
+		//}
+
+		//
+		//if (ERtcpType_sr == rtcp->type()) 
+		//{
+		//	required_publisher_ssrc = rtcp->get_ssrc();
+		//}
+		//else if (ERtcpType_rr == rtcp->type())
+		//{
+		//	crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
+		//	required_player_ssrc = rr->get_rb_ssrc();
+		//}
+		//else if (ERtcpType_rtpfb == rtcp->type()) 
+		//{
+		//	if (1 == rtcp->get_rc()) 
+		//	{
+		//		crtcp_nack* nack = dynamic_cast<crtcp_nack*>(rtcp);
+		//		required_player_ssrc = nack->get_media_ssrc();
+		//	}
+		//}
+		//else if (ERtcpType_psfb == rtcp->type()) 
+		//{
+		//	crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
+		//	required_player_ssrc = psfb->get_media_ssrc();
+		//}
 
 		// Find the publisher or player by SSRC, always try to got one.
 		//RtcPlayStream* player = NULL;

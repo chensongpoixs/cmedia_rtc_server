@@ -15,13 +15,15 @@ purpose:		api_rtc_publish
 #include <string>
 #include "cnet_types.h"
 namespace chen {
+	class cclient;
+	class ProxyVideoTrackSource;
 	class crtc_publisher : public webrtc::PeerConnectionObserver  , 
 		public webrtc::CreateSessionDescriptionObserver
 	{
 	public:
 		//crtc_publisher(/*int32 w*/){}
 
-		crtc_publisher();
+		crtc_publisher(cclient * ptr);
 
 	public:
 
@@ -31,6 +33,12 @@ namespace chen {
 		bool InitializePeerConnection();
 
 		bool CreatePeerConnection(bool dtls);
+
+
+		void set_remoter_description(std::string  sdp);
+
+
+		void onframe(const webrtc::VideoFrame & frame);
 	protected:
 
 		//
@@ -89,6 +97,9 @@ namespace chen {
 
 		rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
 		rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
+		cclient * m_callback_ptr;
+
+		rtc::scoped_refptr<ProxyVideoTrackSource>   m_video_track_source_ptr{nullptr};
 	};
 }
 

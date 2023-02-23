@@ -128,14 +128,14 @@ namespace chen {
 	/*	m_server_protoo_msg_call.insert(std::make_pair("newDataConsumer", &cclient::server_request_new_dataconsumer));
 		m_server_notification_protoo_msg_call.insert(std::make_pair("peerClosed", &cclient::_notification_peer_closed));*/
 
-		m_server_notification_protoo_msg_call.insert(std::make_pair(S2C_Login, &cclient::handler_Login));
+		/*m_server_notification_protoo_msg_call.insert(std::make_pair(S2C_Login, &cclient::handler_Login));
 		m_server_notification_protoo_msg_call.insert(std::make_pair(S2C_CreateRtc, &cclient::handler_create_webrtc_transport));
 		m_server_notification_protoo_msg_call.insert(std::make_pair(S2C_RtcConnect, &cclient::handler_connect_webrtc_transport));
 
 		m_server_notification_protoo_msg_call.insert(std::make_pair(S2C_RtcProduce, &cclient::handler_produce_webrtc_transport));
 
 		m_server_notification_protoo_msg_call.insert(std::make_pair(S2C_RtpCapabilitiesUpdate, &cclient::handler_rtp_capabilities));
-		SYSTEM_LOG("client init ok !!!");
+		*/SYSTEM_LOG("client init ok !!!");
 		m_webrtc_connect = false;
 		/*uint32 osg_webrtc_frame = g_cfg.get_uint32(ECI_OsgWebrtcFrame);
 		if (osg_webrtc_frame == 0)
@@ -230,11 +230,13 @@ namespace chen {
 					m_status = EMediasoup_Reset;
 					continue;
 				}
-				if (!_send_login())
+				/*if (!_send_login())
 				{
 					m_status = EMediasoup_Reset;
 					continue;
-				}
+				}*/
+				m_rtc_publisher_ptr  = new rtc::RefCountedObject<chen::crtc_publisher>(this);
+				m_rtc_publisher_ptr->create_offer();
 				m_websocket_timer = 0;
 				_mediasoup_status_callback(EMediasoup_WebSocket_Init, 0);
 				m_status = EMediasoup_WebSocket;
@@ -453,19 +455,23 @@ namespace chen {
 					WARNING_EX_LOG("notification websocket protoo not find msg_id  msg = %s", response.dump().c_str());
 					continue;
 				}
-				EMsgBaseID msg_id = response[WEBSOCKET_PROBUFFER_MSG_ID];
-				std::map<EMsgBaseID, server_protoo_msg>::iterator iter = m_server_notification_protoo_msg_call.find(msg_id);
-				if (iter != m_server_notification_protoo_msg_call.end())
+				if (response["result"] == 0 )
 				{
+					m_rtc_publisher_ptr->set_remoter_description(response["data"]["sdp"]);
+				}
+				//EMsgBaseID msg_id = response[WEBSOCKET_PROBUFFER_MSG_ID];
+				//std::map<EMsgBaseID, server_protoo_msg>::iterator iter = m_server_notification_protoo_msg_call.find(msg_id);
+				//if (iter != m_server_notification_protoo_msg_call.end())
+				//{
 
-					(this->*(iter->second))(response);
-					//server_request_new_dataconsumer(response);
-				}
-				else
-				{
-					//_default_replay(response);
-					//WARNING_EX_LOG("server request client not find method  response = %s", response.dump().c_str());
-				}
+				//	(this->*(iter->second))(response);
+				//	//server_request_new_dataconsumer(response);
+				//}
+				//else
+				//{
+				//	//_default_replay(response);
+				//	//WARNING_EX_LOG("server request client not find method  response = %s", response.dump().c_str());
+				//}
 
 			}
 			else
@@ -693,15 +699,18 @@ namespace chen {
 		
 
 	}
-	bool cclient::_send_login()
+	bool cclient::_send_login(const std::string & sdp)
 	{
+		std::string peerid = g_cfg.get_string(ECI_Client_Name);
+		std::string roomname = g_cfg.get_string(ECI_Room_Name);
 		nlohmann::json data =
 		{
-			{"user_name", g_cfg.get_string(ECI_Client_Name)},
-			{"room_name", g_cfg.get_string(ECI_Room_Name)}
+			{"offer", sdp},
+			{"peerid", peerid},
+			{"roomname", roomname}
 
 		};
-		if (!_send_request_mediasoup(C2S_Login, data))
+		if (!_send_request_mediasoup(ddd, data))
 		{
 			m_status = EMediasoup_Reset;
 			WARNING_EX_LOG("send request router rtcpcapabilities failed !!!");
@@ -961,23 +970,27 @@ namespace chen {
 	}
 	bool cclient::webrtc_video(const webrtc::VideoFrame& frame)
 	{
-		if (!m_webrtc_connect)
-		{
-			//WARNING_EX_LOG("not connect webrtc video wait !!!");
-			return false;
-		}
-		if (!m_send_transport)
-		{
-			//WARNING_EX_LOG("m_send_transport == nullptr !!!");
-			return false;
-		}
+		//if (!m_webrtc_connect)
+		//{
+		//	//WARNING_EX_LOG("not connect webrtc video wait !!!");
+		//	return false;
+		//}
+		//if (!m_send_transport)
+		//{
+		//	//WARNING_EX_LOG("m_send_transport == nullptr !!!");
+		//	return false;
+		//}
 
-		if (!m_send_produce_video_msg)
+		//if (!m_send_produce_video_msg)
+		//{
+		//	m_send_produce_video_msg = true;
+		//	_mediasoup_status_callback(EMediasoup_Request_Produce_Webrtc_Transport, 0);
+		//}
+		if (m_rtc_publisher_ptr)
 		{
-			m_send_produce_video_msg = true;
-			_mediasoup_status_callback(EMediasoup_Request_Produce_Webrtc_Transport, 0);
+			  m_rtc_publisher_ptr->onframe(frame);
 		}
-		return m_send_transport->webrtc_video(frame);
+		return true;
 	}
 	bool cclient::webrtc_run()
 	{

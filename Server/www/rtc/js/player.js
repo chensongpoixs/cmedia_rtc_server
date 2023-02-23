@@ -215,7 +215,7 @@ function conn()
         return;
     }
 
-     var ws_url = "ws://127.0.0.1:9500/?roomId=20220927&peerId=chensong";
+     var ws_url = "ws://192.168.1.175:9500/?roomId=20220927&peerId=chensong";
 	console.log('ws_url = ', ws_url);
      ws = new WebSocket(ws_url );
 
@@ -552,14 +552,15 @@ function getOffer(desc)
 	//offer_desc.roomname = "chensong";
 	//offer_desc.peerid = "chensong";
 	//将Offer SDP 发送给对端
-	
+	var room_name = getQueryVariable('roomname');
+	var videopeerid	= getQueryVariable('videopeerid');
 	sendMessage(
 				{
 					msg_id: 1074,
 					data:  {
 								offer : desc.sdp,
-								roomname : "chensong",
-								video_peerid: "chensong",
+								roomname : room_name.toString(),
+								video_peerid: videopeerid.toString(),
 								peerid : Math.round(Math.random()*10000).toString()
 						   } 
 				}
