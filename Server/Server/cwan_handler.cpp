@@ -238,19 +238,19 @@ namespace chen {
 			return false;
 		}
 
-		if (!value["data"].isMember("offer")  )
+		if (!value["data"].isMember("offer") || !value["data"]["offer"].isString())
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find offer type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str() );
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
 			return false;
 		}
-		if ( !value["data"].isMember("roomname")  )
+		if ( !value["data"].isMember("roomname") || !value["data"]["roomname"].isString())
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find roomname type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
 			return false;
 		}
-		if (  !value["data"].isMember("peerid"))
+		if (  !value["data"].isMember("peerid") || !value["data"]["peerid"].isString())
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find peerid type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
@@ -287,25 +287,25 @@ namespace chen {
 			return false;
 		}
 
-		if (!value["data"].isMember("offer"))
+		if (!value["data"].isMember("offer") || !value["data"]["offer"].isString())
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find offer type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
 			return false;
 		}
-		if (!value["data"].isMember("roomname"))
+		if (!value["data"].isMember("roomname") || !value["data"]["roomname"].isString())
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find roomname type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
 			return false;
 		}
-		if (!value["data"].isMember("video_peerid"))
+		if (!value["data"].isMember("video_peerid") || !value["data"]["video_peerid"].isString())
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find video_peerid type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);
 			return false;
 		}
-		if (!value["data"].isMember("peerid"))
+		if (!value["data"].isMember("peerid") || !value["data"]["peerid"].isString())
 		{
 			WARNING_EX_LOG("[session_id = %llu]not find peerid type, [value = %s] failed !!! ", m_session_id, value.toStyledString().c_str());
 			send_msg(S2C_rtc_publisher, EShareProtoData, reply);

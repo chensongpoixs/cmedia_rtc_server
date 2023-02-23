@@ -216,7 +216,7 @@ namespace chen {
 	//	session->set_state_as_waiting_stun();
 
 		crtc_transport * transport_ptr = new crtc_transport();
-
+		transport_ptr->create_players(play_sub_relations);
 		transport_ptr->init(rtc_remote_sdp, rtc_local_sdp);
 		transport_ptr->set_state_as_waiting_stun();
 		// Before session initialize, we must setup the local SDP.

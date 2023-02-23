@@ -715,6 +715,12 @@
     <ClCompile Include="crtp_rtcp.cpp">
       <Filter>rtp_rtcp</Filter>
     </ClCompile>
+    <ClCompile Include="crtc_player_stream.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_publisher_stream.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1334,6 +1340,12 @@
     </ClInclude>
     <ClInclude Include="crtp_rtcp_define.h">
       <Filter>rtp_rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_player_stream.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_publisher_stream.h">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

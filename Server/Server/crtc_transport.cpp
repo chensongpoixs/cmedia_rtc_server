@@ -50,6 +50,76 @@ namespace chen {
 		//m_dtls_ptr->init();
 		m_dtls_ptr = new crtc_dtls(this);
 		m_dtls_ptr->init();
+		for (std::vector<cmedia_desc>:: iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
+		{
+			for (std::vector<cssrc_info>:: iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
+			{
+				if (iter->is_audio())
+				{
+					m_all_audio_ssrcs.push_back(ssrc_iter->m_ssrc);
+				}
+				if (iter->is_video())
+				{
+					m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
+				}
+				if (iter->m_payload_types.size())
+				{
+					m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
+				}
+				
+			}
+		}
+		return true;
+	}
+	bool crtc_transport::create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations)
+	{
+
+
+		//for (m_local)
+
+
+		//crtc_player_stream * player_ptr = new crtc_player_stream();
+		//player_ptr->init(sub_relations);
+		//// 
+		//// make map between ssrc and player for fastly searching
+		//for (std::map<uint32 , crtc_track_description*>::const_iterator it = sub_relations.begin(); it != sub_relations.end(); ++it) {
+		//	crtc_track_description* track_desc = it->second;
+		//	if (track_desc->m_type == "audio")
+		//	{
+		//		m_all_audio_ssrcs.push_back(track_desc->m_ssrc);
+		//	}
+		//	else if (track_desc->m_type == "video")
+		//	{
+		//		m_all_video_ssrcs.push_back(track_desc->m_ssrc);
+		//	}
+		//	std::map<uint32 , crtc_player_stream*>::iterator it_player = m_players_ssrc_map.find(track_desc->m_ssrc);
+		//	if ((m_players_ssrc_map.end() != it_player) && (player_ptr != it_player->second)) 
+		//	{
+		//		WARNING_EX_LOG( "duplicate ssrc %d, track id: %s",
+		//			track_desc->m_ssrc, track_desc->m_id.c_str());
+		//		return false;
+		//	}
+		//	m_players_ssrc_map[track_desc->m_ssrc] = player_ptr;
+
+		//	if (0 != track_desc->m_fec_ssrc) {
+		//		if (m_players_ssrc_map.end() != m_players_ssrc_map.find(track_desc->m_fec_ssrc)) {
+		//			WARNING_EX_LOG( "duplicate fec ssrc %d, track id: %s",
+		//				track_desc->m_fec_ssrc, track_desc->m_id.c_str());
+		//			return false;
+		//		}
+		//		m_players_ssrc_map[track_desc->m_fec_ssrc] = player_ptr;
+		//	}
+
+		//	if (0 != track_desc->m_rtx_ssrc) {
+		//		if (m_players_ssrc_map.end() != m_players_ssrc_map.find(track_desc->m_rtx_ssrc)) {
+		//			WARNING_EX_LOG( "duplicate rtx ssrc %d, track id: %s",
+		//				track_desc->m_rtx_ssrc, track_desc->m_id.c_str());
+		//			return false;
+		//		}
+		//		m_players_ssrc_map[track_desc->m_rtx_ssrc] = player_ptr;
+		//	}
+		//}
+
 		return true;
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
@@ -111,25 +181,32 @@ namespace chen {
 	}
 	void crtc_transport::send_rtp_audio_data(RTC::RtpPacket * packet)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_audio_ssrcs.size())
 		{
+			packet->SetSsrc(m_all_audio_ssrcs[0]);
+			std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_audio_ssrcs[0]);
+
+			if (iter != m_ssrc_media_type_map.end())
 			{
-				for (const cmedia_desc& media : m_local_sdp.m_media_descs)
-				{
-					if (media.m_type != "audio")
-					{
-						continue;
-					}
-					//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
-					if (media.m_ssrc_infos.size())
-					{
-						DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
-						packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
-						break;
-					}
-					//if (media)
-				}
+				packet->SetPayloadType(iter->second);
 			}
+			//{
+			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
+			//	{
+			//		if (media.m_type != "audio")
+			//		{
+			//			continue;
+			//		}
+			//		//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
+			//		if (media.m_ssrc_infos.size())
+			//		{
+			//			DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
+			//			packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
+			//			break;
+			//		}
+			//		//if (media)
+			//	}
+			//}
 			//packet->SetSsrc(1);
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
@@ -144,28 +221,45 @@ namespace chen {
 	}
 	void crtc_transport::send_rtp_video_data(RTC::RtpPacket * packet)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_video_ssrcs.size())
 		{
-			NORMAL_EX_LOG("[payload_type = %u]", packet->GetPayloadType());
-			 packet->SetPayloadType(106);
-			// TODO@chensong 2023-02-23 每个ssrc媒体源需要单独处理
+			packet->SetSsrc(m_all_video_ssrcs[0]);
+			std::map<uint32, uint32 >::const_iterator iter =  m_ssrc_media_type_map.find(m_all_video_ssrcs[0]);
+		
+			if (iter != m_ssrc_media_type_map.end())
 			{
-				for (const cmedia_desc& media : m_local_sdp.m_media_descs)
-				{
-					if (media.m_type != "video")
-					{
-						continue;
-					}
-					//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
-					if (media.m_ssrc_infos.size())
-					{
-						DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
-						packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
-						break;
-					}
-					//if (media)
-				}
+				packet->SetPayloadType(iter->second);
 			}
+			//	std::map<uint32, crtc_player_stream*>::iterator  iter = m_players_ssrc_map.find(m_all_audio_ssrcs[0]);
+			//if (iter != m_players_ssrc_map.end())
+			{
+				/*std::map<uint32, crtc_track_description*>::iterator desc_iter = iter->second->m_video_tracks.find(m_all_video_ssrcs[0]);
+				if (desc_iter != iter->second->m_video_tracks.end())
+				{
+					packet->SetPayloadType(desc_iter->second->set_codec_payload())
+				}*/
+			}
+			//NORMAL_EX_LOG("[payload_type = %~u]", packet->GetPayloadType());
+			 
+			//packet->SetPayloadType(106);
+			// TODO@chensong 2023-02-23 每个ssrc媒体源需要单独处理
+			//{
+			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
+			//	{
+			//		if (media.m_type != "video")
+			//		{
+			//			continue;
+			//		}
+			//		//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
+			//		if (media.m_ssrc_infos.size())
+			//		{
+			//			DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
+			//			packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
+			//			break;
+			//		}
+			//		//if (media)
+			//	}
+			//}
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
@@ -399,7 +493,12 @@ namespace chen {
 			WARNING_EX_LOG("srtp recv session ptr = null !!!");
 			return;
 		}
-
+		// TODO@chensong 2023-2-23 native rtc 客户端推流  会有一个522长度数据 srtp 解码崩溃问题 --> 
+		if (len == 522)
+		{
+			WARNING_EX_LOG("rtp 522 data [%s]", str2hex((const char *)data, len).c_str());
+			return;
+		}
 
 		if (!m_srtp_recv_session_ptr->DecryptSrtp((uint8_t *)data, &len))
 		{

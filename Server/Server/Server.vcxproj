@@ -189,6 +189,8 @@
     <ClCompile Include="crtc_constants.cpp" />
     <ClCompile Include="crtc_consumer.cpp" />
     <ClCompile Include="crtc_dtls.cpp" />
+    <ClCompile Include="crtc_player_stream.cpp" />
+    <ClCompile Include="crtc_publisher_stream.cpp" />
     <ClCompile Include="crtc_sdp.cpp" />
     <ClCompile Include="crtc_sdp_handler.cpp" />
     <ClCompile Include="crtc_sdp_test.cpp" />
@@ -376,6 +378,8 @@
     <ClInclude Include="crtc_constants.h" />
     <ClInclude Include="crtc_consumer.h" />
     <ClInclude Include="crtc_dtls.h" />
+    <ClInclude Include="crtc_player_stream.h" />
+    <ClInclude Include="crtc_publisher_stream.h" />
     <ClInclude Include="crtc_sdp.h" />
     <ClInclude Include="crtc_sdp_define.h" />
     <ClInclude Include="crtc_sdp_test.h" />

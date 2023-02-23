@@ -18,6 +18,7 @@ purpose:		crtc_transport
 #include "crtc_stun_packet.h"
 #include "crtc_dtls.h"
 #include "crtp_rtcp.h"
+#include "crtc_player_stream.h"
 namespace chen {
 
 	class cdtls_session;
@@ -44,6 +45,10 @@ namespace chen {
 		, m_dtls_ptr(NULL)
 		, m_srtp_send_session_ptr(NULL)
 		, m_srtp_recv_session_ptr(NULL)
+			, m_players_ssrc_map()
+			, m_all_audio_ssrcs()
+			, m_all_video_ssrcs()
+			, m_ssrc_media_type_map()
 			//, m_srtp()
 		 {}
 
@@ -52,6 +57,7 @@ namespace chen {
 	public:
 		bool init(const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp);
 
+		bool create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations);
 		void update(uint32 uDeltaTime);
 
 		void destroy();
@@ -130,6 +136,16 @@ namespace chen {
 		csrtp_session*					m_srtp_recv_session_ptr;
 		
 		// 1000000LL * 30
+
+		///// key: stream id
+		//std::map<std::string, SrsRtcPlayStream*> players_;
+		//key: player track's ssrc
+		std::map<uint32, crtc_player_stream*> m_players_ssrc_map;
+		std::vector<uint32>						m_all_audio_ssrcs;
+		std::vector<uint32>						m_all_video_ssrcs;
+
+		std::map<uint32, uint32 >				m_ssrc_media_type_map;
+
 	};
 
 
