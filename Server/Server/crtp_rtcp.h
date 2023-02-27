@@ -149,9 +149,9 @@ namespace chen {
 		virtual bool encode(cbuffer *buffer);
 	private:
 		uint64		m_ntp;
-		uint32		m_rtp_ts;
-		uint32		m_send_rtp_packets;
-		uint32		m_send_rtp_bytes;
+		uint32		m_rtp_ts; //rtp 网络时间戳
+		uint32		m_send_rtp_packets; //发送的总包数
+		uint32		m_send_rtp_bytes; //总共发送数据包量
 	};
 
 

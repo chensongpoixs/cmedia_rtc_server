@@ -75,7 +75,7 @@
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
     <LibraryPath>$(C_INCLUDE)\webrtc\lib\x64\debug;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
-    <IncludePath>$(C_INCLUDE)\webrtc\include;$(C_INCLUDE)\webrtc\include\third_party\abseil-cpp;F:\Work\20220803_webrtc\src\third_party\abseil-cpp;$(C_INCLUDE)\webrtc\include\third_party\libyuv\include;F:\Work\20220803_webrtc\src\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(C_INCLUDE)\webrtc\include;$(C_INCLUDE)\webrtc\include\third_party\abseil-cpp;F:\Work\20220803_webrtc\src\third_party\abseil-cpp;$(C_INCLUDE)\webrtc\include\third_party\libyuv\include;F:\Work\20220803_webrtc\src\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files\CUDA\cuda_cudart\cudart\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
@@ -101,12 +101,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>WEBRTC_WIN=1;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;USE_AURA=1;NO_TCMALLOC;FULL_SAFE_BROWSING;SAFE_BROWSING_CSD;SAFE_BROWSING_DB_LOCAL;CHROMIUM_BUILD;_HAS_EXCEPTIONS=0;__STD_C;_CRT_RAND_S;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_ATL_NO_OPENGL;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;PSAPI_VERSION=2;_SECURE_ATL;_USING_V110_SDK71_;WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_UNICODE;UNICODE;NTDDI_VERSION=NTDDI_WIN10_RS2;_WIN32_WINNT=0x0A00;WINVER=0x0A00;_DEBUG;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;_HAS_ITERATOR_DEBUGGING=0;WEBRTC_ENABLE_PROTOBUF=1;WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;RTC_ENABLE_VP9;HAVE_SCTP;WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1;ABSL_ALLOCATOR_NOTHROW=1;GTEST_API_=;GTEST_HAS_POSIX_RE=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;GTEST_HAS_ABSL=1;HAVE_WEBRTC_VIDEO;_CONSOLE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./sdp</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;OATPP_DISABLE_ENV_OBJECT_COUNTERS;OATPP_DISABLE_POOL_ALLOCATIONS;OATPP_COMPAT_BUILD_NO_THREAD_LOCAL;OATPP_DISABLE_LOGV;OATPP_DISABLE_LOGD;OATPP_DISABLE_LOGI;OATPP_DISABLE_LOGW;OATPP_DISABLE_LOGE;WEBRTC_WIN=1;_CRT_SECURE_NO_WARNINGS;NOMINMAX;WIN32_LEAN_AND_MEAN;USE_AURA=1;NO_TCMALLOC;FULL_SAFE_BROWSING;SAFE_BROWSING_CSD;SAFE_BROWSING_DB_LOCAL;CHROMIUM_BUILD;_HAS_EXCEPTIONS=0;__STD_C;_CRT_RAND_S;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_ATL_NO_OPENGL;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;PSAPI_VERSION=2;_SECURE_ATL;_USING_V110_SDK71_;WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;_UNICODE;UNICODE;NTDDI_VERSION=NTDDI_WIN10_RS2;_WIN32_WINNT=0x0A00;WINVER=0x0A00;_DEBUG;DYNAMIC_ANNOTATIONS_ENABLED=1;WTF_USE_DYNAMIC_ANNOTATIONS=1;_HAS_ITERATOR_DEBUGGING=0;WEBRTC_ENABLE_PROTOBUF=1;WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;RTC_ENABLE_VP9;HAVE_SCTP;WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=1;ABSL_ALLOCATOR_NOTHROW=1;GTEST_API_=;GTEST_HAS_POSIX_RE=0;GTEST_LANG_CXX11=1;GTEST_HAS_TR1_TUPLE=0;GTEST_HAS_ABSL=1;HAVE_WEBRTC_VIDEO;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>./sdp;./NvCodec</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>gdiplus.lib;webrtc.lib;advapi32.lib;comdlg32.lib;dbghelp.lib;dnsapi.lib;gdi32.lib;msimg32.lib;odbc32.lib;odbccp32.lib;oleaut32.lib;shell32.lib;shlwapi.lib;user32.lib;usp10.lib;uuid.lib;version.lib;wininet.lib;winmm.lib;winspool.lib;ws2_32.lib;delayimp.lib;kernel32.lib;ole32.lib;crypt32.lib;iphlpapi.lib;secur32.lib;dmoguids.lib;wmcodecdspuuid.lib;amstrmid.lib;msdmo.lib;strmiids.lib;d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>NvCodec\Lib\x64\nvencodeapi.lib;gdiplus.lib;webrtc.lib;advapi32.lib;comdlg32.lib;dbghelp.lib;dnsapi.lib;gdi32.lib;msimg32.lib;odbc32.lib;odbccp32.lib;oleaut32.lib;shell32.lib;shlwapi.lib;user32.lib;usp10.lib;uuid.lib;version.lib;wininet.lib;winmm.lib;winspool.lib;ws2_32.lib;delayimp.lib;kernel32.lib;ole32.lib;crypt32.lib;iphlpapi.lib;secur32.lib;dmoguids.lib;wmcodecdspuuid.lib;amstrmid.lib;msdmo.lib;strmiids.lib;d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -145,6 +145,9 @@
     <None Include="build_version.bat" />
     <None Include="client.cfg" />
     <None Include="cow.ive" />
+    <None Include="NvCodec\Utils\BitDepth.cu" />
+    <None Include="NvCodec\Utils\ColorSpace.cu" />
+    <None Include="NvCodec\Utils\Resize.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="build_version.h" />
@@ -191,6 +194,18 @@
     <ClInclude Include="external_video_encoder_factory.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="mediasoupclient.hpp" />
+    <ClInclude Include="NvCodec\encoder_info.h" />
+    <ClInclude Include="NvCodec\nvenc.h" />
+    <ClInclude Include="NvCodec\NvEncoder\nvEncodeAPI.h" />
+    <ClInclude Include="NvCodec\NvEncoder\NvEncoder.h" />
+    <ClInclude Include="NvCodec\NvEncoder\NvEncoderCuda.h" />
+    <ClInclude Include="NvCodec\NvEncoder\NvEncoderD3D11.h" />
+    <ClInclude Include="NvCodec\NvEncoder\NvEncoderD3D9.h" />
+    <ClInclude Include="NvCodec\nv_encoder.h" />
+    <ClInclude Include="NvCodec\Utils\AppEncUtils.h" />
+    <ClInclude Include="NvCodec\Utils\Logger.h" />
+    <ClInclude Include="NvCodec\Utils\NvCodecUtils.h" />
+    <ClInclude Include="NvCodec\Utils\NvEncoderCLIOptions.h" />
     <ClInclude Include="ortc.hpp" />
     <ClInclude Include="scalabilityMode.hpp" />
     <ClInclude Include="sdptransform.hpp" />
@@ -238,6 +253,12 @@
     <ClCompile Include="grammar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mediasoupclient.cpp" />
+    <ClCompile Include="NvCodec\nvenc.cpp" />
+    <ClCompile Include="NvCodec\NvEncoder\NvEncoder.cpp" />
+    <ClCompile Include="NvCodec\NvEncoder\NvEncoderCuda.cpp" />
+    <ClCompile Include="NvCodec\NvEncoder\NvEncoderD3D11.cpp" />
+    <ClCompile Include="NvCodec\NvEncoder\NvEncoderD3D9.cpp" />
+    <ClCompile Include="NvCodec\nv_encoder.cc" />
     <ClCompile Include="ortc.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="scalabilityMode.cpp" />

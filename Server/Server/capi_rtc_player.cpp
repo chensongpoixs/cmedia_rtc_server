@@ -217,7 +217,7 @@ namespace chen {
 
 		crtc_transport * transport_ptr = new crtc_transport();
 		transport_ptr->create_players(play_sub_relations);
-		transport_ptr->init(rtc_remote_sdp, rtc_local_sdp);
+		transport_ptr->init( ERtcClientPlayer, rtc_remote_sdp, rtc_local_sdp);
 		transport_ptr->set_state_as_waiting_stun();
 		// Before session initialize, we must setup the local SDP.
 		//if ((err = session->initialize(req, ruc->dtls_, ruc->srtp_, username)) != 0) 

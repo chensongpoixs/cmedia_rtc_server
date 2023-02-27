@@ -30,8 +30,9 @@ namespace chen {
 		int32  count = 34;
 		NORMAL_EX_LOG("%" PRIu32 "", count);
 	}
-	bool crtc_transport::init(const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp)
+	bool crtc_transport::init(ERtcClientType rtc_client_type, const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp)
 	{
+		m_rtc_client_type = rtc_client_type;
 		m_remote_sdp = remote_sdp;
 		m_local_sdp = local_sdp;
 		
@@ -50,25 +51,98 @@ namespace chen {
 		//m_dtls_ptr->init();
 		m_dtls_ptr = new crtc_dtls(this);
 		m_dtls_ptr->init();
-		for (std::vector<cmedia_desc>:: iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
+		if (m_rtc_client_type == ERtcClientPlayer)
 		{
-			for (std::vector<cssrc_info>:: iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
+			for (std::vector<cmedia_desc>::iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
 			{
-				if (iter->is_audio())
+				for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
 				{
-					m_all_audio_ssrcs.push_back(ssrc_iter->m_ssrc);
+					if (iter->is_audio())
+					{
+						if (m_all_audio_ssrc == 0)
+						{
+							m_all_audio_ssrc = ssrc_iter->m_ssrc;
+						}
+						else if (m_all_rtx_audio_ssrc == 0)
+						{
+							m_all_rtx_audio_ssrc == ssrc_iter->m_ssrc;
+						}
+						else
+						{
+							WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+						}
+					}
+					if (iter->is_video())
+					{
+						//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
+						if (m_all_video_ssrc == 0)
+						{
+							m_all_video_ssrc = ssrc_iter->m_ssrc;
+						}
+						else if (m_all_rtx_video_ssrc == 0)
+						{
+							m_all_rtx_video_ssrc == ssrc_iter->m_ssrc;
+						}
+						else
+						{
+							WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+						}
+					}
+					if (iter->m_payload_types.size())
+					{
+						m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
+					}
+
 				}
-				if (iter->is_video())
-				{
-					m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
-				}
-				if (iter->m_payload_types.size())
-				{
-					m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
-				}
-				
 			}
 		}
+		else if (m_rtc_client_type == ERtcClientPublisher)
+		{
+			for (std::vector<cmedia_desc>::iterator iter = m_remote_sdp.m_media_descs.begin(); iter != m_remote_sdp.m_media_descs.end(); ++iter)
+			{
+				for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
+				{
+					if (iter->is_audio())
+					{
+					//	m_all_audio_ssrcs.push_back(ssrc_iter->m_ssrc);
+						if(m_all_audio_ssrc == 0)
+						{
+							m_all_audio_ssrc = ssrc_iter->m_ssrc;
+						}
+						else if (m_all_rtx_audio_ssrc == 0)
+						{
+							m_all_rtx_audio_ssrc == ssrc_iter->m_ssrc;
+						}
+						else
+						{
+							WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+						}
+					}
+					if (iter->is_video())
+					{
+						//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
+						if (m_all_video_ssrc == 0)
+						{
+							m_all_video_ssrc = ssrc_iter->m_ssrc;
+						}
+						else if (m_all_rtx_video_ssrc == 0)
+						{
+							m_all_rtx_video_ssrc == ssrc_iter->m_ssrc;
+						}
+						else
+						{
+							WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+						}
+					}
+					if (iter->m_payload_types.size())
+					{
+						m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
+					}
+
+				}
+			}
+		}
+		
 		return true;
 	}
 	bool crtc_transport::create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations)
@@ -142,7 +216,7 @@ namespace chen {
 				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
 				return;
 			}
-			NORMAL_EX_LOG("rtp data size = %u", size);
+			//NORMAL_EX_LOG("rtp data size = %u", size);
 			m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
 		}
 	}
@@ -175,39 +249,22 @@ namespace chen {
 				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
 				return;
 			}
-			NORMAL_EX_LOG("rtp data size = %u", len);
+			//NORMAL_EX_LOG("rtp data size = %u", len);
 			m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
 		}
 	}
 	void crtc_transport::send_rtp_audio_data(RTC::RtpPacket * packet)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_audio_ssrcs.size())
+		if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_audio_ssrc != 0)
 		{
-			packet->SetSsrc(m_all_audio_ssrcs[0]);
-			std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_audio_ssrcs[0]);
+			packet->SetSsrc(m_all_audio_ssrc);
+			std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_audio_ssrc);
 
 			if (iter != m_ssrc_media_type_map.end())
 			{
 				packet->SetPayloadType(iter->second);
 			}
-			//{
-			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
-			//	{
-			//		if (media.m_type != "audio")
-			//		{
-			//			continue;
-			//		}
-			//		//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
-			//		if (media.m_ssrc_infos.size())
-			//		{
-			//			DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
-			//			packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
-			//			break;
-			//		}
-			//		//if (media)
-			//	}
-			//}
-			//packet->SetSsrc(1);
+			 
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
@@ -215,51 +272,22 @@ namespace chen {
 				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
 				return;
 			}
-			NORMAL_EX_LOG("rtp data size = %u", len);
+		//	NORMAL_EX_LOG("rtp data size = %u", len);
 			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
 		}
 	}
 	void crtc_transport::send_rtp_video_data(RTC::RtpPacket * packet)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_video_ssrcs.size())
+		if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_video_ssrc != 0)
 		{
-			packet->SetSsrc(m_all_video_ssrcs[0]);
-			std::map<uint32, uint32 >::const_iterator iter =  m_ssrc_media_type_map.find(m_all_video_ssrcs[0]);
+			packet->SetSsrc(m_all_video_ssrc);
+			std::map<uint32, uint32 >::const_iterator iter =  m_ssrc_media_type_map.find(m_all_video_ssrc);
 		
 			if (iter != m_ssrc_media_type_map.end())
 			{
 				packet->SetPayloadType(iter->second);
 			}
-			//	std::map<uint32, crtc_player_stream*>::iterator  iter = m_players_ssrc_map.find(m_all_audio_ssrcs[0]);
-			//if (iter != m_players_ssrc_map.end())
-			{
-				/*std::map<uint32, crtc_track_description*>::iterator desc_iter = iter->second->m_video_tracks.find(m_all_video_ssrcs[0]);
-				if (desc_iter != iter->second->m_video_tracks.end())
-				{
-					packet->SetPayloadType(desc_iter->second->set_codec_payload())
-				}*/
-			}
-			//NORMAL_EX_LOG("[payload_type = %~u]", packet->GetPayloadType());
 			 
-			//packet->SetPayloadType(106);
-			// TODO@chensong 2023-02-23 每个ssrc媒体源需要单独处理
-			//{
-			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
-			//	{
-			//		if (media.m_type != "video")
-			//		{
-			//			continue;
-			//		}
-			//		//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
-			//		if (media.m_ssrc_infos.size())
-			//		{
-			//			DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_infos[0].m_ssrc);
-			//			packet->SetSsrc(media.m_ssrc_infos[0].m_ssrc);
-			//			break;
-			//		}
-			//		//if (media)
-			//	}
-			//}
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
@@ -267,7 +295,30 @@ namespace chen {
 				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
 				return;
 			}
-			NORMAL_EX_LOG("rtp data size = %u", len);
+			//NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		}
+	}
+	void crtc_transport::send_rtp_rtx_video_data(RTC::RtpPacket * packet)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_rtx_video_ssrc != 0)
+		{
+			packet->SetSsrc(m_all_rtx_video_ssrc);
+			std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_rtx_video_ssrc);
+
+			if (iter != m_ssrc_media_type_map.end())
+			{
+				packet->SetPayloadType(iter->second);
+			}
+			 
+			const uint8_t* data = packet->GetData();
+			size_t len = packet->GetSize();
+			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+			{
+				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+				return;
+			}
+			//NORMAL_EX_LOG("rtp data size = %u", len);
 			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
 		}
 	}
@@ -355,7 +406,7 @@ namespace chen {
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-		NORMAL_EX_LOG("---->");
+		//NORMAL_EX_LOG("---->");
 		// Increase receive transmission.
 		//RTC::Transport::DataReceived(len);
 
@@ -415,7 +466,20 @@ namespace chen {
 	}
 	void crtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
+		std::chrono::steady_clock::time_point cur_time_ms;
+		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::duration dur;
+		std::chrono::microseconds ms;
 		OnPacketReceived(socket, data, len, remoteAddr);
+		cur_time_ms = std::chrono::steady_clock::now();
+		dur = cur_time_ms - pre_time;
+		ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+		//NORMAL_EX_LOG("udp recv packet [microseconds = %u]", ms.count());
+		/*elapse = static_cast<uint32_t>(ms.count());
+		if (elapse < TICK_TIME)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - elapse));
+		}*/
 	}
 	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
@@ -446,8 +510,8 @@ namespace chen {
 			std::string ip;
 
 			uv_ip::GetAddressInfo(remoteAddr, family, ip, port);
-			NORMAL_EX_LOG("[remote_ip = %s][remote_port = %u]",  ip.c_str(), port);
-			NORMAL_EX_LOG(" [localip = %s][localport = %u]",  m_current_socket_ptr->GetLocalIp().c_str(), m_current_socket_ptr->GetLocalPort());
+			//NORMAL_EX_LOG("[remote_ip = %s][remote_port = %u]",  ip.c_str(), port);
+			//NORMAL_EX_LOG(" [localip = %s][localport = %u]",  m_current_socket_ptr->GetLocalIp().c_str(), m_current_socket_ptr->GetLocalPort());
 			stun_response.set_mapped_address(be32toh(inet_addr(ip.c_str())));
 			stun_response.set_mapped_port(port);
 			stun_response.encode(m_local_sdp.get_ice_pwd(), &stream);
@@ -480,14 +544,7 @@ namespace chen {
 
 	void crtc_transport::_on_rtp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
 	{
-		//if (!m_srtp.unprotect_rtp(/*static_cast<void*>*//*const_cast<void*>*//*(void *)(data)*/const_cast<uint8_t*>(data), reinterpret_cast<int32*>(&len)))
-		//{
-		//	WARNING_EX_LOG("rtp unprotect rtp failed !!!-------->>>>>>>");
-		//}
-		//else
-		//{
-		//	WARNING_EX_LOG("rtp unprotect rtp OK !!!-------->>>>>>>");
-		//}
+		
 		if (!m_srtp_recv_session_ptr)
 		{
 			WARNING_EX_LOG("srtp recv session ptr = null !!!");
@@ -497,6 +554,15 @@ namespace chen {
 		if (len == 522)
 		{
 			WARNING_EX_LOG("rtp 522 data [%s]", str2hex((const char *)data, len).c_str());
+			static uint32 count = 0;
+		//	++count;
+			std::string file_name = "rtp.core.522._" + std::to_string(++count) + ".yuv";
+			FILE * out_rtp_core_ptr = fopen(file_name.c_str(), "wb+");
+
+			fwrite(data, len, 1, out_rtp_core_ptr);
+			fflush(out_rtp_core_ptr);
+			fclose(out_rtp_core_ptr);
+			out_rtp_core_ptr = NULL;
 			return;
 		}
 
@@ -515,7 +581,15 @@ namespace chen {
 
 				return;
 			}
-			NORMAL_EX_LOG("[rtp ][ssrc = %u][GetSequenceNumber = %u][GetPayloadType = %u]", packet->GetSsrc(),  packet->GetSequenceNumber(), packet->GetPayloadType());
+			if (m_all_video_ssrc == packet->GetSsrc())
+			{
+				//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
+			}
+			else  if (m_all_rtx_video_ssrc == packet->GetSsrc())
+			{
+				//NORMAL_EX_LOG("[video_rtx][rtp ][ssrc = %u][GetSequenceNumber = %u][GetPayloadType = %u]", packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetPayloadType());
+
+			}
 			bool send_audio = true;
 			for (const cmedia_desc & media_ : m_remote_sdp.m_media_descs)
 			{
@@ -553,7 +627,19 @@ namespace chen {
 				}
 				else
 				{
-					rtc_ptr->send_rtp_video_data(packet);
+					if (m_all_rtx_video_ssrc == packet->GetSsrc())
+					{
+						rtc_ptr->send_rtp_rtx_video_data(packet);
+					}
+					else if (m_all_video_ssrc == packet->GetSsrc())
+					{
+						rtc_ptr->send_rtp_video_data(packet);
+					}
+					else
+					{
+						WARNING_EX_LOG("[video rtx ][not find ssrc = %u][]", packet->GetSsrc());
+					}
+					
 				}
 				
 			}
@@ -578,7 +664,7 @@ namespace chen {
 		else
 
 		{
-			NORMAL_EX_LOG("rtcp unprotect rtp OK !!!-------->>>>>>>");
+			//NORMAL_EX_LOG("rtcp unprotect rtp OK !!!-------->>>>>>>");
 
 
 			cbuffer buffer((char *)data, len);
@@ -611,40 +697,7 @@ namespace chen {
 				}
 			}
 
-			{
-				//for (const cmedia_desc & media_desc : m_local_sdp.m_media_descs)
-				//{
-				//	for (const cssrc_info & ssrc_info : media_desc.m_ssrc_infos)
-				//	{
-				//		// keyframe
-				//		RTC::RTCP::FeedbackPsPliPacket packetfir(ssrc_info.m_ssrc, ssrc_info.m_ssrc);
-
-				//		packetfir.Serialize(RTC::RTCP::Buffer);
-				//		write_dtls_data((void*)packetfir.GetData(), packetfir.GetSize());
-				//	}
-				//}
-				
-			
-			}
-			//RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
-
-			//if (!packet)
-			//{
-			//	WARNING_EX_LOG("rtcp received data is not a valid RTCP compound or single packet"); 
-			//	return;
-			//}
-			//// Pass the packet to the parent transport.
-			//// Handle each RTCP packet.
-			//while (packet)
-			//{
-			//	//HandleRtcpPacket(packet);
-			//	_handler_rtcp_packet(packet);
-			//	auto* previousPacket = packet;
-
-			//	packet = packet->GetNext();
-
-			//	delete previousPacket;
-			//}
+			 
 		}
 	}
 
@@ -1032,6 +1085,7 @@ namespace chen {
 		{
 			case ERtcpType_rr:
 			{
+				DEBUG_EX_LOG("RR");
 				crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
 				if (rr->get_rb_ssrc() == 0)
 				{ //for native client
@@ -1041,6 +1095,7 @@ namespace chen {
 			}
 			case ERtcpType_psfb:
 			{
+				DEBUG_EX_LOG("ERtcpType_psfb");
 				crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
 				switch (psfb->get_rc())
 				{
@@ -1059,6 +1114,7 @@ namespace chen {
 			}
 			case ERtcpType_rtpfb:
 			{
+				DEBUG_EX_LOG("ERtcpType_rtpfb");
 				switch (rtcp->get_rc())
 				{
 					case ERtpfbTCC:
@@ -1068,8 +1124,9 @@ namespace chen {
 					}
 					case ERtpfbNACK:
 					{
-						//crtcp_nack* nack = dynamic_cast<crtcp_nack*>(rtcp);
-						//required_player_ssrc = nack->get_media_ssrc();
+						crtcp_nack* nack = dynamic_cast<crtcp_nack*>(rtcp);
+						required_player_ssrc = nack->get_media_ssrc();
+						DEBUG_EX_LOG("ERtcpType_rtpfb[ftpfb][required_player_ssrc = %u]", required_player_ssrc);
 						break;
 					}
 					default:
@@ -1082,7 +1139,11 @@ namespace chen {
 			}
 			case ERtcpType_sr:
 			{
-				required_publisher_ssrc = rtcp->get_ssrc();
+				crtcp_sr* sr = dynamic_cast<crtcp_sr*>(rtcp);
+				(void)sr;
+				required_publisher_ssrc = sr->get_ssrc();
+				DEBUG_EX_LOG("ERtcpType_sr [required_publisher_ssrc = %u]", required_publisher_ssrc);
+				
 				break;
 			}
 			case ERtcpType_sdes:
@@ -1103,6 +1164,7 @@ namespace chen {
 			}
 			case ERtcpType_xr:
 			{
+				DEBUG_EX_LOG("ERtcpType_xr");
 				switch (rtcp->get_rc())
 				{
 					case EExtendedDLRR:

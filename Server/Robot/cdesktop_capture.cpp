@@ -3,6 +3,7 @@
 #include "rtc_base/logging.h"
 #include "third_party/libyuv/include/libyuv.h"
 #include "cclient.h"
+#include "ccfg.h"
 namespace chen {
 
 
@@ -106,7 +107,7 @@ namespace chen {
             i420_buffer_->StrideY(), i420_buffer_->MutableDataU(),
             i420_buffer_->StrideU(), i420_buffer_->MutableDataV(),
             i420_buffer_->StrideV(), 0, 0, width, height, width,
-            height, libyuv::kRotate0, libyuv::FOURCC_ARGB); 
+            height, libyuv::kRotate0, libyuv::FOURCC_ARGB);  
 	  //static  FILE * out_file_ptr = fopen("yuv_write.yuv", "wb+");
 	  //fwrite(i420_buffer_->DataY(),1,  width * height * 1.5, out_file_ptr);
 	  //fflush(out_file_ptr);
@@ -145,7 +146,7 @@ namespace chen {
 
             while (start_flag_) {
                 dc_->CaptureFrame();
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 30));
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000 / g_cfg.get_uint32(ECI_Video_Fps)));
             }
             }));
     }

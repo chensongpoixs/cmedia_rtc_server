@@ -23,6 +23,16 @@ namespace chen {
 		ERtcNetworkStateEstablished = 4,
 		ERtcNetworkStateClosed = 5,
 	};
+
+
+	enum ERtcClientType
+	{
+		ERtcClientNone = 0,
+		ERtcClientPlayer,
+		ERtcClientPublisher,
+	};
+
+
 }
 
 #endif // _C_RTC_TRANSPORT_DEFINE_H_

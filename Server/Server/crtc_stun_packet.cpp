@@ -273,7 +273,7 @@ namespace chen {
 		uint32 err = 0;
 		std::string property_username = encode_username();
 		std::string mapped_address = encode_mapped_address();
-		NORMAL_EX_LOG("stun encode --> [property_username = %s, size = %u][mapped_address = %s, size = %u]", property_username.c_str(), property_username.length(), mapped_address.c_str(), mapped_address.length());
+		//NORMAL_EX_LOG("stun encode --> [property_username = %s, size = %u][mapped_address = %s, size = %u]", property_username.c_str(), property_username.length(), mapped_address.c_str(), mapped_address.length());
 		stream->write_2bytes(EBindingResponse);
 		//rtc_byte::set2bytes((uint8 * )buffer, 0, EBindingResponse);
 		stream->write_2bytes(property_username.size() + mapped_address.size());

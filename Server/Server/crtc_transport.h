@@ -46,16 +46,19 @@ namespace chen {
 		, m_srtp_send_session_ptr(NULL)
 		, m_srtp_recv_session_ptr(NULL)
 			, m_players_ssrc_map()
-			, m_all_audio_ssrcs()
-			, m_all_video_ssrcs()
+			, m_all_audio_ssrc(0)
+			, m_all_rtx_audio_ssrc(0)
+			, m_all_video_ssrc(0)
+			, m_all_rtx_video_ssrc(0)
 			, m_ssrc_media_type_map()
+			, m_rtc_client_type(ERtcClientNone)
 			//, m_srtp()
 		 {}
 
 		virtual ~crtc_transport();
 
 	public:
-		bool init(const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp);
+		bool init(ERtcClientType rtc_client_type, const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp);
 
 		bool create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations);
 		void update(uint32 uDeltaTime);
@@ -68,6 +71,7 @@ namespace chen {
 		void send_rtp_data(RTC::RtpPacket* packet);
 		void send_rtp_audio_data(RTC::RtpPacket* packet);
 		void send_rtp_video_data(RTC::RtpPacket* packet);
+		void send_rtp_rtx_video_data(RTC::RtpPacket* packet);
 	public:
 		// virtual
 		virtual int32 write_dtls_data(void* data, int size);
@@ -140,11 +144,19 @@ namespace chen {
 		///// key: stream id
 		//std::map<std::string, SrsRtcPlayStream*> players_;
 		//key: player track's ssrc
-		std::map<uint32, crtc_player_stream*> m_players_ssrc_map;
-		std::vector<uint32>						m_all_audio_ssrcs;
-		std::vector<uint32>						m_all_video_ssrcs;
+		std::map<uint32, crtc_player_stream*>	m_players_ssrc_map;
+
+		//////////////////////
+		uint32									m_all_audio_ssrc;
+		uint32									m_all_rtx_audio_ssrc;
+		////////////////////////////////////////////////////////////////
+		uint32									m_all_video_ssrc;
+		uint32									m_all_rtx_video_ssrc;
 
 		std::map<uint32, uint32 >				m_ssrc_media_type_map;
+
+
+		ERtcClientType							m_rtc_client_type;
 
 	};
 
