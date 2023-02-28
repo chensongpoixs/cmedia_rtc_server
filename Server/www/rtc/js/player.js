@@ -11,6 +11,8 @@ var remoteVideo = document.querySelector('video#remotevideo');
 var btnConn = document.querySelector('button#connserver');
 
 
+var btnRequestFrame = document.querySelector('button#RequestFrame');
+
 //与信令服务器断开连接Button
 var btnLeave = document.querySelector('button#leave');
 
@@ -18,57 +20,22 @@ var btnLeave = document.querySelector('button#leave');
 var offer = document.querySelector('textarea#offer');
 
 
+
+//var message;
+	//message.desc = desc.sdp;
+	//offerdesc.offer_desc = desc.sdp;
+	//offer_desc.roomname = "chensong";
+	//offer_desc.peerid = "chensong";
+	//将Offer SDP 发送给对端
+	var room_name = getQueryVariable('roomname');
+	var videopeerid	= getQueryVariable('videopeerid');
+
 // 查看Answer文本窗口
 var answer  = document.querySelector('textarea#answer');
 
-var pcConfig = {
-	'iceServer' : [{
-		//TURN服务器地址
-		'urls': 'stun:stun.l.google.com:19302'
-		// TURN服务器用户名
-		//'username': 'xxx',
-		//TURN服务器密码
-		//'credential': "xxx"
-	}],
-	// 默认使用relay方式传输数据 turn 参数 哈哈 ^_^
-	"iceTransportPolicy": "all",
-	//"iceTransportPolicy": "relay",
-	// 音视频同一个通道哈
-	"bundlePolicy": "max-bundle",
-	// 同一个rtcp和rtp走 公用一个Candidate 就是同一个通道哈 ^_^
-	"rtcpMuxPolicy": "require",
-	"iceCandiatePoolSize": "0"
-};
+ 
 
-
-const MessageType = {
-
-     // ROOM
-		C2S_BeatHeart:200,
-		S2C_BeatHeart:201,
-		C2S_Login:202,
-		S2C_Login:203,
-		C2S_JoinRoom:204,
-		S2C_JoinRoom:205,
-		C2S_DestroyRoom:206,
-		S2C_DestroyRoom:207,
-
-		C2S_WebrtcMessage:208,
-		S2C_WebrtcMessage:209,
-		
-		//C2S_CreateAnswar,
-		//S2C_CreateAnswar,
-		//C2S_Candidate,
-		//S2C_Candidate,
-
-
-
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		S2C_WebrtcMessageUpdate:500,
-		S2C_JoinRoomUpdate:501,
-		S2C_LevalRoomUpdate:502
-};
+ 
 //本地视频流
 var localStream = null;
 
@@ -96,55 +63,8 @@ let ws ;
 const WS_OPEN_STATE = 1;
 
 
-/**
- 功能： 判断此浏览器是在PC端，还是移动端。
- 返回值: false 说明当前操作系统是移动端；
-		 true  说明当前的操作系统是PC端
-
-*/
-function IsPC()
-{
-	var userAgentInfo = navigator.userAgent;
-	var Agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"];
-	var flag = true;
-	
-	
-	for (var v = 0; v < Agents.length; ++v)
-	{
-		if (userAgentInfo.indexOf(Agents[v])> 0)
-		{
-			flag = false;
-			break;
-		}
-	}
-	return flag;
-}
-
-
-/**
- 功能： 判断是Android端还是IOS端
- 返回： true 说明是Android端
-		false 说明是IOS端
-*/
-function IsAndroid()
-{
-	var u = navigator.userAgent;
-	var app = navigator.appVersion;
-	var isAndroid = u.indexOf('Android')> -1 || u.indexOf('Linux')> -1;
-	var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-	
-	if (isAndroid)
-	{
-		// 这个是Android系统
-		return true;
-	}
-	if (isIOS)
-	{
-		// IOS 系统
-		return false;
-	}
-}
-
+ 
+ 
 
 
 /**
@@ -372,6 +292,7 @@ function conn()
 			//设置button状态
 			btnConn.disabled = true;
 			btnLeave.disabled = false;
+			btnRequestFrame.disabled = false;
 			call();
         }
         
@@ -546,14 +467,7 @@ function getOffer(desc)
 	
 	
 	
-	//var message;
-	//message.desc = desc.sdp;
-	//offerdesc.offer_desc = desc.sdp;
-	//offer_desc.roomname = "chensong";
-	//offer_desc.peerid = "chensong";
-	//将Offer SDP 发送给对端
-	var room_name = getQueryVariable('roomname');
-	var videopeerid	= getQueryVariable('videopeerid');
+	
 	sendMessage(
 				{
 					msg_id: 1074,
@@ -655,22 +569,7 @@ function bindTracks()
 	 	pc.addTransceiver("audio", {direction: "recvonly"});
       pc.addTransceiver("video", {direction: "recvonly"});
 	
-	//if (pc === null && localStream === undefined)
-	//{
-	//	console.log('pc is null or undefined!!!');
-	//	return;
-	//}
-	//
-	//if (localStream === null && localStream === undefined)
-	//{
-	//	console.log('localStream is null or undefinded !!!');
-	//	return;
-	//}
-	//
-	////将本地音视频流中所有tranck添加到PeerConnection对象中
-	//localStream.getTracks().forEach((track) => {
-	//	pc.addTrack(track, localStream);
-	//});
+	 
 }
 
 
@@ -758,7 +657,24 @@ function leave()
 	answer.value = '';
 	btnConn.disabled = false;
 	btnLeave.disabled = true;
+	btnRequestFrame.disabled	= false;
 	
+	
+}
+
+
+
+function RequestFrame()
+{
+	//var room_name = getQueryVariable('roomname');
+	//var videopeerid	= getQueryVariable('videopeerid');
+	sendMessage({
+					msg_id: 1076,
+					data: {
+						roomname : room_name.toString(),
+								video_peerid: videopeerid.toString()
+					}
+				});
 	
 }
 
@@ -766,3 +682,4 @@ function leave()
 //为Button设置单击事件
 btnConn.onclick = connSignalServer;
 btnLeave.onclick = leave;
+btnRequestFrame.onclick = RequestFrame;

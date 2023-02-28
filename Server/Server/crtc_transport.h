@@ -52,6 +52,7 @@ namespace chen {
 			, m_all_rtx_video_ssrc(0)
 			, m_ssrc_media_type_map()
 			, m_rtc_client_type(ERtcClientNone)
+			, m_request_keyframe(0)
 			//, m_srtp()
 		 {}
 
@@ -64,7 +65,9 @@ namespace chen {
 		void update(uint32 uDeltaTime);
 
 		void destroy();
+	public:
 
+		void request_key_frame();
 
 	public:
 		void send_rtp_data(void * data, int32 size);
@@ -72,6 +75,11 @@ namespace chen {
 		void send_rtp_audio_data(RTC::RtpPacket* packet);
 		void send_rtp_video_data(RTC::RtpPacket* packet);
 		void send_rtp_rtx_video_data(RTC::RtpPacket* packet);
+
+
+
+		// rtcp  
+		void send_rtcp_packet(RTC::RTCP::Packet* packet);
 	public:
 		// virtual
 		virtual int32 write_dtls_data(void* data, int size);
@@ -157,6 +165,7 @@ namespace chen {
 
 
 		ERtcClientType							m_rtc_client_type;
+		uint32									m_request_keyframe;
 
 	};
 

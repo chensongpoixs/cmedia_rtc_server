@@ -24,6 +24,7 @@ purpose:		crtc_transport
 #include "cdtls_session.h"
 #include "crtp_rtcp.h"
 #include "cstr2digit.h"
+#include "H264.hpp"
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -65,7 +66,7 @@ namespace chen {
 						}
 						else if (m_all_rtx_audio_ssrc == 0)
 						{
-							m_all_rtx_audio_ssrc == ssrc_iter->m_ssrc;
+							m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
 						}
 						else
 						{
@@ -81,7 +82,7 @@ namespace chen {
 						}
 						else if (m_all_rtx_video_ssrc == 0)
 						{
-							m_all_rtx_video_ssrc == ssrc_iter->m_ssrc;
+							m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
 						}
 						else
 						{
@@ -111,7 +112,7 @@ namespace chen {
 						}
 						else if (m_all_rtx_audio_ssrc == 0)
 						{
-							m_all_rtx_audio_ssrc == ssrc_iter->m_ssrc;
+							m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
 						}
 						else
 						{
@@ -127,7 +128,7 @@ namespace chen {
 						}
 						else if (m_all_rtx_video_ssrc == 0)
 						{
-							m_all_rtx_video_ssrc == ssrc_iter->m_ssrc;
+							m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
 						}
 						else
 						{
@@ -206,6 +207,51 @@ namespace chen {
 			delete *iter;
 		}*/
 		m_udp_sockets.clear();
+	}
+	void crtc_transport::request_key_frame()
+	{
+		++m_request_keyframe;
+		///////////////////////////////////////////////////////////////////////////
+		////                         IDR Request
+
+		//     关键帧也叫做即时刷新帧，简称IDR帧。对视频来说，IDR帧的解码无需参考之前的帧，因此在丢包严重时可以通过发送关键帧请求进行画面的恢复。
+		// 关键帧的请求方式分为三种：RTCP FIR反馈（Full intra frame request）、RTCP PLI 反馈（Picture Loss Indictor）或SIP Info消息，
+		//							具体使用哪种可通过协商确定.
+
+		///////////////////////////////////////////////////////////////////////////
+		//if (this->params.usePli)
+		//if (m_request_keyframe > 0)
+		{
+			DEBUG_EX_LOG("rtcp, rtx, sending PLI [ssrc:%" PRIu32 "], [m_request_keyframe = %" PRIu32 "]", m_all_video_ssrc, m_request_keyframe);
+			m_request_keyframe = 0;
+			// Sender SSRC should be 0 since there is no media sender involved, but
+			// some implementations like gstreamer will fail to process it otherwise.
+			RTC::RTCP::FeedbackPsPliPacket packet(m_all_video_ssrc, m_all_video_ssrc);
+
+			packet.Serialize(RTC::RTCP::Buffer);
+			send_rtcp_packet(&packet);
+			//this->pliCount++;
+
+			// Notify the listener.
+			//static_cast<RTC::RtpStreamRecv::Listener*>(this->listener)->OnRtpStreamSendRtcpPacket(this, &packet);
+		}
+		//else if (this->params.useFir)
+		//{
+		//	DEBUG_EX_LOG(" rtcp, rtx,  sending FIR [ssrc:%" PRIu32 "]", m_all_video_ssrc);
+
+		//	// Sender SSRC should be 0 since there is no media sender involved, but
+		//	// some implementations like gstreamer will fail to process it otherwise.
+		//	RTC::RTCP::FeedbackPsFirPacket packet(m_all_video_ssrc, m_all_video_ssrc);
+		//	auto* item = new RTC::RTCP::FeedbackPsFirItem(GetSsrc(), ++this->firSeqNumber);
+
+		//	packet.AddItem(item);
+		//	packet.Serialize(RTC::RTCP::Buffer);
+
+		//	this->firCount++;
+
+		//	// Notify the listener.
+		//	static_cast<RTC::RtpStreamRecv::Listener*>(this->listener)->OnRtpStreamSendRtcpPacket(this, &packet);
+		//}
 	}
 	void crtc_transport::send_rtp_data(void * data, int32 size)
 	{
@@ -321,6 +367,38 @@ namespace chen {
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
 		}
+	}
+	void crtc_transport::send_rtcp_packet(RTC::RTCP::Packet * packet)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			const uint8_t* data = packet->GetData();
+			size_t len = packet->GetSize();
+			if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
+			{
+				WARNING_EX_LOG("rtcp encrypt reqest key frame failed !!!");
+				return;
+			}
+			//NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		}
+		
+
+		//// Ensure there is sending SRTP session.
+		//if (!this->srtpSendSession)
+		//{
+		//	MS_WARN_DEV("ignoring RTCP packet due to non sending SRTP session");
+
+		//	return;
+		//}
+
+		//if (!this->srtpSendSession->EncryptRtcp(&data, &len))
+		//	return;
+
+		//this->iceServer->GetSelectedTuple()->Send(data, len);
+
+		//// Increase send transmission.
+		//RTC::Transport::DataSent(len);
 	}
 	int32 crtc_transport::write_dtls_data(void * data, int size)
 	{
@@ -442,6 +520,7 @@ namespace chen {
 			 
 			//OnRtcpDataReceived(tuple, data, len);
 			_on_rtcp_data_received(socket, data, len, remoteAddr);
+			
 		}
 		// Check if it's RTP.
 		else if (RTC::RtpPacket::IsRtp(data, len))
@@ -463,6 +542,7 @@ namespace chen {
 			 
 			WARNING_EX_LOG("ignoring received packet of unknown type");
 		}
+		
 	}
 	void crtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
@@ -583,6 +663,8 @@ namespace chen {
 			}
 			if (m_all_video_ssrc == packet->GetSsrc())
 			{
+				RTC::Codecs::H264::ProcessRtpPacket(packet);
+				//packet->Dump();
 				//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
 			}
 			else  if (m_all_rtx_video_ssrc == packet->GetSsrc())
@@ -633,11 +715,14 @@ namespace chen {
 					}
 					else if (m_all_video_ssrc == packet->GetSsrc())
 					{
+						
+						//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
+					
 						rtc_ptr->send_rtp_video_data(packet);
 					}
 					else
 					{
-						WARNING_EX_LOG("[video rtx ][not find ssrc = %u][]", packet->GetSsrc());
+						WARNING_EX_LOG("[rtc type = %s][video rtx ][not find ssrc = %u][]", m_rtc_client_type == ERtcClientPlayer ? "rtc_player" : "rtc_publisher", packet->GetSsrc() );
 					}
 					
 				}

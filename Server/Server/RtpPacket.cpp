@@ -306,6 +306,11 @@ namespace RTC
 		DEBUG_LOG("  packet size       : %zu bytes", GetSize());
 		DEBUG_LOG("  spatial layer     : %" PRIu8, GetSpatialLayer());
 		DEBUG_LOG("  temporal layer    : %" PRIu8, GetTemporalLayer());
+
+		if (payloadDescriptorHandler)
+		{
+			payloadDescriptorHandler->Dump();
+		}
 		DEBUG_LOG("</RtpPacket>");
 	}
 

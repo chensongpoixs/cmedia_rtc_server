@@ -345,7 +345,7 @@ namespace chen {
 						continue;
 					}
 
-					// If not exists 42e01f, we pick up any profile such as 42001f.
+					// If not exists 42e01f, we pick up any profile such as 42e01f.
 					bool profile_matched = (!has_42e01f || h264_param.m_profile_level_id == "42e01f");
 
 					// Try to pick the "best match" H.264 payload type.

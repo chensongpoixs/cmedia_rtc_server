@@ -175,6 +175,8 @@ namespace chen {
 
 		C2S_rtc_player,
 		S2C_rtc_player,
+		C2S_rtc_requestframe,
+		S2C_rtc_requestframe,
 	
 		Msg_Client_Max = 125000,
 

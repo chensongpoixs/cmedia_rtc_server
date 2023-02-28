@@ -15,6 +15,8 @@ Copyright boost
 #include "crtp_rtcp.h"
 #include "RtpPacket.hpp"
 #include "SenderReport.hpp"
+#include "crate_calculator.h"
+#include "ReceiverReport.hpp"
 namespace chen {
 	class crtp_stream_recv
 	{
@@ -34,9 +36,11 @@ namespace chen {
 		virtual ~crtp_stream_recv();
 
 	public:
+		bool init(uint32 ssrc, uint8 initial_score);
+	public:
 		bool  receive_packet(RTC::RtpPacket* packet);
 		bool  receive_rtx_packet(RTC::RtpPacket* packet);
-		//RTC::RTCP::ReceiverReport* GetRtcpReceiverReport();
+		RTC::RTCP::ReceiverReport* get_rtcp_receiver_report();
 		//RTC::RTCP::ReceiverReport* GetRtxRtcpReceiverReport();
 		void receive_rtcp_sender_report(RTC::RTCP::SenderReport* report);
 		void receive_rtx_rtcp_sender_report(RTC::RTCP::SenderReport* report);
@@ -46,6 +50,26 @@ namespace chen {
 	private:
 
 		void _calculate_jitter(uint32 rtpTimestamp);
+
+		bool  _receive_packet(RTC::RtpPacket* packet);
+
+		void _reset_score(uint8  score, bool notify);
+
+		void update_score();
+	public:
+		bool update_seq(RTC::RtpPacket* packet);
+		void update_score(uint8 score);
+		void packet_retransmitted(RTC::RtpPacket* packet);
+		void packet_repaired(RTC::RtpPacket* packet);
+		uint32  getexpected_packets() const
+		{
+			return (m_cycles + m_maxSeq) - m_baseSeq + 1;
+		}
+
+	private:
+		void _init_seq(uint16 seq);
+
+
 	private:
 		uint32			m_expectedPrior{ 0u };      // Packets expected at last interval.
 		uint32			m_expectedPriorScore{ 0u }; // Packets expected at last interval for score calculation.
@@ -64,7 +88,49 @@ namespace chen {
 		//Timer* inactivityCheckPeriodicTimer{ nullptr };
 		bool			m_inactive{ false };
 		//TransmissionCounter transmissionCounter;      // Valid media + valid RTX.
-		//RTC::RtpDataCounter mediaTransmissionCounter; // Just valid media.
+		RtpDataCounter m_mediaTransmissionCounter; // Just valid media.
+
+
+		///////////////////////////////////////////////////////////////////////////////////////
+		// Others.
+		//   https://tools.ietf.org/html/rfc3550#appendix-A.1 stuff.
+		uint16				m_maxSeq{ 0u };      // Highest seq. number seen.
+		uint32				m_cycles{ 0u };      // Shifted count of seq. number cycles.
+		uint32				m_baseSeq{ 0u };     // Base seq number.
+		uint32				m_badSeq{ 0u };      // Last 'bad' seq number + 1.
+		uint32				m_maxPacketTs{ 0u }; // Highest timestamp seen.
+		uint64				m_maxPacketMs{ 0u }; // When the packet with highest timestammp was seen.
+		uint32				m_packetsLost{ 0u };
+		uint8				m_fractionLost{ 0u };
+		size_t				m_packetsDiscarded{ 0u };
+		size_t				m_packetsRetransmitted{ 0u };
+		size_t				m_packetsRepaired{ 0u };
+		size_t				m_nackCount{ 0u };
+		size_t				m_nackPacketCount{ 0u };
+		size_t				m_pliCount{ 0u };
+		size_t				m_firCount{ 0u };
+		size_t				m_repairedPriorScore{ 0u }; // Packets repaired at last interval for score calculation.
+		size_t				m_retransmittedPriorScore{ 0u }; // Packets retransmitted at last interval for score calculation.
+		uint64				m_lastSenderReportNtpMs{ 0u }; // NTP timestamp in last Sender Report (in ms).
+		uint32				m_lastSenderReporTs{ 0u };     // RTP timestamp in last Sender Report.
+		float				m_rtt{ 0 };
+		bool				m_hasRtt{ false };
+
+
+
+
+		//////////////////////////private://///////////////////////////////
+		// Score related.
+		uint8					m_score{ 0u };
+		std::vector<uint8>		m_scores;
+		// Whether at least a RTP packet has been received.
+		bool					m_started{ false };
+		// Last time since the stream is active.
+		uint64					m_activeSinceMs{ 0u };
+
+
+
+		uint32					m_ssrc;
 	};
 }
 

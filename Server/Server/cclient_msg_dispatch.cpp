@@ -30,6 +30,7 @@ namespace chen {
 
 		_register_msg_handler(C2S_rtc_publisher, "C2S_RtcPublisher", &cwan_session::handler_rtc_publisher);
 		_register_msg_handler(C2S_rtc_player, "C2S_RtcPlayer", &cwan_session::handler_rtc_player);
+		_register_msg_handler(C2S_rtc_requestframe, "C2S_requestFrame", &cwan_session::handler_rtc_request_frame);
 		//_register_msg_handler(C2S_CreateRoom, "C2S_CreateRoom", &cwan_session::handler_create_room);
 		//_register_msg_handler(C2S_DestroyRoom, "C2S_DestroyRoom", &cwan_session::handler_destroy_room);
 		return true;

@@ -5,6 +5,7 @@
 #include "FeedbackItem.hpp"
 #include "Packet.hpp"
 #include "cnet_type.h"
+#include "clog.h"
 namespace RTC
 {
 	namespace RTCP
@@ -60,6 +61,8 @@ namespace RTC
 			}
 			size_t GetSize() const override
 			{
+				using namespace chen;
+				NORMAL_EX_LOG("[sizeof(CommonHeader) = %u][sizeof(Header) = %u]", sizeof(CommonHeader), sizeof(Header)	);
 				return sizeof(CommonHeader) + sizeof(Header);
 			}
 

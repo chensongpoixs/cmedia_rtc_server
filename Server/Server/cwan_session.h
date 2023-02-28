@@ -71,6 +71,7 @@ namespace chen {
 		//////////////////////
 		bool   handler_rtc_publisher(Json::Value & value);
 		bool   handler_rtc_player(Json::Value & value);
+		bool   handler_rtc_request_frame(Json::Value & value);
 
 	private:
 		//void   _collecion_update_mediasoup_type(EMediasoupType type);

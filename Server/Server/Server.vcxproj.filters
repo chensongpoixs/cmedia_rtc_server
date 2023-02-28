@@ -187,6 +187,9 @@
     <Filter Include="rtp_rtcp">
       <UniqueIdentifier>{5346d05d-a2b4-45f6-a68d-e9488beef75d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="stream">
+      <UniqueIdentifier>{35497ce8-f930-41a4-b061-adbacdaf94c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -720,6 +723,12 @@
     </ClCompile>
     <ClCompile Include="crtc_publisher_stream.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_stream_recv.cpp">
+      <Filter>stream</Filter>
+    </ClCompile>
+    <ClCompile Include="cseq_manager.cpp">
+      <Filter>rtp_rtcp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1346,6 +1355,12 @@
     </ClInclude>
     <ClInclude Include="crtc_publisher_stream.h">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_stream_recv.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="cseq_manager.h">
+      <Filter>rtp_rtcp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
