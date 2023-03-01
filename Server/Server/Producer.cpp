@@ -21,8 +21,8 @@
 namespace RTC
 {
 	/* Instance methods. */
-	using namespace chen;
-	Producer::Producer( RTC::Producer::Listener* listener,       cmedia_desc   media_desc)
+	//using namespace chen;
+	Producer::Producer( RTC::Producer::Listener* listener,       chen::cmedia_desc   media_desc)
 	  :  listener(listener)
 	{
 	//	MS_TRACE();

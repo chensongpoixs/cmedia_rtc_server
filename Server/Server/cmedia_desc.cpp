@@ -432,7 +432,7 @@ if (!getline(is,word,delim)) {\
 		return 0;
 		//return int32();
 	}
-	std::vector<cmedia_payload_type> cmedia_desc::find_media_with_encoding_name(const std::string & encoding_name) const
+	std::vector<cmedia_payload_type> cmedia_desc::find_media_with_encoding_name(const std::string & encoding_name ) const
 	{
 		std::vector<cmedia_payload_type> payloads;
 
@@ -442,8 +442,8 @@ if (!getline(is,word,delim)) {\
 
 		for (size_t i = 0; i < m_payload_types.size(); ++i) 
 		{
-			if (m_payload_types[i].m_encoding_name == std::string(lower_name.c_str()) ||
-				m_payload_types[i].m_encoding_name == std::string(upper_name.c_str()))
+			if ((m_payload_types[i].m_encoding_name == std::string(lower_name.c_str()) ||
+				m_payload_types[i].m_encoding_name == std::string(upper_name.c_str()) ))
 			{
 				payloads.push_back(m_payload_types[i]);
 			}
@@ -657,6 +657,15 @@ if (!getline(is,word,delim)) {\
 		FETCH(is, word, EMediaRtcSdpInvalidAttrFmtpSpecificParam, "EMediaRtcSdpInvalidAttrFmtpParseSpecificParam");
 
 		payload->m_format_specific_param = word;
+
+		//char buffer[520] = {0};
+		//uint32  index = word.find("=");
+		//NORMAL_EX_LOG("[word = %s][index = %u]", word.c_str(), index);
+
+		//if (word.substr(0, index) == "apt")
+		{
+	//		payload->m_apt = std::atoi(word.substr(index + 1, word.size()).c_str());
+		}
 
 		return 0;
 		//return int32();

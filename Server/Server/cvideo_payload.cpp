@@ -36,7 +36,7 @@ namespace chen {
 			format_specific_param << ";profile-level-id=" << m_h264_param.m_profile_level_id;
 		}
 
-		media_payload_type.m_format_specific_param = format_specific_param.str();
+		media_payload_type.m_format_specific_param = format_specific_param.str().c_str();
 		return media_payload_type;
 
 		//return cmedia_payload_type();

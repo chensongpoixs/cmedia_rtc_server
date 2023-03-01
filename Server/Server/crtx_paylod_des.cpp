@@ -20,8 +20,9 @@ namespace chen {
 		media_payload_type.m_encoding_name = m_name;
 		media_payload_type.m_clock_rate = m_sample;
 		std::ostringstream format_specific_param;
-		format_specific_param << "fmtp:" << m_pt << " apt=" << m_apt;
+		//format_specific_param /*<< "fmtp:" << (uint32)m_pt*/ << " apt=" << (uint32)m_apt;
 
+		format_specific_param << "fmtp:" << m_pt << " apt=" << m_apt;
 		media_payload_type.m_format_specific_param = format_specific_param.str();
 
 		return media_payload_type;

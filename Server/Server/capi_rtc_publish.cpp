@@ -325,7 +325,7 @@ namespace chen {
 					return false;
 					//return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid H.264 payload type");
 				}
-
+				int32 video_payload_type = 0;
 				std::deque<cmedia_payload_type> backup_payloads;
 				for (int32 j = 0; j < (int32)payloads.size(); j++)
 				{
@@ -380,7 +380,7 @@ namespace chen {
 								}
 							}
 						}
-
+						video_payload_type = video_payload->m_pt;
 						track_desc.m_type = "video";
 						track_desc.set_codec_payload(video_payload);
 						// Only choose first match H.264 payload type.
@@ -441,6 +441,7 @@ namespace chen {
 
 			// TODO: FIXME: use one parse payload from sdp.
 			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("red"));
+			
 			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("rtx"));
 			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("ulpfec"));
 
@@ -646,13 +647,22 @@ namespace chen {
 			}
 
 			cvideo_payload* payload = dynamic_cast<cvideo_payload*>(video_track->m_media_ptr);
-			local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
+			if (payload)
+			{
+				local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
 
-			if (video_track->m_red_ptr)
+			}
+			
+			 if (video_track->m_red_ptr)
 			{
 				cred_paylod* payload = dynamic_cast<cred_paylod*>(video_track->m_red_ptr);
 				local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
-			}
+			} 
+			 /*if (video_track->m_rtx_ptr)
+			 {
+				 crtx_payload_des* payload = dynamic_cast<crtx_payload_des*>(video_track->m_rtx_ptr);
+				 local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
+			 }*/
 
 			if (!unified_plan)
 			{

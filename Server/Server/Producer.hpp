@@ -16,13 +16,14 @@
 //#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-//#include "crtc_sdp.h"
+ #include "crtc_sdp.h"
+#include "cmedia_desc.h"
 //using json = nlohmann::json;
 
 namespace RTC
 {
-	using namespace chen;
-	class cmedia_desc;
+	//using namespace chen;
+	//class cmedia_desc;
 	class Producer : public RTC::RtpStreamRecv::Listener, public RTC::KeyFrameRequestManager::Listener
 	{
 	public:
@@ -89,7 +90,7 @@ namespace RTC
 
 	public:
 		//Producer(RTC::Producer::Listener* listener, const  chen::cmedia_desc & media_desc);
-		Producer(RTC::Producer::Listener * listener,   cmedia_desc   media_desc);
+		Producer(RTC::Producer::Listener * listener,   chen::cmedia_desc   media_desc);
 		virtual ~Producer();
 
 	public:
