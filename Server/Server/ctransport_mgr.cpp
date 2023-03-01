@@ -22,12 +22,25 @@ namespace chen {
 	void ctransport_mgr::update(uint32 uDeltaTime)
 	{
 
-		for (TRANSPORT_MAP::iterator iter = m_all_transport_map.begin(); iter != m_all_transport_map.end(); ++iter)
+		for (TRANSPORT_MAP::iterator iter = m_all_transport_map.begin(); iter != m_all_transport_map.end(); )
 		{
 			// 心跳包的检查
 			//if ()
 			{
 				iter->second->update(uDeltaTime);
+			}
+			
+			if (iter->second  &&
+				iter->second->check_rtc_timer_out())
+			{
+				iter->second->destroy();
+				crtc_transport* ptr = iter->second;
+				delete ptr;
+				iter = m_all_transport_map.erase(iter);
+			}
+			else
+			{
+				++iter;
 			}
 		}
 
@@ -114,12 +127,13 @@ namespace chen {
 	}
 	bool ctransport_mgr::insert_stream_name(const std::string & stream_url, crtc_transport * transport)
 	{
-		m_all_stream_url_map[stream_url] = transport;
-		/*if (!m_all_stream_url_map.insert(std::make_pair(stream_url, transport)).second)
+		
+		if (!m_all_stream_url_map.insert(std::make_pair(stream_url, transport)).second)
 		{
-			WARNING_EX_LOG("insert  stream url  map failed !!! [stream_url = %s]", stream_url.c_str());
+			m_all_stream_url_map[stream_url] = transport;
+			WARNING_EX_LOG("insert  stream url  map ---> !!! [stream_url = %s]", stream_url.c_str());
 			return false;
-		}*/
+		}
 
 		return true;
 	}

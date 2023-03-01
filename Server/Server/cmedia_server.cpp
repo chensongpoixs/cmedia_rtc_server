@@ -23,7 +23,8 @@ purpose:		cmedia_server
 #include "cdtls_certificate.h"
 #include "cglobal_config.h"
 #include "csrtp_session.h"
-
+#include "crtc_transport.h"
+#include "ctransport_mgr.h"
 
 namespace chen {
 	cmedia_server g_media_server;
@@ -227,7 +228,7 @@ namespace chen {
 
 			g_room_mgr.update(TICK_TIME);
 
-
+			g_transport_mgr.update(TICK_TIME);
 			//uDelta = time_elapse.get_elapse();
 
 			/*if (uDelta < TICK_TIME)

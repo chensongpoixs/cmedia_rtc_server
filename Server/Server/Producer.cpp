@@ -24,6 +24,7 @@ namespace RTC
 	//using namespace chen;
 	Producer::Producer( RTC::Producer::Listener* listener,       chen::cmedia_desc   media_desc)
 	  :  listener(listener)
+		, m_media_desc(media_desc)
 	{
 	//	MS_TRACE();
 		/*
@@ -760,6 +761,14 @@ namespace RTC
 		}
 
 		// Otherwise check our encodings and, if appropriate, create a new stream.
+
+		for (const cssrc_group & ssrc_group : m_media_desc.m_ssrc_groups)
+		{
+			if (ssrc_group.m_semantic == "FID")
+			{
+
+			}
+		}
 
 		// First, look for an encoding with matching media or RTX ssrc value.
 		for (size_t i{ 0 }; i < this->rtpParameters.encodings.size(); ++i)

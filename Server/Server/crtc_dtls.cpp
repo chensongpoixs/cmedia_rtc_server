@@ -320,22 +320,29 @@ namespace chen {
 	{
 		// NOTE: At this point SSL_set_bio() was not called so we must free BIOs as
 		// well.
+		if (m_ssl_ptr)
+		{
+			if (m_handshake_done_for_us)
+			{
+				SSL_shutdown(m_ssl_ptr);
+				send_pending_outgoing_dtlsdata();
+			}
+			
+			SSL_free(m_ssl_ptr);
+			m_ssl_ptr = NULL;
+		}
 		if (m_ssl_bio_read_network_ptr)
 		{
-			BIO_free(m_ssl_bio_read_network_ptr);
+			//BIO_free(m_ssl_bio_read_network_ptr);
 			m_ssl_bio_read_network_ptr = NULL;
 		}
 		if (m_ssl_bio_write_network_ptr)
 		{
-			BIO_free(m_ssl_bio_write_network_ptr);
+			//BIO_free(m_ssl_bio_write_network_ptr);
 			m_ssl_bio_write_network_ptr = NULL;
 		}
 
-		if (m_ssl_ptr)
-		{
-			SSL_free(m_ssl_ptr);
-			m_ssl_ptr = NULL;
-		}
+		
 	}
 
 	bool crtc_dtls::start_active_handshake(const std::string & type)

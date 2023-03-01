@@ -130,6 +130,15 @@ namespace chen {
 	}
 	csrtp_session::~csrtp_session()
 	{
+		if (m_session != nullptr)
+		{
+			srtp_err_status_t err = srtp_dealloc(m_session);
+
+			if (csrtp_session::IsError(err))
+			{
+				cassert("srtp_dealloc() failed: %s", csrtp_session::GetErrorString(err));
+			}
+		}
 	}
 	bool csrtp_session::init()
 	{

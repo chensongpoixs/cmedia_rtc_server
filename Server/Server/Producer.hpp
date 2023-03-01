@@ -187,6 +187,8 @@ namespace RTC
 		bool videoOrientationDetected{ false };
 		struct VideoOrientation videoOrientation;
 		struct TraceEventTypes traceEventTypes;
+
+		chen::cmedia_desc					m_media_desc;
 	};
 } // namespace RTC
 

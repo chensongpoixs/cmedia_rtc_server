@@ -47,8 +47,11 @@ void test_cassert()
  
 int main(int argc, char* argv[])
 {
-	
-	
+	HWND h = FindWindow( "Qt5152QWindowOwnDCIcon", "Rte");
+
+	PostMessage(h, WM_KEYDOWN, 32 /* asciiÂë */, 0);
+	PostMessage(h, WM_KEYUP, 32 /* asciiÂë */, 1);
+	return 0;
 	 
 	RegisterSignal();
 

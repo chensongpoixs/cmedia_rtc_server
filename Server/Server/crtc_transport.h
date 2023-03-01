@@ -53,6 +53,7 @@ namespace chen {
 			, m_ssrc_media_type_map()
 			, m_rtc_client_type(ERtcClientNone)
 			, m_request_keyframe(0)
+			, m_time_out_ms(uv_util::GetTimeMs())
 			//, m_srtp()
 		 {}
 
@@ -65,9 +66,11 @@ namespace chen {
 		void update(uint32 uDeltaTime);
 
 		void destroy();
+		bool check_rtc_timer_out() const;
 	public:
 
 		void request_key_frame();
+
 
 	public:
 		void send_rtp_data(void * data, int32 size);
@@ -166,6 +169,8 @@ namespace chen {
 
 		ERtcClientType							m_rtc_client_type;
 		uint32									m_request_keyframe;
+	
+		uint64									m_time_out_ms;
 
 	};
 

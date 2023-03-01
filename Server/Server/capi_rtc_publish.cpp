@@ -73,7 +73,7 @@ namespace chen {
 		// We allows to mock the eip of server.
 		if (true)
 		{
-			static  int32 udp_port = 10000;//_srs_config->get_rtc_server_listen();
+			static  int32 udp_port = 60000;//_srs_config->get_rtc_server_listen();
 			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
 			std::string protocol = "udp";//_srs_config->get_rtc_server_protocol();
 

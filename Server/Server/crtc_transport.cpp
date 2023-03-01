@@ -202,11 +202,35 @@ namespace chen {
 	}
 	void crtc_transport::destroy()
 	{
-		/*if (std::vector<cudp_socket*>::iterator iter = m_udp_sockets.begin(); iter != m_udp_sockets.end(); ++iter)
+		DEBUG_EX_LOG("");
+		if (m_dtls_ptr)
 		{
-			delete *iter;
-		}*/
+			m_dtls_ptr->destroy();
+			delete m_dtls_ptr;
+			m_dtls_ptr = NULL;
+		}
+		
+		for (std::vector<cudp_socket*>::iterator iter = m_udp_sockets.begin(); iter != m_udp_sockets.end(); ++iter)
+		{
+			cudp_socket* ptr = *iter;
+			delete ptr;
+		}
 		m_udp_sockets.clear();
+		if (m_srtp_send_session_ptr)
+		{
+			delete m_srtp_send_session_ptr;
+			m_srtp_send_session_ptr = NULL;
+		}
+		if (m_srtp_recv_session_ptr)
+		{
+			delete m_srtp_recv_session_ptr;
+			m_srtp_recv_session_ptr = NULL;
+		}
+		
+	}
+	bool crtc_transport::check_rtc_timer_out() const
+	{
+		return (m_time_out_ms + 500) < uv_util::GetTimeMs();
 	}
 	void crtc_transport::request_key_frame()
 	{
@@ -599,7 +623,7 @@ namespace chen {
 			
 		}
 
-
+		m_time_out_ms = uv_util::GetTimeMs();
 		if (m_rtc_net_state != ERtcNetworkStateDtls)
 		{
 			m_rtc_net_state = ERtcNetworkStateDtls;
