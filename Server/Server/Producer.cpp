@@ -1,4 +1,4 @@
-﻿//#define MS_CLASS "RTC::Producer"
+#define MS_CLASS "RTC::Producer"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "Producer.hpp"
@@ -14,160 +14,436 @@
 #include <cstring>  // std::memcpy()
 #include <iterator> // std::ostream_iterator
 #include <sstream>  // std::ostringstream
-#include <cassert>
-#include <vector>
-#include <algorithm>
-#include "crandom.h"
-#include "cortc.h"
+#include "Producer.hpp"
+#include "cuv_util.h"
+#include "crtc_sdp.h"
+//#define  MS_TRACE 
 namespace RTC
 {
 	/* Instance methods. */
-
-	Producer::Producer(const std::string& id, RTC::Producer::Listener* listener, const RTC::RtpParameters& rtp_Parameter/*, Json::Value& data*/)
-		: id(id)
-		, listener(listener)
+	using namespace chen;
+	Producer::Producer( RTC::Producer::Listener* listener,       cmedia_desc   media_desc)
+	  :  listener(listener)
 	{
-
-		if (rtp_Parameter.m_codec_type == RtpCodecMimeType::Type::VIDEO)
+	//	MS_TRACE();
+		/*
 		{
-			kind = RTC::Media::Kind::VIDEO;
-		}
-		else
-		{
-			kind = RTC::Media::Kind::AUDIO;
-		}
-		paused = false;
+					"kind":"video",
+					"paused":false,
+					"rtpMapping":{
+					"codecs":[
+					{
+						"mappedPayloadType":101,
+						"payloadType":108
+					},
+					{
+						"mappedPayloadType":102,
+						"payloadType":109
+					}
+					],
+					"encodings":[
+					{
+						"mappedSsrc":806764358,
+						"rid":"r0",
+						"scalabilityMode":"S1T3"
+					},
+					{
+						"mappedSsrc":806764359,
+						"rid":"r1",
+						"scalabilityMode":"S1T3"
+					},
+					{
+						"mappedSsrc":806764360,
+						"rid":"r2",
+						"scalabilityMode":"S1T3"
+					}
+					]
+					},
+					"rtpParameters":{
+						"codecs":[
+						{
+						"clockRate":90000,
+						"mimeType":"video/H264",
+						"parameters":{
+						"level-asymmetry-allowed":1,
+						"packetization-mode":1,
+						"profile-level-id":"42e01f"
+					},
+						"payloadType":108,
+					"rtcpFeedback":[
+					{
+						"parameter":"",
+						"type":"goog-remb"
+					},
+					{
+						"parameter":"",
+						"type":"transport-cc"
+					},
+					{
+						"parameter":"fir",
+						"type":"ccm"
+					},
+					{
+						"parameter":"",
+						"type":"nack"
+					},
+					{
+						"parameter":"pli",
+						"type":"nack"
+					}
+					]
+					},
+					{
+						"clockRate":90000,
+						"mimeType":"video/rtx",
+						"parameters":{
+						"apt":108
+						},
+						"payloadType":109,
+						"rtcpFeedback":[
 
-		rtpParameters = rtp_Parameter;
-		// Evaluate type.
-		// 根据rtpParameters中encodings中设置编码传输的类型
-		this->type = RTC::RtpParameters::GetType(this->rtpParameters);
-		// 根据客户端 的编码类型 设置每一种编码类型
-		this->rtpStreamByEncodingIdx.resize(this->rtpParameters.encodings.size(), nullptr);
-		this->rtpStreamScores.resize(this->rtpParameters.encodings.size(), 0u);
+					]
+					}
+					],
+					"encodings":[
+					{
+						"active":true,
+						"dtx":false,
+						"maxBitrate":500000,
+						"rid":"r0",
+						"scalabilityMode":"S1T3",
+						"scaleResolutionDownBy":4
+					},
+					{
+						"active":true,
+						"dtx":false,
+						"maxBitrate":1000000,
+						"rid":"r1",
+						"scalabilityMode":"S1T3",
+						"scaleResolutionDownBy":2
+					},
+					{
+						"active":true,
+						"dtx":false,
+						"maxBitrate":5000000,
+						"rid":"r2",
+						"scalabilityMode":"S1T3",
+						"scaleResolutionDownBy":1
+					}
+					],
+					"headerExtensions":[
+					{
+						"encrypt":false,
+						"id":4,
+						"parameters":{
 
-		auto& encoding = this->rtpParameters.encodings[0];
-		auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
+						},
+						"uri":"urn:ietf:params:rtp-hdrext:sdes:mid"
+					},
+					{
+						"encrypt":false,
+						"id":10,
+						"parameters":{
 
-		// 检查对编码类型判断传输类型是否准确创建
-		if (!RTC::Codecs::Tools::IsValidTypeForCodec(this->type, mediaCodec->mimeType))
-		{
-			ERROR_EX_LOG(
-				"%s codec not supported for %s",
-				mediaCodec->mimeType.ToString().c_str(),
-				RTC::RtpParameters::GetTypeString(this->type).c_str());
-		}
+						},
+						"uri":"urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id"
+					},
+					{
+						"encrypt":false,
+						"id":11,
+						"parameters":{
+
+						},
+						"uri":"urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id"
+					},
+					{
+						"encrypt":false,
+						"id":2,
+						"parameters":{
+
+						},
+					"uri":"http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time"
+					},
+					{
+						"encrypt":false,
+						"id":3,
+						"parameters":{
+
+						},
+					"uri":"http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01"
+					},
+					{
+						"encrypt":false,
+						"id":13,
+						"parameters":{
+
+						},
+						"uri":"urn:3gpp:video-orientation"
+					},
+					{
+						"encrypt":false,
+						"id":14,
+						"parameters":{
+
+						},
+					"uri":"urn:ietf:params:rtp-hdrext:toffset"
+					}
+						],
+						"mid":"2",
+						"rtcp":{
+						"cname":"UgYi3789TL6C/8Zx",
+						"reducedSize":true
+						}
+					}
+				}
 		
+		*/
+		/*auto jsonKindIt = data.find("kind");
 
-
-		for (size_t type_index = 0; type_index < rtpParameters.codecs.size(); ++type_index/*const RTC::RtpCodecParameters & p : rtpParameters.codecs*/)
+		if (jsonKindIt == data.end() || !jsonKindIt->is_string())
 		{
-			if (rtpParameters.codecs[type_index].mimeType.subtype == RTC::RtpCodecMimeType::Subtype::RTX)
-			{
-				continue;
-			}
-			int32 find_payloadType = ortc::match_codecs(rtpParameters.codecs[type_index], g_global_rtc.get_rtp_capabilities().m_codecs);
-			if (find_payloadType == 0)
-			{
-				ERROR_EX_LOG("wrong entry in rtpMapping.codecs (missing mappedPayloadType) not find match_codec id !!!");
-				return ;
-			}
-			rtpMapping.codecs[rtpParameters.codecs[type_index].payloadType] = find_payloadType;
+			MS_THROW_TYPE_ERROR("missing kind");
+		}*/
+
+		// This may throw.
+		this->kind = RTC::Media::GetKind(media_desc.m_type.c_str());
+
+		if (this->kind == RTC::Media::Kind::ALL)
+		{
+			ERROR_EX_LOG("invalid empty kind");
 		}
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-	//    对于js中代码 ortc.js 中getProducerRtpParametersMapping方法
-	//    // Generate encodings mapping.
-	//    // 就是一个随机种子 ssrc 
-	//    let mappedSsrc = utils.generateRandomNumber();
-	//    for (const encoding of params.encodings) {
-	//        const mappedEncoding = {};
-	//        mappedEncoding.mappedSsrc = mappedSsrc++;
-	//        if (encoding.rid)
-	//            mappedEncoding.rid = encoding.rid;
-	//        if (encoding.ssrc)
-	//            mappedEncoding.ssrc = encoding.ssrc;
-	//        if (encoding.scalabilityMode)
-	//            mappedEncoding.scalabilityMode = encoding.scalabilityMode;
-	//        rtpMapping.encodings.push(mappedEncoding);
-	//    }
-	//
-	//
-	//
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-		//rtpMapping.encodings.reserve(rtpParameters.encodings.size());
+		 
 
+		// This may throw.
+		//this->rtpParameters = RTC::RtpParameters(*jsonRtpParametersIt);
 
-		for (RTC::RtpEncodingParameters& rtp_encoding_parameters : rtpParameters.encodings)
+		// Evaluate type.
+		this->type = RtpParameters::Type::SIMPLE; // RTC::RtpParameters::GetType(this->rtpParameters);
+
+		// Reserve a slot in rtpStreamByEncodingIdx and rtpStreamsScores vectors
+		// for each RTP stream.
+		/*this->rtpStreamByEncodingIdx.resize(this->rtpParameters.encodings.size(), nullptr);
+		this->rtpStreamScores.resize(this->rtpParameters.encodings.size(), 0u);*/
+
+		//auto& encoding   = this->rtpParameters.encodings[0];
+		//auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
+
+		///*if (!RTC::Codecs::Tools::IsValidTypeForCodec(this->type, mediaCodec->mimeType))
+		//{
+		//	MS_THROW_TYPE_ERROR(
+		//	  "%s codec not supported for %s",
+		//	  mediaCodec->mimeType.ToString().c_str(),
+		//	  RTC::RtpParameters::GetTypeString(this->type).c_str());
+		//}*/
+
+		////auto jsonRtpMappingIt = data.find("rtpMapping");
+
+		////if (jsonRtpMappingIt == data.end() || !jsonRtpMappingIt->is_object())
+		////{
+		////	MS_THROW_TYPE_ERROR("missing rtpMapping");
+		////}
+
+		///*auto jsonCodecsIt = jsonRtpMappingIt->find("codecs");
+
+		//if (jsonCodecsIt == jsonRtpMappingIt->end() || !jsonCodecsIt->is_array())
+		//{
+		//	MS_THROW_TYPE_ERROR("missing rtpMapping.codecs");
+		//}*/
+
+		//for (auto& codec : *jsonCodecsIt)
+		//{
+		//	if (!codec.is_object())
+		//	{
+		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.codecs (not an object)");
+		//	}
+
+		//	auto jsonPayloadTypeIt = codec.find("payloadType");
+
+		//	// clang-format off
+		//	if (
+		//		jsonPayloadTypeIt == codec.end() ||
+		//		!Utils::Json::IsPositiveInteger(*jsonPayloadTypeIt)
+		//	)
+		//	// clang-format on
+		//	{
+		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.codecs (missing payloadType)");
+		//	}
+
+		//	auto jsonMappedPayloadTypeIt = codec.find("mappedPayloadType");
+
+		//	// clang-format off
+		//	if (
+		//		jsonMappedPayloadTypeIt == codec.end() ||
+		//		!Utils::Json::IsPositiveInteger(*jsonMappedPayloadTypeIt)
+		//	)
+		//	// clang-format on
+		//	{
+		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.codecs (missing mappedPayloadType)");
+		//	}
+
+		//	this->rtpMapping.codecs[jsonPayloadTypeIt->get<uint8_t>()] =
+		//	  jsonMappedPayloadTypeIt->get<uint8_t>();
+		//}
+
+		//auto jsonEncodingsIt = jsonRtpMappingIt->find("encodings");
+
+		//if (jsonEncodingsIt == jsonRtpMappingIt->end() || !jsonEncodingsIt->is_array())
+		//{
+		//	MS_THROW_TYPE_ERROR("missing rtpMapping.encodings");
+		//}
+
+		//this->rtpMapping.encodings.reserve(jsonEncodingsIt->size());
+
+		//for (auto& encoding : *jsonEncodingsIt)
+		//{
+		//	if (!encoding.is_object())
+		//	{
+		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.encodings");
+		//	}
+
+		//	this->rtpMapping.encodings.emplace_back();
+
+		//	auto& encodingMapping = this->rtpMapping.encodings.back();
+
+		//	// ssrc is optional.
+		//	auto jsonSsrcIt = encoding.find("ssrc");
+
+		//	// clang-format off
+		//	if (
+		//		jsonSsrcIt != encoding.end() &&
+		//		Utils::Json::IsPositiveInteger(*jsonSsrcIt)
+		//	)
+		//	// clang-format on
+		//	{
+		//		encodingMapping.ssrc = jsonSsrcIt->get<uint32_t>();
+		//	}
+
+		//	// rid is optional.
+		//	auto jsonRidIt = encoding.find("rid");
+
+		//	if (jsonRidIt != encoding.end() && jsonRidIt->is_string())
+		//	{
+		//		encodingMapping.rid = jsonRidIt->get<std::string>();
+		//	}
+
+		//	// However ssrc or rid must be present (if more than 1 encoding).
+		//	// clang-format off
+		//	if (
+		//		jsonEncodingsIt->size() > 1 &&
+		//		jsonSsrcIt == encoding.end() &&
+		//		jsonRidIt == encoding.end()
+		//	)
+		//	// clang-format on
+		//	{
+		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.encodings (missing ssrc or rid)");
+		//	}
+
+		//	// If there is no mid and a single encoding, ssrc or rid must be present.
+		//	// clang-format off
+		//	if (
+		//		this->rtpParameters.mid.empty() &&
+		//		jsonEncodingsIt->size() == 1 &&
+		//		jsonSsrcIt == encoding.end() &&
+		//		jsonRidIt == encoding.end()
+		//	)
+		//	// clang-format on
+		//	{
+		//		MS_THROW_TYPE_ERROR(
+		//		  "wrong entry in rtpMapping.encodings (missing ssrc or rid, or rtpParameters.mid)");
+		//	}
+
+		//	// mappedSsrc is mandatory.
+		//	auto jsonMappedSsrcIt = encoding.find("mappedSsrc");
+
+		//	// clang-format off
+		//	if (
+		//		jsonMappedSsrcIt == encoding.end() ||
+		//		!Utils::Json::IsPositiveInteger(*jsonMappedSsrcIt)
+		//	)
+		//	// clang-format on
+		//	{
+		//		MS_THROW_TYPE_ERROR("wrong entry in rtpMapping.encodings (missing mappedSsrc)");
+		//	}
+
+		//	encodingMapping.mappedSsrc = jsonMappedSsrcIt->get<uint32_t>();
+		//}
+
+		/*auto jsonPausedIt = data.find("paused");
+
+		if (jsonPausedIt != data.end() && jsonPausedIt->is_boolean())
 		{
-			RtpEncodingMapping encodingMapping;// = this->rtpMapping.encodings.back();
-			encodingMapping.ssrc = rtp_encoding_parameters.ssrc;
-			using namespace chen;
-			 encodingMapping.mappedSsrc =    c_rand.rand();
-			 rtpMapping.encodings.push_back(encodingMapping);
-		}
+			this->paused = jsonPausedIt->get<bool>();
+		}*/
+		this->paused = true;
+
+		// The number of encodings in rtpParameters must match the number of encodings
+		// in rtpMapping.
+		/*if (this->rtpParameters.encodings.size() != this->rtpMapping.encodings.size())
+		{
+			MS_THROW_TYPE_ERROR("rtpParameters.encodings size does not match rtpMapping.encodings size");
+		}*/
+
 		// Fill RTP header extension ids.
 		// This may throw.
-		for (auto& exten : this->rtpParameters.headerExtensions)
-		{
-			if (exten.id == 0u)
-			{
-				ERROR_EX_LOG("RTP extension id cannot be 0");
-			}
+		//for (auto& exten : this->rtpParameters.headerExtensions)
+		//{
+		//	/*if (exten.id == 0u)
+		//	{
+		//		MS_THROW_TYPE_ERROR("RTP extension id cannot be 0");
+		//	}*/
 
-			if (this->rtpHeaderExtensionIds.mid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::MID)
-			{
-				this->rtpHeaderExtensionIds.mid = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.mid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::MID)
+		//	{
+		//		this->rtpHeaderExtensionIds.mid = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.rid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::RTP_STREAM_ID)
-			{
-				this->rtpHeaderExtensionIds.rid = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.rid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::RTP_STREAM_ID)
+		//	{
+		//		this->rtpHeaderExtensionIds.rid = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.rrid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::REPAIRED_RTP_STREAM_ID)
-			{
-				this->rtpHeaderExtensionIds.rrid = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.rrid == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::REPAIRED_RTP_STREAM_ID)
+		//	{
+		//		this->rtpHeaderExtensionIds.rrid = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.absSendTime == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::ABS_SEND_TIME)
-			{
-				this->rtpHeaderExtensionIds.absSendTime = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.absSendTime == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::ABS_SEND_TIME)
+		//	{
+		//		this->rtpHeaderExtensionIds.absSendTime = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.transportWideCc01 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TRANSPORT_WIDE_CC_01)
-			{
-				this->rtpHeaderExtensionIds.transportWideCc01 = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.transportWideCc01 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TRANSPORT_WIDE_CC_01)
+		//	{
+		//		this->rtpHeaderExtensionIds.transportWideCc01 = exten.id;
+		//	}
 
-			// NOTE: Remove this once framemarking draft becomes RFC.
-			if (this->rtpHeaderExtensionIds.frameMarking07 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING_07)
-			{
-				this->rtpHeaderExtensionIds.frameMarking07 = exten.id;
-			}
+		//	// NOTE: Remove this once framemarking draft becomes RFC.
+		//	if (this->rtpHeaderExtensionIds.frameMarking07 == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING_07)
+		//	{
+		//		this->rtpHeaderExtensionIds.frameMarking07 = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.frameMarking == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING)
-			{
-				this->rtpHeaderExtensionIds.frameMarking = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.frameMarking == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::FRAME_MARKING)
+		//	{
+		//		this->rtpHeaderExtensionIds.frameMarking = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.ssrcAudioLevel == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::SSRC_AUDIO_LEVEL)
-			{
-				this->rtpHeaderExtensionIds.ssrcAudioLevel = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.ssrcAudioLevel == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::SSRC_AUDIO_LEVEL)
+		//	{
+		//		this->rtpHeaderExtensionIds.ssrcAudioLevel = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.videoOrientation == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::VIDEO_ORIENTATION)
-			{
-				this->rtpHeaderExtensionIds.videoOrientation = exten.id;
-			}
+		//	if (this->rtpHeaderExtensionIds.videoOrientation == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::VIDEO_ORIENTATION)
+		//	{
+		//		this->rtpHeaderExtensionIds.videoOrientation = exten.id;
+		//	}
 
-			if (this->rtpHeaderExtensionIds.toffset == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TOFFSET)
-			{
-				this->rtpHeaderExtensionIds.toffset = exten.id;
-			}
-		}
-
+		//	if (this->rtpHeaderExtensionIds.toffset == 0u && exten.type == RTC::RtpHeaderExtensionUri::Type::TOFFSET)
+		//	{
+		//		this->rtpHeaderExtensionIds.toffset = exten.id;
+		//	}
+		//}
 
 		// Set the RTCP report generation interval.
 		if (this->kind == RTC::Media::Kind::AUDIO)
@@ -183,21 +459,20 @@ namespace RTC
 		if (this->kind == RTC::Media::Kind::VIDEO)
 		{
 			//auto jsonKeyFrameRequestDelayIt = data.find("keyFrameRequestDelay");
-			uint32_t keyFrameRequestDelay = 100u;
+			uint32_t keyFrameRequestDelay   = 0u;
 
 			// clang-format off
 			//if (
-			//	data.isMember("keyFrameRequestDelay") && data["keyFrameRequestDelay"].isUInt64()
-			//	)
-			//	// clang-format on
+			//	jsonKeyFrameRequestDelayIt != data.end() &&
+			//	jsonKeyFrameRequestDelayIt->is_number_integer()
+			//)
+			//// clang-format on
 			//{
-			//	keyFrameRequestDelay = data["keyFrameRequestDelay"].asUInt();// jsonKeyFrameRequestDelayIt->get<uint32_t>();
+			//	keyFrameRequestDelay = jsonKeyFrameRequestDelayIt->get<uint32_t>();
 			//}
-			//keyFrameRequestDelay = 500;
+
 			this->keyFrameRequestManager = new RTC::KeyFrameRequestManager(this, keyFrameRequestDelay);
 		}
-
-	
 	}
 
 	Producer::~Producer()
@@ -223,277 +498,9 @@ namespace RTC
 		delete this->keyFrameRequestManager;
 	}
 
-	//void Producer::FillJson(json& jsonObject) const
-	//{
-	//	MS_TRACE();
-
-	//	// Add id.
-	//	jsonObject["id"] = this->id;
-
-	//	// Add kind.
-	//	jsonObject["kind"] = RTC::Media::GetString(this->kind);
-
-	//	// Add rtpParameters.
-	//	this->rtpParameters.FillJson(jsonObject["rtpParameters"]);
-
-	//	// Add type.
-	//	jsonObject["type"] = RTC::RtpParameters::GetTypeString(this->type);
-
-	//	// Add rtpMapping.
-	//	jsonObject["rtpMapping"] = json::object();
-	//	auto jsonRtpMappingIt    = jsonObject.find("rtpMapping");
-
-	//	// Add rtpMapping.codecs.
-	//	{
-	//		(*jsonRtpMappingIt)["codecs"] = json::array();
-	//		auto jsonCodecsIt             = jsonRtpMappingIt->find("codecs");
-	//		size_t idx{ 0 };
-
-	//		for (auto& kv : this->rtpMapping.codecs)
-	//		{
-	//			jsonCodecsIt->emplace_back(json::value_t::object);
-
-	//			auto& jsonEntry        = (*jsonCodecsIt)[idx];
-	//			auto payloadType       = kv.first;
-	//			auto mappedPayloadType = kv.second;
-
-	//			jsonEntry["payloadType"]       = payloadType;
-	//			jsonEntry["mappedPayloadType"] = mappedPayloadType;
-
-	//			++idx;
-	//		}
-	//	}
-
-	//	// Add rtpMapping.encodings.
-	//	{
-	//		(*jsonRtpMappingIt)["encodings"] = json::array();
-	//		auto jsonEncodingsIt             = jsonRtpMappingIt->find("encodings");
-
-	//		for (size_t i{ 0 }; i < this->rtpMapping.encodings.size(); ++i)
-	//		{
-	//			jsonEncodingsIt->emplace_back(json::value_t::object);
-
-	//			auto& jsonEntry             = (*jsonEncodingsIt)[i];
-	//			const auto& encodingMapping = this->rtpMapping.encodings[i];
-
-	//			if (!encodingMapping.rid.empty())
-	//				jsonEntry["rid"] = encodingMapping.rid;
-	//			else
-	//				jsonEntry["rid"] = nullptr;
-
-	//			if (encodingMapping.ssrc != 0u)
-	//				jsonEntry["ssrc"] = encodingMapping.ssrc;
-	//			else
-	//				jsonEntry["ssrc"] = nullptr;
-
-	//			jsonEntry["mappedSsrc"] = encodingMapping.mappedSsrc;
-	//		}
-	//	}
-
-	//	// Add rtpStreams.
-	//	jsonObject["rtpStreams"] = json::array();
-	//	auto jsonRtpStreamsIt    = jsonObject.find("rtpStreams");
-
-	//	for (auto* rtpStream : this->rtpStreamByEncodingIdx)
-	//	{
-	//		if (!rtpStream)
-	//			continue;
-
-	//		jsonRtpStreamsIt->emplace_back(json::value_t::object);
-
-	//		auto& jsonEntry = (*jsonRtpStreamsIt)[jsonRtpStreamsIt->size() - 1];
-
-	//		rtpStream->FillJson(jsonEntry);
-	//	}
-
-	//	// Add paused.
-	//	jsonObject["paused"] = this->paused;
-
-	//	// Add traceEventTypes.
-	//	std::vector<std::string> traceEventTypes;
-	//	std::ostringstream traceEventTypesStream;
-
-	//	if (this->traceEventTypes.rtp)
-	//		traceEventTypes.emplace_back("rtp");
-	//	if (this->traceEventTypes.keyframe)
-	//		traceEventTypes.emplace_back("keyframe");
-	//	if (this->traceEventTypes.nack)
-	//		traceEventTypes.emplace_back("nack");
-	//	if (this->traceEventTypes.pli)
-	//		traceEventTypes.emplace_back("pli");
-	//	if (this->traceEventTypes.fir)
-	//		traceEventTypes.emplace_back("fir");
-
-	//	if (!traceEventTypes.empty())
-	//	{
-	//		std::copy(
-	//		  traceEventTypes.begin(),
-	//		  traceEventTypes.end() - 1,
-	//		  std::ostream_iterator<std::string>(traceEventTypesStream, ","));
-	//		traceEventTypesStream << traceEventTypes.back();
-	//	}
-
-	//	jsonObject["traceEventTypes"] = traceEventTypesStream.str();
-	//}
-
-	//void Producer::FillJsonStats(json& jsonArray) const
-	//{
-	//	MS_TRACE();
-
-	//	for (auto* rtpStream : this->rtpStreamByEncodingIdx)
-	//	{
-	//		if (!rtpStream)
-	//			continue;
-
-	//		jsonArray.emplace_back(json::value_t::object);
-
-	//		auto& jsonEntry = jsonArray[jsonArray.size() - 1];
-
-	//		rtpStream->FillJsonStats(jsonEntry);
-	//	}
-	//}
-
-	//void Producer::HandleRequest(Channel::ChannelRequest* request)
-	//{
-	//	MS_TRACE();
-
-	//	switch (request->methodId)
-	//	{
-	//		case Channel::ChannelRequest::MethodId::PRODUCER_DUMP:
-	//		{
-	//			json data = json::object();
-
-	//			FillJson(data);
-
-	//			request->Accept(data);
-
-	//			break;
-	//		}
-
-	//		case Channel::ChannelRequest::MethodId::PRODUCER_GET_STATS:
-	//		{
-	//			json data = json::array();
-
-	//			FillJsonStats(data);
-
-	//			request->Accept(data);
-
-	//			break;
-	//		}
-
-	//		case Channel::ChannelRequest::MethodId::PRODUCER_PAUSE:
-	//		{
-	//			if (this->paused)
-	//			{
-	//				request->Accept();
-
-	//				return;
-	//			}
-
-	//			// Pause all streams.
-	//			for (auto& kv : this->mapSsrcRtpStream)
-	//			{
-	//				auto* rtpStream = kv.second;
-
-	//				rtpStream->Pause();
-	//			}
-
-	//			this->paused = true;
-
-	//			MS_DEBUG_DEV("Producer paused [producerId:%s]", this->id.c_str());
-
-	//			this->listener->OnProducerPaused(this);
-
-	//			request->Accept();
-
-	//			break;
-	//		}
-
-	//		case Channel::ChannelRequest::MethodId::PRODUCER_RESUME:
-	//		{
-	//			if (!this->paused)
-	//			{
-	//				request->Accept();
-
-	//				return;
-	//			}
-
-	//			// Resume all streams.
-	//			for (auto& kv : this->mapSsrcRtpStream)
-	//			{
-	//				auto* rtpStream = kv.second;
-
-	//				rtpStream->Resume();
-	//			}
-
-	//			this->paused = false;
-
-	//			MS_DEBUG_DEV("Producer resumed [producerId:%s]", this->id.c_str());
-
-	//			this->listener->OnProducerResumed(this);
-
-	//			if (this->keyFrameRequestManager)
-	//			{
-	//				MS_DEBUG_2TAGS(rtcp, rtx, "requesting forced key frame(s) after resumed");
-
-	//				// Request a key frame for all streams.
-	//				for (auto& kv : this->mapSsrcRtpStream)
-	//				{
-	//					auto ssrc = kv.first;
-
-	//					this->keyFrameRequestManager->ForceKeyFrameNeeded(ssrc);
-	//				}
-	//			}
-
-	//			request->Accept();
-
-	//			break;
-	//		}
-
-	//		case Channel::ChannelRequest::MethodId::PRODUCER_ENABLE_TRACE_EVENT:
-	//		{
-	//			auto jsonTypesIt = request->data.find("types");
-
-	//			// Disable all if no entries.
-	//			if (jsonTypesIt == request->data.end() || !jsonTypesIt->is_array())
-	//				MS_THROW_TYPE_ERROR("wrong types (not an array)");
-
-	//			// Reset traceEventTypes.
-	//			struct TraceEventTypes newTraceEventTypes;
-
-	//			for (const auto& type : *jsonTypesIt)
-	//			{
-	//				if (!type.is_string())
-	//					MS_THROW_TYPE_ERROR("wrong type (not a string)");
-
-	//				std::string typeStr = type.get<std::string>();
-
-	//				if (typeStr == "rtp")
-	//					newTraceEventTypes.rtp = true;
-	//				else if (typeStr == "keyframe")
-	//					newTraceEventTypes.keyframe = true;
-	//				else if (typeStr == "nack")
-	//					newTraceEventTypes.nack = true;
-	//				else if (typeStr == "pli")
-	//					newTraceEventTypes.pli = true;
-	//				else if (typeStr == "fir")
-	//					newTraceEventTypes.fir = true;
-	//			}
-
-	//			this->traceEventTypes = newTraceEventTypes;
-
-	//			request->Accept();
-
-	//			break;
-	//		}
-
-	//		default:
-	//		{
-	//			MS_THROW_ERROR("unknown method '%s'", request->method.c_str());
-	//		}
-	//	}
-	//}
-
+	
+	
+	
 	Producer::ReceiveRtpPacketResult Producer::ReceiveRtpPacket(RTC::RtpPacket* packet)
 	{
 		//MS_TRACE();
@@ -508,7 +515,7 @@ namespace RTC
 
 		if (!rtpStream)
 		{
-			WARNING_EX_LOG("rtp, no stream found for received packet [ssrc:%u]", packet->GetSsrc());
+			WARNING_EX_LOG("rtp, no stream found for received packet [ssrc:%" PRIu32 "]", packet->GetSsrc());
 
 			return ReceiveRtpPacketResult::DISCARDED;
 		}
@@ -529,9 +536,7 @@ namespace RTC
 			{
 				// May have to announce a new RTP stream to the listener.
 				if (this->mapSsrcRtpStream.size() > numRtpStreamsBefore)
-				{
 					NotifyNewRtpStream(rtpStream);
-				}
 
 				return result;
 			}
@@ -544,28 +549,23 @@ namespace RTC
 
 			// Process the packet.
 			if (!rtpStream->ReceiveRtxPacket(packet))
-			{
 				return result;
-			}
 		}
 		// Should not happen.
 		else
 		{
-			//aserrt("found stream does not match received packet");
-			ERROR_EX_LOG("found stream does not match received packet");
+			cassert("found stream does not match received packet");
 		}
 
 		if (packet->IsKeyFrame())
 		{
-			DEBUG_EX_LOG("rtp, key frame received [ssrc:%u, seq:%hu]",
+			DEBUG_EX_LOG(" rtp, key frame received [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber());
 
 			// Tell the keyFrameRequestManager.
 			if (this->keyFrameRequestManager)
-			{
 				this->keyFrameRequestManager->KeyFrameReceived(packet->GetSsrc());
-			}
 		}
 
 		// May have to announce a new RTP stream to the listener.
@@ -574,9 +574,7 @@ namespace RTC
 			// Request a key frame for this stream since we may have lost the first packets
 			// (do not do it if this is a key frame).
 			if (this->keyFrameRequestManager && !this->paused && !packet->IsKeyFrame())
-			{
 				this->keyFrameRequestManager->ForceKeyFrameNeeded(packet->GetSsrc());
-			}
 
 			// Update current packet.
 			this->currentRtpPacket = packet;
@@ -589,18 +587,14 @@ namespace RTC
 
 		// If paused stop here.
 		if (this->paused)
-		{
 			return result;
-		}
 
 		// May emit 'trace' event.
 		EmitTraceEventRtpAndKeyFrameTypes(packet, isRtx);
 
 		// Mangle the packet before providing the listener with it.
 		if (!MangleRtpPacket(packet, rtpStream))
-		{
 			return ReceiveRtpPacketResult::DISCARDED;
-		}
 
 		// Post-process the packet.
 		PostProcessRtpPacket(packet);
@@ -640,7 +634,7 @@ namespace RTC
 			return;
 		}
 
-		DEBUG_EX_LOG("rtcp, RtpStream not found [ssrc:%u]", report->GetSsrc());
+		DEBUG_EX_LOG("rtcp, RtpStream not found [ssrc:%" PRIu32 "]", report->GetSsrc());
 	}
 
 	void Producer::ReceiveRtcpXrDelaySinceLastRr(RTC::RTCP::DelaySinceLastRr::SsrcInfo* ssrcInfo)
@@ -651,7 +645,7 @@ namespace RTC
 
 		if (it == this->mapSsrcRtpStream.end())
 		{
-			WARNING_EX_LOG("rtcp, RtpStream not found [ssrc:%u]", ssrcInfo->GetSsrc());
+			WARNING_EX_LOG("rtcp, RtpStream not found [ssrc:%" PRIu32 "]", ssrcInfo->GetSsrc());
 
 			return;
 		}
@@ -684,7 +678,7 @@ namespace RTC
 		// Add a receiver reference time report if no present in the packet.
 		if (!packet->HasReceiverReferenceTime())
 		{
-			auto ntp     = rtc_time::TimeMs2Ntp(nowMs);
+			auto ntp     =  rtc_time::TimeMs2Ntp(nowMs);
 			auto* report = new RTC::RTCP::ReceiverReferenceTime();
 
 			report->SetNtpSec(ntp.seconds);
@@ -824,9 +818,7 @@ namespace RTC
 				auto& encoding = this->rtpParameters.encodings[i];
 
 				if (encoding.rid != rid)
-				{
 					continue;
-				}
 
 				const auto* mediaCodec = this->rtpParameters.GetCodecForEncoding(encoding);
 				const auto* rtxCodec   = this->rtpParameters.GetRtxCodecForEncoding(encoding);
@@ -842,7 +834,7 @@ namespace RTC
 
 						if (rtpStream->GetRid() == rid)
 						{
-							WARNING_EX_LOG("rtp, ignoring packet with unknown ssrc but already handled RID (RID lookup)");
+							WARNING_EX_LOG("rtp,  ignoring packet with unknown ssrc but already handled RID (RID lookup)");
 
 							return nullptr;
 						}
@@ -912,7 +904,7 @@ namespace RTC
 				// Ensure there is no other RTP stream already.
 				if (!this->mapSsrcRtpStream.empty())
 				{
-					WARNING_EX_LOG("rtp, ignoring packet with unknown ssrc not matching the already existing stream (single RtpStream lookup)");
+					WARNING_EX_LOG(" rtp, ignoring packet with unknown ssrc not matching the already existing stream (single RtpStream lookup)");
 
 					return nullptr;
 				}
@@ -928,7 +920,7 @@ namespace RTC
 
 				if (it == this->mapSsrcRtpStream.end())
 				{
-					DEBUG_EX_LOG("rtp, rtx, ignoring RTX packet for not yet created RtpStream (single stream lookup)");
+					DEBUG_EX_LOG(" rtp, rtx,  ignoring RTX packet for not yet created RtpStream (single stream lookup)");
 
 					return nullptr;
 				}
@@ -963,20 +955,17 @@ namespace RTC
 
 		uint32_t ssrc = packet->GetSsrc();
 
-		assert(
+		cassert_desc(
 		  this->mapSsrcRtpStream.find(ssrc) == this->mapSsrcRtpStream.end(),
 		  "RtpStream with given SSRC already exists");
-		assert(
+		cassert_desc(
 		  !this->rtpStreamByEncodingIdx[encodingIdx],
 		  "RtpStream for given encoding index already exists");
 
 		auto& encoding        = this->rtpParameters.encodings[encodingIdx];
-
-		// TODO@chensong 2022-10-25 payloadType 的映射表
-
 		auto& encodingMapping = this->rtpMapping.encodings[encodingIdx];
 
-		DEBUG_EX_LOG("rtp, [encodingIdx:%zu, ssrc:%u, rid:%s, payloadType:%hhu]",
+		DEBUG_EX_LOG(" rtp, [encodingIdx:%zu, ssrc:%" PRIu32 ", rid:%s, payloadType:%" PRIu8 "]",
 		  encodingIdx,
 		  ssrc,
 		  encoding.rid.c_str(),
@@ -1055,9 +1044,7 @@ namespace RTC
 
 		// If the Producer is paused tell it to the new RtpStreamRecv.
 		if (this->paused)
-		{
 			rtpStream->Pause();
-		}
 
 		// Emit the first score event right now.
 		EmitScore();
@@ -1068,16 +1055,11 @@ namespace RTC
 	void Producer::NotifyNewRtpStream(RTC::RtpStreamRecv* rtpStream)
 	{
 		//MS_TRACE();
-		// 通知消费数据
-		//auto mappedSsrc = this->mapRtpStreamMappedSsrc.at(rtpStream);
-		std::map<RTC::RtpStreamRecv*, uint32_t>::const_iterator iter =  mapRtpStreamMappedSsrc.find(rtpStream);
-		if (iter == mapRtpStreamMappedSsrc.end())
-		{
-			WARNING_EX_LOG("not find rtp stream map ssrc !@!!!");
-			return;
-		}
+
+		auto mappedSsrc = this->mapRtpStreamMappedSsrc.at(rtpStream);
+
 		// Notify the listener.
-		this->listener->OnProducerNewRtpStream(this, static_cast<RTC::RtpStream*>(rtpStream), iter->second);
+		this->listener->OnProducerNewRtpStream(this, static_cast<RTC::RtpStream*>(rtpStream), mappedSsrc);
 	}
 
 	inline void Producer::PreProcessRtpPacket(RTC::RtpPacket* packet)
@@ -1103,7 +1085,7 @@ namespace RTC
 
 			if (it == this->rtpMapping.codecs.end())
 			{
-				WARNING_EX_LOG("rtp, unknown payload type [payloadType:%hhu]", payloadType);
+				WARNING_EX_LOG("rtp, unknown payload type [payloadType:%" PRIu8 "]", payloadType);
 
 				return false;
 			}
@@ -1127,9 +1109,7 @@ namespace RTC
 
 			// This happens just once.
 			if (extensions.capacity() != 24)
-			{
 				extensions.reserve(24);
-			}
 
 			extensions.clear();
 
@@ -1310,13 +1290,13 @@ namespace RTC
 					this->videoOrientation.flip     = flip;
 					this->videoOrientation.rotation = rotation;
 
-					//json data = json::object();
+					/*json data = json::object();
 
-					///data["camera"]   = this->videoOrientation.camera;
-					//data["flip"]     = this->videoOrientation.flip;
-					//data["rotation"] = this->videoOrientation.rotation;
+					data["camera"]   = this->videoOrientation.camera;
+					data["flip"]     = this->videoOrientation.flip;
+					data["rotation"] = this->videoOrientation.rotation;
 
-					//Channel::ChannelNotifier::Emit(this->id, "videoorientationchange", data);
+					Channel::ChannelNotifier::Emit(this->id, "videoorientationchange", data);*/
 				}
 			}
 		}
@@ -1351,38 +1331,38 @@ namespace RTC
 
 	inline void Producer::EmitTraceEventRtpAndKeyFrameTypes(RTC::RtpPacket* packet, bool isRtx) const
 	{
-	//	MS_TRACE();
+		//MS_TRACE();
 
-		//if (this->traceEventTypes.keyframe && packet->IsKeyFrame())
-		//{
-		//	json data = json::object();
+		if (this->traceEventTypes.keyframe && packet->IsKeyFrame())
+		{
+			/*json data = json::object();
 
-		//	data["type"]      = "keyframe";
-		//	data["timestamp"] = DepLibUV::GetTimeMs();
-		//	data["direction"] = "in";
+			data["type"]      = "keyframe";
+			data["timestamp"] = DepLibUV::GetTimeMs();
+			data["direction"] = "in";
 
-		//	packet->FillJson(data["info"]);
+			packet->FillJson(data["info"]);
 
-		//	if (isRtx)
-		//		data["info"]["isRtx"] = true;
+			if (isRtx)
+				data["info"]["isRtx"] = true;
 
-		//	Channel::ChannelNotifier::Emit(this->id, "trace", data);
-		//}
-		//else if (this->traceEventTypes.rtp)
-		//{
-		//	json data = json::object();
+			Channel::ChannelNotifier::Emit(this->id, "trace", data);*/
+		}
+		else if (this->traceEventTypes.rtp)
+		{
+			/*json data = json::object();
 
-		//	data["type"]      = "rtp";
-		//	data["timestamp"] = DepLibUV::GetTimeMs();
-		//	data["direction"] = "in";
+			data["type"]      = "rtp";
+			data["timestamp"] = DepLibUV::GetTimeMs();
+			data["direction"] = "in";
 
-		//	packet->FillJson(data["info"]);
+			packet->FillJson(data["info"]);
 
-		//	if (isRtx)
-		//		data["info"]["isRtx"] = true;
+			if (isRtx)
+				data["info"]["isRtx"] = true;
 
-		//	Channel::ChannelNotifier::Emit(this->id, "trace", data);
-		//}
+			Channel::ChannelNotifier::Emit(this->id, "trace", data);*/
+		}
 	}
 
 	inline void Producer::EmitTraceEventPliType(uint32_t ssrc) const
@@ -1524,7 +1504,7 @@ namespace RTC
 
 		if (it == this->mapSsrcRtpStream.end())
 		{
-			WARNING_EX_LOG("rtcp, rtx, no associated RtpStream found [ssrc:%u]", ssrc);
+			WARNING_EX_LOG("rtcp, rtx, no associated RtpStream found [ssrc:%" PRIu32 "]", ssrc);
 
 			return;
 		}

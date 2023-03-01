@@ -730,6 +730,30 @@
     <ClCompile Include="cseq_manager.cpp">
       <Filter>rtp_rtcp</Filter>
     </ClCompile>
+    <ClCompile Include="Producer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="Consumer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpStream.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpStreamRecv.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpStreamSend.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="RtxStream.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyFrameRequestManager.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="NackGenerator.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1361,6 +1385,30 @@
     </ClInclude>
     <ClInclude Include="cseq_manager.h">
       <Filter>rtp_rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="Producer.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="Consumer.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpStream.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpStreamRecv.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpStreamSend.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="RtxStream.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyFrameRequestManager.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="NackGenerator.hpp">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
