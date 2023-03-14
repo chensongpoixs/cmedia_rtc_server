@@ -230,7 +230,7 @@ namespace chen {
 	}
 	bool crtc_transport::check_rtc_timer_out() const
 	{
-		return (m_time_out_ms + 500) < uv_util::GetTimeMs();
+		return (m_time_out_ms + 5000) < uv_util::GetTimeMs();
 	}
 	void crtc_transport::request_key_frame()
 	{

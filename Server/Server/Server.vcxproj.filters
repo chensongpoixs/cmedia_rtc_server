@@ -754,6 +754,12 @@
     <ClCompile Include="NackGenerator.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="crtp_listener.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_producer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1408,6 +1414,12 @@
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="NackGenerator.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_listener.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_producer.h">
       <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>

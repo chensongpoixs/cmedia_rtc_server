@@ -359,6 +359,7 @@ namespace chen {
 
 						// Set the codec parameter for H.264, to make Unity happy.
 						video_payload->m_h264_param = h264_param;
+						
 
 						// TODO: FIXME: Only support some transport algorithms.
 						for (int32 k = 0; k < (int32)payload.m_rtcp_fb.size(); ++k)

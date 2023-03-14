@@ -656,19 +656,23 @@ if (!getline(is,word,delim)) {\
 		std::string word;
 		FETCH(is, word, EMediaRtcSdpInvalidAttrFmtpSpecificParam, "EMediaRtcSdpInvalidAttrFmtpParseSpecificParam");
 
+		// TODO@chensong 2023-03-12 RTX RED   编码参数设置
 		payload->m_format_specific_param = word;
 
-		//char buffer[520] = {0};
-		//uint32  index = word.find("=");
-		//NORMAL_EX_LOG("[word = %s][index = %u]", word.c_str(), index);
 
-		//if (word.substr(0, index) == "apt")
+		std::vector<std::string> vec = rtc_sdp_util::string_split(word, ";");
+		 
+		for (size_t i = 0; i < vec.size(); ++i)
 		{
-	//		payload->m_apt = std::atoi(word.substr(index + 1, word.size()).c_str());
-		}
-
-		return 0;
-		//return int32();
+			std::vector<std::string> kv = rtc_sdp_util::string_split(vec[0], "=");
+			if (kv.size() != 2)
+			{
+				WARNING_EX_LOG("payload kv != 2 !!!!");
+				return 0;
+			}
+			payload->m_codec_parameter_map[kv[0]] = kv[1];
+		} 
+		return 0; 
 	}
 	int32 cmedia_desc::_parse_attr_mid(const std::string & value)
 	{
