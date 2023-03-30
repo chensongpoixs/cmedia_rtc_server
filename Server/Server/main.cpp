@@ -46,7 +46,9 @@ void test_cassert()
 }
  
 int main(int argc, char* argv[])
-{ 
+{
+
+	 
 	RegisterSignal();
 
 	const char* config_filename = "server.cfg";

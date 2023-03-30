@@ -159,7 +159,10 @@ namespace chen {
 			, m_encoding_param("")
 			, m_rtcp_fb()
 			, m_format_specific_param("")
-			, m_apt(0){}
+			, m_apt(0)
+			, m_rtx(0)
+			, m_red(0)
+			, m_codec_parameter_map(){}
 		/*virtual*/ ~cmedia_payload_type();
 		uint32 encode(std::ostringstream & os);
 
@@ -171,6 +174,9 @@ namespace chen {
 		std::vector<std::string>m_rtcp_fb;
 		std::string				m_format_specific_param;
 		uint32					m_apt;
+		uint32					m_rtx;
+		uint32					m_red;
+		std::map<std::string, std::string> m_codec_parameter_map;
 	};
 	class cmedia_desc
 	{
