@@ -153,7 +153,7 @@ namespace chen {
 					{
 						m_local_ufrag = val.substr(0, p);
 						m_remote_ufrag = val.substr(p + 1);
-						NORMAL_EX_LOG("stun packet local_ufrag=%s, remote_ufrag=%s", m_local_ufrag.c_str(), m_remote_ufrag.c_str());
+						//NORMAL_EX_LOG("stun packet local_ufrag=%s, remote_ufrag=%s", m_local_ufrag.c_str(), m_remote_ufrag.c_str());
 					}
 					break;
 				}
@@ -169,14 +169,14 @@ namespace chen {
 					}
 
 					//packet->SetPriority(Utils::Byte::Get4Bytes(attrValuePos, 0));
-					DEBUG_EX_LOG("stun EPriority" );
+					//DEBUG_EX_LOG("stun EPriority" );
 					break;
 					break;
 				}
 				case EUseCandidate: 
 				{
 					m_use_candidate = true;
-					 NORMAL_EX_LOG("stun use-candidate");
+				//	 NORMAL_EX_LOG("stun use-candidate");
 					break;
 				}
 
@@ -188,14 +188,14 @@ namespace chen {
 				case EIceControlled: 
 				{
 					m_ice_controlled = true;
-					 NORMAL_EX_LOG("stun ice-controlled");
+					// NORMAL_EX_LOG("stun ice-controlled");
 					break;
 				}
 
 				case EIceControlling: 
 				{
 					m_ice_controlling = true;
-					NORMAL_EX_LOG("stun ice-controlling");
+					//NORMAL_EX_LOG("stun ice-controlling");
 					break;
 				}
 				case EMessageIntegrity:
@@ -211,7 +211,7 @@ namespace chen {
 
 					//hasMessageIntegrity = true;
 					//packet->SetMessageIntegrity(attrValuePos);
-					DEBUG_EX_LOG("stun MessageIntegrity  " );
+					//DEBUG_EX_LOG("stun MessageIntegrity  " );
 					break;
 				}
 				 
@@ -230,12 +230,12 @@ namespace chen {
 					fingerprintAttrPos = pos;
 					fingerprint = Utils::Byte::Get4Bytes(attrValuePos, 0);
 					packet->SetFingerprint();*/
-					NORMAL_EX_LOG("stun EFingerprint");
+					//NORMAL_EX_LOG("stun EFingerprint");
 					break;
 				}
 				default:
 				{
-					NORMAL_EX_LOG("stun type=%u, no process", type);
+					//NORMAL_EX_LOG("stun type=%u, no process", type);
 					break;
 				}
 			}
@@ -327,7 +327,7 @@ namespace chen {
 		std::string username = m_remote_ufrag + ":" + m_local_ufrag;
 		
 
-		NORMAL_EX_LOG("[remote_ufrag = %s][local_ufrag = %s]", m_remote_ufrag.c_str(), m_local_ufrag.c_str());
+		//NORMAL_EX_LOG("[remote_ufrag = %s][local_ufrag = %s]", m_remote_ufrag.c_str(), m_local_ufrag.c_str());
 		
 		cbuffer stream(&buf[0], sizeof(buf));
 		//rtc_byte::set2bytes((unsigned char *)&buf[0], 0, EUsername);
@@ -343,7 +343,7 @@ namespace chen {
 			 //memcpy(&buf[0] + 4 + username.size(), &padding[0], 4 - (4 + username.size()) %4);
 			stream.write_bytes(padding, 4 - (stream.pos() % 4));
 		}
-		NORMAL_EX_LOG("stream pos = %u", stream.pos());
+		//NORMAL_EX_LOG("stream pos = %u", stream.pos());
 		return std::string(stream.data(), stream.pos());
 		//return std::string();
 	}

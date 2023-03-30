@@ -230,7 +230,7 @@ namespace chen {
 	}
 	bool crtc_transport::check_rtc_timer_out() const
 	{
-		return (m_time_out_ms + 500) < uv_util::GetTimeMs();
+		return (m_time_out_ms + 5000) < uv_util::GetTimeMs();
 	}
 	void crtc_transport::request_key_frame()
 	{
@@ -526,7 +526,7 @@ namespace chen {
 		// Check if it's STUN.
 		if (crtc_stun_packet::is_stun(data, len))
 		{
-			NORMAL_EX_LOG("is_stun");
+			//NORMAL_EX_LOG("is_stun");
 			 
 			//OnStunDataReceived(tuple, data, len);
 			/*m_rtc_stun_packet.decode((const char *)(data), len);
@@ -1194,7 +1194,7 @@ namespace chen {
 		{
 			case ERtcpType_rr:
 			{
-				DEBUG_EX_LOG("RR");
+				//DEBUG_EX_LOG("RR");
 				crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
 				if (rr->get_rb_ssrc() == 0)
 				{ //for native client
@@ -1204,7 +1204,7 @@ namespace chen {
 			}
 			case ERtcpType_psfb:
 			{
-				DEBUG_EX_LOG("ERtcpType_psfb");
+				//DEBUG_EX_LOG("ERtcpType_psfb");
 				crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
 				switch (psfb->get_rc())
 				{
@@ -1223,7 +1223,7 @@ namespace chen {
 			}
 			case ERtcpType_rtpfb:
 			{
-				DEBUG_EX_LOG("ERtcpType_rtpfb");
+				//DEBUG_EX_LOG("ERtcpType_rtpfb");
 				switch (rtcp->get_rc())
 				{
 					case ERtpfbTCC:
@@ -1235,7 +1235,7 @@ namespace chen {
 					{
 						crtcp_nack* nack = dynamic_cast<crtcp_nack*>(rtcp);
 						required_player_ssrc = nack->get_media_ssrc();
-						DEBUG_EX_LOG("ERtcpType_rtpfb[ftpfb][required_player_ssrc = %u]", required_player_ssrc);
+						//DEBUG_EX_LOG("ERtcpType_rtpfb[ftpfb][required_player_ssrc = %u]", required_player_ssrc);
 						break;
 					}
 					default:
@@ -1251,7 +1251,7 @@ namespace chen {
 				crtcp_sr* sr = dynamic_cast<crtcp_sr*>(rtcp);
 				(void)sr;
 				required_publisher_ssrc = sr->get_ssrc();
-				DEBUG_EX_LOG("ERtcpType_sr [required_publisher_ssrc = %u]", required_publisher_ssrc);
+				//DEBUG_EX_LOG("ERtcpType_sr [required_publisher_ssrc = %u]", required_publisher_ssrc);
 				
 				break;
 			}
@@ -1268,12 +1268,12 @@ namespace chen {
 			}
 			case ERtcpType_bye:
 			{ 
-				NORMAL_EX_LOG("ignoring received RTCP BYE");
+				//NORMAL_EX_LOG("ignoring received RTCP BYE");
 				break;
 			}
 			case ERtcpType_xr:
 			{
-				DEBUG_EX_LOG("ERtcpType_xr");
+				//DEBUG_EX_LOG("ERtcpType_xr");
 				switch (rtcp->get_rc())
 				{
 					case EExtendedDLRR:

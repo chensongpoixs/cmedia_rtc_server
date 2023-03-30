@@ -653,11 +653,11 @@ namespace chen {
 
 			}
 			
-			 if (video_track->m_red_ptr)
+			/* if (video_track->m_red_ptr)
 			{
 				cred_paylod* payload = dynamic_cast<cred_paylod*>(video_track->m_red_ptr);
 				local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
-			} 
+			} */
 			 /*if (video_track->m_rtx_ptr)
 			 {
 				 crtx_payload_des* payload = dynamic_cast<crtx_payload_des*>(video_track->m_rtx_ptr);

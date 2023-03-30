@@ -516,7 +516,7 @@ if (!getline(is,word,delim)) {\
 			return _parse_attr_rtcp_fb(value);
 		}
 		else if (attribute == "fmtp") 
-		{
+		{ // 编码参数 rtx apt 
 			return _parse_attr_fmtp(value);
 		}
 		else if (attribute == "mid") 
