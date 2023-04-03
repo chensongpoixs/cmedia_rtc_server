@@ -190,6 +190,9 @@
     <Filter Include="stream">
       <UniqueIdentifier>{35497ce8-f930-41a4-b061-adbacdaf94c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{4a395a90-44dd-4d9f-a57b-fb8561b5d36e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -759,6 +762,21 @@
     </ClCompile>
     <ClCompile Include="crtc_producer.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="crtcp_packet.cpp">
+      <Filter>feedback</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_fb.cpp">
+      <Filter>feedback</Filter>
+    </ClCompile>
+    <ClCompile Include="ctransport_feedback.cc">
+      <Filter>feedback</Filter>
+    </ClCompile>
+    <ClCompile Include="ccommon_header.cc">
+      <Filter>feedback</Filter>
+    </ClCompile>
+    <ClCompile Include="cremote_estimator_proxy.cpp">
+      <Filter>feedback</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1421,6 +1439,33 @@
     </ClInclude>
     <ClInclude Include="crtc_producer.h">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cfunction_view.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="carray_view.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="crtcp_packet.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="buffer.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_fb.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="cbyte_io.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="ctransport_feedback.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="ccommon_header.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="cremote_estimator_proxy.h">
+      <Filter>feedback</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

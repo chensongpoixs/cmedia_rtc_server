@@ -158,6 +158,7 @@
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cclient_msg_dispatch.cpp" />
     <ClCompile Include="ccodec_payload.cpp" />
+    <ClCompile Include="ccommon_header.cc" />
     <ClCompile Include="cconfig.cpp" />
     <ClCompile Include="ccrc32.cpp" />
     <ClCompile Include="ccrypto_random.cpp" />
@@ -183,6 +184,8 @@
     <ClCompile Include="cnet_adapter_test.cpp" />
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
+    <ClCompile Include="cremote_estimator_proxy.cpp" />
+    <ClCompile Include="crtcp_packet.cpp" />
     <ClCompile Include="crtc_producer.cpp" />
     <ClCompile Include="crandom.cpp" />
     <ClCompile Include="crate_calculator.cpp" />
@@ -206,6 +209,7 @@
     <ClCompile Include="crtc_track_description.cpp" />
     <ClCompile Include="crtc_transport.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
+    <ClCompile Include="crtp_fb.cpp" />
     <ClCompile Include="crtp_listener.cpp" />
     <ClCompile Include="crtp_rtcp.cpp" />
     <ClCompile Include="crtp_stream_recv.cpp" />
@@ -218,6 +222,7 @@
     <ClCompile Include="csrtp_session_test.cpp" />
     <ClCompile Include="csrtp_util.cpp" />
     <ClCompile Include="cstr2digit.cpp" />
+    <ClCompile Include="ctransport_feedback.cc" />
     <ClCompile Include="ctransport_mgr.cpp" />
     <ClCompile Include="ctransport_util.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
@@ -342,17 +347,21 @@
     <ClCompile Include="TransportCongestionControlServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="buffer.h" />
     <ClInclude Include="BweType.hpp" />
     <ClInclude Include="capi_rtc_player.h" />
     <ClInclude Include="capi_rtc_publish.h" />
     <ClInclude Include="carraysize.h" />
+    <ClInclude Include="carray_view.h" />
     <ClInclude Include="casync_log.h" />
     <ClInclude Include="caudio_payload.h" />
     <ClInclude Include="cbuffer.h" />
+    <ClInclude Include="cbyte_io.h" />
     <ClInclude Include="cbyte_order.h" />
     <ClInclude Include="ccfg.h" />
     <ClInclude Include="cclient_msg_dispatch.h" />
     <ClInclude Include="ccodec_payload.h" />
+    <ClInclude Include="ccommon_header.h" />
     <ClInclude Include="cconfig.h" />
     <ClInclude Include="ccrc32.h" />
     <ClInclude Include="ccrypto_random.h" />
@@ -363,6 +372,7 @@
     <ClInclude Include="cdtls_session.h" />
     <ClInclude Include="cdtls_test.h" />
     <ClInclude Include="cencoder.h" />
+    <ClInclude Include="cfunction_view.h" />
     <ClInclude Include="cglobal_config.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cguard_reply.h" />
@@ -384,6 +394,8 @@
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
     <ClInclude Include="cortc.h" />
+    <ClInclude Include="cremote_estimator_proxy.h" />
+    <ClInclude Include="crtcp_packet.h" />
     <ClInclude Include="crtc_producer.h" />
     <ClInclude Include="crandom.h" />
     <ClInclude Include="crate_calculator.h" />
@@ -409,6 +421,7 @@
     <ClInclude Include="crtc_transport.h" />
     <ClInclude Include="crtc_transport_define.h" />
     <ClInclude Include="crtc_user_config.h" />
+    <ClInclude Include="crtp_fb.h" />
     <ClInclude Include="crtp_listener.h" />
     <ClInclude Include="crtp_rtcp.h" />
     <ClInclude Include="crtp_rtcp_define.h" />
@@ -424,6 +437,7 @@
     <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="csrtp_util.h" />
     <ClInclude Include="cstr2digit.h" />
+    <ClInclude Include="ctransport_feedback.h" />
     <ClInclude Include="ctransport_mgr.h" />
     <ClInclude Include="ctransport_util.h" />
     <ClInclude Include="cudp_socket.h" />

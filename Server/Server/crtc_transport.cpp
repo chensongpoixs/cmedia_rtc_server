@@ -199,6 +199,7 @@ namespace chen {
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
 	{
+		m_remote_estimator.send_periodic_Feedbacks();
 	}
 	void crtc_transport::destroy()
 	{
@@ -391,6 +392,22 @@ namespace chen {
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
 		}
+	}
+
+	bool crtc_transport::send_rtcp(const uint8 * data, size_t len)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
+			{
+				WARNING_EX_LOG("rtcp encrypt reqest key frame failed !!!");
+				return false;
+			}
+			//NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			return true;
+		}
+		return false;
 	}
 	void crtc_transport::send_rtcp_packet(RTC::RTCP::Packet * packet)
 	{
@@ -687,6 +704,7 @@ namespace chen {
 			}
 			if (m_all_video_ssrc == packet->GetSsrc())
 			{
+				m_remote_estimator.on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
 				RTC::Codecs::H264::ProcessRtpPacket(packet);
 				//packet->Dump();
 				//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());

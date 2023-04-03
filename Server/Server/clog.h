@@ -158,7 +158,28 @@ namespace chen {
 			assert(expression); \
 		}
 
+#define RTC_UNREACHABLE_CODE_HIT false
+#define RTC_NOTREACHED() cassert(RTC_UNREACHABLE_CODE_HIT)
 
+// Helper macro for binary operators.
+// Don't use this macro directly in your code, use RTC_CHECK_EQ et al below.
+#define RTC_CHECK_OP(name, op, val1, val2)                               \
+   cassert(((val1) op (val2)));
+
+#define RTC_DCHECK(condition) cassert(condition)
+#define RTC_CHECK_EQ(val1, val2) RTC_CHECK_OP(Eq, ==, val1, val2)
+#define RTC_CHECK_NE(val1, val2) RTC_CHECK_OP(Ne, !=, val1, val2)
+#define RTC_CHECK_LE(val1, val2) RTC_CHECK_OP(Le, <=, val1, val2)
+#define RTC_CHECK_LT(val1, val2) RTC_CHECK_OP(Lt, <, val1, val2)
+#define RTC_CHECK_GE(val1, val2) RTC_CHECK_OP(Ge, >=, val1, val2)
+#define RTC_CHECK_GT(val1, val2) RTC_CHECK_OP(Gt, >, val1, val2)
+	///////////////////////////////////////
+#define RTC_DCHECK_EQ(v1, v2) RTC_CHECK_EQ(v1, v2)
+#define RTC_DCHECK_NE(v1, v2) RTC_CHECK_NE(v1, v2)
+#define RTC_DCHECK_LE(v1, v2) RTC_CHECK_LE(v1, v2)
+#define RTC_DCHECK_LT(v1, v2) RTC_CHECK_LT(v1, v2)
+#define RTC_DCHECK_GE(v1, v2) RTC_CHECK_GE(v1, v2)
+#define RTC_DCHECK_GT(v1, v2) RTC_CHECK_GT(v1, v2)
 } // namespace chen
 
 #endif //!#define _C_LOG_H_

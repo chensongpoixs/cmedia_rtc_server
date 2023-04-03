@@ -655,10 +655,10 @@ int nvenc_set_bitrate(void *nvenc_data, uint32_t bitrate_bps)
 	using namespace chen;
 	//NORMAL_EX_LOG("----------->");
 	//return 0;
-	if ((bitrate_bps / 1000) > g_cfg.get_uint32(ECI_RtcAvgRate))
+	//if ((bitrate_bps / 1000) > g_cfg.get_uint32(ECI_RtcAvgRate))
 	{
 		WARNING_EX_LOG("[bitrate_bps = %u ]too big [defalut bitrate = %u]", bitrate_bps/ 1000, g_cfg.get_uint32(ECI_RtcAvgRate));
-		bitrate_bps = g_cfg.get_uint32(ECI_RtcAvgRate) * 1000;
+	//	bitrate_bps = g_cfg.get_uint32(ECI_RtcAvgRate) * 1000;
 	}
 	struct nvenc_data *enc = (struct nvenc_data *)nvenc_data;
 
@@ -689,7 +689,7 @@ int nvenc_set_framerate(void *nvenc_data, uint32_t framerate)
 	}
 	using namespace chen;
 	
-	if (framerate < g_cfg.get_uint32(ECI_RtcFrames))
+	//if (framerate < g_cfg.get_uint32(ECI_RtcFrames))
 	{
 		WARNING_EX_LOG("framerate = %u", framerate);
 	}

@@ -38,6 +38,7 @@ purpose:		api_rtc_publish
 #include "cclient.h"
 //#include "ccapturer_track_source.h"
 #include "ccapturer_tracksource.h"
+#include "external_video_encoder_factory.h"
 namespace chen {
 
 	class DummySetSessionDescriptionObserver
@@ -97,7 +98,7 @@ namespace chen {
 			nullptr /* default_adm */,
 			webrtc::CreateBuiltinAudioEncoderFactory(),
 			webrtc::CreateBuiltinAudioDecoderFactory(),
-			webrtc::CreateBuiltinVideoEncoderFactory(),
+			CreateBuiltinExternalVideoEncoderFactory(),
 			webrtc::CreateBuiltinVideoDecoderFactory(), nullptr /* audio_mixer */,
 			nullptr /* audio_processing */);
 

@@ -19,6 +19,8 @@ purpose:		crtc_transport
 #include "crtc_dtls.h"
 #include "crtp_rtcp.h"
 #include "crtc_player_stream.h"
+#include "cremote_estimator_proxy.h"
+#include "FeedbackRtpTransport.hpp"
 namespace chen {
 
 	class cdtls_session;
@@ -54,6 +56,8 @@ namespace chen {
 			, m_rtc_client_type(ERtcClientNone)
 			, m_request_keyframe(0)
 			, m_time_out_ms(uv_util::GetTimeMs())
+			, m_remote_estimator(this)
+			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
 
@@ -83,6 +87,7 @@ namespace chen {
 
 		// rtcp  
 		void send_rtcp_packet(RTC::RTCP::Packet* packet);
+		bool send_rtcp(const uint8 * data, size_t len);
 	public:
 		// virtual
 		virtual int32 write_dtls_data(void* data, int size);
@@ -171,7 +176,8 @@ namespace chen {
 		uint32									m_request_keyframe;
 	
 		uint64									m_time_out_ms;
-
+		cremote_estimator_proxy					m_remote_estimator;
+		//RTC::RTCP::FeedbackRtpTransportPacket   m_feedback_rtp_transport_packet;
 	};
 
 
