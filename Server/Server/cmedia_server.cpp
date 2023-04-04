@@ -127,7 +127,7 @@ namespace chen {
 		}
 		SYSTEM_LOG("timer startup  ...");
 
-		ctimer::Start(1u, 100u);
+		ctimer::Start(1u, 50u);
 
 		SYSTEM_LOG(" media rtc server init ok");
 
@@ -213,9 +213,14 @@ namespace chen {
 
 	void cmedia_server::OnTimer()
 	{
-		static const uint32 TICK_TIME = 100;
+		//static const uint32 TICK_TIME = 100;
 		////启动内网并等待初始化完成
-		//DEBUG_EX_LOG("   %llu ms", uv_util::GetTimeMsInt64());
+		static int64 prev_time_ms = uv_util::GetTimeMsInt64();
+
+		uint32 tick_time = uv_util::GetTimeMsInt64() - prev_time_ms;
+
+		//DEBUG_EX_LOG("   %u ms", tick_time);
+		prev_time_ms = uv_util::GetTimeMsInt64();
 		//ctime_elapse time_elapse;
 		//uint32 uDelta = 0;
 		if (!m_stop)
@@ -223,12 +228,12 @@ namespace chen {
 			//uDelta += time_elapse.get_elapse();
 
 			//	g_game_client.update(uDelta);
-			g_wan_server.update(TICK_TIME);
+			g_wan_server.update(tick_time);
 
 
-			g_room_mgr.update(TICK_TIME);
+			g_room_mgr.update(tick_time);
 
-			g_transport_mgr.update(TICK_TIME);
+			g_transport_mgr.update(tick_time);
 			//uDelta = time_elapse.get_elapse();
 
 			/*if (uDelta < TICK_TIME)

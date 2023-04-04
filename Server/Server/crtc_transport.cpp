@@ -199,7 +199,13 @@ namespace chen {
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
 	{
-		m_remote_estimator.send_periodic_Feedbacks();
+		m_feedback_gcc_timer += uDeltaTime;
+		if (m_feedback_gcc_timer > 100)
+		{
+			m_feedback_gcc_timer -= 100;
+			m_remote_estimator.send_periodic_Feedbacks();
+		}
+		
 	}
 	void crtc_transport::destroy()
 	{

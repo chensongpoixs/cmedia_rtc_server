@@ -177,6 +177,7 @@ namespace chen {
 	
 		uint64									m_time_out_ms;
 		cremote_estimator_proxy					m_remote_estimator;
+		uint32									m_feedback_gcc_timer;
 		//RTC::RTCP::FeedbackRtpTransportPacket   m_feedback_rtp_transport_packet;
 	};
 

@@ -72,8 +72,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\webrtc\include;$(C_INCLUDE)\webrtc\include\third_party\abseil-cpp;$(C_INCLUDE)\webrtc\include\third_party\libyuv\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\webrtc\lib\x64\debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(RTC_PATH);$(RTC_PATH)\third_party\abseil-cpp;$(RTC_PATH)\third_party\libyuv\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(RTC_PATH)\out\test_vs2017_debug\obj;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
@@ -142,6 +142,7 @@
     <ClCompile Include="cbase64.cpp" />
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="cd3d_renderer.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cint2str.cpp" />
     <ClCompile Include="clog.cpp" />
@@ -151,8 +152,10 @@
     <ClCompile Include="cplayer.cpp" />
     <ClCompile Include="cremote_sdp.cpp" />
     <ClCompile Include="crtc_player.cpp" />
+    <ClCompile Include="crtc_transport.cpp" />
     <ClCompile Include="csdp_util.cpp" />
     <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="cvideo_render.cpp" />
     <ClCompile Include="cwebscoket_connection.cpp" />
     <ClCompile Include="cwebsocket_mgr.cpp" />
     <ClCompile Include="cwebsocket_protoo.cpp" />
@@ -168,6 +171,7 @@
     <ClInclude Include="cbase64.h" />
     <ClInclude Include="ccfg.h" />
     <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cd3d_renderer.h" />
     <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cint2str.h" />
     <ClInclude Include="clog.h" />
@@ -180,10 +184,12 @@
     <ClInclude Include="cplayer.h" />
     <ClInclude Include="cremote_sdp.h" />
     <ClInclude Include="crtc_player.h" />
+    <ClInclude Include="crtc_transport.h" />
     <ClInclude Include="csdp_util.h" />
     <ClInclude Include="csingleton.h" />
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
+    <ClInclude Include="cvideo_render.h" />
     <ClInclude Include="cwebscoket_connection.h" />
     <ClInclude Include="cwebsocket_mgr.h" />
     <ClInclude Include="cwebsocket_protoo.h" />

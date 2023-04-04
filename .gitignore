@@ -149,3 +149,7 @@ Server/enc_temp_folder/d1474b4781cf668bd5aee6ff1c15e72b/desktop_capture_source.c
 Server/Server/rtp.core.522.yuv
 Server/enc_temp_folder/2ce1140d68f1b9e5f359369551e2c4/crtp_stream_recv.h
 Server/Server/rtp.core.522.*
+Server/rtc_player/debug/*.log
+Server/Robot/debug/*.log
+Server/rtc_player/.vs/rtc_player/v15/Browse.VC.db
+Server/rtc_player/client.cfg

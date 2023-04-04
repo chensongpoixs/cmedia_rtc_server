@@ -35,7 +35,7 @@ namespace chen {
 		~cremote_estimator_proxy();
 
 		bool init();
-		void update();
+		void update(uint32 uDeltaTime);
 		void destroy();
 	public:
 		void on_packet_arrival(uint16 sequence_number, uint32 media_ssrc, int64 arrival_time);
@@ -56,6 +56,7 @@ namespace chen {
 		std::map<int64, int64>			m_packet_arrival_times;
 		int64							m_send_interval_ms;
 		crtc_transport *				m_rtc_transport_ptr;
+		
 	};
 }
 

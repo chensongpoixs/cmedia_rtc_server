@@ -29,7 +29,7 @@ namespace chen {
 	{
 		return true;
 	}
-	void cremote_estimator_proxy::update()
+	void cremote_estimator_proxy::update(uint32 uDeltaTime)
 	{
 	}
 	void cremote_estimator_proxy::destroy()
@@ -48,8 +48,8 @@ namespace chen {
 		{
 			for (std::map<int64, int64>::iterator it = m_packet_arrival_times.begin();
 				it != m_packet_arrival_times.end() && it->first < sequence_number && arrival_time - it->second >= kBackWindowMs/*500*/;)
-			{
-				WARNING_EX_LOG("500 ms ===> [cur sequence_number = %u][del seq  = %u][time = %u]", sequence_number, it->first, it->second);
+			{//
+				//WARNING_EX_LOG("500 ms ===> [cur sequence_number = %u][del seq  = %u][time = %u]", sequence_number, it->first, it->second);
 				it = m_packet_arrival_times.erase(it);
 			}
 		}
@@ -71,7 +71,7 @@ namespace chen {
 			m_packet_arrival_times.erase(m_packet_arrival_times.begin(), first_arrival_time_to_keep);
 			//if (send_periodic_feedback_)
 			{
-				WARNING_EX_LOG("[m_periodic_window_start_seq = %u][m_packet_arrival_times.begin()->first = %u]", m_periodic_window_start_seq, m_packet_arrival_times.begin()->first);
+				//WARNING_EX_LOG("[m_periodic_window_start_seq = %u][m_packet_arrival_times.begin()->first = %u]", m_periodic_window_start_seq, m_packet_arrival_times.begin()->first);
 				// |packet_arrival_times_| cannot be empty since we just added one element
 				// and the last element is not deleted.
 				//RTC_DCHECK(!packet_arrival_times_.empty());
@@ -92,7 +92,7 @@ namespace chen {
 		}
 		auto callback = [&]( ArrayView<const uint8 > packet)
 		{
-			DEBUG_EX_LOG(" --->>>>");
+			//DEBUG_EX_LOG(" --->>>>");
 			m_rtc_transport_ptr->send_rtcp(packet.data(), packet.size());
 			/*if (transport_->SendRtcp(packet.data(), packet.size()))
 			{

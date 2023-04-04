@@ -106,6 +106,15 @@
     <ClCompile Include="cplayer.cpp">
       <Filter>player</Filter>
     </ClCompile>
+    <ClCompile Include="crtc_transport.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cvideo_render.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cd3d_renderer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cremote_sdp.h">
@@ -188,6 +197,15 @@
     </ClInclude>
     <ClInclude Include="cplayer.h">
       <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_transport.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cvideo_render.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cd3d_renderer.h">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

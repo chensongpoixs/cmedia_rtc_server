@@ -74,8 +74,8 @@
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
-    <LibraryPath>$(C_INCLUDE)\webrtc\lib\x64\debug;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
-    <IncludePath>$(C_INCLUDE)\webrtc\include;$(C_INCLUDE)\webrtc\include\third_party\abseil-cpp;F:\Work\20220803_webrtc\src\third_party\abseil-cpp;$(C_INCLUDE)\webrtc\include\third_party\libyuv\include;F:\Work\20220803_webrtc\src\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files\CUDA\cuda_cudart\cudart\include</IncludePath>
+    <LibraryPath>$(RTC_PATH)\out\test_vs2017_debug\obj;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <IncludePath>$(RTC_PATH);$(RTC_PATH)\third_party\abseil-cpp;$(RTC_PATH)\third_party\libyuv\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files\CUDA\cuda_cudart\cudart\include</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
