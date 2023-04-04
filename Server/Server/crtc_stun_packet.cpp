@@ -352,20 +352,20 @@ namespace chen {
 	{
 		char buf[1460] = {0};
 		 
-		
-		//stream->write_2bytes(EXorMappedAddress);
-		rtc_byte::set2bytes((unsigned char *)&buf[0], 0, EXorMappedAddress);
-		//stream->write_2bytes(8);
-		rtc_byte::set2bytes((unsigned char *)&buf[0], 2, 8);
-		//stream->write_1bytes(0); // ignore this bytes
-		rtc_byte::set1byte((unsigned char *)&buf[0], 4, 0);
-		//stream->write_1bytes(1); // ipv4 family
-		rtc_byte::set1byte((unsigned char *)&buf[0], 5, 1);
-		//stream->write_2bytes(m_mapped_port ^ (kStunMagicCookie >> 16));
-		rtc_byte::set2bytes((unsigned char *)&buf[0], 6, m_mapped_port ^ (KStunMagicCookie >> 16));
-		//stream->write_4bytes(m_mapped_address ^ kStunMagicCookie);
-		rtc_byte::set4bytes((unsigned char *)&buf[0], 8, m_mapped_address ^ KStunMagicCookie);
-		return buf;
+		cbuffer stream(&buf[0], sizeof(buf));
+		stream.write_2bytes(EXorMappedAddress);
+		//rtc_byte::set2bytes((unsigned char *)&buf[0], 0, EXorMappedAddress);
+		stream.write_2bytes(8);
+		//rtc_byte::set2bytes((unsigned char *)&buf[0], 2, 8);
+		stream.write_1bytes(0); // ignore this bytes
+		//rtc_byte::set1byte((unsigned char *)&buf[0], 4, 0);
+		stream.write_1bytes(1); // ipv4 family
+		//rtc_byte::set1byte((unsigned char *)&buf[0], 5, 1);
+		stream.write_2bytes(m_mapped_port ^ (KStunMagicCookie >> 16));
+		//rtc_byte::set2bytes((unsigned char *)&buf[0], 6, m_mapped_port ^ (KStunMagicCookie >> 16));
+		stream.write_4bytes(m_mapped_address ^ KStunMagicCookie);
+		//rtc_byte::set4bytes((unsigned char *)&buf[0], 8, m_mapped_address ^ KStunMagicCookie);
+		return std::string(stream.data(), stream.pos());
 		//return std::string();
 	}
 

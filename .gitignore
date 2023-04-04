@@ -153,3 +153,4 @@ Server/rtc_player/debug/*.log
 Server/Robot/debug/*.log
 Server/rtc_player/.vs/rtc_player/v15/Browse.VC.db
 Server/rtc_player/client.cfg
+Server/rtc_player/log/*.log
