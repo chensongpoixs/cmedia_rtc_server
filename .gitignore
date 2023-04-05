@@ -157,3 +157,4 @@ Server/rtc_player/log/*.log
 Server/rtc_player/chensong_rtc_error.log
 Server/Robot/chensong_rtc_error.log
 Server/Robot/nvEncodeAPI64.dll
+Server/rtc_player/video_render.yuv

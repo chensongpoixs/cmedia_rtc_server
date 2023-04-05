@@ -27,7 +27,7 @@ namespace chen {
 		// 默认值
 		 
 		set_string(ECI_RoomName, "room_name", "chensong");
-		set_string(ECI_ClientName, "client_name", "test");
+		set_string(ECI_ClientName, "client_name", "chensong");
 		set_uint32(ECI_VideoFps, "video_fps", 30);
 		set_string(ECI_RtcMediaIp, "rtc_media_ip", "127.0.0.1");
 		set_uint32(ECI_RtcMediaPort, "rtc_media_port", 9500);

@@ -42,8 +42,8 @@ void VideoCaptureSource::VideoOnFrame(const webrtc::VideoFrame& frame)
 }
 void VideoCaptureSource::OnFrame(const webrtc::VideoFrame& frame) 
 {
-	//broadcaster_.OnFrame(frame);
-	//return;
+	broadcaster_.OnFrame(frame);
+	return;
 
 
 	int cropped_width = 0;
