@@ -57,9 +57,11 @@ namespace chen {
 			{
 				buffer = webrtc::I420Buffer::Rotate(*buffer, video_frame.rotation());
 			}
+			
 			static FILE  *out_video_render_ptr = fopen("./video_render.yuv", "wb+");
 			if (out_video_render_ptr)
 			{
+				NORMAL_EX_LOG("[width = %u][height = %u]", buffer->width(), buffer->height());
 				::fwrite(buffer->DataY(), buffer->width() * buffer->height() ,1,out_video_render_ptr);
 				::fflush(out_video_render_ptr);
 			}

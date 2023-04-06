@@ -64,6 +64,7 @@ namespace chen {
 			nullptr /*audio_processing*/);
 
 		webrtc::PeerConnectionInterface::RTCConfiguration config;
+		config.enable_dtls_srtp = true; //是否加密
 		// Set SDP semantics to Unified Plan.
 		config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
 		m_peer_connection = m_peer_connection_factory->CreatePeerConnection(config, nullptr, nullptr, this);
