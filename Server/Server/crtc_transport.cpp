@@ -204,6 +204,7 @@ namespace chen {
 		{
 			m_feedback_gcc_timer -= 100;
 			m_remote_estimator.send_periodic_Feedbacks();
+			NORMAL_EX_LOG("[m_rtc_net_state = %u]", m_rtc_net_state);
 		}
 		
 	}
@@ -558,7 +559,7 @@ namespace chen {
 				m_srtp_send_session_ptr = nullptr;
 			}
 		}
-		m_rtc_net_state = ERtcNetworkStateEstablished;
+		//m_rtc_net_state = ERtcNetworkStateEstablished;
 	}
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
