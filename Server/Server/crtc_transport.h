@@ -70,7 +70,7 @@ namespace chen {
 		void update(uint32 uDeltaTime);
 
 		void destroy();
-		bool check_rtc_timer_out() const;
+		bool is_active() const;
 	public:
 
 		void request_key_frame();

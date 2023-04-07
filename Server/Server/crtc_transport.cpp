@@ -236,9 +236,9 @@ namespace chen {
 		}
 		
 	}
-	bool crtc_transport::check_rtc_timer_out() const
+	bool crtc_transport::is_active() const
 	{
-		return (m_time_out_ms + 5000) < uv_util::GetTimeMs();
+		return (m_time_out_ms + g_cfg.get_uint32(ECI_StunTimeOut)) < uv_util::GetTimeMs();
 	}
 	void crtc_transport::request_key_frame()
 	{

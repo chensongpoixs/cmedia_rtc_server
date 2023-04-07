@@ -43,6 +43,9 @@ namespace chen {
 		set_string(ECI_RtcAnnouncedIp, "rtc_announced_ip", "127.0.0.1");
 
 		set_uint32(ECI_LogLevel, "log_level", ELogLevel_Num);
+
+		set_uint32(ECI_StunTimeOut, "stun_time_out", 30000);
+
 		//配置表的值
 		load_cfg_file();
 

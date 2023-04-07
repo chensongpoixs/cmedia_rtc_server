@@ -31,7 +31,7 @@ namespace chen {
 			}
 			
 			if (iter->second  &&
-				iter->second->check_rtc_timer_out())
+				!iter->second->is_active())
 			{
 				iter->second->destroy();
 				crtc_transport* ptr = iter->second;

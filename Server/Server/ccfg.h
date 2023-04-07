@@ -35,6 +35,7 @@ namespace chen {
 		ECI_RtcAnnouncedIp,
 
 		ECI_LogLevel,
+		ECI_StunTimeOut,//stun_timeout
 		ECI_Max,
 	};
 	class ccfg : public cconfig
