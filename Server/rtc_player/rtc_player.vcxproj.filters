@@ -34,6 +34,9 @@
     <Filter Include="player">
       <UniqueIdentifier>{cc6a4e36-b4b9-4782-bd7b-252cf7a37f3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="window">
+      <UniqueIdentifier>{696b9826-7263-4b50-8855-fc25f6015a33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="csdp_util.cpp">
@@ -114,6 +117,9 @@
     </ClCompile>
     <ClCompile Include="cd3d_renderer.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cmain_wnd.cpp">
+      <Filter>window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="cd3d_renderer.h">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cmain_wnd.h">
+      <Filter>window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

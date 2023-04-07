@@ -21,7 +21,7 @@ namespace chen {
 	}
 	void ctransport_mgr::update(uint32 uDeltaTime)
 	{
-
+		//NORMAL_EX_LOG("[all_transport = %u]", m_all_transport_map.size());
 		for (TRANSPORT_MAP::iterator iter = m_all_transport_map.begin(); iter != m_all_transport_map.end(); )
 		{
 			// 心跳包的检查

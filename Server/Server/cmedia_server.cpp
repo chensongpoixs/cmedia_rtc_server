@@ -127,7 +127,7 @@ namespace chen {
 		}
 		SYSTEM_LOG("timer startup  ...");
 
-		ctimer::Start(1u, 50u);
+		ctimer::Start(1u, 100u);
 
 		SYSTEM_LOG(" media rtc server init ok");
 

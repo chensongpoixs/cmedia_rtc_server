@@ -96,6 +96,7 @@ namespace chen {
 		virtual void  on_dtls_transport_connected(ECRYPTO_SUITE srtp_crypto_suite, uint8* srtp_local_key, size_t srtp_local_key_len, uint8* srtp_remote_key, size_t srtp_remote_key_len);
 	public:
 		void set_state_as_waiting_stun() { m_rtc_net_state = ERtcNetworkStateWaitingStun; };
+		bool get_dtls_connected_ok() const { return m_rtc_net_state == ERtcNetworkStateEstablished; }
 	protected:
 	public:
 

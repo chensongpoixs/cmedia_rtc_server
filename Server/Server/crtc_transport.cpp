@@ -286,6 +286,11 @@ namespace chen {
 	}
 	void crtc_transport::send_rtp_data(void * data, int32 size)
 	{
+		/*if (m_rtc_net_state != ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG("");
+			return  ;
+		}*/
 		if (m_current_socket_ptr && m_srtp_send_session_ptr)
 		{
 			if (m_srtp_send_session_ptr->EncryptRtp((const uint8_t**)&data, (size_t *)&size))
@@ -299,6 +304,11 @@ namespace chen {
 	}
 	void crtc_transport::send_rtp_data(RTC::RtpPacket * packet)
 	{
+	/*	if (m_rtc_net_state != ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG("");
+			return;
+		}*/
 		if (m_current_socket_ptr && m_srtp_send_session_ptr)
 		{
 			{
@@ -332,6 +342,11 @@ namespace chen {
 	}
 	void crtc_transport::send_rtp_audio_data(RTC::RtpPacket * packet)
 	{
+		/*if (m_rtc_net_state != ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG("");
+			return;
+		}*/
 		if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_audio_ssrc != 0)
 		{
 			packet->SetSsrc(m_all_audio_ssrc);
@@ -355,9 +370,25 @@ namespace chen {
 	}
 	void crtc_transport::send_rtp_video_data(RTC::RtpPacket * packet)
 	{
+		/*if (m_rtc_net_state != ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG("");
+			return;
+		}*/
+		std::ostringstream cmd;
+		cmd << "[ssrc_map]: ";
+		for (const std::pair<uint32, uint32> & pi: m_ssrc_media_type_map)
+		{
+			cmd << "[first = " << pi.first << "][ second = " << pi.second << "]";
+		}
+		NORMAL_EX_LOG("[-->%s]", cmd.str().c_str());
 		if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_video_ssrc != 0)
 		{
 			packet->SetSsrc(m_all_video_ssrc);
+			//size_t size = m_ssrc_media_type_map.size();
+
+
+
 			std::map<uint32, uint32 >::const_iterator iter =  m_ssrc_media_type_map.find(m_all_video_ssrc);
 		
 			if (iter != m_ssrc_media_type_map.end())
@@ -527,6 +558,7 @@ namespace chen {
 				m_srtp_send_session_ptr = nullptr;
 			}
 		}
+		m_rtc_net_state = ERtcNetworkStateEstablished;
 	}
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
@@ -558,7 +590,10 @@ namespace chen {
 				WARNING_EX_LOG("stun not binding request failed !!!");
 				return;
 			}*/
+			uint64 ms = uv_util::GetTimeMs();
 			_on_stun_data_received(socket, data, len, remoteAddr);
+			uint64 diff_ms = uv_util::GetTimeMs();
+			NORMAL_EX_LOG("media stun --> ms = %u", diff_ms - ms);
 		}
 		// Check if it's RTCP.
 		else if (RTC::RTCP::Packet::IsRtcp(data, len))
@@ -645,8 +680,9 @@ namespace chen {
 			m_current_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
 			
 		}
-
+		NORMAL_EX_LOG("[m_time_out_ms = %u]", uv_util::GetTimeMs() - m_time_out_ms);
 		m_time_out_ms = uv_util::GetTimeMs();
+		
 		if (m_rtc_net_state != ERtcNetworkStateDtls)
 		{
 			m_rtc_net_state = ERtcNetworkStateDtls;
@@ -746,9 +782,14 @@ namespace chen {
 			for (const std::string & stream_name : g_transport_mgr.m_all_consumer_map[m_local_sdp.m_msids[0]])
 			{
 				crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
-				if (!rtc_ptr)
+				if (!rtc_ptr )
 				{
 					WARNING_EX_LOG("not find stream_name = %s", stream_name.c_str());
+					continue;
+				}
+				if (!rtc_ptr->get_dtls_connected_ok())
+				{
+					WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", stream_name.c_str());
 					continue;
 				}
 				if (send_audio)
