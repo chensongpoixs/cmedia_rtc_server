@@ -82,6 +82,8 @@ namespace chen {
 			video_track_desc->m_media_ptr = video_payload;
 
 			video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
+			crtx_payload_des *rtx_video_payload = new crtx_payload_des(kRtxVideoPayloadType, kVideoPayloadType);
+			video_track_desc->m_rtx_ptr = rtx_video_payload;
 		}
 		///////////////////////////////////////////
 
@@ -269,9 +271,11 @@ namespace chen {
 
 			// Whether feature enabled in remote extmap.
 			int remote_twcc_id = 0;
+			std::map<int32, std::string> extmaps = remote_media_desc.get_extmaps();
 			if (true) {
-				std::map<int32, std::string> extmaps = remote_media_desc.get_extmaps();
-				for (std::map<int32, std::string>::iterator it = extmaps.begin(); it != extmaps.end(); ++it) {
+				
+				for (std::map<int32, std::string>::iterator it = extmaps.begin(); it != extmaps.end(); ++it) 
+				{
 					if (it->second == kTWCCExt) {
 						remote_twcc_id = it->first;
 						break;
@@ -447,17 +451,74 @@ namespace chen {
 				}
 
 				track->m_ssrc = c_rtc_ssrc_generator.generate_ssrc();
+				if (true)
+				{
+					for (std::map<int32, std::string>::iterator it = extmaps.begin(); it != extmaps.end(); ++it)
+					{
 
+						if (it->second == RtpExtension_kMidUri)
+						{
+							track->add_rtp_extension_desc(it->first, RtpExtension_kMidUri);
+						}
+						else if (it->second == RtpExtension_kAbsSendTimeUri) 
+						{
+							track->add_rtp_extension_desc(it->first, RtpExtension_kAbsSendTimeUri);
+						}
+					}
+				}
+				if (track->m_type == "audio")
+				{
+					 
+					for (std::map<int32, std::string>::iterator iter = extmaps.begin(); iter != extmaps.end(); ++iter)
+					{
+						if (iter->second == RtpExtension_kAudioLevelUri)
+						{
+							track->add_rtp_extension_desc(iter->first, RtpExtension_kAudioLevelUri);
+							break;
+						}
+					} 
+				}
+				else if (track->m_type == "video")
+				{
+					for (std::map<int32, std::string>::iterator iter = extmaps.begin(); iter != extmaps.end(); ++iter)
+					{
+						if (iter->second == RtpExtension_kTimestampOffsetUri)
+						{
+							track->add_rtp_extension_desc(iter->first, RtpExtension_kTimestampOffsetUri);
+
+						}
+						else if (iter->second == RtpExtension_kVideoRotationUri)
+						{
+							track->add_rtp_extension_desc(iter->first, RtpExtension_kVideoRotationUri);
+
+						}
+						else if (iter->second == RtpExtension_kRidUri)
+						{
+							track->add_rtp_extension_desc(iter->first, RtpExtension_kRidUri);
+
+						}
+						else if (iter->second == RtpExtension_kRepairedRidUri)
+						{
+							track->add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
+
+						}
+						else if (iter->second == RtpExtension_kRepairedRidUri)
+						{
+							track->add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
+
+						}
+					}
+				}
 				// TODO: FIXME: set audio_payload rtcp_fbs_,
 				// according by whether downlink is support transport algorithms.
 				// TODO: FIXME: if we support downlink RTX, MUST assign rtx_ssrc_, rtx_pt, rtx_apt
 				// not support rtx
-				if (true) 
+				/*if (true)
 				{
 					delete track->m_rtx_ptr;
 					track->m_rtx_ssrc = 0;
 				}
-
+*/
 				track->set_direction("sendonly");
 				sub_relations.insert(std::make_pair(publish_ssrc, track));
 			}

@@ -204,7 +204,7 @@ namespace chen {
 		{
 			m_feedback_gcc_timer -= 100;
 			m_remote_estimator.send_periodic_Feedbacks();
-			NORMAL_EX_LOG("[m_rtc_net_state = %u]", m_rtc_net_state);
+			//NORMAL_EX_LOG("[m_rtc_net_state = %u]", m_rtc_net_state);
 		}
 		
 	}
@@ -238,7 +238,7 @@ namespace chen {
 	}
 	bool crtc_transport::is_active() const
 	{
-		return (m_time_out_ms + g_cfg.get_uint32(ECI_StunTimeOut)) < uv_util::GetTimeMs();
+		return (m_time_out_ms + g_cfg.get_uint32(ECI_StunTimeOut)) > uv_util::GetTimeMs();
 	}
 	void crtc_transport::request_key_frame()
 	{
@@ -559,7 +559,7 @@ namespace chen {
 				m_srtp_send_session_ptr = nullptr;
 			}
 		}
-		//m_rtc_net_state = ERtcNetworkStateEstablished;
+		m_rtc_net_state = ERtcNetworkStateEstablished;
 	}
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
@@ -591,10 +591,10 @@ namespace chen {
 				WARNING_EX_LOG("stun not binding request failed !!!");
 				return;
 			}*/
-			uint64 ms = uv_util::GetTimeMs();
+			//uint64 ms = uv_util::GetTimeMs();
 			_on_stun_data_received(socket, data, len, remoteAddr);
-			uint64 diff_ms = uv_util::GetTimeMs();
-			NORMAL_EX_LOG("media stun --> ms = %u", diff_ms - ms);
+			//uint64 diff_ms = uv_util::GetTimeMs();
+			//NORMAL_EX_LOG("media stun --> ms = %u", diff_ms - ms);
 		}
 		// Check if it's RTCP.
 		else if (RTC::RTCP::Packet::IsRtcp(data, len))
@@ -681,10 +681,10 @@ namespace chen {
 			m_current_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
 			
 		}
-		NORMAL_EX_LOG("[m_time_out_ms = %u]", uv_util::GetTimeMs() - m_time_out_ms);
+		//NORMAL_EX_LOG("[m_time_out_ms = %u]", uv_util::GetTimeMs() - m_time_out_ms);
 		m_time_out_ms = uv_util::GetTimeMs();
 		
-		if (m_rtc_net_state != ERtcNetworkStateDtls)
+		if (m_rtc_net_state != ERtcNetworkStateDtls && m_rtc_net_state != ERtcNetworkStateEstablished)
 		{
 			m_rtc_net_state = ERtcNetworkStateDtls;
 			//cdtls_client * dtls_client_ptr = dynamic_cast<cdtls_client*>(m_dtls_ptr);

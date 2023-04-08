@@ -146,6 +146,33 @@ struct crtcp_header
 #define kTwccFbLargeRecvDeltaBytes	2
 #define kTwccFbMaxBitElements 		kTwccFbOneBitElements
 
+
+
+// This enum must not have any gaps, i.e., all integers between
+// kRtpExtensionNone and kRtpExtensionNumberOfExtensions must be valid enum
+// entries.
+enum RTPExtensionType  {
+	kRtpExtensionNone,
+	kRtpExtensionTransmissionTimeOffset,
+	kRtpExtensionAudioLevel,
+	kRtpExtensionAbsoluteSendTime,
+	kRtpExtensionVideoRotation,
+	kRtpExtensionTransportSequenceNumber,
+	kRtpExtensionTransportSequenceNumber02,
+	kRtpExtensionPlayoutDelay,
+	kRtpExtensionVideoContentType,
+	kRtpExtensionVideoTiming,
+	kRtpExtensionFrameMarking,
+	kRtpExtensionRtpStreamId,
+	kRtpExtensionRepairedRtpStreamId,
+	kRtpExtensionMid,
+	kRtpExtensionGenericFrameDescriptor00,
+	kRtpExtensionGenericFrameDescriptor = kRtpExtensionGenericFrameDescriptor00,
+	kRtpExtensionGenericFrameDescriptor01,
+	kRtpExtensionColorSpace,
+	kRtpExtensionNumberOfExtensions  // Must be the last entity in the enum.
+};
+
 }
 
 #endif // 

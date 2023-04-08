@@ -208,29 +208,50 @@ namespace chen {
 			track_desc.set_mid(remote_media_desc.m_mid);
 			// Whether feature enabled in remote extmap.
 			int32 remote_twcc_id = 0;
+			std::map<int32, std::string> extmaps = remote_media_desc.get_extmaps();
 			if (true)
 			{
-				std::map<int32, std::string> extmaps = remote_media_desc.get_extmaps();
+				
 				for (std::map<int32, std::string>::iterator it = extmaps.begin(); it != extmaps.end(); ++it)
 				{
 					if (it->second == kTWCCExt)
 					{
-						remote_twcc_id = it->first;
-						break;
+						//remote_twcc_id = it->first;
+						//break;
+						track_desc.add_rtp_extension_desc(it->first, kTWCCExt);
+					}
+					else if (it->second == RtpExtension_kMidUri)
+					{
+						track_desc.add_rtp_extension_desc(it->first, RtpExtension_kMidUri);
+					}
+					else if (it->second == RtpExtension_kAbsSendTimeUri)
+					{
+						//RtpExtension_kAbsSendTimeUri
+						track_desc.add_rtp_extension_desc(it->first, RtpExtension_kAbsSendTimeUri);
 					}
 				}
 			}
 
-			if (twcc_enabled && remote_twcc_id)
+			/*if (twcc_enabled && remote_twcc_id)
 			{
 				track_desc.add_rtp_extension_desc(remote_twcc_id, kTWCCExt);
-			}
+			}*/
 
 			if (remote_media_desc.is_audio())
 			{
 				// Update the ruc, which is about user specified configuration.
 				//ruc->audio_before_video_ = !nn_any_video_parsed;
-
+				if (true)
+				{
+					for (std::map<int32, std::string>::iterator iter = extmaps.begin(); iter != extmaps.end(); ++iter)
+					{
+						if (iter->second == RtpExtension_kAudioLevelUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kAudioLevelUri);
+							break;
+						}
+					}
+				}
 				// TODO: check opus format specific param
 				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("opus");
 				if (payloads.empty())
@@ -318,6 +339,38 @@ namespace chen {
 			//}
 			else if (remote_media_desc.is_video())
 			{
+				if (true)
+				{
+					for (std::map<int32, std::string>::iterator iter = extmaps.begin(); iter != extmaps.end(); ++iter)
+					{
+						if (iter->second == RtpExtension_kTimestampOffsetUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kTimestampOffsetUri);
+
+						}
+						else if (iter->second == RtpExtension_kVideoRotationUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kVideoRotationUri);
+
+						}
+						else if (iter->second == RtpExtension_kRidUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kRidUri);
+
+						}
+						else if (iter->second == RtpExtension_kRepairedRidUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
+
+						}
+						else if (iter->second == RtpExtension_kRepairedRidUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
+
+						}
+					}
+
+				}
 				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("H264");
 				if (payloads.empty())
 				{
@@ -325,6 +378,7 @@ namespace chen {
 					return false;
 					//return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid H.264 payload type");
 				}
+				std::vector<cmedia_payload_type> rtx_payloads = remote_media_desc.find_media_with_encoding_name("rtx");
 				int32 video_payload_type = 0;
 				std::deque<cmedia_payload_type> backup_payloads;
 				for (int32 j = 0; j < (int32)payloads.size(); j++)
@@ -384,6 +438,18 @@ namespace chen {
 						video_payload_type = video_payload->m_pt;
 						track_desc.m_type = "video";
 						track_desc.set_codec_payload(video_payload);
+						for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
+						{
+							if (rtx_payloads[rtx_i].m_payload_type == payload.m_rtx)
+							{
+								crtx_payload_des * rtx_video_payload = new crtx_payload_des(rtx_payloads[rtx_i].m_payload_type, payload.m_payload_type);
+								//SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
+								//video_payload->set_h264_param_desc(payload.m_format_specific_param);
+
+								track_desc.m_rtx_ptr = (rtx_video_payload);
+								break;
+							}
+						}
 						// Only choose first match H.264 payload type.
 						break;
 					}
@@ -441,10 +507,10 @@ namespace chen {
 			}
 
 			// TODO: FIXME: use one parse payload from sdp.
-			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("red"));
+			//track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("red"));
 			
-			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("rtx"));
-			track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("ulpfec"));
+			//track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("rtx"));
+			//track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("ulpfec"));
 
 			std::string track_id;
 			for (int32 j = 0; j < (int32)remote_media_desc.m_ssrc_infos.size(); ++j)
@@ -659,11 +725,11 @@ namespace chen {
 				cred_paylod* payload = dynamic_cast<cred_paylod*>(video_track->m_red_ptr);
 				local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
 			} */
-			 /*if (video_track->m_rtx_ptr)
+			 if (video_track->m_rtx_ptr)
 			 {
 				 crtx_payload_des* payload = dynamic_cast<crtx_payload_des*>(video_track->m_rtx_ptr);
 				 local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
-			 }*/
+			 }
 
 			if (!unified_plan)
 			{

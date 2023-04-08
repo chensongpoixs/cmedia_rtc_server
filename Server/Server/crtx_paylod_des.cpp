@@ -22,7 +22,7 @@ namespace chen {
 		std::ostringstream format_specific_param;
 		//format_specific_param /*<< "fmtp:" << (uint32)m_pt*/ << " apt=" << (uint32)m_apt;
 
-		format_specific_param << "fmtp:" << m_pt << " apt=" << m_apt;
+		format_specific_param/* << "fmtp:" << m_pt*/ << "apt=" << std::to_string(m_apt);
 		media_payload_type.m_format_specific_param = format_specific_param.str();
 
 		return media_payload_type;

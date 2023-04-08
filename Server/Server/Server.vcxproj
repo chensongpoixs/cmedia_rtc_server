@@ -210,7 +210,11 @@
     <ClCompile Include="crtc_transport.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
     <ClCompile Include="crtp_fb.cpp" />
+    <ClCompile Include="crtp_headers.cpp" />
+    <ClCompile Include="crtp_header_extensions.cpp" />
+    <ClCompile Include="crtp_header_extension_map.cpp" />
     <ClCompile Include="crtp_listener.cpp" />
+    <ClCompile Include="crtp_packet.cpp" />
     <ClCompile Include="crtp_rtcp.cpp" />
     <ClCompile Include="crtp_stream_recv.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
@@ -422,7 +426,11 @@
     <ClInclude Include="crtc_transport_define.h" />
     <ClInclude Include="crtc_user_config.h" />
     <ClInclude Include="crtp_fb.h" />
+    <ClInclude Include="crtp_headers.h" />
+    <ClInclude Include="crtp_header_extensions.h" />
+    <ClInclude Include="crtp_header_extension_map.h" />
     <ClInclude Include="crtp_listener.h" />
+    <ClInclude Include="crtp_packet.h" />
     <ClInclude Include="crtp_rtcp.h" />
     <ClInclude Include="crtp_rtcp_define.h" />
     <ClInclude Include="crtp_stream_recv.h" />

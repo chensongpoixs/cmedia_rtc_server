@@ -60,6 +60,9 @@ namespace chen {
 	const int kVideoPayloadType = 102;
 	const int kVideoSamplerate = 90000;
 
+
+	const int kRtxVideoPayloadType = 103;
+
 	// The RTP payload max size, reserved some paddings for SRTP as such:
 	//      kRtpPacketSize = kRtpMaxPayloadSize + paddings
 	// For example, if kRtpPacketSize is 1500, recommend to set kRtpMaxPayloadSize to 1400,

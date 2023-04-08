@@ -778,6 +778,18 @@
     <ClCompile Include="cremote_estimator_proxy.cpp">
       <Filter>feedback</Filter>
     </ClCompile>
+    <ClCompile Include="crtp_packet.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_header_extension_map.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_header_extensions.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_headers.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1466,6 +1478,18 @@
     </ClInclude>
     <ClInclude Include="cremote_estimator_proxy.h">
       <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_packet.h">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_header_extension_map.h">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_header_extensions.h">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_headers.h">
+      <Filter>rtp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

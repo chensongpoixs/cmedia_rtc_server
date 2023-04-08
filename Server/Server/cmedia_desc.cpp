@@ -670,6 +670,37 @@ if (!getline(is,word,delim)) {\
 				WARNING_EX_LOG("payload kv != 2 !!!!");
 				return 0;
 			}
+
+			// payload --> rtx
+			//std::string lower_name(encoding_name), upper_name(encoding_name);
+			//transform(encoding_name.begin(), encoding_name.end(), lower_name.begin(), ::tolower);
+			//transform(encoding_name.begin(), encoding_name.end(), upper_name.begin(), ::toupper);
+			if (kv[0] == "apt")
+			{
+				int32 apt_payload_type = 0;
+				std::string apt_payload(kv[1]);
+				for (size_t w = 0; i < apt_payload.size(); ++i)
+				{
+					apt_payload_type *= 10;
+					apt_payload_type += apt_payload[i] - '0';
+				}
+
+				cmedia_payload_type* apt_main_payload = find_media_with_payload_type(apt_payload_type);
+				if (apt_main_payload  == NULL)
+				{
+					WARNING_EX_LOG("can not find payload %d when pase fmtp", apt_payload_type);
+					//return EMediaRtcSdpInvalidAttrFmtpPayloadType;
+					//	return srs_error_new(ERROR_RTC_SDP_DECODE, "can not find payload %d when pase fmtp", payload_type);
+				}
+				else
+				{
+					apt_main_payload->m_rtx = payload_type;
+				}
+
+			}
+
+
+
 			payload->m_codec_parameter_map[kv[0]] = kv[1];
 		} 
 		return 0; 
