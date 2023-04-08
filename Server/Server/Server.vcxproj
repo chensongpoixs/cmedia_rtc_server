@@ -185,7 +185,9 @@
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
     <ClCompile Include="cremote_estimator_proxy.cpp" />
+    <ClCompile Include="creport_block.cpp" />
     <ClCompile Include="crtcp_packet.cpp" />
+    <ClCompile Include="crtcp_receiver.cpp" />
     <ClCompile Include="crtc_producer.cpp" />
     <ClCompile Include="crandom.cpp" />
     <ClCompile Include="crate_calculator.cpp" />
@@ -219,6 +221,7 @@
     <ClCompile Include="crtp_stream_recv.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
     <ClCompile Include="csdp_util.cpp" />
+    <ClCompile Include="csender_report.cpp" />
     <ClCompile Include="cseq_manager.cpp" />
     <ClCompile Include="csocket_util.cpp" />
     <ClCompile Include="csrtp.cpp" />
@@ -226,6 +229,7 @@
     <ClCompile Include="csrtp_session_test.cpp" />
     <ClCompile Include="csrtp_util.cpp" />
     <ClCompile Include="cstr2digit.cpp" />
+    <ClCompile Include="ctime_util.cpp" />
     <ClCompile Include="ctransport_feedback.cc" />
     <ClCompile Include="ctransport_mgr.cpp" />
     <ClCompile Include="ctransport_util.cpp" />
@@ -238,6 +242,7 @@
     <ClCompile Include="crtc_util.cpp" />
     <ClCompile Include="ctimer.cpp" />
     <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="cvideo_bitrate_allocation.cpp" />
     <ClCompile Include="cvideo_payload.cpp" />
     <ClCompile Include="cwan_handler.cpp" />
     <ClCompile Include="cwan_server.cpp" />
@@ -366,6 +371,7 @@
     <ClInclude Include="cclient_msg_dispatch.h" />
     <ClInclude Include="ccodec_payload.h" />
     <ClInclude Include="ccommon_header.h" />
+    <ClInclude Include="ccommon_type.h" />
     <ClInclude Include="cconfig.h" />
     <ClInclude Include="ccrc32.h" />
     <ClInclude Include="ccrypto_random.h" />
@@ -395,11 +401,14 @@
     <ClInclude Include="cnetwork.h" />
     <ClInclude Include="cnet_adapter_test.h" />
     <ClInclude Include="cnet_define.h" />
+    <ClInclude Include="cntp_time.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
     <ClInclude Include="cortc.h" />
     <ClInclude Include="cremote_estimator_proxy.h" />
+    <ClInclude Include="creport_block.h" />
     <ClInclude Include="crtcp_packet.h" />
+    <ClInclude Include="crtcp_receiver.h" />
     <ClInclude Include="crtc_producer.h" />
     <ClInclude Include="crandom.h" />
     <ClInclude Include="crate_calculator.h" />
@@ -436,6 +445,7 @@
     <ClInclude Include="crtp_stream_recv.h" />
     <ClInclude Include="crtx_paylod_des.h" />
     <ClInclude Include="csdp_util.h" />
+    <ClInclude Include="csender_report.h" />
     <ClInclude Include="cseq_manager.h" />
     <ClInclude Include="cshare_proto_error.h" />
     <ClInclude Include="csocket_util.h" />
@@ -445,6 +455,7 @@
     <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="csrtp_util.h" />
     <ClInclude Include="cstr2digit.h" />
+    <ClInclude Include="ctime_util.h" />
     <ClInclude Include="ctransport_feedback.h" />
     <ClInclude Include="ctransport_mgr.h" />
     <ClInclude Include="ctransport_util.h" />
@@ -459,6 +470,8 @@
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
     <ClInclude Include="ctime_elapse.h" />
+    <ClInclude Include="cvideo_bitrate_allocation.h" />
+    <ClInclude Include="cvideo_codec_constants.h" />
     <ClInclude Include="cvideo_payload.h" />
     <ClInclude Include="cwan_server.h" />
     <ClInclude Include="cwan_session.h" />

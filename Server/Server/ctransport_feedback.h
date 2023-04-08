@@ -85,8 +85,8 @@ class TransportFeedback : public crtp_fb {
   bool Create(uint8_t* packet, size_t* position, size_t max_length, PacketReadyCallback callback) const override;
   const std::vector<ReceivedPacket>& GetPacket() const { return packets_; }
   const std::vector<uint16_t>& GetEncodedChunks() const { return encoded_chunks_; }
-  const std::string ToString() const;
-  std::string ToString();
+  //const std::string ToString() const;
+  //std::string ToString();
  private:
   // Size in bytes of a delta time in rtcp packet.
   // Valid values are 0 (packet wasn't received), 1 or 2.

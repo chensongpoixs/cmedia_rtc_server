@@ -193,6 +193,9 @@
     <Filter Include="NewFilter1">
       <UniqueIdentifier>{4a395a90-44dd-4d9f-a57b-fb8561b5d36e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="video_bitrate">
+      <UniqueIdentifier>{7da62829-2690-4d8b-b531-ea152e061613}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -789,6 +792,21 @@
     </ClCompile>
     <ClCompile Include="crtp_headers.cpp">
       <Filter>rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtcp_receiver.cpp">
+      <Filter>rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="cvideo_bitrate_allocation.cpp">
+      <Filter>video_bitrate</Filter>
+    </ClCompile>
+    <ClCompile Include="csender_report.cpp">
+      <Filter>feedback</Filter>
+    </ClCompile>
+    <ClCompile Include="creport_block.cpp">
+      <Filter>feedback</Filter>
+    </ClCompile>
+    <ClCompile Include="ctime_util.cpp">
+      <Filter>feedback</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1490,6 +1508,30 @@
     </ClInclude>
     <ClInclude Include="crtp_headers.h">
       <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtcp_receiver.h">
+      <Filter>rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="cvideo_bitrate_allocation.h">
+      <Filter>video_bitrate</Filter>
+    </ClInclude>
+    <ClInclude Include="cvideo_codec_constants.h">
+      <Filter>video_bitrate</Filter>
+    </ClInclude>
+    <ClInclude Include="ccommon_type.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="csender_report.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="creport_block.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="cntp_time.h">
+      <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="ctime_util.h">
+      <Filter>feedback</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

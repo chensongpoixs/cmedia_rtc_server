@@ -147,7 +147,28 @@ struct crtcp_header
 #define kTwccFbMaxBitElements 		kTwccFbOneBitElements
 
 
-
+// TODO(sprang): Make this an enum class once rtcp_receiver has been cleaned up.
+enum RTCPPacketType  {
+	kRtcpReport = 0x0001, // 发送信息
+	kRtcpSr = 0x0002,
+	kRtcpRr = 0x0004,
+	kRtcpSdes = 0x0008,
+	kRtcpBye = 0x0010,
+	kRtcpPli = 0x0020,
+	kRtcpNack = 0x0040,
+	kRtcpFir = 0x0080,
+	kRtcpTmmbr = 0x0100,
+	kRtcpTmmbn = 0x0200,
+	kRtcpSrReq = 0x0400,
+	kRtcpApp = 0x1000,
+	kRtcpLossNotification = 0x2000,
+	kRtcpRemb = 0x10000,
+	kRtcpTransmissionTimeOffset = 0x20000,
+	kRtcpXrReceiverReferenceTime = 0x40000,
+	kRtcpXrDlrrReportBlock = 0x80000,
+	kRtcpTransportFeedback = 0x100000,
+	kRtcpXrTargetBitrate = 0x200000
+};
 // This enum must not have any gaps, i.e., all integers between
 // kRtpExtensionNone and kRtpExtensionNumberOfExtensions must be valid enum
 // entries.
@@ -172,7 +193,47 @@ enum RTPExtensionType  {
 	kRtpExtensionColorSpace,
 	kRtpExtensionNumberOfExtensions  // Must be the last entity in the enum.
 };
+struct crtc_report_block {
+	crtc_report_block()
+		: sender_ssrc(0),
+		source_ssrc(0),
+		fraction_lost(0),
+		packets_lost(0),
+		extended_highest_sequence_number(0),
+		jitter(0),
+		last_sender_report_timestamp(0),
+		delay_since_last_sender_report(0) {}
 
+	crtc_report_block(uint32_t sender_ssrc,
+		uint32_t source_ssrc,
+		uint8_t fraction_lost,
+		int32_t packets_lost,
+		uint32_t extended_highest_sequence_number,
+		uint32_t jitter,
+		uint32_t last_sender_report_timestamp,
+		uint32_t delay_since_last_sender_report)
+		: sender_ssrc(sender_ssrc),
+		source_ssrc(source_ssrc),
+		fraction_lost(fraction_lost),
+		packets_lost(packets_lost),
+		extended_highest_sequence_number(extended_highest_sequence_number),
+		jitter(jitter),
+		last_sender_report_timestamp(last_sender_report_timestamp),
+		delay_since_last_sender_report(delay_since_last_sender_report) {}
+
+	// TODO@chensong 2022-11-30
+	// Fields as described by RFC 3550 6.4.2.
+	uint32_t sender_ssrc;  // SSRC of sender of this report. 32位， 接收到的每个媒体源
+	uint32_t source_ssrc;  // SSRC of the RTP packet sender. 媒体源的ssrc
+	uint8_t fraction_lost;                     // 8位 上一次报告之后从sender_ssrc 来包的掉包比例
+	int32_t packets_lost;  // 24 bits valid.   // 24位， 自接收开始掉包总数， 迟到包不算掉包， 重传有可以导致负数
+	uint32_t extended_highest_sequence_number; // 低16位表示收到的最大seq， 高16位表示seq循环次数
+	uint32_t jitter;                           // RTP包到达时间间隔的统计方差
+	uint32_t last_sender_report_timestamp;     // 32位， NTP时间戳的中间32位
+	uint32_t delay_since_last_sender_report;   // 记录上一个接收SR的时间与上一个发送SR的时间差
+};
+
+//typedef std::list<crtc_report_block> report_block_list;
 }
 
 #endif // 

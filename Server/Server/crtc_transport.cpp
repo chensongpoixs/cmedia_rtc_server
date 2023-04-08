@@ -1260,7 +1260,7 @@ namespace chen {
 		{
 			case ERtcpType_rr:
 			{
-				//DEBUG_EX_LOG("RR");
+				DEBUG_EX_LOG("RR");
 				crtcp_rr* rr = dynamic_cast<crtcp_rr*>(rtcp);
 				if (rr->get_rb_ssrc() == 0)
 				{ //for native client
@@ -1270,7 +1270,7 @@ namespace chen {
 			}
 			case ERtcpType_psfb:
 			{
-				//DEBUG_EX_LOG("ERtcpType_psfb");
+				DEBUG_EX_LOG("ERtcpType_psfb");
 				crtcp_psfb_common* psfb = dynamic_cast<crtcp_psfb_common*>(rtcp);
 				switch (psfb->get_rc())
 				{
@@ -1289,7 +1289,7 @@ namespace chen {
 			}
 			case ERtcpType_rtpfb:
 			{
-				//DEBUG_EX_LOG("ERtcpType_rtpfb");
+				DEBUG_EX_LOG("ERtcpType_rtpfb");
 				switch (rtcp->get_rc())
 				{
 					case ERtpfbTCC:
@@ -1317,7 +1317,7 @@ namespace chen {
 				crtcp_sr* sr = dynamic_cast<crtcp_sr*>(rtcp);
 				(void)sr;
 				required_publisher_ssrc = sr->get_ssrc();
-				//DEBUG_EX_LOG("ERtcpType_sr [required_publisher_ssrc = %u]", required_publisher_ssrc);
+				DEBUG_EX_LOG("ERtcpType_sr [required_publisher_ssrc = %u]", required_publisher_ssrc);
 				
 				break;
 			}
@@ -1339,7 +1339,7 @@ namespace chen {
 			}
 			case ERtcpType_xr:
 			{
-				//DEBUG_EX_LOG("ERtcpType_xr");
+				DEBUG_EX_LOG("ERtcpType_xr");
 				switch (rtcp->get_rc())
 				{
 					case EExtendedDLRR:
