@@ -136,7 +136,7 @@ if (!getline(is,word,delim)) {\
 		{
 			os << " " << m_ssrcs[i];
 		}
-
+		os <<   kCRLF;
 		return 0;
 	}
 	int32 parse_h264_fmtp(const std::string & fmtp, ch264_specific_param & h264_param)
@@ -375,7 +375,15 @@ if (!getline(is,word,delim)) {\
 				//return srs_error_wrap(err, "encode media payload failed");
 			}
 		}
-
+		for (std::vector<cssrc_group>::iterator iter = m_ssrc_groups.begin(); iter != m_ssrc_groups.end(); ++iter)
+		{
+			if ((err = iter->encode(os)) != 0)
+			{
+				WARNING_EX_LOG("encode ssrc groups  failed");
+				return EMediaRtcSdpEncodeMediaPayloadFailed;
+				//return srs_error_wrap(err, "encode media payload failed");
+			}
+		}
 		for (std::vector<cssrc_info>::iterator iter = m_ssrc_infos.begin(); iter != m_ssrc_infos.end(); ++iter)
 		{
 			cssrc_info& ssrc_info = *iter;

@@ -58,7 +58,9 @@ namespace chen {
 
 			audio_track_desc->m_type = "audio";
 			audio_track_desc->m_id = "audio-" + c_rand.rand_str(8);
-			 //audio_track_desc->m_mid = "0";
+			audio_track_desc->m_msid = c_rand.rand_str(36);
+			//audio_track_desc->m_msid_tracker = c_rand.rand_str(36);;
+			//audio_track_desc->m_mid = "0";
 			uint32_t audio_ssrc = c_rtc_ssrc_generator.generate_ssrc();
 			audio_track_desc->m_ssrc = audio_ssrc;
 			audio_track_desc->m_direction = "sendonly";
@@ -73,6 +75,7 @@ namespace chen {
 
 			video_track_desc->m_type = "video";
 			video_track_desc->m_id = "video-" + c_rand.rand_str(8);
+			video_track_desc->m_msid = c_rand.rand_str(36);
 			//video_track_desc->m_mid = "1";
 			uint32_t video_ssrc = c_rtc_ssrc_generator.generate_ssrc();
 			video_track_desc->m_ssrc = video_ssrc;
@@ -84,6 +87,7 @@ namespace chen {
 			video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
 			crtx_payload_des *rtx_video_payload = new crtx_payload_des(kRtxVideoPayloadType, kVideoPayloadType);
 			video_track_desc->m_rtx_ptr = rtx_video_payload;
+			video_track_desc->m_rtx_ssrc = c_rtc_ssrc_generator.generate_ssrc();
 		}
 		///////////////////////////////////////////
 
@@ -263,7 +267,7 @@ namespace chen {
 		int32 nn_any_video_parsed = 0;
 		for (int i = 0; i < (int)remote_sdp.m_media_descs.size(); ++i) {
 			const cmedia_desc& remote_media_desc = remote_sdp.m_media_descs.at(i);
-
+			std::vector<cmedia_payload_type> rtx_payloads = remote_media_desc.find_media_with_encoding_name("rtx");
 			if (remote_media_desc.is_video())
 			{
 				nn_any_video_parsed++;
@@ -386,6 +390,7 @@ namespace chen {
 			else if (remote_media_desc.is_video()) {
 				// TODO: check opus format specific param
 				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("H264");
+				
 				if (payloads.empty()) 
 				{
 					WARNING_EX_LOG("no valid found h264 payload type");
@@ -450,7 +455,7 @@ namespace chen {
 					}
 				}
 
-				track->m_ssrc = c_rtc_ssrc_generator.generate_ssrc();
+				//track->m_ssrc = c_rtc_ssrc_generator.generate_ssrc();
 				if (true)
 				{
 					for (std::map<int32, std::string>::iterator it = extmaps.begin(); it != extmaps.end(); ++it)
@@ -506,6 +511,18 @@ namespace chen {
 						{
 							track->add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
 
+						}
+					}
+					if (track->m_rtx_ptr)
+					{
+						for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
+						{
+							if (remote_payload.m_rtx == rtx_payloads[rtx_i].m_payload_type)
+							{
+								((crtx_payload_des*)(track->m_rtx_ptr))->m_pt = rtx_payloads[rtx_i].m_payload_type;
+								((crtx_payload_des*)(track->m_rtx_ptr))->m_apt = remote_payload.m_payload_type;// ((crtx_payload_des*)&rtx_payloads[rtx_i])->m_apt;
+								break;
+							}
 						}
 					}
 				}
@@ -1020,7 +1037,12 @@ namespace chen {
 			cred_paylod* red_payload = (cred_paylod*)track->m_red_ptr;
 			local_media_desc.m_payload_types.push_back(red_payload->generate_media_payload_type());
 		}
+		if (track->m_rtx_ptr) {
+			crtx_payload_des* rtx_payload = (crtx_payload_des*)track->m_rtx_ptr;
+			local_media_desc.m_payload_types.push_back(rtx_payload->generate_media_payload_type());
+		}
 	}
+
 
 	bool capi_rtc_player::_generate_play_local_sdp_for_video(crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan, std::string cname)
 	{
@@ -1042,7 +1064,8 @@ namespace chen {
 			cmedia_desc& local_media_desc = local_sdp.m_media_descs.back();
 			local_media_desc.m_ssrc_infos.push_back(cssrc_info(track->m_ssrc, cname, track->m_msid, track->m_id));
 
-			if (track->m_rtx_ptr && track->m_rtx_ssrc) {
+			if (track->m_rtx_ptr && track->m_rtx_ssrc)
+			{
 				std::vector<uint32_t> group_ssrcs;
 				group_ssrcs.push_back(track->m_ssrc);
 				group_ssrcs.push_back(track->m_rtx_ssrc);
