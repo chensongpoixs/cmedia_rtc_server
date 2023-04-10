@@ -159,3 +159,4 @@ Server/rtc_player/*.log
 Server/Robot/*.log
 Server/Robot/nvEncodeAPI64.dll
 Server/rtc_player/video_render.yuv 
+Server/enc_temp_folder/22ea6ccf3626047174cc6e6e133da35/crtp_header_extension_uri.cpp

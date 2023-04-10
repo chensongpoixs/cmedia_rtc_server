@@ -106,7 +106,9 @@ namespace chen {
 
 	const char RtpExtension_kMidUri[] = "urn:ietf:params:rtp-hdrext:sdes:mid";
 
-	const char RtpExtension_kFrameMarkingUri[] =
+	const char RtpExtension_kFrameMarkingUri[] = "urn:ietf:params:rtp-hdrext:framemarking";
+
+	const char RtpExtension_kFrameMarking07Uri[] =
 		"http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07";
 
 	const char RtpExtension_kGenericFrameDescriptorUri00[] =

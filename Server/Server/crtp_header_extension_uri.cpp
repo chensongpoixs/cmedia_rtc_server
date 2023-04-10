@@ -4,6 +4,7 @@ created: 		2023-04-08
 author:			chensong
 
 purpose:		ccfg
+WebRTC 中对应rtp的扩展头信息的作用
 ************************************************************************************************/
 #include "crtp_header_extension_uri.h"
 #include <unordered_map>
@@ -37,12 +38,12 @@ namespace chen {
 		// NOTE: Remove this once framemarking draft becomes RFC.
 
 
-		{ RtpExtension_kFrameMarkingUri,              EFRAME_MARKING_07       },
+		{ RtpExtension_kFrameMarking07Uri,              EFRAME_MARKING_07       },
 
 
 		// 由于 WebRTC 中 RTP payload 通过 SRTP 进行加密，这样导致 RTP packet 在经过交换节点或转发节点时，
 		// 有些场景下需要知道当前 RTP packet 的编码信息，framemarking 用于给定该编码信息 
-		{ "urn:ietf:params:rtp-hdrext:framemarking",                                   EFRAME_MARKING          },
+		{ RtpExtension_kFrameMarkingUri,                                   EFRAME_MARKING          },
 
 		// 用于音量调节
 		{ RtpExtension_kAudioLevelUri,                               ESSRC_AUDIO_LEVEL       },

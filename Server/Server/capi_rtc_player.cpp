@@ -283,7 +283,7 @@ namespace chen {
 					if (it->second == kTWCCExt) 
 					{
 						remote_twcc_id = it->first;
-						remote_twcc_id = get_rtp_header_extension_uri_type(kTWCCExt);
+						//remote_twcc_id = get_rtp_header_extension_uri_type(kTWCCExt);
 						break;
 					}
 				}
@@ -465,11 +465,11 @@ namespace chen {
 
 						if (it->second == RtpExtension_kMidUri)
 						{//get_rtp_header_extension_uri_type(RtpExtension_kMidUri);
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kMidUri), RtpExtension_kMidUri);
+							track->add_rtp_extension_desc(it ->first/*get_rtp_header_extension_uri_type(RtpExtension_kMidUri)*/, RtpExtension_kMidUri);
 						}
 						else if (it->second == RtpExtension_kAbsSendTimeUri) 
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kAbsSendTimeUri), RtpExtension_kAbsSendTimeUri);
+							track->add_rtp_extension_desc(it ->first /*get_rtp_header_extension_uri_type(RtpExtension_kAbsSendTimeUri)*/, RtpExtension_kAbsSendTimeUri);
 						}
 					}
 				}
@@ -480,7 +480,7 @@ namespace chen {
 					{
 						if (iter->second == RtpExtension_kAudioLevelUri)
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kAudioLevelUri), RtpExtension_kAudioLevelUri);
+							track->add_rtp_extension_desc(iter->first/*get_rtp_header_extension_uri_type(RtpExtension_kAudioLevelUri)*/, RtpExtension_kAudioLevelUri);
 							break;
 						}
 					} 
@@ -491,34 +491,36 @@ namespace chen {
 					{
 						if (iter->second == RtpExtension_kTimestampOffsetUri)
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kTimestampOffsetUri), RtpExtension_kTimestampOffsetUri);
+							track->add_rtp_extension_desc(iter->first/*get_rtp_header_extension_uri_type(RtpExtension_kTimestampOffsetUri)*/, RtpExtension_kTimestampOffsetUri);
 
 						}
 						else if (iter->second == RtpExtension_kVideoRotationUri)
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kVideoRotationUri), RtpExtension_kVideoRotationUri);
+							track->add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kVideoRotationUri)*/, RtpExtension_kVideoRotationUri);
 
 						}
 						else if (iter->second == RtpExtension_kRidUri)
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kRidUri), RtpExtension_kRidUri);
+							track->add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kRidUri)*/, RtpExtension_kRidUri);
 
 						}
 						else if (iter->second == RtpExtension_kRepairedRidUri)
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri), RtpExtension_kRepairedRidUri);
+							track->add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri)*/, RtpExtension_kRepairedRidUri);
 
 						}
 						else if (iter->second == RtpExtension_kRepairedRidUri)
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri), RtpExtension_kRepairedRidUri);
+							track->add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri)*/, RtpExtension_kRepairedRidUri);
 
 						}
-						else if (iter->second == RtpExtension_kFrameMarkingUri)
+						else if (iter->second == RtpExtension_kFrameMarking07Uri)
 						{
-							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kFrameMarkingUri), RtpExtension_kFrameMarkingUri);
+							track->add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kFrameMarking07Uri)*/, RtpExtension_kFrameMarkingUri);
 						}
+
 					}
+				//	track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kFrameMarkingUri), RtpExtension_kFrameMarkingUri);
 					if (track->m_rtx_ptr)
 					{
 						for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
