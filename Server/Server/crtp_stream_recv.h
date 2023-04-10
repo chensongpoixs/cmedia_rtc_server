@@ -37,7 +37,31 @@ namespace chen {
 		 void receive_rtx_rtcp_sender_report(crtcp_sr* report);
 		//void ReceiveRtcpXrDelaySinceLastRr(RTC::RTCP::DelaySinceLastRr::SsrcInfo* ssrcInfo);
 
+
+
+		 void request_key_frame();
+		 void pause();
+		 void pesume();
+
+		 uint32  get_bitrate(uint64  nowMs) override
+		 {
+			 return m_media_transmission_counter .GetBitrate(nowMs);
+		 }
+		 /* uint32  get_bitrate(uint64  nowMs, uint8  spatialLayer, uint8  temporalLayer) override
+		  {
+			  return m_transmission_counter.GetBitrate(nowMs, spatialLayer, temporalLayer);
+		  }*/
+		 /*uint32  get_spatialLayerBitrate(uint64_t nowMs, uint8_t spatialLayer) override
+		 {
+			 return this->transmissionCounter.GetSpatialLayerBitrate(nowMs, spatialLayer);
+		 }*/
+		 /*uint32  GetLayerBitrate(uint64_t nowMs, uint8_t spatialLayer, uint8_t temporalLayer) override
+		 {
+			 return this->transmissionCounter.GetLayerBitrate(nowMs, spatialLayer, temporalLayer);
+		 }*/
 	protected:
+		void onnack_generator_nack_required(const std::vector<uint16>& seqNumbers)  ;
+		void onnack_generator_key_frame_required()  ;
 	private:
 
 		void _calculate_jitter(uint32 rtpTimestamp);
