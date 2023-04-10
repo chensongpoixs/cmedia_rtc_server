@@ -15,6 +15,7 @@ purpose:		ctransport_mgr
 #include <unordered_map>
 #include "crtc_source_description.h"
 #include <crtc_transport.h>
+#include "crtp_stream.h"
 namespace chen {
 
 	class ctransport_mgr
@@ -24,9 +25,15 @@ namespace chen {
 									
 		typedef std::unordered_map<std::string, crtc_transport*>   STREAM_URL_MAP;
 		////////////////////////////////////////////////////////////////////////////////
-
+		// key-->
 		typedef std::unordered_map<std::string, std::set<std::string>> CONSUMER_MAP;
 
+		//  key ---> 0: audio 1: video 2: datachannel
+		typedef std::unordered_map < std::string, std::vector<std::set<crtp_stream*>>>  ALL_RTP_STREAM_MAP;
+
+
+		// key -->
+		//typedef std::unordered_map < std::string, std::vector<std::set<crtc_transport*>>>  ALL_CONSUMER_MAP;
 	public:
 
 		explicit ctransport_mgr()
@@ -80,6 +87,11 @@ namespace chen {
 		STREAM_URL_MAP										m_all_stream_url_map;
 	public:
 		CONSUMER_MAP										m_all_consumer_map;
+
+
+
+		ALL_RTP_STREAM_MAP									m_all_recv_rtp_stream_map;
+		ALL_RTP_STREAM_MAP									m_all_send_rtp_stream_map;
 	};
 
 

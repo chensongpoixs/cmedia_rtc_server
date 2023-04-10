@@ -104,6 +104,13 @@ namespace chen {
 
 	struct crtcp_rb
 	{
+		//uint32_t ssrc;//32位，接收到的每个媒体源
+		//uint32_t fractionLost : 8;//8位，上一次报告之后从SSRC_n来包的漏包比列
+		//uint32_t totalLost : 24;//24位，自接收开始漏包总数，迟到包不算漏包，重传有可以导致负数
+		//uint32_t lastSeq; //--? 低16位表式收到的最大seq，高16位表式seq循环次数 
+		//uint32_t jitter;//RTP包到达时间间隔的统计方差
+		//uint32_t lsr;//32位， NTP时间戳的中间32位
+		//uint32_t dlsr;//记录接收SR的时间与发送SR的时间差
 		uint32_t ssrc;
 		uint8_t fraction_lost;
 		uint32_t lost_packets;
@@ -148,7 +155,7 @@ namespace chen {
 		virtual uint64 nb_bytes();
 		virtual bool encode(cbuffer *buffer);
 	private:
-		uint64		m_ntp;
+		uint64		m_ntp; // 网络时间戳， 用于不同源之间的同步 
 		uint32		m_rtp_ts; //rtp 网络时间戳
 		uint32		m_send_rtp_packets; //发送的总包数
 		uint32		m_send_rtp_bytes; //总共发送数据包量

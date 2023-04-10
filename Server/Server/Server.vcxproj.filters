@@ -811,6 +811,15 @@
     <ClCompile Include="crtp_header_extension_uri.cpp">
       <Filter>rtp</Filter>
     </ClCompile>
+    <ClCompile Include="crtp_stream.cpp">
+      <Filter>stream</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_stream_send.cpp">
+      <Filter>stream</Filter>
+    </ClCompile>
+    <ClCompile Include="crtx_stream.cpp">
+      <Filter>stream</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1538,6 +1547,18 @@
     </ClInclude>
     <ClInclude Include="crtp_header_extension_uri.h">
       <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_stream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_stream_send.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="crtx_stream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_stream_define.h">
+      <Filter>stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

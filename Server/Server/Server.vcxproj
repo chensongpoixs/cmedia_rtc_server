@@ -219,8 +219,11 @@
     <ClCompile Include="crtp_listener.cpp" />
     <ClCompile Include="crtp_packet.cpp" />
     <ClCompile Include="crtp_rtcp.cpp" />
+    <ClCompile Include="crtp_stream.cpp" />
     <ClCompile Include="crtp_stream_recv.cpp" />
+    <ClCompile Include="crtp_stream_send.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
+    <ClCompile Include="crtx_stream.cpp" />
     <ClCompile Include="csdp_util.cpp" />
     <ClCompile Include="csender_report.cpp" />
     <ClCompile Include="cseq_manager.cpp" />
@@ -444,8 +447,12 @@
     <ClInclude Include="crtp_packet.h" />
     <ClInclude Include="crtp_rtcp.h" />
     <ClInclude Include="crtp_rtcp_define.h" />
+    <ClInclude Include="crtp_stream.h" />
+    <ClInclude Include="crtp_stream_define.h" />
     <ClInclude Include="crtp_stream_recv.h" />
+    <ClInclude Include="crtp_stream_send.h" />
     <ClInclude Include="crtx_paylod_des.h" />
+    <ClInclude Include="crtx_stream.h" />
     <ClInclude Include="csdp_util.h" />
     <ClInclude Include="csender_report.h" />
     <ClInclude Include="cseq_manager.h" />
