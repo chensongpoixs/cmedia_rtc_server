@@ -135,6 +135,10 @@ namespace chen {
 		bool _on_rtcp_feedback_twcc(char * data, int32 nb_data);
 		// 老版本的代码 不需要处理了
 		bool _on_rtcp_feedback_remb(crtcp_psfb_common * rtcp);
+
+
+
+		inline bool _mangle_rtp_packet(RTC::RtpPacket * packet, bool audio_video = false);
 	private:
 		crtc_sdp			 			m_local_sdp ;
 		crtc_sdp			 			m_remote_sdp ;

@@ -221,16 +221,16 @@ namespace chen {
 					{
 						//remote_twcc_id = it->first;
 						//break;
-						track_desc.add_rtp_extension_desc(it->first /*get_rtp_header_extension_uri_type(kTWCCExt)*/, kTWCCExt);
+						track_desc.add_rtp_extension_desc(get_rtp_header_extension_uri_type(kTWCCExt) , kTWCCExt);
 					}
 					else if (it->second == RtpExtension_kMidUri)
 					{
-						track_desc.add_rtp_extension_desc(it->first /*get_rtp_header_extension_uri_type(RtpExtension_kMidUri)*/, RtpExtension_kMidUri);
+						track_desc.add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kMidUri) , RtpExtension_kMidUri);
 					}
 					else if (it->second == RtpExtension_kAbsSendTimeUri)
 					{
 						//RtpExtension_kAbsSendTimeUri
-						track_desc.add_rtp_extension_desc(it->first /*get_rtp_header_extension_uri_type(RtpExtension_kAbsSendTimeUri)*/, RtpExtension_kAbsSendTimeUri);
+						track_desc.add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kAbsSendTimeUri) , RtpExtension_kAbsSendTimeUri);
 					}
 				}
 			}
@@ -250,7 +250,7 @@ namespace chen {
 					{
 						if (iter->second == RtpExtension_kAudioLevelUri)
 						{
-							track_desc.add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kAudioLevelUri)*/, RtpExtension_kAudioLevelUri);
+							track_desc.add_rtp_extension_desc( get_rtp_header_extension_uri_type(RtpExtension_kAudioLevelUri) , RtpExtension_kAudioLevelUri);
 							break;
 						}
 					}
@@ -353,17 +353,17 @@ namespace chen {
 						}
 						else if (iter->second == RtpExtension_kVideoRotationUri)
 						{
-							track_desc.add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kVideoRotationUri)*/, RtpExtension_kVideoRotationUri);
+							track_desc.add_rtp_extension_desc( get_rtp_header_extension_uri_type(RtpExtension_kVideoRotationUri) , RtpExtension_kVideoRotationUri);
 
 						}
 						else if (iter->second == RtpExtension_kRidUri)
 						{
-							track_desc.add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kRidUri)*/, RtpExtension_kRidUri);
+							track_desc.add_rtp_extension_desc( get_rtp_header_extension_uri_type(RtpExtension_kRidUri) , RtpExtension_kRidUri);
 
 						}
 						else if (iter->second == RtpExtension_kRepairedRidUri)
 						{
-							track_desc.add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri)*/, RtpExtension_kRepairedRidUri);
+							track_desc.add_rtp_extension_desc( get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri) , RtpExtension_kRepairedRidUri);
 
 						}
 						/*else if (iter->second == RtpExtension_kRepairedRidUri)
@@ -372,7 +372,7 @@ namespace chen {
 
 						}*/
 					}
-				//	track_desc.add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kFrameMarkingUri), RtpExtension_kFrameMarkingUri);
+				 	track_desc.add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kFrameMarkingUri), RtpExtension_kFrameMarkingUri);
 
 
 				}

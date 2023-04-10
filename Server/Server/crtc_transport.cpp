@@ -25,6 +25,7 @@ purpose:		crtc_transport
 #include "crtp_rtcp.h"
 #include "cstr2digit.h"
 #include "H264.hpp"
+#include "crtp_header_extensions.h"
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -780,6 +781,7 @@ namespace chen {
 					}
 				}
 			}
+			_mangle_rtp_packet(packet, send_audio);
 			for (const std::string & stream_name : g_transport_mgr.m_all_consumer_map[m_local_sdp.m_msids[0]])
 			{
 				crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
@@ -1468,6 +1470,180 @@ namespace chen {
 	bool crtc_transport::_on_rtcp_feedback_remb(crtcp_psfb_common * rtcp)
 	{
 		//ignore REMB
+		return true;
+	}
+
+	inline bool crtc_transport::_mangle_rtp_packet(  RTC::RtpPacket * packet, bool audio_video)
+	{
+		// Mangle the payload type.
+ 
+		// Mangle the SSRC.
+		//{
+		//	// 2.  修改为服务端ssrc   这个可能是因为不同端可能会冲突的问题吧
+		//	 
+		//	packet->SetSsrc(mappedSsrc);
+		//}
+		 
+		// Mangle RTP header extensions.
+		{
+			thread_local static uint8_t buffer[4096];
+			thread_local static std::vector<RTC::RtpPacket::GenericExtension> extensions;
+
+			// This happens just once.
+			if (extensions.capacity() != 24)
+			{
+				extensions.reserve(24);
+			}
+
+			extensions.clear();
+
+			uint8_t* extenValue;
+			uint8_t extenLen;
+			uint8_t* bufferPtr{ buffer };
+
+			// Add urn:ietf:params:rtp-hdrext:sdes:mid.
+			{
+				extenLen = RTC::MidMaxLength;
+
+				extensions.emplace_back(
+					static_cast<uint8_t>(EMID), extenLen, bufferPtr);
+
+				bufferPtr += extenLen;
+			}
+
+			if (!audio_video)
+			{
+				// Proxy urn:ietf:params:rtp-hdrext:ssrc-audio-level.
+				extenValue = packet->GetExtension(ESSRC_AUDIO_LEVEL, extenLen);
+
+				if (extenValue)
+				{
+					std::memcpy(bufferPtr, extenValue, extenLen);
+
+					extensions.emplace_back(
+						static_cast<uint8_t>(ESSRC_AUDIO_LEVEL),
+						extenLen,
+						bufferPtr);
+
+					// Not needed since this is the latest added extension.
+					// bufferPtr += extenLen;
+				}
+			}
+			else if (audio_video)
+			{
+				// Add http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time.
+				{
+					extenLen = 3u;
+
+					// NOTE: Add value 0. The sending Transport will update it.
+					uint32_t absSendTime{ 0u };
+
+					rtc_byte::set3bytes(bufferPtr, 0, absSendTime);
+
+					extensions.emplace_back(
+						static_cast<uint8_t>(EABS_SEND_TIME), extenLen, bufferPtr);
+
+					bufferPtr += extenLen;
+				}
+
+				// Add http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions-01.
+				{
+					extenLen = 2u;
+
+					// NOTE: Add value 0. The sending Transport will update it.
+					uint16_t wideSeqNumber{ 0u };
+
+					rtc_byte::set3bytes(bufferPtr, 0, wideSeqNumber);
+
+					extensions.emplace_back(
+						static_cast<uint8_t>(ETRANSPORT_WIDE_CC_01),
+						extenLen,
+						bufferPtr);
+
+					bufferPtr += extenLen;
+				}
+
+				// NOTE: Remove this once framemarking draft becomes RFC.
+				// Proxy http://tools.ietf.org/html/draft-ietf-avtext-framemarking-07.
+				extenValue =   packet->GetExtension(EFRAME_MARKING_07, extenLen);
+
+				if (extenValue)
+				{
+					std::memcpy(bufferPtr, extenValue, extenLen);
+
+					extensions.emplace_back(
+						static_cast<uint8_t>(EFRAME_MARKING_07),
+						extenLen,
+						bufferPtr);
+
+					bufferPtr += extenLen;
+				}
+
+				// Proxy urn:ietf:params:rtp-hdrext:framemarking.
+				extenValue =   packet->GetExtension(EFRAME_MARKING, extenLen);
+
+				if (extenValue)
+				{
+					std::memcpy(bufferPtr, extenValue, extenLen);
+
+					extensions.emplace_back(
+						static_cast<uint8_t>(EFRAME_MARKING), extenLen, bufferPtr);
+
+					bufferPtr += extenLen;
+				}
+
+				// Proxy urn:3gpp:video-orientation.
+				extenValue = packet->GetExtension(EVIDEO_ORIENTATION, extenLen);
+
+				if (extenValue)
+				{
+					std::memcpy(bufferPtr, extenValue, extenLen);
+
+					extensions.emplace_back(
+						static_cast<uint8_t>(EVIDEO_ORIENTATION),
+						extenLen,
+						bufferPtr);
+
+					bufferPtr += extenLen;
+				}
+
+				// Proxy urn:ietf:params:rtp-hdrext:toffset.
+				extenValue = packet->GetExtension(ETOFFSET, extenLen);
+
+				if (extenValue)
+				{
+					std::memcpy(bufferPtr, extenValue, extenLen);
+
+					extensions.emplace_back(
+						static_cast<uint8_t>(ETOFFSET), extenLen, bufferPtr);
+
+					// Not needed since this is the latest added extension.
+					// bufferPtr += extenLen;
+				}
+			}
+
+			// Set the new extensions into the packet using One-Byte format.
+			packet->SetExtensions(1, extensions);
+
+			// Assign mediasoup RTP header extension ids (just those that mediasoup may
+			// be interested in after passing it to the Router).
+			packet->SetMidExtensionId(static_cast<uint8_t>(EMID));
+			packet->SetAbsSendTimeExtensionId(
+				static_cast<uint8_t>(EABS_SEND_TIME));
+			packet->SetTransportWideCc01ExtensionId(
+				static_cast<uint8_t>(ETRANSPORT_WIDE_CC_01));
+			// NOTE: Remove this once framemarking draft becomes RFC.
+			packet->SetFrameMarking07ExtensionId(
+				static_cast<uint8_t>(EFRAME_MARKING_07));
+			packet->SetFrameMarkingExtensionId(
+				static_cast<uint8_t>(EFRAME_MARKING));
+			packet->SetSsrcAudioLevelExtensionId(
+				static_cast<uint8_t>(ESSRC_AUDIO_LEVEL));
+			packet->SetVideoOrientationExtensionId(
+				static_cast<uint8_t>(EVIDEO_ORIENTATION));
+		}
+
+		return true;
 		return true;
 	}
 
