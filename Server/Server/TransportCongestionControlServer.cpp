@@ -325,11 +325,11 @@ namespace RTC
 		this->listener->OnTransportCongestionControlServerSendRtcpPacket(this, &packet);
 	}
 
-	inline void TransportCongestionControlServer::OnTimer(/*Timer* timer*/)
+	inline void TransportCongestionControlServer::OnTimer(ctimer * timer)
 	{
 		//MS_TRACE();
 
-		//if (timer == this->transportCcFeedbackSendPeriodicTimer)
+		 if (timer == this )
 			SendTransportCcFeedback();
 	}
 } // namespace RTC

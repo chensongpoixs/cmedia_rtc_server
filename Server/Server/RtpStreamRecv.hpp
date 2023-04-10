@@ -83,7 +83,7 @@ namespace RTC
 		/* Pure virtual methods inherited from Timer. */
 	protected:
 		//void OnTimer(Timer* timer) override;
-		void OnTimer() override;
+		void OnTimer(ctimer * timer);// override;
 		/* Pure virtual methods inherited from RTC::NackGenerator. */
 	protected:
 		void OnNackGeneratorNackRequired(const std::vector<uint16_t>& seqNumbers) override;

@@ -215,6 +215,7 @@
     <ClCompile Include="crtp_headers.cpp" />
     <ClCompile Include="crtp_header_extensions.cpp" />
     <ClCompile Include="crtp_header_extension_map.cpp" />
+    <ClCompile Include="crtp_header_extension_uri.cpp" />
     <ClCompile Include="crtp_listener.cpp" />
     <ClCompile Include="crtp_packet.cpp" />
     <ClCompile Include="crtp_rtcp.cpp" />
@@ -438,6 +439,7 @@
     <ClInclude Include="crtp_headers.h" />
     <ClInclude Include="crtp_header_extensions.h" />
     <ClInclude Include="crtp_header_extension_map.h" />
+    <ClInclude Include="crtp_header_extension_uri.h" />
     <ClInclude Include="crtp_listener.h" />
     <ClInclude Include="crtp_packet.h" />
     <ClInclude Include="crtp_rtcp.h" />

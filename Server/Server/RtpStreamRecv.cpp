@@ -795,7 +795,7 @@ namespace RTC
 	//	}
 	//}
 
-	void RtpStreamRecv::OnTimer()
+	void RtpStreamRecv::OnTimer(ctimer * timer)
 	{
 	}
 

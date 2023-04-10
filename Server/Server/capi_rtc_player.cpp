@@ -24,7 +24,7 @@ purpose:		api_rtc_publish
 #include "cglobal_config.h"
 #include "crtc_ssrc_generator.h"
 #include "crtc_constants.h"
-
+#include "crtp_header_extension_uri.h"
 
 
 namespace chen {
@@ -280,8 +280,10 @@ namespace chen {
 				
 				for (std::map<int32, std::string>::iterator it = extmaps.begin(); it != extmaps.end(); ++it) 
 				{
-					if (it->second == kTWCCExt) {
+					if (it->second == kTWCCExt) 
+					{
 						remote_twcc_id = it->first;
+						remote_twcc_id = get_rtp_header_extension_uri_type(kTWCCExt);
 						break;
 					}
 				}
@@ -462,12 +464,12 @@ namespace chen {
 					{
 
 						if (it->second == RtpExtension_kMidUri)
-						{
-							track->add_rtp_extension_desc(it->first, RtpExtension_kMidUri);
+						{//get_rtp_header_extension_uri_type(RtpExtension_kMidUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kMidUri), RtpExtension_kMidUri);
 						}
 						else if (it->second == RtpExtension_kAbsSendTimeUri) 
 						{
-							track->add_rtp_extension_desc(it->first, RtpExtension_kAbsSendTimeUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kAbsSendTimeUri), RtpExtension_kAbsSendTimeUri);
 						}
 					}
 				}
@@ -478,7 +480,7 @@ namespace chen {
 					{
 						if (iter->second == RtpExtension_kAudioLevelUri)
 						{
-							track->add_rtp_extension_desc(iter->first, RtpExtension_kAudioLevelUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kAudioLevelUri), RtpExtension_kAudioLevelUri);
 							break;
 						}
 					} 
@@ -489,28 +491,32 @@ namespace chen {
 					{
 						if (iter->second == RtpExtension_kTimestampOffsetUri)
 						{
-							track->add_rtp_extension_desc(iter->first, RtpExtension_kTimestampOffsetUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kTimestampOffsetUri), RtpExtension_kTimestampOffsetUri);
 
 						}
 						else if (iter->second == RtpExtension_kVideoRotationUri)
 						{
-							track->add_rtp_extension_desc(iter->first, RtpExtension_kVideoRotationUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kVideoRotationUri), RtpExtension_kVideoRotationUri);
 
 						}
 						else if (iter->second == RtpExtension_kRidUri)
 						{
-							track->add_rtp_extension_desc(iter->first, RtpExtension_kRidUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kRidUri), RtpExtension_kRidUri);
 
 						}
 						else if (iter->second == RtpExtension_kRepairedRidUri)
 						{
-							track->add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri), RtpExtension_kRepairedRidUri);
 
 						}
 						else if (iter->second == RtpExtension_kRepairedRidUri)
 						{
-							track->add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri), RtpExtension_kRepairedRidUri);
 
+						}
+						else if (iter->second == RtpExtension_kFrameMarkingUri)
+						{
+							track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kFrameMarkingUri), RtpExtension_kFrameMarkingUri);
 						}
 					}
 					if (track->m_rtx_ptr)

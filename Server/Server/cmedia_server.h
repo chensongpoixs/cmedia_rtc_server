@@ -25,7 +25,7 @@ namespace chen {
 		void destroy();
 		void stop();
 	public:
-		virtual void OnTimer();
+		virtual void OnTimer(ctimer * timer);
 	private:
 		volatile bool m_stop;
 	};

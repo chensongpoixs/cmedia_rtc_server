@@ -50,7 +50,7 @@ namespace chen {
 		/* Callbacks fired by UV events. */
 		void OnUvTimer();
 	public: 
-	 	virtual void OnTimer() = 0;
+	 	virtual void OnTimer(ctimer * timer) = 0;
 	private:
 		ctimer(const ctimer&);
 		ctimer& operator=(const ctimer&)  ;

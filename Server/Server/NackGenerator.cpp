@@ -338,7 +338,7 @@ namespace RTC
 		}
 	}
 
-	inline void NackGenerator::OnTimer(/*Timer**/ /*timer*/)
+	inline void NackGenerator::OnTimer(ctimer * timer)
 	{
 	//	MS_TRACE();
 

@@ -70,7 +70,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
-		void OnTimer(/*Timer* timer*/) /*override*/;
+		void OnTimer(ctimer * timer) /*override*/;
 
 	private:
 		// Passed by argument.

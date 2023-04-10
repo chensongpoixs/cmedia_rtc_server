@@ -172,9 +172,14 @@ namespace chen {
 
 	void cmedia_server::destroy()
 	{
+		ctimer::Stop();
+		SYSTEM_LOG("g_wan_server timer stop OK !!!");
+		ctimer::destroy();
+		SYSTEM_LOG("g_wan_server timer destroy OK !!!");
+
 		g_wan_server.shutdown();
 		g_wan_server.destroy();
-		SYSTEM_LOG("g_wan_server Destroy OK!");
+		SYSTEM_LOG("g_wan_server Destroy OK!!!");
 
 		uv_util::destroy();
 		SYSTEM_LOG("uv destroy OK !!!");
@@ -211,37 +216,40 @@ namespace chen {
 		m_stop = true;
 	}
 
-	void cmedia_server::OnTimer()
+	void cmedia_server::OnTimer(ctimer * timer)
 	{
 		//static const uint32 TICK_TIME = 100;
 		////启动内网并等待初始化完成
-		static int64 prev_time_ms = uv_util::GetTimeMsInt64();
-
-		uint32 tick_time = uv_util::GetTimeMsInt64() - prev_time_ms;
-
-		//DEBUG_EX_LOG("   %u ms", tick_time);
-		prev_time_ms = uv_util::GetTimeMsInt64();
-		//ctime_elapse time_elapse;
-		//uint32 uDelta = 0;
-		if (!m_stop)
+		if (timer == this)
 		{
-			//uDelta += time_elapse.get_elapse();
+			static int64 prev_time_ms = uv_util::GetTimeMsInt64();
 
-			//	g_game_client.update(uDelta);
-			g_wan_server.update(tick_time);
+			uint32 tick_time = uv_util::GetTimeMsInt64() - prev_time_ms;
 
-
-			g_room_mgr.update(tick_time);
-
-			g_transport_mgr.update(tick_time);
-			//uDelta = time_elapse.get_elapse();
-
-			/*if (uDelta < TICK_TIME)
+			//DEBUG_EX_LOG("   %u ms", tick_time);
+			prev_time_ms = uv_util::GetTimeMsInt64();
+			//ctime_elapse time_elapse;
+			//uint32 uDelta = 0;
+			if (!m_stop)
 			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
-			}*/
-		}
+				//uDelta += time_elapse.get_elapse();
 
+				//	g_game_client.update(uDelta);
+				g_wan_server.update(tick_time);
+
+
+				g_room_mgr.update(tick_time);
+
+				g_transport_mgr.update(tick_time);
+				//uDelta = time_elapse.get_elapse();
+
+				/*if (uDelta < TICK_TIME)
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
+				}*/
+			}
+
+		}
 		//SYSTEM_LOG("Leave main loop");
 	}
 

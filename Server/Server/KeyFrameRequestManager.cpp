@@ -28,11 +28,11 @@ RTC::PendingKeyFrameInfo::~PendingKeyFrameInfo()
 	//delete this->timer;
 }
 
-inline void RTC::PendingKeyFrameInfo::OnTimer(/*Timer* timer*/)
+inline void RTC::PendingKeyFrameInfo::OnTimer(ctimer * timer)
 {
 //	MS_TRACE();
 
-	//if (timer == this->timer)
+	 if (timer ==  this)
 		this->listener->OnKeyFrameRequestTimeout(this);
 }
 
@@ -58,11 +58,11 @@ RTC::KeyFrameRequestDelayer::~KeyFrameRequestDelayer()
 	//delete this->timer;
 }
 
-inline void RTC::KeyFrameRequestDelayer::OnTimer(/*Timer* timer*/)
+inline void RTC::KeyFrameRequestDelayer::OnTimer(ctimer * timer)
 {
 	//MS_TRACE();
 
-	//if (timer == this->timer)
+	 if (timer == this )
 		this->listener->OnKeyFrameDelayTimeout(this);
 }
 

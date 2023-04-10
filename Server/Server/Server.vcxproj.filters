@@ -808,6 +808,9 @@
     <ClCompile Include="ctime_util.cpp">
       <Filter>feedback</Filter>
     </ClCompile>
+    <ClCompile Include="crtp_header_extension_uri.cpp">
+      <Filter>rtp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1532,6 +1535,9 @@
     </ClInclude>
     <ClInclude Include="ctime_util.h">
       <Filter>feedback</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_header_extension_uri.h">
+      <Filter>rtp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

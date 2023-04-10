@@ -161,6 +161,6 @@ namespace chen {
 	{
 		// Callback TODO@chensong 20220811 
 		//OnTimer(this);
-		OnTimer();
+		OnTimer(this);
 	}
 }
