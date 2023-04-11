@@ -52,16 +52,16 @@ namespace chen {
 
 
 	// Firefox defaults as 109, Chrome is 111.
-	const int kAudioPayloadType = 111;
+	const int kAudioPayloadType = 101;
 	const int kAudioChannel = 2;
 	const int kAudioSamplerate = 48000;
 
 	// Firefox defaults as 126, Chrome is 102.
-	const int kVideoPayloadType = 102;
+	const int kVideoPayloadType = 108;
 	const int kVideoSamplerate = 90000;
 
 
-	const int kRtxVideoPayloadType = 103;
+	const int kRtxVideoPayloadType = 109;
 
 	// The RTP payload max size, reserved some paddings for SRTP as such:
 	//      kRtpPacketSize = kRtpMaxPayloadSize + paddings

@@ -196,6 +196,9 @@
     <Filter Include="video_bitrate">
       <UniqueIdentifier>{7da62829-2690-4d8b-b531-ea152e061613}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rtc_stream">
+      <UniqueIdentifier>{708370d5-310b-4976-90b7-628f3ea5b106}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -742,18 +745,6 @@
     <ClCompile Include="Consumer.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
-    <ClCompile Include="RtpStream.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStreamRecv.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStreamSend.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="RtxStream.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="KeyFrameRequestManager.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
@@ -825,6 +816,24 @@
     </ClCompile>
     <ClCompile Include="SimpleConsumer.cpp">
       <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cconsumer.cpp">
+      <Filter>rtc_stream</Filter>
+    </ClCompile>
+    <ClCompile Include="cproducer.cpp">
+      <Filter>rtc_stream</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpStream.cpp">
+      <Filter>rtc_stream</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpStreamRecv.cpp">
+      <Filter>rtc_stream</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpStreamSend.cpp">
+      <Filter>rtc_stream</Filter>
+    </ClCompile>
+    <ClCompile Include="RtxStream.cpp">
+      <Filter>rtc_stream</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1464,18 +1473,6 @@
     <ClInclude Include="Consumer.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
-    <ClInclude Include="RtpStream.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStreamRecv.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStreamSend.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="RtxStream.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="KeyFrameRequestManager.hpp">
       <Filter>rtc</Filter>
     </ClInclude>
@@ -1571,6 +1568,24 @@
     </ClInclude>
     <ClInclude Include="SimpleConsumer.hpp">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cconsumer.h">
+      <Filter>rtc_stream</Filter>
+    </ClInclude>
+    <ClInclude Include="cproducer.h">
+      <Filter>rtc_stream</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpStream.hpp">
+      <Filter>rtc_stream</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpStreamRecv.hpp">
+      <Filter>rtc_stream</Filter>
+    </ClInclude>
+    <ClInclude Include="RtpStreamSend.hpp">
+      <Filter>rtc_stream</Filter>
+    </ClInclude>
+    <ClInclude Include="RtxStream.hpp">
+      <Filter>rtc_stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,7 @@ namespace RTC
 	{
 		//MS_TRACE();
 		// 视频是否是SVC与SIMULCAST
-		if (rtpParameters.encodings.size() == 1)
+		/*if (rtpParameters.encodings.size() == 1)
 		{
 			auto& encoding = rtpParameters.encodings[0];
 
@@ -48,24 +48,24 @@ namespace RTC
 		else if (rtpParameters.encodings.size() > 1)
 		{
 			return RtpParameters::Type::SIMULCAST;
-		}
+		}*/
 
 		return RtpParameters::Type::NONE;
 	}
 
-	RtpParameters::Type RtpParameters::GetType(std::string& str)
-	{
-	//	MS_TRACE();
+	//RtpParameters::Type RtpParameters::GetType(std::string& str)
+	//{
+	////	MS_TRACE();
 
-		auto it = RtpParameters::string2Type.find(str);
+	//	/*auto it = RtpParameters::string2Type.find(str);
 
-		if (it == RtpParameters::string2Type.end())
-		{
-			ERROR_EX_LOG("invalid RtpParameters type [type:%s]", str.c_str());
-		}
+	//	if (it == RtpParameters::string2Type.end())
+	//	{
+	//		ERROR_EX_LOG("invalid RtpParameters type [type:%s]", str.c_str());
+	//	}*/
 
-		return it->second;
-	}
+	//	return SIMPLE;// it->second;
+	//}
 
 	RtpParameters::Type RtpParameters::GetType(std::string&& str)
 	{

@@ -160,6 +160,7 @@
     <ClCompile Include="ccodec_payload.cpp" />
     <ClCompile Include="ccommon_header.cc" />
     <ClCompile Include="cconfig.cpp" />
+    <ClCompile Include="cconsumer.cpp" />
     <ClCompile Include="ccrc32.cpp" />
     <ClCompile Include="ccrypto_random.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="cnet_adapter_test.cpp" />
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
+    <ClCompile Include="cproducer.cpp" />
     <ClCompile Include="cremote_estimator_proxy.cpp" />
     <ClCompile Include="creport_block.cpp" />
     <ClCompile Include="crtcp_packet.cpp" />
@@ -379,6 +381,7 @@
     <ClInclude Include="ccommon_header.h" />
     <ClInclude Include="ccommon_type.h" />
     <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cconsumer.h" />
     <ClInclude Include="ccrc32.h" />
     <ClInclude Include="ccrypto_random.h" />
     <ClInclude Include="cdigit2str.h" />
@@ -411,6 +414,7 @@
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
     <ClInclude Include="cortc.h" />
+    <ClInclude Include="cproducer.h" />
     <ClInclude Include="cremote_estimator_proxy.h" />
     <ClInclude Include="creport_block.h" />
     <ClInclude Include="crtcp_packet.h" />

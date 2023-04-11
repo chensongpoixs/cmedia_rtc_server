@@ -427,8 +427,8 @@ namespace chen {
 				track->m_media_ptr->m_rtcp_fbs.clear();
 
 				// Use remote/source/offer PayloadType.
-				track->m_media_ptr->m_pt_of_publisher = track->m_media_ptr->m_pt;
-				track->m_media_ptr->m_pt = remote_payload.m_payload_type;
+				//track->m_media_ptr->m_pt_of_publisher = track->m_media_ptr->m_pt;
+				//track->m_media_ptr->m_pt = remote_payload.m_payload_type;
 
 				std::vector<cmedia_payload_type> red_pts = remote_media_desc.find_media_with_encoding_name("red");
 				if (!red_pts.empty() && track->m_red_ptr) {
@@ -523,15 +523,15 @@ namespace chen {
 			 		track->add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kFrameMarkingUri), RtpExtension_kFrameMarkingUri);
 					if (track->m_rtx_ptr)
 					{
-						for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
-						{
-							if (remote_payload.m_rtx == rtx_payloads[rtx_i].m_payload_type)
-							{
-								((crtx_payload_des*)(track->m_rtx_ptr))->m_pt = rtx_payloads[rtx_i].m_payload_type;
-								((crtx_payload_des*)(track->m_rtx_ptr))->m_apt = remote_payload.m_payload_type;// ((crtx_payload_des*)&rtx_payloads[rtx_i])->m_apt;
-								break;
-							}
-						}
+						//for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
+						//{
+						//	if (remote_payload.m_rtx == rtx_payloads[rtx_i].m_payload_type)
+						//	{
+						//		((crtx_payload_des*)(track->m_rtx_ptr))->m_pt = rtx_payloads[rtx_i].m_payload_type;
+						//		((crtx_payload_des*)(track->m_rtx_ptr))->m_apt = remote_payload.m_payload_type;// ((crtx_payload_des*)&rtx_payloads[rtx_i])->m_apt;
+						//		break;
+						//	}
+						//}
 					}
 				}
 				// TODO: FIXME: set audio_payload rtcp_fbs_,

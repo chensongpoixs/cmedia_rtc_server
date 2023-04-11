@@ -273,7 +273,7 @@ namespace RTC
 
 	public:
 		static Type GetType(const RtpParameters& rtpParameters);
-		static Type GetType(std::string& str);
+		//static Type GetType(std::string& str);
 		static Type GetType(std::string&& str);
 		static std::string& GetTypeString(Type type);
 
@@ -304,6 +304,10 @@ namespace RTC
 		bool hasRtcp{ false };
 		RtpCodecMimeType::Type		m_codec_type;
 	};
+
+
+
+	
 } // namespace RTC
 
 #endif
