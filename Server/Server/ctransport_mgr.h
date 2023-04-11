@@ -26,7 +26,7 @@ namespace chen {
 		typedef std::unordered_map<std::string, crtc_transport*>   STREAM_URL_MAP;
 		////////////////////////////////////////////////////////////////////////////////
 		// key-->
-		typedef std::unordered_map<std::string, std::set<std::string>> CONSUMER_MAP;
+		typedef std::unordered_map<std::string, std::set<crtc_transport*>> CONSUMER_MAP;
 
 		//  key ---> 0: audio 1: video 2: datachannel
 		typedef std::unordered_map < std::string, std::vector<std::set<crtp_stream*>>>  ALL_RTP_STREAM_MAP;
@@ -38,8 +38,9 @@ namespace chen {
 
 		explicit ctransport_mgr()
 		: m_all_transport_map()
-		, m_all_stream_url_map()
-		, m_all_consumer_map(){}
+	    , m_all_stream_url_map()
+		, m_all_consumer_map()
+		{}
 
 		virtual ~ctransport_mgr();
 
@@ -63,10 +64,7 @@ namespace chen {
 
 	public:
 		// stream url 
-		crtc_transport * find_stream_name(const std::string & stream_url);
-		const crtc_transport* find_stream_name(const std::string & stream_url)const;
-		bool   insert_stream_name(const std::string & stream_url, crtc_transport* transport);
-
+	 
 		bool   remove_stream_name(const std::string& stream_url);
 
 
@@ -84,6 +82,8 @@ namespace chen {
 	private:
 
 		TRANSPORT_MAP										m_all_transport_map;
+	public:
+
 		STREAM_URL_MAP										m_all_stream_url_map;
 	public:
 		CONSUMER_MAP										m_all_consumer_map;

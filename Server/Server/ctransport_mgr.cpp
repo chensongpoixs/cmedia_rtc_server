@@ -34,6 +34,11 @@ namespace chen {
 				!iter->second->is_active())
 			{
 				iter->second->destroy();
+				m_all_consumer_map[iter->second->get_rtp_sdp().m_msids[0]].erase(iter->second);
+				if (iter->second->get_rtc_type() == ERtcClientPublisher)
+				{
+					m_all_stream_url_map.erase(iter->second->get_rtp_sdp().m_msids[0]);
+				}
 				crtc_transport* ptr = iter->second;
 				delete ptr;
 				iter = m_all_transport_map.erase(iter);
@@ -56,7 +61,8 @@ namespace chen {
 			delete iter->second;
 		}
 		m_all_transport_map.clear();
-		m_all_stream_url_map.clear();
+		m_all_consumer_map.clear();
+		//m_all_stream_url_map.clear();
 	}
 	crtc_transport * ctransport_mgr::find_username(const std::string & username)
 	{
@@ -105,38 +111,7 @@ namespace chen {
 
 		return true;
 	}
-	crtc_transport * ctransport_mgr::find_stream_name(const std::string & stream_url)
-	{
-		STREAM_URL_MAP::iterator iter = m_all_stream_url_map.find(stream_url);
-
-		if (iter != m_all_stream_url_map.end())
-		{
-			return iter->second;
-		}
-		return nullptr;
-	}
-	const crtc_transport * ctransport_mgr::find_stream_name(const std::string & stream_url) const
-	{
-		STREAM_URL_MAP::const_iterator iter = m_all_stream_url_map.find(stream_url);
-
-		if (iter != m_all_stream_url_map.end())
-		{
-			return iter->second;
-		}
-		return nullptr;
-	}
-	bool ctransport_mgr::insert_stream_name(const std::string & stream_url, crtc_transport * transport)
-	{
-		
-		if (!m_all_stream_url_map.insert(std::make_pair(stream_url, transport)).second)
-		{
-			m_all_stream_url_map[stream_url] = transport;
-			WARNING_EX_LOG("insert  stream url  map ---> !!! [stream_url = %s]", stream_url.c_str());
-			return false;
-		}
-
-		return true;
-	}
+	 
 	bool ctransport_mgr::remove_stream_name(const std::string & stream_url)
 	{
 		crtc_transport * transport_ptr = find_username(stream_url);

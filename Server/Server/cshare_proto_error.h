@@ -32,6 +32,7 @@ namespace chen {
 		EShareRtcSdpExchange,
 		EShareRtcSourceBusy,
 		EShareRtcRequestFrame,
+		EShareRtcCreateMediaChannel,
 	};
 }
 

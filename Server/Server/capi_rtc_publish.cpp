@@ -142,7 +142,7 @@ namespace chen {
 
 		crtc_transport * transport_ptr = new crtc_transport();
 
-		transport_ptr->init(ERtcClientPublisher , rtc_remote_sdp, rtc_local_sdp);
+		transport_ptr->init(ERtcClientPublisher , rtc_remote_sdp, rtc_local_sdp, stream_desc);
 		transport_ptr->set_state_as_waiting_stun();
 		// Before session initialize, we must setup the local SDP.
 		//if ((err = session->initialize(req, ruc->dtls_, ruc->srtp_, username)) != 0) 
@@ -153,8 +153,13 @@ namespace chen {
 		// We allows username is optional, but it never empty here.
 		//_srs_rtc_manager->add_with_name(username, session);
 		g_transport_mgr.insert_username(username, transport_ptr);
-		g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
+		//g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
 
+		if (!g_transport_mgr.m_all_stream_url_map.insert(std::make_pair(roomname + "/" + peerid, transport_ptr)).second)
+		{
+			g_transport_mgr.m_all_stream_url_map[roomname + "/" + peerid] = transport_ptr;
+			WARNING_EX_LOG("insert failed url = %s failed !!!", std::string(roomname + "/" + peerid).c_str());
+		}
 
 		std::ostringstream    sdp;
 		rtc_local_sdp.encode(sdp);
@@ -516,7 +521,8 @@ namespace chen {
 			
 			//track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("rtx"));
 			//track_desc.create_auxiliary_payload(remote_media_desc.find_media_with_encoding_name("ulpfec"));
-
+			// set track fec_ssrc and rtx_ssrc
+			
 			std::string track_id;
 			for (int32 j = 0; j < (int32)remote_media_desc.m_ssrc_infos.size(); ++j)
 			{
@@ -530,6 +536,7 @@ namespace chen {
 					track_desc_copy->m_ssrc = ssrc_info.m_ssrc;
 					track_desc_copy->m_id = ssrc_info.m_msid_tracker;
 					track_desc_copy->m_msid = ssrc_info.m_msid;
+					//track_desc_copy->m_rtx_ssrc
 
 					if (remote_media_desc.is_audio() && !stream_desc->m_audio_track_desc_ptr)
 					{
@@ -550,7 +557,6 @@ namespace chen {
 				track_id = ssrc_info.m_msid_tracker;
 			}
 
-			// set track fec_ssrc and rtx_ssrc
 			for (int32 j = 0; j < (int32)remote_media_desc.m_ssrc_groups.size(); ++j)
 			{
 				const cssrc_group& ssrc_group = remote_media_desc.m_ssrc_groups.at(j);

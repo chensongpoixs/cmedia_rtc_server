@@ -12,6 +12,8 @@ Copyright boost
 #include "SeqManager.hpp"
 #include "crtp_stream_define.h"
 #include "crtp_stream.h"
+#include "cbuffer.h"
+#include "H264.hpp"
 namespace chen {
 
 	/* Static. */
@@ -51,7 +53,10 @@ namespace chen {
 
 			return false;
 		}
-
+		if (m_params.type == "video")
+		{
+			RTC::Codecs::H264::ProcessRtpPacket(packet);
+		}
 		// Process the packet at codec level.
 		//if (packet->GetPayloadType() == GetPayloadType())
 		//{
@@ -93,7 +98,7 @@ namespace chen {
 		{
 			this->inactivityCheckPeriodicTimer->Restart();
 		}*/
-		return false;
+		return true;
 	}
 	bool crtp_stream_recv::receive_rtx_packet(RTC::RtpPacket * packet)
 	{
@@ -380,12 +385,25 @@ namespace chen {
 		m_jitter = 0;
 	}
 
-	void crtp_stream_recv::pesume()
+	void crtp_stream_recv::resume()
 	{
 		//if (this->inactivityCheckPeriodicTimer && !this->inactive)
 			//this->inactivityCheckPeriodicTimer->Restart();
 	}
 	 
+	/*void crtp_stream_recv::set_rtx(uint8 payload_type, uint32 ssrc)
+	{
+	}*/
+
+	void crtp_stream_recv::del_rtx()
+	{
+		if (m_rtx_stream_ptr)
+		{
+			delete m_rtx_stream_ptr;
+			m_rtx_stream_ptr = NULL;
+		}
+	}
+
 	void crtp_stream_recv::onnack_generator_nack_required(const std::vector<uint16>& seqNumbers)
 	{
 		cassert(m_params.use_nack, "NACK required but not supported");
@@ -395,10 +413,19 @@ namespace chen {
 			seqNumbers[0],
 			seqNumbers.size());
 
-		//RTC::RTCP::FeedbackRtpNackPacket packet(0, GetSsrc());
 
-		//auto it = seqNumbers.begin();
-		//const auto end = seqNumbers.end();
+		crtcp_nack rtcp_nack(get_ssrc());
+		//RTC::RTCP::FeedbackRtpNackPacket packet(0, GetSsrc());
+		for (std::vector<uint16>::const_iterator iter = seqNumbers.begin(); iter != seqNumbers.end(); ++iter)
+		{
+			rtcp_nack.add_lost_sn(*iter);
+		}
+
+		char buffer[RTC::RTCP::BufferSize] = {0};
+		cbuffer stream(&buffer[0], sizeof(buffer));
+		rtcp_nack.encode(&stream);
+		// auto it = seqNumbers.begin();
+		// const auto end = seqNumbers.end();
 		//size_t numPacketsRequested{ 0 };
 
 		//while (it != end)
@@ -436,10 +463,10 @@ namespace chen {
 		//}
 
 		m_nack_count++;
-		/*m_nack_packet_count += numPacketsRequested;
+		
 
-		packet.Serialize(RTC::RTCP::Buffer);
-*/
+	//	packet.Serialize(RTC::RTCP::Buffer);
+		//m_nack_packet_count += m_num_packets_requested;
 		// Notify the listener.
 		// static_cast<RTC::RtpStreamRecv::Listener*>(this->listener)->OnRtpStreamSendRtcpPacket(this, &packet);
 	}
@@ -594,5 +621,5 @@ namespace chen {
 		crtp_stream::update_score(score);
 	}
  
-
+	 
 }

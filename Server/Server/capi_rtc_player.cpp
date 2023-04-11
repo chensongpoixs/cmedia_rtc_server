@@ -223,7 +223,7 @@ namespace chen {
 
 		crtc_transport * transport_ptr = new crtc_transport();
 		transport_ptr->create_players(play_sub_relations);
-		transport_ptr->init( ERtcClientPlayer, rtc_remote_sdp, rtc_local_sdp);
+		transport_ptr->init( ERtcClientPlayer, rtc_remote_sdp, rtc_local_sdp, stream_desc);
 		transport_ptr->set_state_as_waiting_stun();
 		// Before session initialize, we must setup the local SDP.
 		//if ((err = session->initialize(req, ruc->dtls_, ruc->srtp_, username)) != 0) 
@@ -234,8 +234,8 @@ namespace chen {
 		// We allows username is optional, but it never empty here.
 		//_srs_rtc_manager->add_with_name(username, session);
 		g_transport_mgr.insert_username(username, transport_ptr);
-		g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
-		g_transport_mgr.m_all_consumer_map[roomname + "/" + video_peerid].insert(roomname + "/" + peerid);
+		//g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
+		g_transport_mgr.m_all_consumer_map[roomname + "/" + video_peerid].insert(transport_ptr);
 
 
 		std::ostringstream    sdp;

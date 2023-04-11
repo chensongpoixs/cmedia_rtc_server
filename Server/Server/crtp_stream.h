@@ -65,6 +65,7 @@ namespace chen {
 			, m_last_sender_repor_ts(0u)
 			, m_rtt(0)
 			, m_has_rtt(false)
+			, m_rtx_stream_ptr(NULL)
 			, m_score(0u)
 			, m_scores()
 			, m_active_since_ms(0u)

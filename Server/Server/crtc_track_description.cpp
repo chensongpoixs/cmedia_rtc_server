@@ -16,10 +16,10 @@ namespace chen {
 
 	bool crtc_track_description::has_ssrc(uint32_t ssrc)
 	{
-		if (!m_is_active) 
+		/*if (!m_is_active) 
 		{
 			return false;
-		}
+		}*/
 
 		if (ssrc == m_ssrc || ssrc == m_rtx_ssrc || ssrc == m_fec_ssrc) 
 		{

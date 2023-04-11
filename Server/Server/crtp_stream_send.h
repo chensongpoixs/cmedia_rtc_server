@@ -52,7 +52,7 @@ namespace chen {
 
 		bool receive_packet(RTC::RtpPacket* packet);
 
-		//void receive_nack();
+		//void receive_nack();//crtcp_nack
 		/*void ReceiveNack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket);
 		void ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType);
 		void ReceiveRtcpReceiverReport(RTC::RTCP::ReceiverReport* report);

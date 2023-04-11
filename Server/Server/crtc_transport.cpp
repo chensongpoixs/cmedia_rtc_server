@@ -26,13 +26,14 @@ purpose:		crtc_transport
 #include "cstr2digit.h"
 #include "H264.hpp"
 #include "crtp_header_extensions.h"
+#include "crtc_producer.h"
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
 		int32  count = 34;
 		NORMAL_EX_LOG("%" PRIu32 "", count);
 	}
-	bool crtc_transport::init(ERtcClientType rtc_client_type, const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp)
+	bool crtc_transport::init(ERtcClientType rtc_client_type, const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp, const crtc_source_description& stream_desc)
 	{
 		m_rtc_client_type = rtc_client_type;
 		m_remote_sdp = remote_sdp;
@@ -53,6 +54,9 @@ namespace chen {
 		//m_dtls_ptr->init();
 		m_dtls_ptr = new crtc_dtls(this);
 		m_dtls_ptr->init();
+
+		
+
 		if (m_rtc_client_type == ERtcClientPlayer)
 		{
 			for (std::vector<cmedia_desc>::iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
@@ -100,13 +104,66 @@ namespace chen {
 		}
 		else if (m_rtc_client_type == ERtcClientPublisher)
 		{
+
+			if (stream_desc.m_audio_track_desc_ptr)
+			{
+				crtc_producer::crtp_params params;
+				params.mid = stream_desc.m_audio_track_desc_ptr->m_mid;
+				params.params.payload_type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_pt;
+				params.params.ssrc = stream_desc.m_audio_track_desc_ptr->m_ssrc;
+				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
+
+
+				crtc_producer * producer_ptr = new crtc_producer("audio", params);
+				if (!m_all_rtp_listener.add_producer(stream_desc.m_audio_track_desc_ptr->m_ssrc, producer_ptr))
+				{
+					WARNING_EX_LOG("add producer audio failed (ssrc = %u)", stream_desc.m_audio_track_desc_ptr->m_ssrc);
+				}
+
+			}
+			
+			{
+				for (const crtc_track_description * rtc_track : stream_desc.m_video_track_descs)
+				{
+					crtc_producer::crtp_params params;
+					params.mid = rtc_track->m_mid;
+					params.params.payload_type = rtc_track->m_media_ptr->m_pt;
+					params.params.ssrc = rtc_track->m_ssrc;
+					params.params.type = rtc_track->m_type;
+					params.params.use_nack = true;
+					params.params.use_fir = true;
+					params.params.use_pli = true;
+					crtc_producer * producer_ptr = NULL; 
+
+					if (rtc_track->m_rtx_ptr)
+					{
+						params.params.rtx_payload_type = rtc_track->m_rtx_ptr->m_pt;
+						params.params.rtx_ssrc = rtc_track->m_rtx_ssrc;
+						producer_ptr = new crtc_producer("video", params);;
+						if (!m_all_rtp_listener.add_producer(rtc_track->m_rtx_ssrc, producer_ptr))
+						{
+							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_rtx_ssrc);
+						}
+					}
+					else
+					{
+						producer_ptr = new crtc_producer("video", params);;
+					}
+				
+					
+					if (!m_all_rtp_listener.add_producer(rtc_track->m_ssrc, producer_ptr))
+					{
+						WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_ssrc);
+					}
+				}
+			}
 			for (std::vector<cmedia_desc>::iterator iter = m_remote_sdp.m_media_descs.begin(); iter != m_remote_sdp.m_media_descs.end(); ++iter)
 			{
 				for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
 				{
 					if (iter->is_audio())
 					{
-					//	m_all_audio_ssrcs.push_back(ssrc_iter->m_ssrc);
+						//m_all_audio_ssrcs.push_back(ssrc_iter->m_ssrc);
 						if(m_all_audio_ssrc == 0)
 						{
 							m_all_audio_ssrc = ssrc_iter->m_ssrc;
@@ -143,6 +200,9 @@ namespace chen {
 
 				}
 			}
+
+
+
 		}
 		
 		return true;
@@ -746,70 +806,84 @@ namespace chen {
 
 				return;
 			}
-			if (m_all_video_ssrc == packet->GetSsrc())
+			crtc_producer * producer_ptr = m_all_rtp_listener.get_producer(packet->GetSsrc());
+			if (!producer_ptr)
 			{
-				m_remote_estimator.on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
-				RTC::Codecs::H264::ProcessRtpPacket(packet);
-				//packet->Dump();
-				//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
+				WARNING_EX_LOG("not find ssrc =%u failed !!!", packet->GetSsrc());
+				return;
 			}
-			else  if (m_all_rtx_video_ssrc == packet->GetSsrc())
-			{
-				//NORMAL_EX_LOG("[video_rtx][rtp ][ssrc = %u][GetSequenceNumber = %u][GetPayloadType = %u]", packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetPayloadType());
 
-			}
-			bool send_audio = true;
-			for (const cmedia_desc & media_ : m_remote_sdp.m_media_descs)
-			{
-				for (const cssrc_group& ssrc_group : media_.m_ssrc_groups)
-				{
-					for (const uint32 ssrc : ssrc_group.m_ssrcs)
-					{
-						if (ssrc == packet->GetSsrc())
-						{
-							if (media_.m_type == "audio")
-							{
 
-								
-							}
-							else
-							{
-								send_audio = false;
-							}
-							break;
-						}
-					}
-				}
-			}
-			_mangle_rtp_packet(packet, send_audio);
-			for (const std::string & stream_name : g_transport_mgr.m_all_consumer_map[m_local_sdp.m_msids[0]])
+			//if (m_all_video_ssrc == packet->GetSsrc())
+			//{
+			//	m_remote_estimator.on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
+			//	RTC::Codecs::H264::ProcessRtpPacket(packet);
+			//	//packet->Dump();
+			//	//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
+			//}
+			//else  if (m_all_rtx_video_ssrc == packet->GetSsrc())
+			//{
+			//	//NORMAL_EX_LOG("[video_rtx][rtp ][ssrc = %u][GetSequenceNumber = %u][GetPayloadType = %u]", packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetPayloadType());
+
+			//}
+			//bool send_audio = true;
+			//crtp_stream::crtp_stream_params params;
+			//params.type = "auido";
+			//for (const cmedia_desc & media_ : m_remote_sdp.m_media_descs)
+			//{
+			//	for (const cssrc_group& ssrc_group : media_.m_ssrc_groups)
+			//	{
+			//		for (const uint32 ssrc : ssrc_group.m_ssrcs)
+			//		{
+			//			if (ssrc == packet->GetSsrc())
+			//			{
+			//				if (media_.m_type == "audio")
+			//				{
+
+
+			//				}
+			//				else
+			//				{
+			//					params.type = "video";
+			//					//send_audio = false;
+			//				}
+			//				break;
+			//			}
+			//		}
+			//	}
+			//}
+			
+			//crtc_producer::mangle_rtp_packet(packet, producer_ptr->get_rtcp_params().params/*params*/);
+			producer_ptr->receive_rtp_packet(packet);
+			 
+			for (crtc_transport* rtc_ptr : g_transport_mgr.m_all_consumer_map[m_local_sdp.m_msids[0]])
 			{
-				crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
+				//crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
 				if (!rtc_ptr )
 				{
-					WARNING_EX_LOG("not find stream_name = %s", stream_name.c_str());
+					WARNING_EX_LOG("not find stream_name = %s" , m_local_sdp.m_msids[0].c_str());
 					continue;
 				}
 				if (!rtc_ptr->get_dtls_connected_ok())
 				{
-					WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", stream_name.c_str());
+					WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_local_sdp.m_msids[0].c_str());
 					continue;
 				}
-				if (send_audio)
+				if (/*params.type*/ producer_ptr->get_kind()  == "audio")
 				{
 					rtc_ptr->send_rtp_audio_data(packet);
 				}
 				else
 				{
-					if (m_all_rtx_video_ssrc == packet->GetSsrc())
+					if (/*m_all_rtx_video_ssrc*/ producer_ptr->get_rtcp_params().params.rtx_ssrc  == packet->GetSsrc())
 					{
 						rtc_ptr->send_rtp_rtx_video_data(packet);
 					}
-					else if (m_all_video_ssrc == packet->GetSsrc())
+					else if (/*m_all_video_ssrc*/ producer_ptr->get_rtcp_params().params.ssrc  == packet->GetSsrc())
 					{
 						
 						//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
-					
+						//RTC::Codecs::H264::ProcessRtpPacket(packet);
 						rtc_ptr->send_rtp_video_data(packet);
 					}
 					else

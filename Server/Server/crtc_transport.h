@@ -21,6 +21,7 @@ purpose:		crtc_transport
 #include "crtc_player_stream.h"
 #include "cremote_estimator_proxy.h"
 #include "FeedbackRtpTransport.hpp"
+#include "crtp_listener.h"
 namespace chen {
 
 	class cdtls_session;
@@ -57,6 +58,7 @@ namespace chen {
 			, m_request_keyframe(0)
 			, m_time_out_ms(uv_util::GetTimeMs())
 			, m_remote_estimator(this)
+			, m_all_rtp_listener()
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -64,7 +66,7 @@ namespace chen {
 		virtual ~crtc_transport();
 
 	public:
-		bool init(ERtcClientType rtc_client_type, const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp);
+		bool init(ERtcClientType rtc_client_type, const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp, const crtc_source_description& stream_desc);
 
 		bool create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations);
 		void update(uint32 uDeltaTime);
@@ -75,7 +77,10 @@ namespace chen {
 
 		void request_key_frame();
 
-
+		const crtc_sdp & get_rtp_sdp() const {
+			return m_local_sdp;
+		}
+		const ERtcClientType get_rtc_type() { return m_rtc_client_type; }
 	public:
 		void send_rtp_data(void * data, int32 size);
 		void send_rtp_data(RTC::RtpPacket* packet);
@@ -184,6 +189,8 @@ namespace chen {
 		cremote_estimator_proxy					m_remote_estimator;
 		uint32									m_feedback_gcc_timer;
 		//RTC::RTCP::FeedbackRtpTransportPacket   m_feedback_rtp_transport_packet;
+
+		crtp_listener							m_all_rtp_listener;
 	};
 
 

@@ -50,11 +50,11 @@ namespace chen {
 		return true;
 	}
 
-	//void RtpStreamSend::ReceiveNack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket)
+	//void crtp_stream_send::receive_nack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket)
 	//{
-	//	MS_TRACE();
+	//	//MS_TRACE();
 
-	//	this->nackCount++;
+	//	m_nack_count++;
 
 	//	for (auto it = nackPacket->Begin(); it != nackPacket->End(); ++it)
 	//	{
@@ -67,22 +67,26 @@ namespace chen {
 	//		for (auto* storageItem : RetransmissionContainer)
 	//		{
 	//			if (!storageItem)
+	//			{
 	//				break;
+	//			}
 
 	//			// Note that this is an already RTX encoded packet if RTX is used
 	//			// (FillRetransmissionContainer() did it).
-	//			auto* packet = storageItem->packet;
+	//			RtpPacket* packet = storageItem->packet;
 
 	//			// Retransmit the packet.
 	//			static_cast<RTC::RtpStreamSend::Listener*>(this->listener)
 	//				->OnRtpStreamRetransmitRtpPacket(this, packet);
 
 	//			// Mark the packet as retransmitted.
-	//			RTC::RtpStream::PacketRetransmitted(packet);
+	//			crtp_stream_send::packet_retransmitted(packet);
 
 	//			// Mark the packet as repaired (only if this is the first retransmission).
 	//			if (storageItem->sentTimes == 1)
-	//				RTC::RtpStream::PacketRepaired(packet);
+	//			{
+	//				crtp_stream_send::packet_repaired(packet);
+	//			}
 	//		}
 	//	}
 	//}

@@ -267,11 +267,19 @@ namespace chen {
 			std::string peerid = value["data"]["peerid"].asCString();
 
 			std::string local_sdp;
-
-			publisher.do_serve_client(sdp, roomname, peerid, local_sdp);
-			reply["sdp"] = local_sdp;
-			reply["type"] = "answer";
-			send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
+			auto iter = g_transport_mgr.m_all_stream_url_map.find(roomname + "/" + peerid);
+			if (iter == g_transport_mgr.m_all_stream_url_map.end())
+			{
+				publisher.do_serve_client(sdp, roomname, peerid, local_sdp);
+				reply["sdp"] = local_sdp;
+				reply["type"] = "answer";
+				send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
+			}
+			else
+			{
+				send_msg(S2C_rtc_publisher, EShareRtcCreateMediaChannel, reply);
+			}
+			
 			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
 		}
 		return true;
@@ -363,14 +371,14 @@ namespace chen {
 			std::string roomname = value["data"]["roomname"].asCString();
 			std::string video_peerid = value["data"]["video_peerid"].asCString();
 			 
-			crtc_transport * transport_ptr = g_transport_mgr.find_stream_name(roomname + "/" + video_peerid);
+			auto iter  = g_transport_mgr.m_all_stream_url_map.find(roomname + "/" + video_peerid);
 		 
-			if (!transport_ptr)
+			if (iter == g_transport_mgr.m_all_stream_url_map.end())
 			{
 				send_msg(S2C_rtc_requestframe, EShareRtcRequestFrame, reply);
 				return false;
 			}
-			transport_ptr->request_key_frame();
+			iter->second ->request_key_frame();
 			send_msg(S2C_rtc_requestframe, EShareProtoOk, reply);
 			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
 		}

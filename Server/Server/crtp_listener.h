@@ -30,8 +30,8 @@ namespace chen {
 
 		virtual ~crtp_listener();
 	public:
-		void add_producer(crtc_producer * producer);
-		void remove_producer(crtc_producer * producer);
+		bool add_producer(uint32 ssrc,  crtc_producer * producer);
+		void remove_producer(uint32 ssrc);
 
 		crtc_producer * get_producer(const RTC::RtpPacket * packet )   ;
 		crtc_producer * get_producer(uint32 ssrc) const ;
