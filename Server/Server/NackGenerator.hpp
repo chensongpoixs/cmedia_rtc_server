@@ -12,7 +12,7 @@
 
 namespace RTC
 {
-	class NackGenerator : chen::ctimer // public Timer::Listener
+	class NackGenerator : public chen::ctimer  ::Listener
 	{
 	public:
 		class Listener
@@ -68,13 +68,13 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
-		void OnTimer(ctimer * timer) override;
+		void OnTimer(chen::ctimer * timer)  ;
 
 	private:
 		// Passed by argument.
 		Listener* listener{ nullptr };
 		// Allocated by this.
-		//Timer* timer{ nullptr };
+		chen::ctimer* timer{ nullptr };
 		// Others.
 		std::map<uint16_t, NackInfo, RTC::SeqManager<uint16_t>::SeqLowerThan> nackList;
 		std::set<uint16_t, RTC::SeqManager<uint16_t>::SeqLowerThan> keyFrameList;

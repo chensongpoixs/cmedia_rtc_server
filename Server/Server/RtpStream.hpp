@@ -1,4 +1,4 @@
-﻿#ifndef MS_RTC_RTP_STREAM_HPP
+#ifndef MS_RTC_RTP_STREAM_HPP
 #define MS_RTC_RTP_STREAM_HPP
 
 //#include "common.hpp"
@@ -12,7 +12,6 @@
 #include "SenderReport.hpp"
 #include "RtpDictionaries.hpp"
 #include "RtxStream.hpp"
-#include "cuv_util.h"
 //#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
@@ -36,8 +35,7 @@ namespace RTC
 	public:
 		struct Params
 		{
-			//void FillJson(json& jsonObject) const;
-
+			 
 			size_t encodingIdx{ 0u };
 			uint32_t ssrc{ 0u };
 			uint8_t payloadType{ 0u };
@@ -51,19 +49,6 @@ namespace RTC
 			bool usePli{ false };
 			bool useFir{ false };
 			bool useInBandFec{ false };
-			/* 
-			TODO@chensong 2022-10-25 
-			OPUS 语音功能支持 DTX
-当不是音乐模式时，即在 VoIP 模式下，当检测到某个时间期间内没有说话声时，为了节省带宽，可以将开启 DTX。
-
-这个时候，在没有检测到通话声音时，OPUS 会定期 400ms 发送静音包，达到降低带宽的目的，WebRTC 默认没有开启这个特性，要开启 DTX，只需要 SDP 协商时，在 a=ftmp 这一行中加入 usedtx=1 即可开启。
-
-WebRTCOPUS_EnableDtx
-WebRTCOPUS_
-OPUS 本?具有很多抗弱网的特性，这些特性再配合丢包重传，可以使音频具备很强的抗弱网能力。
-
-
-			*/
 			bool useDtx{ false };
 			uint8_t spatialLayers{ 1u };
 			uint8_t temporalLayers{ 1u };
@@ -73,7 +58,7 @@ OPUS 本?具有很多抗弱网的特性，这些特性再配合丢包重传，�
 		RtpStream(RTC::RtpStream::Listener* listener, RTC::RtpStream::Params& params, uint8_t initialScore);
 		virtual ~RtpStream();
 
-	//	void FillJson(json& jsonObject) const;
+		//void FillJson(json& jsonObject) const;
 		//virtual void FillJsonStats(json& jsonObject);
 		uint32_t GetEncodingIdx() const
 		{
@@ -208,9 +193,7 @@ OPUS 本?具有很多抗弱网的特性，这些特性再配合丢包重传，�
 		size_t pliCount{ 0u };
 		size_t firCount{ 0u };
 		size_t repairedPriorScore{ 0u }; // Packets repaired at last interval for score calculation.
-		size_t retransmittedPriorScore{
-			0u
-		}; // Packets retransmitted at last interval for score calculation.
+		size_t retransmittedPriorScore{ 0u }; // Packets retransmitted at last interval for score calculation.
 		uint64_t lastSenderReportNtpMs{ 0u }; // NTP timestamp in last Sender Report (in ms).
 		uint32_t lastSenderReporTs{ 0u };     // RTP timestamp in last Sender Report.
 		float rtt{ 0 };

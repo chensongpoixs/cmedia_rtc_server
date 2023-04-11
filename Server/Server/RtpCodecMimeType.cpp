@@ -145,8 +145,9 @@ namespace RTC
 		//}
 	}
 
-	//void RtpCodecMimeType::UpdateMimeType()
-	//{
+	void RtpCodecMimeType::UpdateMimeType()
+	{
+	}
 	//	//MS_TRACE();
 
 	//	//MS_ASSERT(this->type != Type::UNSET, "type unset");

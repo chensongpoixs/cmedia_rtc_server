@@ -1,7 +1,7 @@
 #ifndef MS_RTC_RTP_STREAM_SEND_HPP
 #define MS_RTC_RTP_STREAM_SEND_HPP
 
-#include "crate_calculator.h"
+#include "RateCalculator.hpp"
 #include "RtpStream.hpp"
 #include <vector>
 
@@ -44,7 +44,7 @@ namespace RTC
 		void ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType);
 		void ReceiveRtcpReceiverReport(RTC::RTCP::ReceiverReport* report);
 		RTC::RTCP::SenderReport* GetRtcpSenderReport(uint64_t nowMs);
-		RTC::RTCP::SdesChunk* GetRtcpSdesChunk();
+		//RTC::RTCP::SdesChunk* GetRtcpSdesChunk();
 		void Pause() override;
 		void Resume() override;
 		uint32_t GetBitrate(uint64_t nowMs) override
@@ -65,12 +65,12 @@ namespace RTC
 	private:
 		uint32_t lostPriorScore{ 0u }; // Packets lost at last interval for score calculation.
 		uint32_t sentPriorScore{ 0u }; // Packets sent at last interval for score calculation.
-		std::vector<StorageItem*> buffer;
+		std::vector<StorageItem*> buffer; // 65535 »º´æ
 		uint16_t bufferStartIdx{ 0u };
 		size_t bufferSize{ 0u };
 		std::vector<StorageItem> storage;
 		uint16_t rtxSeq{ 0u };
-		chen::RtpDataCounter transmissionCounter;
+		RTC::RtpDataCounter transmissionCounter;
 	};
 } // namespace RTC
 

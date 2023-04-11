@@ -12,7 +12,7 @@ purpose:		cmedia_server
 #include "cnoncopyable.h"
 #include "ctimer.h"
 namespace chen {
-	class cmedia_server : public ctimer /*: public  cnoncopyable*/
+	class cmedia_server : public ctimer::Listener /*: public  cnoncopyable*/
 	{
 	public:
 		explicit cmedia_server();
@@ -28,6 +28,7 @@ namespace chen {
 		virtual void OnTimer(ctimer * timer);
 	private:
 		volatile bool m_stop;
+		ctimer * m_server_intaval;
 	};
 	extern cmedia_server g_media_server;
 }

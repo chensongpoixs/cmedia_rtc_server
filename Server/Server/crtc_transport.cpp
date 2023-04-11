@@ -27,6 +27,7 @@ purpose:		crtc_transport
 #include "H264.hpp"
 #include "crtp_header_extensions.h"
 #include "crtc_producer.h"
+#include "cuv_ip.h"
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -114,7 +115,7 @@ namespace chen {
 				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
 
 
-				crtc_producer * producer_ptr = new crtc_producer("audio", params);
+				crtc_producer * producer_ptr = new crtc_producer(this, "audio", params);
 				if (!m_all_rtp_listener.add_producer(stream_desc.m_audio_track_desc_ptr->m_ssrc, producer_ptr))
 				{
 					WARNING_EX_LOG("add producer audio failed (ssrc = %u)", stream_desc.m_audio_track_desc_ptr->m_ssrc);
@@ -139,7 +140,7 @@ namespace chen {
 					{
 						params.params.rtx_payload_type = rtc_track->m_rtx_ptr->m_pt;
 						params.params.rtx_ssrc = rtc_track->m_rtx_ssrc;
-						producer_ptr = new crtc_producer("video", params);;
+						producer_ptr = new crtc_producer(this, "video", params);;
 						if (!m_all_rtp_listener.add_producer(rtc_track->m_rtx_ssrc, producer_ptr))
 						{
 							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_rtx_ssrc);
@@ -147,7 +148,7 @@ namespace chen {
 					}
 					else
 					{
-						producer_ptr = new crtc_producer("video", params);;
+						producer_ptr = new crtc_producer(this, "video", params);;
 					}
 				
 					
@@ -437,13 +438,13 @@ namespace chen {
 			WARNING_EX_LOG("");
 			return;
 		}*/
-		std::ostringstream cmd;
-		cmd << "[ssrc_map]: ";
-		for (const std::pair<uint32, uint32> & pi: m_ssrc_media_type_map)
+		//std::ostringstream cmd;
+		//cmd << "[ssrc_map]: ";
+		/*for (const std::pair<uint32, uint32> & pi: m_ssrc_media_type_map)
 		{
 			cmd << "[first = " << pi.first << "][ second = " << pi.second << "]";
-		}
-		NORMAL_EX_LOG("[-->%s]", cmd.str().c_str());
+		}*/
+		//NORMAL_EX_LOG("[-->%s]", cmd.str().c_str());
 		if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_video_ssrc != 0)
 		{
 			packet->SetSsrc(m_all_video_ssrc);
@@ -856,44 +857,7 @@ namespace chen {
 			//crtc_producer::mangle_rtp_packet(packet, producer_ptr->get_rtcp_params().params/*params*/);
 			producer_ptr->receive_rtp_packet(packet);
 			 
-			for (crtc_transport* rtc_ptr : g_transport_mgr.m_all_consumer_map[m_local_sdp.m_msids[0]])
-			{
-				//crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
-				if (!rtc_ptr )
-				{
-					WARNING_EX_LOG("not find stream_name = %s" , m_local_sdp.m_msids[0].c_str());
-					continue;
-				}
-				if (!rtc_ptr->get_dtls_connected_ok())
-				{
-					WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_local_sdp.m_msids[0].c_str());
-					continue;
-				}
-				if (/*params.type*/ producer_ptr->get_kind()  == "audio")
-				{
-					rtc_ptr->send_rtp_audio_data(packet);
-				}
-				else
-				{
-					if (/*m_all_rtx_video_ssrc*/ producer_ptr->get_rtcp_params().params.rtx_ssrc  == packet->GetSsrc())
-					{
-						rtc_ptr->send_rtp_rtx_video_data(packet);
-					}
-					else if (/*m_all_video_ssrc*/ producer_ptr->get_rtcp_params().params.ssrc  == packet->GetSsrc())
-					{
-						
-						//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
-						//RTC::Codecs::H264::ProcessRtpPacket(packet);
-						rtc_ptr->send_rtp_video_data(packet);
-					}
-					else
-					{
-						WARNING_EX_LOG("[rtc type = %s][video rtx ][not find ssrc = %u][]", m_rtc_client_type == ERtcClientPlayer ? "rtc_player" : "rtc_publisher", packet->GetSsrc() );
-					}
-					
-				}
-				
-			}
+			
 			
 		}
 	}
@@ -960,7 +924,7 @@ namespace chen {
 			{
 				DEBUG_EX_LOG("RTC::RTCP::Type::RR");
 				RTC::RTCP::ReceiverReportPacket* rr = static_cast<RTC::RTCP::ReceiverReportPacket*>(packet);
-				rr->Dump();
+				//rr->Dump();
 				for (auto it = rr->Begin(); it != rr->End(); ++it)
 				{
 					auto& report = *it;
@@ -1391,7 +1355,11 @@ namespace chen {
 			case ERtcpType_sr:
 			{
 				crtcp_sr* sr = dynamic_cast<crtcp_sr*>(rtcp);
-				(void)sr;
+				/*crtc_producer* producer_ptr = m_all_rtp_listener.get_producer(sr->get_ssrc());
+				if (producer_ptr)
+				{
+					producer_ptr->receive_rtcp_sender_report(sr);
+				}*/
 				required_publisher_ssrc = sr->get_ssrc();
 				DEBUG_EX_LOG("ERtcpType_sr [required_publisher_ssrc = %u]", required_publisher_ssrc);
 				

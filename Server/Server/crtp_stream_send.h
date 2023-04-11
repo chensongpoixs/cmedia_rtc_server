@@ -18,6 +18,7 @@ Copyright boost
 #include "crate_calculator.h"
 #include "ReceiverReport.hpp"
 #include "crtp_stream.h"
+#include "FeedbackRtpNack.hpp"
 namespace chen {
 	class crtp_stream_send : public crtp_stream
 	{
@@ -53,8 +54,8 @@ namespace chen {
 		bool receive_packet(RTC::RtpPacket* packet);
 
 		//void receive_nack();//crtcp_nack
-		/*void ReceiveNack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket);
-		void ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType);
+		void receive_nack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket);
+		/*void ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType);
 		void ReceiveRtcpReceiverReport(RTC::RTCP::ReceiverReport* report);
 		RTC::RTCP::SenderReport* GetRtcpSenderReport(uint64_t nowMs);*/
 		//RTC::RTCP::SdesChunk* GetRtcpSdesChunk();
@@ -66,6 +67,8 @@ namespace chen {
 		void _store_packet(RTC::RtpPacket * packet);
 		void _clear_buffer();
 		
+
+		//void FillRetransmissionContainer(uint16_t seq, uint16_t bitmask);
 	private:
 
 		uint32						m_lost_prior_score{ 0u }; // Packets lost at last interval for score calculation.

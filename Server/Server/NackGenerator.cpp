@@ -22,15 +22,14 @@ namespace RTC
 	/* Instance methods. */
 
 	NackGenerator::NackGenerator(Listener* listener) 
-		: chen::ctimer()
-		, listener(listener)
+		:   listener(listener)
 		, rtt(DefaultRtt)
 	{
 		//MS_TRACE();
 
 		// Set the timer.
-		//this->timer = new Timer(this);
-		chen::ctimer::init();
+		 this->timer = new chen::ctimer(this);
+		 
 	}
 
 	NackGenerator::~NackGenerator()
@@ -38,8 +37,11 @@ namespace RTC
 		//MS_TRACE();
 
 		// Close the timer.
-		destroy();
-		//delete this->timer;
+		if (this->timer)
+		{
+			//this->timer->destroy();
+			delete this->timer;
+		}
 	}
 
 	// Returns true if this is a found nacked packet. False otherwise.
@@ -150,7 +152,7 @@ namespace RTC
 
 		// This is important. Otherwise the running timer (filter:TIME) would be
 		// interrupted and NACKs would never been sent more than once for each seq.
-		if (!/*this->timer->*/IsActive())
+		if (! this->timer-> IsActive())
 		{
 			MayRunTimer();
 		}
@@ -334,11 +336,11 @@ namespace RTC
 	{
 		if (!this->nackList.empty())
 		{
-			/*this->timer->*/ Start(TimerInterval);
+			 this->timer->  Start(TimerInterval);
 		}
 	}
 
-	inline void NackGenerator::OnTimer(ctimer * timer)
+	inline void NackGenerator::OnTimer(chen::ctimer * timer)
 	{
 	//	MS_TRACE();
 

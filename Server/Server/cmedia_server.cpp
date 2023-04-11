@@ -30,8 +30,8 @@ namespace chen {
 	cmedia_server g_media_server;
 
 	cmedia_server::cmedia_server() 
-		: ctimer()
-		, m_stop(false)
+		:   m_stop(false)
+		, m_server_intaval(NULL)
 	{
 	}
 
@@ -121,13 +121,14 @@ namespace chen {
 			return false;
 		}
 		SYSTEM_LOG("timer init ...");
-		if (!ctimer::init())
+		/*if (!ctimer::init())
 		{
 			return false;
-		}
+		}*/
+		m_server_intaval = new ctimer(this);
 		SYSTEM_LOG("timer startup  ...");
 
-		ctimer::Start(1u, 100u);
+		m_server_intaval->Start(1u, 100u);
 
 		SYSTEM_LOG(" media rtc server init ok");
 
@@ -172,10 +173,16 @@ namespace chen {
 
 	void cmedia_server::destroy()
 	{
-		ctimer::Stop();
-		SYSTEM_LOG("g_wan_server timer stop OK !!!");
-		ctimer::destroy();
-		SYSTEM_LOG("g_wan_server timer destroy OK !!!");
+		if (m_server_intaval)
+		{
+			m_server_intaval->Stop();
+			SYSTEM_LOG("g_wan_server timer stop OK !!!");
+			//m_server_intaval->destroy();
+			delete m_server_intaval;
+			m_server_intaval = NULL;
+		//	SYSTEM_LOG("g_wan_server timer destroy OK !!!");
+		}
+		
 
 		g_wan_server.shutdown();
 		g_wan_server.destroy();
@@ -212,7 +219,7 @@ namespace chen {
 
 	void cmedia_server::stop()
 	{
-		Stop();
+		m_server_intaval->Stop();
 		m_stop = true;
 	}
 
@@ -220,7 +227,7 @@ namespace chen {
 	{
 		//static const uint32 TICK_TIME = 100;
 		////启动内网并等待初始化完成
-		if (timer == this)
+		if (timer == m_server_intaval)
 		{
 			static int64 prev_time_ms = uv_util::GetTimeMsInt64();
 

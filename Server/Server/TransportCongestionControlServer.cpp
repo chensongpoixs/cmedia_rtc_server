@@ -39,12 +39,12 @@ namespace RTC
 				// Set initial packet count.
 				this->transportCcFeedbackPacket->SetFeedbackPacketCount(this->transportCcFeedbackPacketCount);
 
-				if (!init())
+				/*if (!init())
 				{
 					ERROR_EX_LOG("ctimer init failed !!!");
-				}
+				}*/
 				// Create the feedback send periodic timer.
-				//this->transportCcFeedbackSendPeriodicTimer = new Timer(this);
+				this->transportCcFeedbackSendPeriodicTimer = new chen::ctimer(this);
 
 				break;
 			}
@@ -62,8 +62,8 @@ namespace RTC
 	{
 		//MS_TRACE();
 
-		//delete this->transportCcFeedbackSendPeriodicTimer;
-		//this->transportCcFeedbackSendPeriodicTimer = nullptr;
+		delete this->transportCcFeedbackSendPeriodicTimer;
+		this->transportCcFeedbackSendPeriodicTimer = nullptr;
 
 		// Delete REMB server.
 		delete this->rembServer;
@@ -78,7 +78,7 @@ namespace RTC
 		{
 			case RTC::BweType::TRANSPORT_CC:
 			{
-				/*this->transportCcFeedbackSendPeriodicTimer->*/Start(
+				this->transportCcFeedbackSendPeriodicTimer->Start(
 				  TransportCcFeedbackSendInterval, TransportCcFeedbackSendInterval);
 
 				break;
@@ -96,7 +96,7 @@ namespace RTC
 		{
 			case RTC::BweType::TRANSPORT_CC:
 			{
-				/*this->transportCcFeedbackSendPeriodicTimer->*/Stop();
+				 this->transportCcFeedbackSendPeriodicTimer-> Stop();
 
 				// Create a new feedback packet.
 				this->transportCcFeedbackPacket.reset(new RTC::RTCP::FeedbackRtpTransportPacket(0u, 0u));
@@ -325,11 +325,13 @@ namespace RTC
 		this->listener->OnTransportCongestionControlServerSendRtcpPacket(this, &packet);
 	}
 
-	inline void TransportCongestionControlServer::OnTimer(ctimer * timer)
+	inline void TransportCongestionControlServer::OnTimer(chen::ctimer * timer)
 	{
 		//MS_TRACE();
 
-		 if (timer == this )
+		if (timer == transportCcFeedbackSendPeriodicTimer)
+		{
 			SendTransportCcFeedback();
+		 }
 	}
 } // namespace RTC

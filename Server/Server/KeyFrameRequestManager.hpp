@@ -6,7 +6,7 @@
 #include "ctimer.h"
 namespace RTC
 {
-	class PendingKeyFrameInfo : chen::ctimer //public Timer::Listener
+	class PendingKeyFrameInfo : public chen::ctimer::Listener
 	{
 	public:
 		class Listener
@@ -36,22 +36,22 @@ namespace RTC
 		}
 		void Restart()
 		{
-			return /*this->timer->*/Restart();
+			return this->timer->Restart();
 		}
 
 		
 	public:
 		/* Pure virtual methods inherited from Timer::Listener. */
-		void OnTimer(ctimer * timer) override;
+		void OnTimer(chen::ctimer * timer) override;
 
 	private:
 		Listener* listener{ nullptr };
 		uint32_t ssrc;
-		//Timer* timer{ nullptr };
+		chen::ctimer* timer{ nullptr };
 		bool retryOnTimeout{ true };
 	};
 
-	class KeyFrameRequestDelayer : chen::ctimer //public Timer::Listener
+	class KeyFrameRequestDelayer : public  chen::ctimer::Listener
 	{
 	public:
 		class Listener
@@ -82,12 +82,12 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
-		void OnTimer(ctimer * timer) override;
+		void OnTimer(chen::ctimer * timer) override;
 
 	private:
 		Listener* listener{ nullptr };
 		uint32_t ssrc;
-		//Timer* timer{ nullptr };
+		chen::ctimer* timer{ nullptr };
 		bool keyFrameRequested{ false };
 	};
 

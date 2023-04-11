@@ -1,4 +1,4 @@
-//#define MS_CLASS "RTC::RtpStreamSend"
+#define MS_CLASS "RTC::RtpStreamSend"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "RtpStreamSend.hpp"
@@ -6,13 +6,12 @@
 //#include "Utils.hpp"
 #include "SeqManager.hpp"
 #include "clog.h"
-#include "cuv_util.h"
 #include "crandom.h"
-#include "ccrypto_random.h"
- 
+#include "FeedbackRtpNack.hpp"
+#include "ReceiverReport.hpp"
+#include "SenderReport.hpp"
 namespace RTC
 {
-	using namespace chen;
 	/* Static. */
 
 	// 17: 16 bit mask + the initial sequence number.
@@ -25,9 +24,8 @@ namespace RTC
 
 	static void resetStorageItem(RTC::RtpStreamSend::StorageItem* storageItem)
 	{
-	//	MS_TRACE();
-
-	//	MS_ASSERT(storageItem, "storageItem cannot be nullptr");
+		using namespace chen;
+		cassert(storageItem, "storageItem cannot be nullptr");
 
 		delete storageItem->packet;
 
@@ -55,19 +53,19 @@ namespace RTC
 		ClearBuffer();
 	}
 
-	/*void RtpStreamSend::FillJsonStats(json& jsonObject)
-	{
-		MS_TRACE();
+	//void RtpStreamSend::FillJsonStats(json& jsonObject)
+	//{
+	//	//MS_TRACE();
 
-		uint64_t nowMs = DepLibUV::GetTimeMs();
+	//	uint64_t nowMs = chen::uv_util::GetTimeMs();
 
-		RTC::RtpStream::FillJsonStats(jsonObject);
+	//	RTC::RtpStream::FillJsonStats(jsonObject);
 
-		jsonObject["type"]        = "outbound-rtp";
-		jsonObject["packetCount"] = this->transmissionCounter.GetPacketCount();
-		jsonObject["byteCount"]   = this->transmissionCounter.GetBytes();
-		jsonObject["bitrate"]     = this->transmissionCounter.GetBitrate(nowMs);
-	}*/
+	//	jsonObject["type"]        = "outbound-rtp";
+	//	jsonObject["packetCount"] = this->transmissionCounter.GetPacketCount();
+	//	jsonObject["byteCount"]   = this->transmissionCounter.GetBytes();
+	//	jsonObject["bitrate"]     = this->transmissionCounter.GetBitrate(nowMs);
+	//}
 
 	void RtpStreamSend::SetRtx(uint8_t payloadType, uint32_t ssrc)
 	{
@@ -75,12 +73,12 @@ namespace RTC
 
 		RTC::RtpStream::SetRtx(payloadType, ssrc);
 
-		this->rtxSeq = s_crypto_random.GetRandomUInt(0u, 0xFFFF);
+		this->rtxSeq = c_rand.rand(0u, 0xFFFF);//Utils::Crypto::GetRandomUInt(0u, 0xFFFF);
 	}
 
 	bool RtpStreamSend::ReceivePacket(RTC::RtpPacket* packet)
 	{
-		//MS_TRACE();
+		 
 
 		// Call the parent method.
 		if (!RtpStream::ReceivePacket(packet))
@@ -102,8 +100,7 @@ namespace RTC
 
 	void RtpStreamSend::ReceiveNack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket)
 	{
-		//MS_TRACE();
-
+		 
 		this->nackCount++;
 
 		for (auto it = nackPacket->Begin(); it != nackPacket->End(); ++it)
@@ -139,8 +136,7 @@ namespace RTC
 
 	void RtpStreamSend::ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType)
 	{
-	//	MS_TRACE();
-
+		 
 		switch (messageType)
 		{
 			case RTC::RTCP::FeedbackPs::MessageType::PLI:
@@ -157,7 +153,7 @@ namespace RTC
 
 	void RtpStreamSend::ReceiveRtcpReceiverReport(RTC::RTCP::ReceiverReport* report)
 	{
-		//MS_TRACE();
+		 
 		
 		/* Calculate RTT. */
 
@@ -186,12 +182,12 @@ namespace RTC
 		// and dlsr values in the Receiver Report.
 		if (lastSr && dlsr && (compactNtp > dlsr + lastSr))
 		{
-			NORMAL_EX_LOG("[lastSr = %u][dlstr = %u][compactNtp = %u]", lastSr, dlsr, compactNtp);
+			//INFO_EX_LOG("[lastSr = %u][dlstr = %u][compactNtp = %u]", lastSr, dlsr, compactNtp);
 			rtt = compactNtp - dlsr - lastSr;
 		}
 		else
 		{
-			NORMAL_EX_LOG("[lastSr = %u][dlstr = %u][compactNtp = %u]", lastSr, dlsr, compactNtp);
+			//INFO_EX_LOG("[lastSr = %u][dlstr = %u][compactNtp = %u]", lastSr, dlsr, compactNtp);
 		}
 		// RTT in milliseconds.
 		this->rtt = static_cast<float>(rtt >> 16) * 1000;
@@ -210,14 +206,14 @@ namespace RTC
 
 		//上一次报告之后从SSRC_n来包的漏包比列
 		this->fractionLost = report->GetFractionLost();
-		NORMAL_EX_LOG("[packetsLost = %u][fractionLost = %u][rtt = %u]", packetsLost, fractionLost, rtt);
+		//INFO_EX_LOG("[packetsLost = %u][fractionLost = %u][rtt = %u]", packetsLost, fractionLost, rtt);
 		// Update the score with the received RR.
 		UpdateScore(report);
 	}
 
 	RTC::RTCP::SenderReport* RtpStreamSend::GetRtcpSenderReport(uint64_t nowMs)
 	{
-		//MS_TRACE();
+		 
 
 		if (this->transmissionCounter.GetPacketCount() == 0u)
 			return nullptr;
@@ -243,9 +239,9 @@ namespace RTC
 		return report;
 	}
 
-	RTC::RTCP::SdesChunk* RtpStreamSend::GetRtcpSdesChunk()
+	/*RTC::RTCP::SdesChunk* RtpStreamSend::GetRtcpSdesChunk()
 	{
-		//MS_TRACE();
+		MS_TRACE();
 
 		const auto& cname = GetCname();
 		auto* sdesChunk   = new RTC::RTCP::SdesChunk(GetSsrc());
@@ -256,52 +252,49 @@ namespace RTC
 
 		return sdesChunk;
 	}
-
+*/
 	void RtpStreamSend::Pause()
 	{
-		//MS_TRACE();
-
+		 
 		ClearBuffer();
 	}
 
 	void RtpStreamSend::Resume()
 	{
-		//MS_TRACE();
+		 
 	}
 
 	uint32_t RtpStreamSend::GetBitrate(
 	  uint64_t /*nowMs*/, uint8_t /*spatialLayer*/, uint8_t /*temporalLayer*/)
 	{
-		//MS_TRACE();
+		 
 
-		//MS_ABORT("invalid method call");
+		cassert("invalid method call");
 		return 0;
 	}
 
 	uint32_t RtpStreamSend::GetSpatialLayerBitrate(uint64_t /*nowMs*/, uint8_t /*spatialLayer*/)
 	{
-		//MS_TRACE();
-
-		//MS_ABORT("invalid method call");
+		 
+		cassert("invalid method call");
 		return 0;
 	}
 
 	uint32_t RtpStreamSend::GetLayerBitrate(
 	  uint64_t /*nowMs*/, uint8_t /*spatialLayer*/, uint8_t /*temporalLayer*/)
 	{
-		//MS_TRACE();
-
-		//MS_ABORT("invalid method call");
+		 
+		cassert("invalid method call");
 		return 0;
 	}
 
 	void RtpStreamSend::StorePacket(RTC::RtpPacket* packet)
 	{
-		//MS_TRACE();
+		 
 
 		if (packet->GetSize() > RTC::MtuSize)
 		{
-			WARNING_EX_LOG("rtp, packet too big [ssrc:%u, seq:%hu, size:%zu]",
+			WARNING_EX_LOG( "rtp packet too big [ssrc:%" PRIu32 ", seq:%" PRIu16 ", size:%zu]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber(),
 			  packet->GetSize());
@@ -375,8 +368,7 @@ namespace RTC
 
 	void RtpStreamSend::ClearBuffer()
 	{
-		//MS_TRACE();
-
+		 
 		if (this->storage.empty())
 			return;
 
@@ -386,7 +378,7 @@ namespace RTC
 
 			if (!storageItem)
 			{
-				//MS_ASSERT(!this->buffer[idx], "key should be NULL");
+				cassert(!this->buffer[idx], "key should be NULL");
 
 				continue;
 			}
@@ -431,8 +423,7 @@ namespace RTC
 	// encoded in a previous resend).
 	void RtpStreamSend::FillRetransmissionContainer(uint16_t seq, uint16_t bitmask)
 	{
-		//MS_TRACE();
-
+		 
 		// Ensure the container's first element is 0.
 		RetransmissionContainer[0] = nullptr;
 
@@ -490,8 +481,8 @@ namespace RTC
 				{
 					if (!tooOldPacketFound)
 					{
-						WARNING_EX_LOG("rtx, ignoring retransmission for too old packet "
-						  "[seq:%hu, max age:%u ms, packet age:%u ms]",
+						WARNING_EX_LOG( "rtx ignoring retransmission for too old packet "
+						  "[seq:%" PRIu16 ", max age:%" PRIu32 "ms, packet age:%" PRIu32 "ms]",
 						  packet->GetSequenceNumber(),
 						  MaxRetransmissionDelay,
 						  diffMs);
@@ -507,8 +498,8 @@ namespace RTC
 				)
 				// clang-format on
 				{
-					DEBUG_EX_LOG("rtx, ignoring retransmission for a packet already resent in the last RTT ms "
-					  "[seq:%hu, rtt:%u]",
+					DEBUG_EX_LOG( "rtx ignoring retransmission for a packet already resent in the last RTT ms "
+					  "[seq:%" PRIu16 ", rtt:%" PRIu32 "]",
 					  packet->GetSequenceNumber(),
 					  rtt);
 				}
@@ -568,7 +559,8 @@ namespace RTC
 		if (!firstPacketSent || origBitmask != sentBitmask)
 		{
 			WARNING_EX_LOG(
-			  "could not resend all packets [seq:%hu, first:%s, "
+			  "could not resend all packets [seq:%" PRIu16
+			  ", first:%s, "
 			  "bitmask:" MS_UINT16_TO_BINARY_PATTERN ", sent bitmask:" MS_UINT16_TO_BINARY_PATTERN "]",
 			  seq,
 			  firstPacketSent ? "yes" : "no",
@@ -589,7 +581,7 @@ namespace RTC
 
 	void RtpStreamSend::UpdateScore(RTC::RTCP::ReceiverReport* report)
 	{
-		//MS_TRACE();
+		 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Calculate number of packets sent in this interval.
@@ -604,7 +596,7 @@ namespace RTC
 		// 4. 总丢包数
 		uint32_t totalLost = report->GetTotalLost() > 0 ? report->GetTotalLost() : 0;
 		uint32_t lost;
-		DEBUG_EX_LOG("[totalSent = %u][sent = %u][totalLost = %u]", totalSent, sent, totalLost);
+		//INFO_EX_LOG("[totalSent = %u][sent = %u][totalLost = %u]", totalSent, sent, totalLost);
 		// 5. 上一时刻到现在时刻是否有丢包
 		// | ...     |        <-->          |
 		// |     上一个时刻                  现在
@@ -636,7 +628,7 @@ namespace RTC
 		auto totatRetransmitted = this->packetsRetransmitted;
 		// 11. 上一个时刻到现在重新发送包的数量
 		uint32_t retransmitted  = totatRetransmitted - this->retransmittedPriorScore;
-		DEBUG_EX_LOG("[totalRepaired = %u][repaired = %u][packetsRetransmitted = %u]", totalRepaired, repaired, packetsRetransmitted);
+		//INFO_EX_LOG("[totalRepaired = %u][repaired = %u][packetsRetransmitted = %u]", totalRepaired, repaired, packetsRetransmitted);
 		// 12. 记录当前时刻总重新发送包数量
 		this->retransmittedPriorScore = totatRetransmitted;
 
@@ -644,7 +636,7 @@ namespace RTC
 		// 13. 判断上一个时刻到现在之间没有发送包
 		if (sent == 0)
 		{
-			DEBUG_EX_LOG("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+			//INFO_EX_LOG("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 			RTC::RtpStream::UpdateScore(10);
 
 			return;
@@ -680,8 +672,8 @@ namespace RTC
 		auto repairedRatio  = static_cast<float>(repaired) / static_cast<float>(sent);
 		// 17. 上一个时刻到现在修复包权重 =   [1/(修复包比率 + 1))] ^ 4 =====> ||||||||||||
 		auto repairedWeight = std::pow(1 / (repairedRatio + 1), 4);
-		DEBUG_EX_LOG("== [repairedRatio = %s][repairedWeight = %s]", std::to_string(repairedRatio).c_str(), std::to_string(repairedWeight).c_str());
-		//assert(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
+		//INFO_EX_LOG("== [repairedRatio = %s][repairedWeight = %s]", std::to_string(repairedRatio).c_str(), std::to_string(repairedWeight).c_str());
+		cassert(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
 
 
 		// 18. 上一个时刻到现在 修复包数量大于0 , 修复包权重格式 = repairedWeight  * (修复包/ 重新发送包)
@@ -732,7 +724,7 @@ namespace RTC
 		  lost,
 		  score);
 #endif
-		DEBUG_EX_LOG("[pdatescore = %u]", score);
+		//INFO_EX_LOG("[pdatescore = %u]", score);
 		RtpStream::UpdateScore(score);
 	}
 } // namespace RTC

@@ -82,8 +82,8 @@ namespace chen {
 			return m_packets_discarded;
 		} 
 		bool receive_packet(RTC::RtpPacket* packet);
-		crtcp_rr get_rtcp_receiver_report();
-		void receive_rtcp_sender_report(const crtcp_sr& report);
+		RTC::RTCP::ReceiverReport* get_rtcp_receiver_report();
+		void receive_rtcp_sender_report(RTC::RTCP::SenderReport* report);
 	protected:
 		bool update_seq(RTC::RtpPacket* packet);
 

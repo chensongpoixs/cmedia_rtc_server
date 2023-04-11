@@ -80,6 +80,10 @@ namespace chen {
 		const crtc_sdp & get_rtp_sdp() const {
 			return m_local_sdp;
 		}
+		  crtc_sdp   get_rtp_sdp()   {
+			return m_local_sdp;
+		}
+		  cremote_estimator_proxy* get_remote_estimator() { return &m_remote_estimator; }
 		const ERtcClientType get_rtc_type() { return m_rtc_client_type; }
 	public:
 		void send_rtp_data(void * data, int32 size);

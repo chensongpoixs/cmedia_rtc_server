@@ -14,6 +14,7 @@ Copyright boost
 #include "crtp_stream.h"
 #include "cbuffer.h"
 #include "H264.hpp"
+#include "FeedbackRtpNack.hpp"
 namespace chen {
 
 	/* Static. */
@@ -36,12 +37,24 @@ namespace chen {
 	{
 		if ( params.use_nack)
 		{
-			// nackGenerator.reset(new RTC::NackGenerator(this));
+			  nackGenerator.reset(new RTC::NackGenerator(this));
 		}
+		// Run the RTP inactivity periodic timer (use a different timeout if DTX is
+		// enabled).
+		m_inactivityCheckPeriodicTimer = new ctimer(this);
+		m_inactive = false;
+
+		//if (!this->params.useDtx)
+		{
+			m_inactivityCheckPeriodicTimer->Start(InactivityCheckInterval);
+		}
+		 
 	}
 
 	crtp_stream_recv::~crtp_stream_recv()
 	{
+		// Close the RTP inactivity check periodic timer.
+		delete this->m_inactivityCheckPeriodicTimer;
 	}
  
 	bool crtp_stream_recv::receive_packet(RTC::RtpPacket * packet)
@@ -65,22 +78,23 @@ namespace chen {
 		//}
 
 		// Pass the packet to the NackGenerator.
-		//if (this->params.useNack)
-		//{
-		//	// If there is RTX just provide the NackGenerator with the packet.
-		//	if (HasRtx())
-		//	{
-		//		this->nackGenerator->ReceivePacket(packet, /*isRecovered*/ false);
-		//	}
-		//	// If there is no RTX and NackGenerator returns true it means that it
-		//	// was a NACKed packet.
-		//	else if (this->nackGenerator->ReceivePacket(packet, /*isRecovered*/ false))
-		//	{
-		//		// Mark the packet as retransmitted and repaired.
-		//		RTC::RtpStream::PacketRetransmitted(packet);
-		//		RTC::RtpStream::PacketRepaired(packet);
-		//	}
-		//}
+		if (m_params.use_nack)
+		{
+			// If there is RTX just provide the NackGenerator with the packet.
+			if (has_rtx())
+			{
+				this->nackGenerator->ReceivePacket(packet, /*isRecovered*/ false);
+			}
+			// If there is no RTX and NackGenerator returns true it means that it
+			// was a NACKed packet.
+			else if (this->nackGenerator->ReceivePacket(packet, /*isRecovered*/ false))
+			{
+				// Mark the packet as retransmitted and repaired.
+				//           packet_retransmitted
+				crtp_stream::packet_retransmitted(packet);
+				crtp_stream::packet_repaired(packet);
+			}
+		}
 		_calculate_jitter(packet->GetTimestamp());
 		// Increase transmission counter.
 		//this->transmissionCounter.Update(packet);
@@ -94,10 +108,10 @@ namespace chen {
 		}
 
 		// Restart the inactivityCheckPeriodicTimer.
-		/*if (this->inactivityCheckPeriodicTimer)
+		if (this->m_inactivityCheckPeriodicTimer)
 		{
-			this->inactivityCheckPeriodicTimer->Restart();
-		}*/
+			this->m_inactivityCheckPeriodicTimer->Restart();
+		}
 		return true;
 	}
 	bool crtp_stream_recv::receive_rtx_packet(RTC::RtpPacket * packet)
@@ -177,7 +191,7 @@ namespace chen {
 
 		// Pass the packet to the NackGenerator and return true just if this was a
 		// NACKed packet.
-		//if (this->nackGenerator->ReceivePacket(packet, /*isRecovered*/ true))
+		if (this->nackGenerator->ReceivePacket(packet, /*isRecovered*/ true))
 		{
 			// Mark the packet as repaired.
 			crtp_stream::packet_repaired(packet);
@@ -194,17 +208,18 @@ namespace chen {
 			}
 
 			// Restart the inactivityCheckPeriodicTimer.
-			//if (this->inactivityCheckPeriodicTimer)
-			//	this->inactivityCheckPeriodicTimer->Restart();
+			if (this->m_inactivityCheckPeriodicTimer)
+			{
+				this->m_inactivityCheckPeriodicTimer->Restart();
+			}
 
 			return true;
 		}
 
-		return false;
-		return true;
+		return false; 
 	}
 
-	crtcp_rr crtp_stream_recv::get_rtcp_receiver_report()
+	RTC::RTCP::ReceiverReport* crtp_stream_recv::get_rtcp_receiver_report()
 	{
 		uint8_t worstRemoteFractionLost{ 0 };
 
@@ -218,10 +233,10 @@ namespace chen {
 		//		MS_DEBUG_TAG(rtcp, "using worst remote fraction lost:%" PRIu8, worstRemoteFractionLost);
 		//}
 
-		//auto* report = new RTC::RTCP::ReceiverReport();
-		crtcp_rr report;
-		report.set_ssrc(get_ssrc());
-
+		auto* report = new RTC::RTCP::ReceiverReport();
+		//crtcp_rr report;
+		//report.set_ssrc(get_ssrc());
+		  report->SetSsrc(get_ssrc()) ;
 		uint32_t prevPacketsLost = m_packets_lost;
 
 		// Calculate Packets Expected and Lost.
@@ -261,8 +276,10 @@ namespace chen {
 		{
 			m_reported_packet_lost += (m_packets_lost - prevPacketsLost);
 
-			report.set_lost_packets(m_reported_packet_lost);
-			report.set_lost_rate(m_fraction_lost);
+			//report.set_lost_packets(m_reported_packet_lost);
+			//report.set_lost_rate(m_fraction_lost);
+			report->SetTotalLost(m_reported_packet_lost);
+			report->SetFractionLost(m_fraction_lost);
 		}
 		else
 		{
@@ -270,14 +287,18 @@ namespace chen {
 			uint32_t newLostInterval = (worstRemoteFractionLost * expectedInterval) >> 8;
 
 			m_reported_packet_lost += newLostInterval;
-
-			report.set_lost_packets(m_reported_packet_lost);
-			report.set_lost_rate(worstRemoteFractionLost);
+			report->SetTotalLost(m_reported_packet_lost);
+			report->SetFractionLost(worstRemoteFractionLost);
+			//report.set_lost_packets(m_reported_packet_lost);
+			//report.set_lost_rate(worstRemoteFractionLost);
 		}
 
 		// Fill the rest of the report.
-		report.set_highest_sn(static_cast<uint32 >(m_max_seq) + m_cycles);
-		report.set_jitter(m_jitter);
+		//report.set_highest_sn(static_cast<uint32 >(m_max_seq) + m_cycles);
+		//report.set_jitter(m_jitter);
+		report->SetLastSeq(static_cast<uint32_t>(m_max_seq) + m_cycles);
+		report->SetJitter(m_jitter);
+
 
 		if (m_last_sr_received != 0)
 		{
@@ -288,51 +309,55 @@ namespace chen {
 
 			dlsr |= uint32_t{ (delayMs % 1000) * 65536 / 1000 };
 
-			report.set_dlsr(dlsr);
-			report.set_lsr(m_last_sr_timestamp);
+			//report.set_dlsr(dlsr);
+			//report.set_lsr(m_last_sr_timestamp);
+			report->SetDelaySinceLastSenderReport(dlsr);
+			report->SetLastSenderReport(m_last_sr_timestamp);
 		}
 		else
 		{
-			report.set_dlsr(0);
-			report.set_lsr(0);
+			//report.set_dlsr(0);
+			//report.set_lsr(0);
+			report->SetDelaySinceLastSenderReport(0);
+			report->SetLastSenderReport(0);
 		}
 
 		return report;
 	}
 
-	crtcp_rr crtp_stream_recv::get_rtx_rtcp_receiver_report()
+	RTC::RTCP::ReceiverReport* crtp_stream_recv::get_rtx_rtcp_receiver_report()
 	{
 		if (has_rtx())
 		{
 			return  m_rtx_stream_ptr->get_rtcp_receiver_report();
 		}
-		return crtcp_rr();
+		return NULL;
 	}
 
-	void crtp_stream_recv::receive_rtcp_sender_report(crtcp_sr * report)
+	void crtp_stream_recv::receive_rtcp_sender_report(RTC::RTCP::SenderReport* report)
 	{
 		m_last_sr_received = uv_util::GetTimeMs();
-		m_last_sr_timestamp = report->get_ntp() << 16;
-		m_last_sr_timestamp += report->get_ntp() >> 16;
+		m_last_sr_timestamp = report->GetNtpSec() << 16;
+		m_last_sr_timestamp += report->GetNtpFrac() >> 16;
 
 		// Update info about last Sender Report.
 		rtc_time::Ntp ntp; // NOLINT(cppcoreguidelines-pro-type-member-init)
 
-		ntp.seconds = report->get_ntp() << 16;
-		ntp.fractions = report->get_ntp() >> 16;
+		ntp.seconds = report->GetNtpSec();
+		ntp.fractions = report->GetNtpFrac();
 
 		m_last_sender_report_ntp_ms = rtc_time::Ntp2TimeMs(ntp);
-		m_last_sender_repor_ts = report->get_rtp_ts();
+		m_last_sender_repor_ts = report->GetRtpTs();
 
 		// Update the score with the current RR.
 		update_score();
 	}
 
-	void crtp_stream_recv::receive_rtx_rtcp_sender_report(crtcp_sr * report)
+	void crtp_stream_recv::receive_rtx_rtcp_sender_report(RTC::RTCP::SenderReport* report)
 	{
 		if (has_rtx())
 		{
-			m_rtx_stream_ptr->receive_rtcp_sender_report(*report);
+			m_rtx_stream_ptr->receive_rtcp_sender_report(report);
 		}
 	}
 
@@ -374,11 +399,15 @@ namespace chen {
 
 	void crtp_stream_recv::pause()
 	{
-		//if (this->inactivityCheckPeriodicTimer)
-		//	this->inactivityCheckPeriodicTimer->Stop();
+		if (this->m_inactivityCheckPeriodicTimer)
+		{
+			this->m_inactivityCheckPeriodicTimer->Stop();
+		}
 
-		//if (this->params.useNack)
-		//	this->nackGenerator->Reset();
+		 if (m_params.use_nack)
+		 {
+			 this->nackGenerator->Reset();
+		 }
 
 		// Reset jitter.
 		m_transit = 0;
@@ -387,13 +416,30 @@ namespace chen {
 
 	void crtp_stream_recv::resume()
 	{
-		//if (this->inactivityCheckPeriodicTimer && !this->inactive)
-			//this->inactivityCheckPeriodicTimer->Restart();
+		if (this->m_inactivityCheckPeriodicTimer && !this->m_inactive)
+		{
+			this->m_inactivityCheckPeriodicTimer->Restart();
+		 }
 	}
 	 
 	/*void crtp_stream_recv::set_rtx(uint8 payload_type, uint32 ssrc)
 	{
 	}*/
+
+	void crtp_stream_recv::OnTimer(ctimer * timer)
+	{
+		if (timer == this->m_inactivityCheckPeriodicTimer)
+		{
+			m_inactive = true;
+
+			if (get_score() != 0)
+			{
+				WARNING_EX_LOG("RTP inactivity detected, resetting score to 0 [ssrc:%" PRIu32 "]", get_ssrc());
+			}
+
+			reset_score(0, /*notify*/ true);
+		}
+	}
 
 	void crtp_stream_recv::del_rtx()
 	{
@@ -404,7 +450,7 @@ namespace chen {
 		}
 	}
 
-	void crtp_stream_recv::onnack_generator_nack_required(const std::vector<uint16>& seqNumbers)
+	void crtp_stream_recv::OnNackGeneratorNackRequired(const std::vector<uint16>& seqNumbers)
 	{
 		cassert(m_params.use_nack, "NACK required but not supported");
 
@@ -413,17 +459,69 @@ namespace chen {
 			seqNumbers[0],
 			seqNumbers.size());
 
+		RTC::RTCP::FeedbackRtpNackPacket packet(0, get_ssrc());
 
-		crtcp_nack rtcp_nack(get_ssrc());
+		auto it = seqNumbers.begin();
+		const auto end = seqNumbers.end();
+		size_t numPacketsRequested{ 0 };
+
+		while (it != end)
+		{
+			uint16_t seq;
+			uint16_t bitmask{ 0 };
+
+			seq = *it;
+			++it;
+			//////////////////////////////////////////////////////////////
+			//[uint16_t ]	[uint16_t]
+			//[seq]			[0000 0000 0000 0000 ]
+			//////////////////////////////////////////////////////////////
+			while (it != end)
+			{
+				uint16_t shift = *it - seq - 1;
+
+				if (shift > 15)
+				{
+					break;
+				}
+
+				bitmask |= (1 << shift);
+				++it;
+			}
+
+			auto* nackItem = new RTC::RTCP::FeedbackRtpNackItem(seq, bitmask);
+
+			packet.AddItem(nackItem);
+
+			numPacketsRequested += nackItem->CountRequestedPackets();
+		}
+
+		// Ensure that the RTCP packet fits into the RTCP buffer.
+		if (packet.GetSize() > RTC::RTCP::BufferSize)
+		{
+			WARNING_EX_LOG("rtx, cannot send RTCP NACK packet, size too big (%zu bytes)", packet.GetSize());
+
+			return;
+		}
+		// 发送feedback 个数
+		m_nack_count++;
+		// 发送一共nack个数
+		m_nack_packet_count += numPacketsRequested;
+
+		packet.Serialize(RTC::RTCP::Buffer);
+
+		// Notify the listener.
+		//static_cast<RTC::RtpStreamRecv::Listener*>(this->listener)->OnRtpStreamSendRtcpPacket(this, &packet);
+		//crtcp_nack rtcp_nack(get_ssrc());
 		//RTC::RTCP::FeedbackRtpNackPacket packet(0, GetSsrc());
-		for (std::vector<uint16>::const_iterator iter = seqNumbers.begin(); iter != seqNumbers.end(); ++iter)
+		/*for (std::vector<uint16>::const_iterator iter = seqNumbers.begin(); iter != seqNumbers.end(); ++iter)
 		{
 			rtcp_nack.add_lost_sn(*iter);
 		}
 
 		char buffer[RTC::RTCP::BufferSize] = {0};
 		cbuffer stream(&buffer[0], sizeof(buffer));
-		rtcp_nack.encode(&stream);
+		rtcp_nack.encode(&stream);*/
 		// auto it = seqNumbers.begin();
 		// const auto end = seqNumbers.end();
 		//size_t numPacketsRequested{ 0 };
@@ -462,7 +560,7 @@ namespace chen {
 		//	return;
 		//}
 
-		m_nack_count++;
+		//m_nack_count++;
 		
 
 	//	packet.Serialize(RTC::RTCP::Buffer);
@@ -471,7 +569,7 @@ namespace chen {
 		// static_cast<RTC::RtpStreamRecv::Listener*>(this->listener)->OnRtpStreamSendRtcpPacket(this, &packet);
 	}
 
-	void crtp_stream_recv::onnack_generator_key_frame_required()
+	void crtp_stream_recv::OnNackGeneratorKeyFrameRequired()
 	{
 		DEBUG_EX_LOG( "requesting key frame [ssrc:%" PRIu32 "]", m_params.ssrc);
 
@@ -594,7 +692,7 @@ namespace chen {
 		auto repairedRatio = static_cast<float>(repaired) / static_cast<float>(received);
 		auto repairedWeight = std::pow(1 / (repairedRatio + 1), 4);
 
-		cassert(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
+		//cassert(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
 
 		if (retransmitted > 0)
 		{

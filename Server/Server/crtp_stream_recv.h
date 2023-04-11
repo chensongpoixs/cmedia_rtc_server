@@ -18,8 +18,10 @@ Copyright boost
 #include "crate_calculator.h"
 #include "crtp_stream.h"
 #include "ReceiverReport.hpp"
+#include "ctimer.h"
+#include "NackGenerator.hpp"
 namespace chen {
-	class crtp_stream_recv : public crtp_stream
+	class crtp_stream_recv : public crtp_stream, public ctimer::Listener, public RTC::NackGenerator::Listener
 	{
 	public:
 		explicit crtp_stream_recv(const crtp_stream::crtp_stream_params & params);
@@ -31,10 +33,10 @@ namespace chen {
 	public:
 		bool  receive_packet(RTC::RtpPacket* packet);
 		bool  receive_rtx_packet(RTC::RtpPacket* packet);
-		crtcp_rr get_rtcp_receiver_report();
-		crtcp_rr get_rtx_rtcp_receiver_report();
-		 void receive_rtcp_sender_report(crtcp_sr* report);
-		 void receive_rtx_rtcp_sender_report(crtcp_sr* report);
+		RTC::RTCP::ReceiverReport* get_rtcp_receiver_report();
+		RTC::RTCP::ReceiverReport* get_rtx_rtcp_receiver_report();
+		 void receive_rtcp_sender_report(RTC::RTCP::SenderReport* report);
+		 void receive_rtx_rtcp_sender_report(RTC::RTCP::SenderReport* report);
 		//void ReceiveRtcpXrDelaySinceLastRr(RTC::RTCP::DelaySinceLastRr::SsrcInfo* ssrcInfo);
 
 
@@ -61,13 +63,15 @@ namespace chen {
 		 {
 			 return this->transmissionCounter.GetLayerBitrate(nowMs, spatialLayer, temporalLayer);
 		 }*/
-
+		 /* Pure virtual methods inherited from Timer. */
+	protected:
+		void OnTimer(ctimer* timer)  ;
 	public:
 		//virtual void set_rtx(uint8 payload_type, uint32 ssrc);
 		void del_rtx();
 	protected:
-		void onnack_generator_nack_required(const std::vector<uint16>& seqNumbers)  ;
-		void onnack_generator_key_frame_required()  ;
+		void OnNackGeneratorNackRequired(const std::vector<uint16>& seqNumbers)  ;
+		void OnNackGeneratorKeyFrameRequired()  ;
 	private:
 
 		void _calculate_jitter(uint32 rtpTimestamp);
@@ -91,8 +95,8 @@ namespace chen {
 		uint32			m_jitter{ 0u };
 		uint8			m_fir_seq_number{ 0u };
 		uint32			m_reported_packet_lost{ 0u };
-		//std::unique_ptr<RTC::NackGenerator> nackGenerator;
-		//Timer* inactivityCheckPeriodicTimer{ nullptr };
+		std::unique_ptr<RTC::NackGenerator> nackGenerator;
+		ctimer*			m_inactivityCheckPeriodicTimer{ nullptr };
 		bool			m_inactive{ false };
 		//TransmissionCounter transmissionCounter;      // Valid media + valid RTX.
 		RtpDataCounter m_media_transmission_counter; // Just valid media.

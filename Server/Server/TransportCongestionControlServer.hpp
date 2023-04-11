@@ -15,8 +15,8 @@
 
 namespace RTC
 {
-	class TransportCongestionControlServer : public webrtc::RemoteBitrateEstimator::Listener, public chen::ctimer
-	                                         /*public Timer::Listener*/
+	class TransportCongestionControlServer : public webrtc::RemoteBitrateEstimator::Listener 
+	                                         ,public chen::ctimer::Listener 
 	{
 	public:
 		class Listener
@@ -70,13 +70,13 @@ namespace RTC
 
 		/* Pure virtual methods inherited from Timer::Listener. */
 	public:
-		void OnTimer(ctimer * timer) /*override*/;
+		void OnTimer(chen::ctimer * timer) /*override*/;
 
 	private:
 		// Passed by argument.
 		Listener* listener{ nullptr };
 		// Allocated by this.
-		//Timer* transportCcFeedbackSendPeriodicTimer{ nullptr };
+		chen::ctimer* transportCcFeedbackSendPeriodicTimer{ nullptr };
 		std::unique_ptr<RTC::RTCP::FeedbackRtpTransportPacket> transportCcFeedbackPacket;
 		webrtc::RemoteBitrateEstimatorAbsSendTime* rembServer{ nullptr };
 		// Others.

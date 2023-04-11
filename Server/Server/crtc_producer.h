@@ -21,6 +21,7 @@ purpose:		rtc_producer
 #include "crtp_stream_send.h"
 
 namespace chen {
+	class crtc_transport;
 	class crtc_producer
 	{
 	public:
@@ -31,11 +32,12 @@ namespace chen {
 
 		};
 	public:
-		explicit crtc_producer(const std::string & kind, const crtp_params& params)
+		explicit crtc_producer(crtc_transport *ptr, const std::string & kind, const crtp_params& params)
 		: m_kind(kind)
 		, m_params(params)
 		, m_ssrc_rtp_stream_map()
 		, m_rtx_ssrc_rtp_stream_map()
+		, m_rtc_ptr(ptr)
 		{}
 		virtual ~crtc_producer();
 
@@ -45,7 +47,7 @@ namespace chen {
 
 
 		 bool    receive_rtp_packet(RTC::RtpPacket* packet);
-		void receive_rtcp_sender_report(crtcp_sr * report);
+		void receive_rtcp_sender_report(RTC::RTCP::SenderReport* report);
 
 		void request_key_frame(uint32 mapped_ssrc);
 
@@ -64,6 +66,7 @@ namespace chen {
 
 		std::map<uint32, crtp_stream_recv*>			m_ssrc_rtp_stream_map;
 		std::map<uint32, crtp_stream_recv*>			m_rtx_ssrc_rtp_stream_map;
+		crtc_transport *							m_rtc_ptr;
 	};
 }
 

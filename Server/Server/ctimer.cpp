@@ -25,17 +25,42 @@ namespace chen {
 	}
 
 
-	ctimer::ctimer()
-		: m_uvHandle(NULL)
+	ctimer::ctimer(Listener *listener)
+		: m_listener(listener)
+		, m_uvHandle(NULL)
 		, m_closed(false)
 		, m_timeout(0u)
 		, m_repeat(0u)
 	{
+		m_uvHandle = new uv_timer_t;
+		if (!m_uvHandle)
+		{
+			WARNING_EX_LOG(" uv timer alloc filed !!!");
+			return  ;
+		}
+
+		m_uvHandle->data = static_cast<void*>(this);
+
+		int32 err = uv_timer_init(uv_util::get_loop(), m_uvHandle);
+
+		if (0 != err)
+		{
+			delete m_uvHandle;
+			m_uvHandle = NULL;
+
+			ERROR_EX_LOG("uv_timer_init() failed: %s", uv_strerror(err));
+			return  ;
+		}
+
 	}
 	ctimer::~ctimer()
 	{
+		if (!this->m_closed)
+		{
+			Close();
+		}
 	}
-	bool ctimer::init()
+	/*bool ctimer::init()
 	{
 		m_uvHandle = new uv_timer_t;
 		if (!m_uvHandle)
@@ -58,14 +83,14 @@ namespace chen {
 		}
 
 		return true;
-	}
-	void ctimer::destroy()
+	}*/
+	/*void ctimer::destroy()
 	{
 		if (!m_closed)
 		{
 			Close();
 		}
-	}
+	}*/
 	void ctimer::Start(uint64_t timeout, uint64_t repeat)
 	{
 		if (m_closed)
@@ -161,6 +186,6 @@ namespace chen {
 	{
 		// Callback TODO@chensong 20220811 
 		//OnTimer(this);
-		OnTimer(this);
+		m_listener->OnTimer(this);
 	}
 }

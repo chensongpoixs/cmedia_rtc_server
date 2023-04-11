@@ -9,6 +9,8 @@ purpose:		rtc_producer
 ************************************************************************************************/
 #include "crtc_producer.h"
 #include "crtp_header_extensions.h"
+#include "ctransport_mgr.h"
+#include "crtc_transport.h"
 namespace chen {
 
 	crtc_producer::~crtc_producer()
@@ -130,12 +132,74 @@ namespace chen {
 		// 所有的订阅的客户端媒体信息
 		// 数据保持在每个接受客户端缓存中中了RtpSend
 		//this->listener->OnProducerRtpPacketReceived(this, packet);
+		for (crtc_transport* rtc_ptr : g_transport_mgr.m_all_consumer_map[m_rtc_ptr->get_rtp_sdp().m_msids[0]])
+		{
+			//crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
+			if (!rtc_ptr)
+			{
+				WARNING_EX_LOG("not find stream_name = %s", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
+				continue;
+			}
+			if (!rtc_ptr->get_dtls_connected_ok())
+			{
+				WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
+				continue;
+			}
+			if (/*params.type*/  get_kind() == "audio")
+			{
+				rtc_ptr->send_rtp_audio_data(packet);
+			}
+			else
+			{
+				if (/*m_all_rtx_video_ssrc*/  get_rtcp_params().params.rtx_ssrc == packet->GetSsrc())
+				{
+					rtc_ptr->send_rtp_rtx_video_data(packet);
+				}
+				else if (/*m_all_video_ssrc*/  get_rtcp_params().params.ssrc == packet->GetSsrc())
+				{
+					m_rtc_ptr->get_remote_estimator()->on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
+					//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
+					//RTC::Codecs::H264::ProcessRtpPacket(packet);
+					rtc_ptr->send_rtp_video_data(packet);
+				}
+				else
+				{
+					WARNING_EX_LOG("[rtc type = %s][video rtx ][not find ssrc = %u][]", m_rtc_ptr->get_rtc_type() == ERtcClientPlayer ? "rtc_player" : "rtc_publisher", packet->GetSsrc());
+				}
 
+			}
+
+		}
 		return true;
 	}
 
-	void crtc_producer::receive_rtcp_sender_report(crtcp_sr * report)
+	void crtc_producer::receive_rtcp_sender_report(RTC::RTCP::SenderReport* report)
 	{
+		auto it = m_ssrc_rtp_stream_map.find(report->GetSsrc());
+
+		if (it != m_ssrc_rtp_stream_map.end())
+		{
+			auto* rtpStream = it->second;
+			bool first = rtpStream->get_sender_report_ntp_ms() == 0;
+
+			rtpStream->receive_rtcp_sender_report(report);
+
+			//this->listener->OnProducerRtcpSenderReport(this, rtpStream, first);
+
+			return;
+		}
+
+		// If not found, check with RTX.
+		auto it2 = m_rtx_ssrc_rtp_stream_map.find(report->GetSsrc());
+
+		if (it2 != this->m_rtx_ssrc_rtp_stream_map.end())
+		{
+			auto* rtpStream = it2->second;
+
+			rtpStream->receive_rtx_rtcp_sender_report(report);
+
+			return;
+		}
 	}
 
 	void crtc_producer::request_key_frame(uint32 mapped_ssrc)

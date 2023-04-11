@@ -18,6 +18,8 @@ namespace chen {
 	static const  uint16  MaxMisorder{ 1500 };
 	static const  uint32  RtpSeqMod{ 1 << 16 };
 	static const  size_t ScoreHistogramLength{ 24 };
+	static const  uint64  InactivityCheckInterval{ 1500u };        // In ms.
+	static const  uint64  InactivityCheckIntervalWithDtx{ 5000u }; // In ms.
 }
 
 #endif //_C_RTP_STREAM_DEFINE_H_

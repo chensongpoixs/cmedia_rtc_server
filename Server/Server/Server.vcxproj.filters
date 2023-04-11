@@ -820,6 +820,12 @@
     <ClCompile Include="crtx_stream.cpp">
       <Filter>stream</Filter>
     </ClCompile>
+    <ClCompile Include="RateCalculator.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleConsumer.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1559,6 +1565,12 @@
     </ClInclude>
     <ClInclude Include="crtp_stream_define.h">
       <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="RateCalculator.hpp">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleConsumer.hpp">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

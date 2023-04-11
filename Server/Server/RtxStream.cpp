@@ -1,10 +1,11 @@
-//#define MS_CLASS "RTC::RtxStream"
+#define MS_CLASS "RTC::RtxStream"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "RtxStream.hpp"
 //#include "Logger.hpp"
 #include "SeqManager.hpp"
-#include "cuv_util.h"
+#include "clog.h"
+
 namespace RTC
 {
 	/* Static. */
@@ -19,26 +20,20 @@ namespace RTC
 	{
 		//MS_TRACE();
 
-		//MS_ASSERT(
-		 // params.mimeType.subtype == RTC::RtpCodecMimeType::Subtype::RTX, "mimeType.subtype is not RTX");
+		cassert(
+		  params.mimeType.subtype == RTC::RtpCodecMimeType::Subtype::RTX, "mimeType.subtype is not RTX");
 	}
 
 	RtxStream::~RtxStream()
 	{
-		//MS_TRACE();
+		 
 	}
 
-	//void RtxStream::FillJson(json& jsonObject) const
-	//{
-	//	MS_TRACE();
-
-	//	// Add params.
-	//	this->params.FillJson(jsonObject["params"]);
-	//}
+ 
 
 	bool RtxStream::ReceivePacket(RTC::RtpPacket* packet)
 	{
-		//MS_TRACE();
+		 
 
 		uint16_t seq = packet->GetSequenceNumber();
 
@@ -56,7 +51,7 @@ namespace RTC
 		// If not a valid packet ignore it.
 		if (!UpdateSeq(packet))
 		{
-			WARNING_EX_LOG( "rtx invalid packet [ssrc:%u, seq:%hu]",
+			WARNING_EX_LOG( "rtx, invalid packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber());
 
@@ -78,7 +73,7 @@ namespace RTC
 
 	RTC::RTCP::ReceiverReport* RtxStream::GetRtcpReceiverReport()
 	{
-		//MS_TRACE();
+		 
 
 		auto* report = new RTC::RTCP::ReceiverReport();
 
@@ -144,7 +139,7 @@ namespace RTC
 
 	void RtxStream::ReceiveRtcpSenderReport(RTC::RTCP::SenderReport* report)
 	{
-		//MS_TRACE();
+		 
 
 		this->lastSrReceived  = chen::uv_util::GetTimeMs();
 		this->lastSrTimestamp = report->GetNtpSec() << 16;
@@ -153,7 +148,7 @@ namespace RTC
 
 	bool RtxStream::UpdateSeq(RTC::RtpPacket* packet)
 	{
-		//MS_TRACE();
+		 
 
 		uint16_t seq    = packet->GetSequenceNumber();
 		uint16_t udelta = seq - this->maxSeq;
@@ -183,7 +178,7 @@ namespace RTC
 			{
 				// Two sequential packets. Assume that the other side restarted without
 				// telling us so just re-sync (i.e., pretend this was the first packet).
-				WARNING_EX_LOG(" rtx too bad sequence number, re-syncing RTP [ssrc:%u, seq:%hu]",
+				WARNING_EX_LOG( "rtx too bad sequence number, re-syncing RTP [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
@@ -194,7 +189,7 @@ namespace RTC
 			}
 			else
 			{
-				WARNING_EX_LOG("rtx bad sequence number, ignoring packet [ssrc:%u, seq:%hu]",
+				WARNING_EX_LOG( "rtx, bad sequence number, ignoring packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
@@ -217,7 +212,7 @@ namespace RTC
 
 	inline void RtxStream::InitSeq(uint16_t seq)
 	{
-		//MS_TRACE();
+		 
 
 		// Initialize/reset RTP counters.
 		this->baseSeq = seq;

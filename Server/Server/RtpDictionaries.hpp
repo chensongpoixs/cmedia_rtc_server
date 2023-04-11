@@ -97,7 +97,7 @@ namespace RTC
 
 		void SetMimeType(const std::string& mimeType);
 
-		//void UpdateMimeType();
+		void UpdateMimeType();
 
 		const std::string& ToString() const
 		{

@@ -9,30 +9,29 @@ static constexpr uint32_t KeyFrameRetransmissionWaitTime{ 1000 };
 /* PendingKeyFrameInfo methods. */
 
 RTC::PendingKeyFrameInfo::PendingKeyFrameInfo(PendingKeyFrameInfo::Listener* listener, uint32_t ssrc)
-  : chen::ctimer()
-  , listener(listener)
+  : listener(listener)
   , ssrc(ssrc)
 {
 	//MS_TRACE();
 
-	//this->timer = new Timer(this);
-	chen::ctimer::init();
-	/*this->timer->*/Start(KeyFrameRetransmissionWaitTime);
+	this->timer = new chen::ctimer(this);
+	//chen::ctimer::init();
+	this->timer->Start(KeyFrameRetransmissionWaitTime);
 }
 
 RTC::PendingKeyFrameInfo::~PendingKeyFrameInfo()
 {
 	//MS_TRACE();
 
-	/*this->timer->*/Stop();
-	//delete this->timer;
+	 this->timer-> Stop();
+	 delete this->timer;
 }
 
-inline void RTC::PendingKeyFrameInfo::OnTimer(ctimer * timer)
+inline void RTC::PendingKeyFrameInfo::OnTimer(chen::ctimer * timer)
 {
 //	MS_TRACE();
 
-	 if (timer ==  this)
+	 if (timer ==  this->timer)
 		this->listener->OnKeyFrameRequestTimeout(this);
 }
 
@@ -40,29 +39,28 @@ inline void RTC::PendingKeyFrameInfo::OnTimer(ctimer * timer)
 
 RTC::KeyFrameRequestDelayer::KeyFrameRequestDelayer(
   KeyFrameRequestDelayer::Listener* listener, uint32_t ssrc, uint32_t delay)
-  : chen::ctimer()
-  , listener(listener)
+  :  listener(listener)
   , ssrc(ssrc)
 {
 	//MS_TRACE();
-	chen::ctimer::init();
-	//this->timer = new Timer(this);
-	/*this->timer->*/Start(delay);
+	//chen::ctimer::init();
+	this->timer = new chen::ctimer(this);
+	this->timer->Start(delay);
 }
 
 RTC::KeyFrameRequestDelayer::~KeyFrameRequestDelayer()
 {
 //	MS_TRACE();
 
-	/*this->timer->*/Stop();
-	//delete this->timer;
+	 this->timer-> Stop();
+	 delete this->timer;
 }
 
-inline void RTC::KeyFrameRequestDelayer::OnTimer(ctimer * timer)
+inline void RTC::KeyFrameRequestDelayer::OnTimer(chen::ctimer * timer)
 {
 	//MS_TRACE();
 
-	 if (timer == this )
+	 if (timer == this->timer )
 		this->listener->OnKeyFrameDelayTimeout(this);
 }
 

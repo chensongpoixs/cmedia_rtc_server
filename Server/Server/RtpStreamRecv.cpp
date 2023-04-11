@@ -1,13 +1,17 @@
-//#define MS_CLASS "RTC::RtpStreamRecv"
+﻿#define MS_CLASS "RTC::RtpStreamRecv"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "RtpStreamRecv.hpp"
 //#include "Logger.hpp"
 //#include "Utils.hpp"
 #include "Tools.hpp"
-#include "RtpStreamRecv.hpp"
-#include "cuv_util.h"
-#include "RtpDictionaries.hpp"
+#include "ReceiverReport.hpp"
+#include "SenderReport.hpp"
+#include "clog.h"
+//#include "FeedbackPsPliPacket.h"
+#include "FeedbackPsPli.hpp"
+#include "FeedbackRtpNack.hpp"
+#include "FeedbackPsFir.hpp"
 namespace RTC
 {
 	/* Static. */
@@ -20,24 +24,22 @@ namespace RTC
 	RtpStreamRecv::TransmissionCounter::TransmissionCounter(
 	  uint8_t spatialLayers, uint8_t temporalLayers, size_t windowSize)
 	{
-		//MS_TRACE();
-
+		 
 		// Reserve vectors capacity.
-		this->spatialLayerCounters = std::vector<std::vector<chen::RtpDataCounter>>(spatialLayers) ;
+		this->spatialLayerCounters = std::vector<std::vector<RTC::RtpDataCounter>>(spatialLayers);
 
 		for (auto& spatialLayerCounter : this->spatialLayerCounters)
 		{
 			for (uint8_t tIdx{ 0u }; tIdx < temporalLayers; ++tIdx)
 			{
-				spatialLayerCounter.emplace_back(chen::RtpDataCounter(windowSize));
+				spatialLayerCounter.emplace_back(RTC::RtpDataCounter(windowSize));
 			}
 		}
 	}
 
 	void RtpStreamRecv::TransmissionCounter::Update(RTC::RtpPacket* packet)
 	{
-	//	MS_TRACE();
-
+		 
 		auto spatialLayer  = packet->GetSpatialLayer();
 		auto temporalLayer = packet->GetTemporalLayer();
 
@@ -49,15 +51,14 @@ namespace RTC
 		if (temporalLayer > this->spatialLayerCounters[0].size() - 1)
 			temporalLayer = this->spatialLayerCounters[0].size() - 1;
 
-		RtpDataCounter& counter =  spatialLayerCounters[spatialLayer][temporalLayer];
+		auto& counter = this->spatialLayerCounters[spatialLayer][temporalLayer];
 
 		counter.Update(packet);
 	}
 
 	uint32_t RtpStreamRecv::TransmissionCounter::GetBitrate(uint64_t nowMs)
 	{
-		//MS_TRACE();
-
+		 
 		uint32_t rate{ 0u };
 
 		for (auto& spatialLayerCounter : this->spatialLayerCounters)
@@ -74,11 +75,10 @@ namespace RTC
 	uint32_t RtpStreamRecv::TransmissionCounter::GetBitrate(
 	  uint64_t nowMs, uint8_t spatialLayer, uint8_t temporalLayer)
 	{
-		//MS_TRACE();
-
-		//MS_ASSERT(spatialLayer < this->spatialLayerCounters.size(), "spatialLayer too high");
-		//MS_ASSERT(
-		 // temporalLayer < this->spatialLayerCounters[spatialLayer].size(), "temporalLayer too high");
+		using namespace chen;
+		cassert(spatialLayer < this->spatialLayerCounters.size(), "spatialLayer too high");
+		cassert(
+		  temporalLayer < this->spatialLayerCounters[spatialLayer].size(), "temporalLayer too high");
 
 		// Return 0 if specified layers are not being received.
 		auto& counter = this->spatialLayerCounters[spatialLayer][temporalLayer];
@@ -112,9 +112,8 @@ namespace RTC
 
 	uint32_t RtpStreamRecv::TransmissionCounter::GetSpatialLayerBitrate(uint64_t nowMs, uint8_t spatialLayer)
 	{
-		//MS_TRACE();
-
-		//MS_ASSERT(spatialLayer < this->spatialLayerCounters.size(), "spatialLayer too high");
+		using namespace chen;
+		cassert(spatialLayer < this->spatialLayerCounters.size(), "spatialLayer too high");
 
 		uint32_t rate{ 0u };
 
@@ -137,11 +136,10 @@ namespace RTC
 	uint32_t RtpStreamRecv::TransmissionCounter::GetLayerBitrate(
 	  uint64_t nowMs, uint8_t spatialLayer, uint8_t temporalLayer)
 	{
-		//MS_TRACE();
-
-		//MS_ASSERT(spatialLayer < this->spatialLayerCounters.size(), "spatialLayer too high");
-		//MS_ASSERT(
-		//  temporalLayer < this->spatialLayerCounters[spatialLayer].size(), "temporalLayer too high");
+		 using namespace chen;
+		cassert(spatialLayer < this->spatialLayerCounters.size(), "spatialLayer too high");
+		cassert(
+		  temporalLayer < this->spatialLayerCounters[spatialLayer].size(), "temporalLayer too high");
 
 		auto& counter = this->spatialLayerCounters[spatialLayer][temporalLayer];
 
@@ -150,8 +148,7 @@ namespace RTC
 
 	size_t RtpStreamRecv::TransmissionCounter::GetPacketCount() const
 	{
-		//MS_TRACE();
-
+		 
 		size_t packetCount{ 0u };
 
 		for (auto& spatialLayerCounter : this->spatialLayerCounters)
@@ -167,8 +164,7 @@ namespace RTC
 
 	size_t RtpStreamRecv::TransmissionCounter::GetBytes() const
 	{
-		//MS_TRACE();
-
+		 
 		size_t bytes{ 0u };
 
 		for (const auto& spatialLayerCounter : this->spatialLayerCounters)
@@ -185,13 +181,11 @@ namespace RTC
 	/* Instance methods. */
 
 	RtpStreamRecv::RtpStreamRecv(RTC::RtpStreamRecv::Listener* listener, RTC::RtpStream::Params& params)
-	  : RTC::RtpStream::RtpStream(listener, params, 10)
-	  , chen::ctimer()
-	  ,  transmissionCounter(
+	  : RTC::RtpStream::RtpStream(listener, params, 10),
+	    transmissionCounter(
 	      params.spatialLayers, params.temporalLayers, this->params.useDtx ? 6000 : 2500)
 	{
-		//MS_TRACE();
-
+		 
 		if (this->params.useNack)
 		{
 			this->nackGenerator.reset(new RTC::NackGenerator(this));
@@ -199,33 +193,30 @@ namespace RTC
 
 		// Run the RTP inactivity periodic timer (use a different timeout if DTX is
 		// enabled).
-	//	this->inactivityCheckPeriodicTimer = new Timer(this);
-		chen::ctimer::init();
+		this->inactivityCheckPeriodicTimer = new chen::ctimer(this);
 		this->inactive                     = false;
 
 		if (!this->params.useDtx)
 		{
-			/*this->inactivityCheckPeriodicTimer->*/Start(InactivityCheckInterval);
+			this->inactivityCheckPeriodicTimer->Start(InactivityCheckInterval);
 		}
 		else
 		{
-			/*this->inactivityCheckPeriodicTimer->*/Start(InactivityCheckIntervalWithDtx);
+			this->inactivityCheckPeriodicTimer->Start(InactivityCheckIntervalWithDtx);
 		}
 	}
 
 	RtpStreamRecv::~RtpStreamRecv()
 	{
-		//MS_TRACE();
-		chen::ctimer::destroy();
+		 
 		// Close the RTP inactivity check periodic timer.
-		//delete this->inactivityCheckPeriodicTimer;
+		delete this->inactivityCheckPeriodicTimer;
 	}
 
 	/*void RtpStreamRecv::FillJsonStats(json& jsonObject)
 	{
-		MS_TRACE();
-
-		uint64_t nowMs = DepLibUV::GetTimeMs();
+		 
+		uint64_t nowMs = chen::uv_util::GetTimeMs();
 
 		RTC::RtpStream::FillJsonStats(jsonObject);
 
@@ -249,16 +240,16 @@ namespace RTC
 				}
 			}
 		}
-	}
-*/
+	}*/
+
 	bool RtpStreamRecv::ReceivePacket(RTC::RtpPacket* packet)
 	{
-		//MS_TRACE();
-
+		 
 		// Call the parent method.
 		if (!RTC::RtpStream::ReceivePacket(packet))
 		{
-			WARNING_EX_LOG("rtp, packet discarded");
+			using namespace chen;
+			WARNING_EX_LOG( "rtp packet discarded");
 
 			return false;
 		}
@@ -267,6 +258,7 @@ namespace RTC
 		if (packet->GetPayloadType() == GetPayloadType())
 		{
 			RTC::Codecs::Tools::ProcessRtpPacket(packet, GetMimeType());
+			//packet->Dump();
 		}
 
 		// Pass the packet to the NackGenerator.
@@ -305,29 +297,32 @@ namespace RTC
 		}
 
 		// Restart the inactivityCheckPeriodicTimer.
-		//if (this->inactivityCheckPeriodicTimer)
-			/*this->inactivityCheckPeriodicTimer->*/Restart();
+		if (this->inactivityCheckPeriodicTimer)
+		{
+			this->inactivityCheckPeriodicTimer->Restart();
+		}
 
 		return true;
 	}
 
 	bool RtpStreamRecv::ReceiveRtxPacket(RTC::RtpPacket* packet)
 	{
-		//MS_TRACE();
-
+		using namespace chen;
 		if (!this->params.useNack)
 		{
-			WARNING_EX_LOG("rtx, NACK not supported");
+			
+			WARNING_EX_LOG( "NACK not supported");
 
 			return false;
 		}
 
-		//MS_ASSERT(packet->GetSsrc() == this->params.rtxSsrc, "invalid ssrc on RTX packet");
+		cassert(packet->GetSsrc() == this->params.rtxSsrc, "invalid ssrc on RTX packet");
 
 		// Check that the payload type corresponds to the one negotiated.
 		if (packet->GetPayloadType() != this->params.rtxPayloadType)
 		{
-			WARNING_EX_LOG(" rtx, ignoring RTX packet with invalid payload type [ssrc:%u, seq:%hu, pt:%hhu]",
+			WARNING_EX_LOG( "ignoring RTX packet with invalid payload type [ssrc:%" PRIu32 ", seq:%" PRIu16
+			  ", pt:%" PRIu8 "]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber(),
 			  packet->GetPayloadType());
@@ -345,32 +340,35 @@ namespace RTC
 			}
 		}
 
-#if MS_LOG_DEV_LEVEL == 3
+ 
 		// Get the RTX packet sequence number for logging purposes.
 		auto rtxSeq = packet->GetSequenceNumber();
-#endif
+ 
 
 		// Get the original RTP packet.
 		if (!packet->RtxDecode(this->params.payloadType, this->params.ssrc))
 		{
-			DEBUG_EX_LOG( "ignoring empty RTX packet [ssrc:%u, seq:%hu, pt:%hhu]",
+			DEBUG_EX_LOG(
+			  "ignoring empty RTX packet [ssrc:%" PRIu32 ", seq:%" PRIu16 ", pt:%" PRIu8 "]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber(),
 			  packet->GetPayloadType());
 
 			return false;
 		}
-		using namespace chen;
-		DEBUG_EX_LOG("received RTX packet [ssrc:%u, seq:%hhu] recovering original [ssrc:%u, seq:%hu]",
+
+		DEBUG_EX_LOG(
+		  "received RTX packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "] recovering original [ssrc:%" PRIu32
+		  ", seq:%" PRIu16 "]",
 		  this->params.rtxSsrc,
-			packet->GetSequenceNumber()/*rtxSeq*/,
+		  rtxSeq,
 		  packet->GetSsrc(),
 		  packet->GetSequenceNumber());
 
 		// If not a valid packet ignore it.
 		if (!RTC::RtpStream::UpdateSeq(packet))
 		{
-			WARNING_EX_LOG( "rtx, invalid RTX packet [ssrc:%u, seq:%hu]",
+			WARNING_EX_LOG( "invalid RTX packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber());
 
@@ -379,7 +377,9 @@ namespace RTC
 
 		// Process the packet at codec level.
 		if (packet->GetPayloadType() == GetPayloadType())
+		{
 			RTC::Codecs::Tools::ProcessRtpPacket(packet, GetMimeType());
+		}
 
 		// Mark the packet as retransmitted.
 		RTC::RtpStream::PacketRetransmitted(packet);
@@ -403,8 +403,8 @@ namespace RTC
 			}
 
 			// Restart the inactivityCheckPeriodicTimer.
-			//if (this->inactivityCheckPeriodicTimer)
-				/*this->inactivityCheckPeriodicTimer->*/Restart();
+			if (this->inactivityCheckPeriodicTimer)
+				this->inactivityCheckPeriodicTimer->Restart();
 
 			return true;
 		}
@@ -414,8 +414,7 @@ namespace RTC
 
 	RTC::RTCP::ReceiverReport* RtpStreamRecv::GetRtcpReceiverReport()
 	{
-		//MS_TRACE();
-
+		 
 		uint8_t worstRemoteFractionLost{ 0 };
 
 		if (this->params.useInBandFec)
@@ -425,7 +424,7 @@ namespace RTC
 			  ->OnRtpStreamNeedWorstRemoteFractionLost(this, worstRemoteFractionLost);
 
 			if (worstRemoteFractionLost > 0)
-				DEBUG_EX_LOG("rtcp, using worst remote fraction lost:%hhu", worstRemoteFractionLost);
+				DEBUG_EX_LOG(  "rtcp using worst remote fraction lost:%" PRIu8, worstRemoteFractionLost);
 		}
 
 		auto* report = new RTC::RTCP::ReceiverReport();
@@ -504,8 +503,7 @@ namespace RTC
 
 	RTC::RTCP::ReceiverReport* RtpStreamRecv::GetRtxRtcpReceiverReport()
 	{
-		//MS_TRACE();
-
+		 
 		if (HasRtx())
 			return this->rtxStream->GetRtcpReceiverReport();
 
@@ -514,14 +512,13 @@ namespace RTC
 
 	void RtpStreamRecv::ReceiveRtcpSenderReport(RTC::RTCP::SenderReport* report)
 	{
-		//MS_TRACE();
-
-		this->lastSrReceived  = chen::uv_util::GetTimeMs();
+		 
+		this->lastSrReceived  = uv_util::GetTimeMs();
 		this->lastSrTimestamp = report->GetNtpSec() << 16;
 		this->lastSrTimestamp += report->GetNtpFrac() >> 16;
 
 		// Update info about last Sender Report.
-		chen::rtc_time::Ntp ntp; // NOLINT(cppcoreguidelines-pro-type-member-init)
+		rtc_time::Ntp ntp; // NOLINT(cppcoreguidelines-pro-type-member-init)
 
 		ntp.seconds   = report->GetNtpSec();
 		ntp.fractions = report->GetNtpFrac();
@@ -535,16 +532,14 @@ namespace RTC
 
 	void RtpStreamRecv::ReceiveRtxRtcpSenderReport(RTC::RTCP::SenderReport* report)
 	{
-		//MS_TRACE();
-
+		 
 		if (HasRtx())
 			this->rtxStream->ReceiveRtcpSenderReport(report);
 	}
 
 	void RtpStreamRecv::ReceiveRtcpXrDelaySinceLastRr(RTC::RTCP::DelaySinceLastRr::SsrcInfo* ssrcInfo)
 	{
-		//MS_TRACE();
-
+		 
 		/* Calculate RTT. */
 
 		// Get the NTP representation of the current timestamp.
@@ -581,11 +576,18 @@ namespace RTC
 
 	void RtpStreamRecv::RequestKeyFrame()
 	{
-		//MS_TRACE();
+		 
+		///////////////////////////////////////////////////////////////////////////
+		////                         IDR Request
 
+	    //     关键帧也叫做即时刷新帧，简称IDR帧。对视频来说，IDR帧的解码无需参考之前的帧，因此在丢包严重时可以通过发送关键帧请求进行画面的恢复。
+		// 关键帧的请求方式分为三种：RTCP FIR反馈（Full intra frame request）、RTCP PLI 反馈（Picture Loss Indictor）或SIP Info消息，
+		//							具体使用哪种可通过协商确定.
+ 
+		///////////////////////////////////////////////////////////////////////////
 		if (this->params.usePli)
 		{
-			DEBUG_EX_LOG("rtcp, rtx, sending PLI [ssrc:%u]", GetSsrc());
+			DEBUG_EX_LOG( "sending PLI [ssrc:%" PRIu32 "]", GetSsrc());
 
 			// Sender SSRC should be 0 since there is no media sender involved, but
 			// some implementations like gstreamer will fail to process it otherwise.
@@ -600,7 +602,7 @@ namespace RTC
 		}
 		else if (this->params.useFir)
 		{
-			DEBUG_EX_LOG("rtcp, rtx, sending FIR [ssrc:%u]", GetSsrc());
+			DEBUG_EX_LOG(  "sending FIR [ssrc:%" PRIu32 "]", GetSsrc());
 
 			// Sender SSRC should be 0 since there is no media sender involved, but
 			// some implementations like gstreamer will fail to process it otherwise.
@@ -619,10 +621,9 @@ namespace RTC
 
 	void RtpStreamRecv::Pause()
 	{
-		//MS_TRACE();
-
-		//if (this->inactivityCheckPeriodicTimer)
-			/*this->inactivityCheckPeriodicTimer->*/Stop();
+		 
+		if (this->inactivityCheckPeriodicTimer)
+			this->inactivityCheckPeriodicTimer->Stop();
 
 		if (this->params.useNack)
 			this->nackGenerator->Reset();
@@ -634,16 +635,14 @@ namespace RTC
 
 	void RtpStreamRecv::Resume()
 	{
-		//MS_TRACE();
-
-		if (/*this->inactivityCheckPeriodicTimer && */!this->inactive)
-			/*this->inactivityCheckPeriodicTimer->*/Restart();
+		 
+		if (this->inactivityCheckPeriodicTimer && !this->inactive)
+			this->inactivityCheckPeriodicTimer->Restart();
 	}
 
 	void RtpStreamRecv::CalculateJitter(uint32_t rtpTimestamp)
 	{
-		//MS_TRACE();
-
+		 
 		if (this->params.clockRate == 0u)
 			return;
 
@@ -669,8 +668,7 @@ namespace RTC
 
 	void RtpStreamRecv::UpdateScore()
 	{
-	//	MS_TRACE();
-
+		 
 		// Calculate number of packets expected in this interval.
 		auto totalExpected = GetExpectedPackets();
 		uint32_t expected  = totalExpected - this->expectedPriorScore;
@@ -752,10 +750,12 @@ namespace RTC
 		auto repairedRatio  = static_cast<float>(repaired) / static_cast<float>(received);
 		auto repairedWeight = std::pow(1 / (repairedRatio + 1), 4);
 
-		//MS_ASSERT(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
+		cassert(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
 
 		if (retransmitted > 0)
+		{
 			repairedWeight *= static_cast<float>(repaired) / retransmitted;
+		}
 
 		lost -= repaired * repairedWeight;
 
@@ -777,40 +777,36 @@ namespace RTC
 		RtpStream::UpdateScore(score);
 	}
 
-	//inline void RtpStreamRecv::OnTimer(Timer* timer)
-	//{
-	//	MS_TRACE();
-
-	//	if (timer == this->inactivityCheckPeriodicTimer)
-	//	{
-	//		this->inactive = true;
-
-	//		if (GetScore() != 0)
-	//		{
-	//			MS_WARN_2TAGS(
-	//			  rtp, score, "RTP inactivity detected, resetting score to 0 [ssrc:%" PRIu32 "]", GetSsrc());
-	//		}
-
-	//		ResetScore(0, /*notify*/ true);
-	//	}
-	//}
-
-	void RtpStreamRecv::OnTimer(ctimer * timer)
+	inline void RtpStreamRecv::OnTimer(chen::ctimer* timer)
 	{
+		 
+		if (timer == this->inactivityCheckPeriodicTimer)
+		{
+			this->inactive = true;
+
+			if (GetScore() != 0)
+			{
+				WARNING_EX_LOG( "RTP inactivity detected, resetting score to 0 [ssrc:%" PRIu32 "]", GetSsrc());
+			}
+
+			ResetScore(0, /*notify*/ true);
+		}
 	}
 
 	inline void RtpStreamRecv::OnNackGeneratorNackRequired(const std::vector<uint16_t>& seqNumbers)
 	{
-		//MS_TRACE();
+		 
+		cassert(this->params.useNack, "NACK required but not supported");
 
-	//	MS_ASSERT(this->params.useNack, "NACK required but not supported");
-
-		DEBUG_EX_LOG("rtx, triggering NACK [ssrc:%u, first seq:%hu, num packets:%zu]", this->params.ssrc, seqNumbers[0], seqNumbers.size());
+		DEBUG_EX_LOG( "triggering NACK [ssrc:%" PRIu32 ", first seq:%" PRIu16 ", num packets:%zu]",
+		  this->params.ssrc,
+		  seqNumbers[0],
+		  seqNumbers.size());
 
 		RTC::RTCP::FeedbackRtpNackPacket packet(0, GetSsrc());
 
-		std::vector<uint16_t>::const_iterator it			= seqNumbers.begin();
-		std::vector<uint16_t>::const_iterator end			= seqNumbers.end();
+		auto it        = seqNumbers.begin();
+		const auto end = seqNumbers.end();
 		size_t numPacketsRequested{ 0 };
 
 		while (it != end)
@@ -820,7 +816,10 @@ namespace RTC
 
 			seq = *it;
 			++it;
-
+			//////////////////////////////////////////////////////////////
+			//[uint16_t ]	[uint16_t]
+			//[seq]			[0000 0000 0000 0000 ]
+			//////////////////////////////////////////////////////////////
 			while (it != end)
 			{
 				uint16_t shift = *it - seq - 1;
@@ -834,7 +833,7 @@ namespace RTC
 				++it;
 			}
 
-			RTC::RTCP::FeedbackRtpNackItem* nackItem = new RTC::RTCP::FeedbackRtpNackItem(seq, bitmask);
+			auto* nackItem = new RTC::RTCP::FeedbackRtpNackItem(seq, bitmask);
 
 			packet.AddItem(nackItem);
 
@@ -844,12 +843,13 @@ namespace RTC
 		// Ensure that the RTCP packet fits into the RTCP buffer.
 		if (packet.GetSize() > RTC::RTCP::BufferSize)
 		{
-			WARNING_EX_LOG("rtx, cannot send RTCP NACK packet, size too big (%zu bytes)", packet.GetSize());
+			WARNING_EX_LOG( "rtx cannot send RTCP NACK packet, size too big (%zu bytes)", packet.GetSize());
 
 			return;
 		}
-
+		// 发送feedback 个数
 		this->nackCount++;
+		// 发送一共nack个数
 		this->nackPacketCount += numPacketsRequested;
 
 		packet.Serialize(RTC::RTCP::Buffer);
@@ -860,9 +860,8 @@ namespace RTC
 
 	inline void RtpStreamRecv::OnNackGeneratorKeyFrameRequired()
 	{
-		//MS_TRACE();
-
-		DEBUG_EX_LOG("rtx, requesting key frame [ssrc:%u]", this->params.ssrc);
+		 
+		DEBUG_EX_LOG(  "requesting key frame [ssrc:%" PRIu32 "]", this->params.ssrc);
 
 		RequestKeyFrame();
 	}

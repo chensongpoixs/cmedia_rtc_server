@@ -1,10 +1,10 @@
-﻿//#define MS_CLASS "RTC::RtpStream"
+#define MS_CLASS "RTC::RtpStream"
 // #define MS_LOG_DEV_LEVEL 3
 
 #include "RtpStream.hpp"
 //#include "Logger.hpp"
 #include "SeqManager.hpp"
-
+#include "RtpDictionaries.hpp"
 namespace RTC
 {
 	/* Static. */
@@ -18,14 +18,14 @@ namespace RTC
 
 	RtpStream::RtpStream(
 	  RTC::RtpStream::Listener* listener, RTC::RtpStream::Params& params, uint8_t initialScore)
-	  : listener(listener), params(params), score(initialScore), activeSinceMs(chen::uv_util::GetTimeMs())
+	  : listener(listener), params(params), score(initialScore), activeSinceMs(uv_util::GetTimeMs())
 	{
-		//MS_TRACE();
+		 
 	}
 
 	RtpStream::~RtpStream()
 	{
-		//MS_TRACE();
+		 
 
 		delete this->rtxStream;
 	}
@@ -81,8 +81,7 @@ namespace RTC
 
 	void RtpStream::SetRtx(uint8_t payloadType, uint32_t ssrc)
 	{
-		//MS_TRACE();
-
+		 
 		this->params.rtxPayloadType = payloadType;
 		this->params.rtxSsrc        = ssrc;
 
@@ -104,19 +103,17 @@ namespace RTC
 		params.cname            = GetCname();
 
 		// Tell the RtpCodecMimeType to update its string based on current type and subtype.
-		//params.mimeType.UpdateMimeType();
+		params.mimeType.UpdateMimeType();
 
 		this->rtxStream = new RTC::RtxStream(params);
 	}
 
 	bool RtpStream::ReceivePacket(RTC::RtpPacket* packet)
 	{
-		// MS_TRACE();
-
+		 
 		uint16_t seq = packet->GetSequenceNumber();
 
 		// If this is the first packet seen, initialize stuff.
-		// TODO@chensong 2022-11-03 一帧数据开始位置
 		if (!this->started)
 		{
 			InitSeq(seq);
@@ -124,13 +121,15 @@ namespace RTC
 			this->started     = true;
 			this->maxSeq      = seq - 1;
 			this->maxPacketTs = packet->GetTimestamp();
-			this->maxPacketMs = chen::uv_util::GetTimeMs();
+			this->maxPacketMs = uv_util::GetTimeMs();
 		}
 
 		// If not a valid packet ignore it.
 		if (!UpdateSeq(packet))
 		{
-			WARNING_EX_LOG("rtp, invalid packet [ssrc:%u, seq:%hu]",
+			WARNING_EX_LOG(
+			   
+			  "invalid packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 			  packet->GetSsrc(),
 			  packet->GetSequenceNumber());
 
@@ -141,7 +140,7 @@ namespace RTC
 		if (RTC::SeqManager<uint32_t>::IsSeqHigherThan(packet->GetTimestamp(), this->maxPacketTs))
 		{
 			this->maxPacketTs = packet->GetTimestamp();
-			this->maxPacketMs = chen::uv_util::GetTimeMs();
+			this->maxPacketMs = uv_util::GetTimeMs();
 		}
 
 		return true;
@@ -149,8 +148,7 @@ namespace RTC
 
 	void RtpStream::ResetScore(uint8_t score, bool notify)
 	{
-		//MS_TRACE();
-
+		 
 		this->scores.clear();
 
 		if (this->score != score)
@@ -161,7 +159,7 @@ namespace RTC
 
 			// If previous score was 0 (and new one is not 0) then update activeSinceMs.
 			if (previousScore == 0u)
-				this->activeSinceMs = chen::uv_util::GetTimeMs();
+				this->activeSinceMs = uv_util::GetTimeMs();
 
 			// Notify the listener.
 			if (notify)
@@ -171,8 +169,7 @@ namespace RTC
 
 	bool RtpStream::UpdateSeq(RTC::RtpPacket* packet)
 	{
-		//MS_TRACE();
-
+		 
 		uint16_t seq    = packet->GetSequenceNumber();
 		uint16_t udelta = seq - this->maxSeq;
 
@@ -201,18 +198,18 @@ namespace RTC
 			{
 				// Two sequential packets. Assume that the other side restarted without
 				// telling us so just re-sync (i.e., pretend this was the first packet).
-				WARNING_EX_LOG("rtp, too bad sequence number, re-syncing RTP [ssrc:%u, seq:%hu]",
+				WARNING_EX_LOG( "too bad sequence number, re-syncing RTP [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
 				InitSeq(seq);
 
 				this->maxPacketTs = packet->GetTimestamp();
-				this->maxPacketMs = chen::uv_util::GetTimeMs();
+				this->maxPacketMs = uv_util::GetTimeMs();
 			}
 			else
 			{
-				WARNING_EX_LOG("rtp, bad sequence number, ignoring packet [ssrc:%u, seq:%hu]",
+				WARNING_EX_LOG( "bad sequence number, ignoring packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
 				  packet->GetSsrc(),
 				  packet->GetSequenceNumber());
 
@@ -235,8 +232,7 @@ namespace RTC
 
 	void RtpStream::UpdateScore(uint8_t score)
 	{
-		//MS_TRACE();
-
+		 
 		// Add the score into the histogram.
 		if (this->scores.size() == ScoreHistogramLength)
 			this->scores.erase(this->scores.begin());
@@ -261,8 +257,8 @@ namespace RTC
 		size_t weight{ 0 };
 		size_t samples{ 0 };
 		size_t totalScore{ 0 };
-		// ï¿½ï¿½È¨Æ½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
-		// 1. È¨ï¿½ï¿½Ô½ï¿½ï¿½ ï¿½Ð¶Ïµï¿½Õ¼ï¿½Ð±ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ 
+		// 加权平均数  计算 哈
+		// 1. 权重越大 判断的占有标量越大哈
 		for (auto score : this->scores)
 		{
 			weight++;
@@ -272,20 +268,21 @@ namespace RTC
 
 		// clang-tidy "thinks" that this can lead to division by zero but we are
 		// smarter.
-		// NOLINTNEXTLINE(clang-analyzer-core.DivideZero) // Round ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡Å¼ï¿½ï¿½
+		// NOLINTNEXTLINE(clang-analyzer-core.DivideZero)  // Round 函数即四舍五入取偶
 		this->score = static_cast<uint8_t>(std::round(static_cast<double>(totalScore) / samples));
 
 		// Call the listener if the global score has changed.
 		if (this->score != previousScore)
 		{
-			DEBUG_EX_LOG("score, [added score:%hhu, previous computed score:%hhu, new computed score:%hhu] (calling listener)",
+			DEBUG_EX_LOG( "[added score:%" PRIu8 ", previous computed score:%" PRIu8 ", new computed score:%" PRIu8
+			  "] (calling listener)",
 			  score,
 			  previousScore,
 			  this->score);
 
 			// If previous score was 0 (and new one is not 0) then update activeSinceMs.
 			if (previousScore == 0u)
-				this->activeSinceMs = chen::uv_util::GetTimeMs();
+				this->activeSinceMs = uv_util::GetTimeMs();
 
 			this->listener->OnRtpStreamScore(this, this->score, previousScore);
 		}
@@ -305,22 +302,19 @@ namespace RTC
 
 	void RtpStream::PacketRetransmitted(RTC::RtpPacket* /*packet*/)
 	{
-		//MS_TRACE();
-
+		 
 		this->packetsRetransmitted++;
 	}
 
 	void RtpStream::PacketRepaired(RTC::RtpPacket* /*packet*/)
 	{
-		//MS_TRACE();
-
+		 
 		this->packetsRepaired++;
 	}
 
 	inline void RtpStream::InitSeq(uint16_t seq)
 	{
-		//MS_TRACE();
-
+		 
 		// Initialize/reset RTP counters.
 		this->baseSeq = seq;
 		this->maxSeq  = seq;
@@ -329,7 +323,6 @@ namespace RTC
 
 	/*void RtpStream::Params::FillJson(json& jsonObject) const
 	{
-		MS_TRACE();
 
 		jsonObject["encodingIdx"] = this->encodingIdx;
 		jsonObject["ssrc"]        = this->ssrc;

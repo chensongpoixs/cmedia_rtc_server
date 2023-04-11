@@ -55,10 +55,14 @@ namespace chen {
 
 		return true;
 	}
-	crtcp_rr crtx_stream::get_rtcp_receiver_report()
+	RTC::RTCP::ReceiverReport* crtx_stream::get_rtcp_receiver_report()
 	{
-		crtcp_rr report;
-		report.set_ssrc(get_ssrc());
+		//crtcp_rr report;
+		//report.set_ssrc(get_ssrc());
+		auto* report = new RTC::RTCP::ReceiverReport();
+
+		report->SetSsrc(get_ssrc());
+		
 		uint32  prevPacketsLost = m_packets_lost;
 
 		// Calculate Packets Expected and Lost.
@@ -94,11 +98,16 @@ namespace chen {
 		}
 		m_reported_packet_lost += (m_packets_lost - prevPacketsLost);
 
-		report.set_lost_packets(m_reported_packet_lost);
-		report.set_lost_rate(m_fraction_lost);
+		//report.set_lost_packets(m_reported_packet_lost);
+		//report.set_lost_rate(m_fraction_lost);
+		report->SetTotalLost(m_reported_packet_lost);
+		report->SetFractionLost(m_fraction_lost);
 
-		report.set_highest_sn(static_cast<uint32 >(m_max_seq) + m_cycles);
-		report.set_jitter(0);
+		report->SetLastSeq(static_cast<uint32>(m_max_seq) + m_cycles);
+
+		//report.set_highest_sn(static_cast<uint32 >(m_max_seq) + m_cycles);
+		//report.set_jitter(0);
+		report->SetJitter(0);
 
 		if (m_last_sr_received != 0)
 		{
@@ -109,21 +118,27 @@ namespace chen {
 
 			dlsr |= uint32_t{ (delayMs % 1000) * 65536 / 1000 };
 
-			report.set_dlsr(dlsr);
-			report.set_lsr(m_last_sr_timestamp);
+			report->SetDelaySinceLastSenderReport(dlsr);
+			report->SetLastSenderReport(m_last_sr_timestamp);
+			//report.set_dlsr(dlsr);
+			//report.set_lsr(m_last_sr_timestamp);
 		}
 		else
 		{
-			report.set_dlsr(0);
-			report.set_lsr(0);
+			report->SetDelaySinceLastSenderReport(0);
+			report->SetLastSenderReport(0);
+			//report.set_dlsr(0);
+			//report.set_lsr(0);
 		}
 		return report;
 	}
-	void crtx_stream::receive_rtcp_sender_report(const crtcp_sr & report)
+	void crtx_stream::receive_rtcp_sender_report(RTC::RTCP::SenderReport* report)
 	{
 		m_last_sr_received = uv_util::GetTimeMs();
-		m_last_sr_timestamp = report.get_ntp()  << 16;
-		m_last_sr_timestamp += report.get_ntp() >> 16;
+		m_last_sr_timestamp = report->GetNtpSec() << 16;
+		m_last_sr_timestamp += report->GetNtpFrac() >> 16;
+
+		 
 	}
 	bool crtx_stream::update_seq(RTC::RtpPacket * packet)
 	{

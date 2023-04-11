@@ -21,12 +21,20 @@ namespace chen {
 	class ctimer
 	{
 	public:
-		ctimer();
+		class Listener
+		{
+		public:
+			virtual ~Listener() = default;
+		public :
+			virtual void OnTimer(ctimer * timer) = 0;
+		};
+	public:
+		ctimer(Listener * listener);
 		virtual ~ctimer();
 	public:
-		bool init();
+	//	bool init();
 		
-		void destroy();
+		//void destroy();
 		void Start(uint64_t timeout, uint64_t repeat = 0);
 		void Stop();
 		void Close();
@@ -50,13 +58,14 @@ namespace chen {
 		/* Callbacks fired by UV events. */
 		void OnUvTimer();
 	public: 
-	 	virtual void OnTimer(ctimer * timer) = 0;
+	 	//virtual void OnTimer(ctimer * timer) = 0;
 	private:
 		ctimer(const ctimer&);
 		ctimer& operator=(const ctimer&)  ;
 		
 
 	private:
+		Listener	*		m_listener;
 		// Allocated by this.
 		uv_timer_t*			m_uvHandle/*{ nullptr }*/;
 		// Others.

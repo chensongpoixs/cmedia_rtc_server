@@ -312,6 +312,7 @@
     <ClCompile Include="Parameters.cpp" />
     <ClCompile Include="PortManager.cpp" />
     <ClCompile Include="Producer.cpp" />
+    <ClCompile Include="RateCalculator.cpp" />
     <ClCompile Include="RtcpFeedback.cpp" />
     <ClCompile Include="RtcpParameters.cpp" />
     <ClCompile Include="rtcp\Bye.cpp" />
@@ -356,6 +357,7 @@
     <ClCompile Include="RtpStreamSend.cpp" />
     <ClCompile Include="RtxStream.cpp" />
     <ClCompile Include="SeqManager.cpp" />
+    <ClCompile Include="SimpleConsumer.cpp" />
     <ClCompile Include="StunPacket.cpp" />
     <ClCompile Include="TransportCongestionControlServer.cpp" />
   </ItemGroup>
@@ -566,6 +568,7 @@
     <ClInclude Include="PayloadDescriptorHandler.hpp" />
     <ClInclude Include="PortManager.hpp" />
     <ClInclude Include="Producer.hpp" />
+    <ClInclude Include="RateCalculator.hpp" />
     <ClInclude Include="rtcp\Bye.hpp" />
     <ClInclude Include="rtcp\CompoundPacket.hpp" />
     <ClInclude Include="rtcp\Feedback.hpp" />
@@ -603,6 +606,7 @@
     <ClInclude Include="RtpStreamSend.hpp" />
     <ClInclude Include="RtxStream.hpp" />
     <ClInclude Include="SeqManager.hpp" />
+    <ClInclude Include="SimpleConsumer.hpp" />
     <ClInclude Include="StunPacket.hpp" />
     <ClInclude Include="Tools.hpp" />
     <ClInclude Include="TransportCongestionControlServer.hpp" />

@@ -342,9 +342,9 @@ namespace RTC
 		packet->AddSenderReport(report);
 
 		// Build SDES chunk for this sender.
-		auto* sdesChunk = this->rtpStream->GetRtcpSdesChunk();
+		//auto* sdesChunk = this->rtpStream->GetRtcpSdesChunk();
 
-		packet->AddSdesChunk(sdesChunk);
+		//packet->AddSdesChunk(sdesChunk);
 
 		this->lastRtcpSentTime = nowMs;
 	}
