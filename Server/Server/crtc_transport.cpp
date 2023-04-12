@@ -32,7 +32,7 @@ purpose:		crtc_transport
 #include "cglobal_rtc_config.h"
 #include "FeedbackPsAfb.hpp"
 #include "FeedbackPsRemb.hpp"
-
+#include <unordered_map>
 
 namespace chen {
 	crtc_transport::~crtc_transport()
@@ -463,6 +463,19 @@ namespace chen {
 	}
 	void crtc_transport::OnTransportConsumerKeyFrameRequested()
 	{
+		if (!get_dtls_connected_ok())
+		{
+			WARNING_EX_LOG("not dtls connected ok !!!");
+			return;
+		}
+		ctransport_mgr:: STREAM_URL_MAP::iterator iter =   g_transport_mgr.m_all_stream_url_map.find(m_rtc_master.m_room_name + "/" + m_rtc_master.m_user_name);
+	
+		if (iter == g_transport_mgr.m_all_stream_url_map.end())
+		{
+			WARNING_EX_LOG("not find stream url = %s", std::string(m_rtc_master.m_room_name + "/" + m_rtc_master.m_room_name).c_str());
+			return;
+		}
+		iter->second->request_key_frame();
 	}
 	void crtc_transport::send_rtp_data(void * data, int32 size)
 	{

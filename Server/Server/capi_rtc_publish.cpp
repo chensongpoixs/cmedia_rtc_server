@@ -168,6 +168,8 @@ namespace chen {
 
 		if (!g_transport_mgr.m_all_stream_url_map.insert(std::make_pair(roomname + "/" + peerid, transport_ptr)).second)
 		{
+			g_transport_mgr.m_all_stream_url_map[roomname + "/" + peerid]->destroy();
+			delete g_transport_mgr.m_all_stream_url_map[roomname + "/" + peerid];
 			g_transport_mgr.m_all_stream_url_map[roomname + "/" + peerid] = transport_ptr;
 			WARNING_EX_LOG("insert failed url = %s failed !!!", std::string(roomname + "/" + peerid).c_str());
 		}
@@ -284,7 +286,7 @@ namespace chen {
 					const cmedia_payload_type& payload = payloads.at(j);
 
 					// if the payload is opus, and the encoding_param_ is channel
-					caudio_payload* audio_payload = new caudio_payload(kAudioPayloadType/*payload.m_payload_type*/, payload.m_encoding_name, payload.m_clock_rate, ::atol(payload.m_encoding_param.c_str()));
+					caudio_payload* audio_payload = new caudio_payload(/*kAudioPayloadType*/payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate, ::atol(payload.m_encoding_param.c_str()));
 					audio_payload->set_opus_param_desc(payload.m_format_specific_param);
 					// AudioPayload* audio_payload = new SrsAudioPayload(payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate, ::atol(payload.m_encoding_param.c_str()));
 					//audio_payload->set_opus_param_desc(payload.format_specific_param_);
@@ -428,7 +430,7 @@ namespace chen {
 					{
 						// if the playload is opus, and the encoding_param_ is channel
 
-						cvideo_payload * video_payload = new cvideo_payload(kVideoPayloadType/*payload.m_payload_type*/, payload.m_encoding_name, payload.m_clock_rate);
+						cvideo_payload * video_payload = new cvideo_payload(/*kVideoPayloadType*/payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate);
 						//SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
 						video_payload->set_h264_param_desc(payload.m_format_specific_param);
 
@@ -459,21 +461,21 @@ namespace chen {
 						video_payload_type = video_payload->m_pt;
 						track_desc.m_type = "video";
 						track_desc.set_codec_payload(video_payload);
-						crtx_payload_des * rtx_video_payload = new crtx_payload_des( kRtxVideoPayloadType, kVideoPayloadType);
+						//crtx_payload_des * rtx_video_payload = new crtx_payload_des( kRtxVideoPayloadType, kVideoPayloadType);
 						
-						track_desc.m_rtx_ptr = (rtx_video_payload);
-						//for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
-						//{
-						//	if (rtx_payloads[rtx_i].m_payload_type == payload.m_rtx)
-						//	{
-						//		crtx_payload_des * rtx_video_payload = new crtx_payload_des(rtx_payloads[rtx_i].m_payload_type, payload.m_payload_type);
-						//		//SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
-						//		//video_payload->set_h264_param_desc(payload.m_format_specific_param);
+						//track_desc.m_rtx_ptr = (rtx_video_payload);
+						for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
+						{
+							if (rtx_payloads[rtx_i].m_payload_type == payload.m_rtx)
+							{
+								crtx_payload_des * rtx_video_payload = new crtx_payload_des(rtx_payloads[rtx_i].m_payload_type, payload.m_payload_type);
+								//SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
+								//video_payload->set_h264_param_desc(payload.m_format_specific_param);
 
-						//		track_desc.m_rtx_ptr = (rtx_video_payload);
-						//		break;
-						//	}
-						//}
+								track_desc.m_rtx_ptr = (rtx_video_payload);
+								break;
+							}
+						}
 						// Only choose first match H.264 payload type.
 						break;
 					}

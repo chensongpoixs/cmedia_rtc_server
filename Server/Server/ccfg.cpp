@@ -44,7 +44,7 @@ namespace chen {
 
 		set_uint32(ECI_LogLevel, "log_level", ELogLevel_Num);
 
-		set_uint32(ECI_StunTimeOut, "stun_time_out", 50000);
+		set_uint32(ECI_StunTimeOut, "stun_time_out", 5000);
 
 		//配置表的值
 		load_cfg_file();

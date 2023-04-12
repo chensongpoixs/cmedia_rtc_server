@@ -65,7 +65,16 @@ namespace chen {
 		// Rewrite packet.
 		//packet->SetSsrc(this->rtpParameters.encodings[0].ssrc);
 		packet->SetSequenceNumber(seq);
-
+		if (m_rtp_params.params.rtx_ssrc == origSsrc)
+		{
+			 
+			packet->SetPayloadType(m_rtp_params.params.rtx_payload_type);
+		}
+		else
+		{
+			packet->SetPayloadType(m_rtp_params.params.payload_type);
+		}
+		
 		if (isSyncPacket)
 		{
 			DEBUG_EX_LOG( "rtp sending sync packet [ssrc:%" PRIu32 ", seq:%" PRIu16 ", ts:%" PRIu32
@@ -130,6 +139,7 @@ namespace chen {
 
 		m_rtp_stream_send_ptr ->receive_key_frame_request(messageType);
 		//RequestKeyFrame();
+		request_key_frame();
 	}
 
 	void crtc_consumer::request_key_frame()

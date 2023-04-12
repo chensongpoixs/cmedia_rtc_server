@@ -20,7 +20,7 @@ namespace chen {
 
 	class ctransport_mgr
 	{
-	private:
+	public:
 		typedef std::unordered_map<std::string, crtc_transport*>   TRANSPORT_MAP;
 									
 		typedef std::unordered_map<std::string, crtc_transport*>   STREAM_URL_MAP;

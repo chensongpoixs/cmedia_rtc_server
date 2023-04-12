@@ -33,12 +33,13 @@ namespace chen {
 			if (iter->second  &&
 				!iter->second->is_active())
 			{
-				iter->second->destroy();
+				
 				m_all_consumer_map[iter->second->get_rtp_sdp().m_msids[0]].erase(iter->second);
 				if (iter->second->get_rtc_type() == ERtcClientPublisher)
 				{
 					m_all_stream_url_map.erase(iter->second->get_rtp_sdp().m_msids[0]);
 				}
+				iter->second->destroy();
 				crtc_transport* ptr = iter->second;
 				delete ptr;
 				iter = m_all_transport_map.erase(iter);
