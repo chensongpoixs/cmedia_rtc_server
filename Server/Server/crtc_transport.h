@@ -81,6 +81,8 @@ namespace chen {
 			, m_tcc_server(NULL)
 			, m_rtc_master(master)
 			, m_transportWideCcSeq(0u)
+			, m_udp_ports()
+			, m_tcp_ports()
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -243,7 +245,8 @@ namespace chen {
 
 		crtc_room_master						m_rtc_master;
 		uint32									m_transportWideCcSeq;
-
+		std::vector<uint32>									m_udp_ports;
+		std::vector< uint32>									m_tcp_ports;
 	};
 
 

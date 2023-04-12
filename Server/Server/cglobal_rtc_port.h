@@ -15,8 +15,10 @@ purpose:		_C_DTLS_ _H_
 #include <vector>
 #include <set>
 #include <set>
-
+#include <list>
 namespace chen {
+
+	 
 	class cglobal_rtc_port
 	{
 	public:
@@ -42,7 +44,7 @@ namespace chen {
 		uint32				m_min_port;
 		uint32				m_max_port;
 		uint32				m_cur_use_port;
-		std::set<uint32>    m_unuse_port;
+		std::list<uint32>    m_unuse_port;
 
 	};
 	extern cglobal_rtc_port g_global_rtc_port;

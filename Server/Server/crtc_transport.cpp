@@ -33,7 +33,7 @@ purpose:		crtc_transport
 #include "FeedbackPsAfb.hpp"
 #include "FeedbackPsRemb.hpp"
 #include <unordered_map>
-
+#include "cglobal_rtc_port.h"
 namespace chen {
 
 	static const char * wan_ip = "0.0.0.0";
@@ -56,6 +56,7 @@ namespace chen {
 		{
 			std::string ip = wan_ip;
 			cudp_socket * socket_ptr = new   cudp_socket(this,  ip, (*iter).m_port);
+			m_udp_ports.push_back((*iter).m_port);
 			m_udp_sockets.push_back(socket_ptr);
 			socket_ptr = NULL;
 		}
@@ -387,6 +388,10 @@ namespace chen {
 			delete ptr;
 		}
 		m_udp_sockets.clear();
+		for (const uint32 &port : m_udp_ports)
+		{
+			g_global_rtc_port.brack_port(port);
+		}
 		if (m_srtp_send_session_ptr)
 		{
 			delete m_srtp_send_session_ptr;
@@ -528,7 +533,8 @@ namespace chen {
 			//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
-			if (!m_srtp_send_session_ptr->EncryptRtp( &data,  &len))
+			 
+			if (len != 512 && !m_srtp_send_session_ptr->EncryptRtp( &data,  &len))
 			{
 				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
 				return;
@@ -998,18 +1004,21 @@ namespace chen {
 			return;
 		}
 		// TODO@chensong 2023-2-23 native rtc 客户端推流  会有一个522长度数据 srtp 解码崩溃问题 --> 
-		if (len == 522)
+		if (len == 522 || len == 512)
 		{
-			WARNING_EX_LOG("rtp 522 data [%s]", str2hex((const char *)data, len).c_str());
+			WARNING_EX_LOG("rtp %u data [%s]",len, str2hex((const char *)data, len).c_str());
 			static uint32 count = 0;
 		//	++count;
-			std::string file_name = "rtp.core.522._" + std::to_string(++count) + ".yuv";
+			std::string file_name = "./rtp/rtp.core."+std::to_string(len)+"._" + std::to_string(++count) + ".yuv";
 			FILE * out_rtp_core_ptr = fopen(file_name.c_str(), "wb+");
-
-			fwrite(data, len, 1, out_rtp_core_ptr);
-			fflush(out_rtp_core_ptr);
-			fclose(out_rtp_core_ptr);
-			out_rtp_core_ptr = NULL;
+			if (out_rtp_core_ptr)
+			{
+				fwrite(data, len, 1, out_rtp_core_ptr);
+				fflush(out_rtp_core_ptr);
+				fclose(out_rtp_core_ptr);
+				out_rtp_core_ptr = NULL;
+			}
+			
 			return;
 		}
 

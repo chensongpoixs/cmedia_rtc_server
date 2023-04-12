@@ -137,12 +137,12 @@ namespace chen {
 			//crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
 			if (!rtc_ptr)
 			{
-				WARNING_EX_LOG("not find stream_name = %s", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
+				 WARNING_EX_LOG("not find stream_name = %s", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
 				continue;
 			}
 			if (!rtc_ptr->get_dtls_connected_ok())
 			{
-				WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
+				//WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
 				continue;
 			}
 			rtc_ptr->send_consumer(packet);

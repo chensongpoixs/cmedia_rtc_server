@@ -37,17 +37,18 @@ namespace chen {
 	uint32 cglobal_rtc_port::get_new_port()
 	{
 		uint32 port = 0;
-		//if (m_unuse_port.empty())
+		 if (!m_unuse_port.empty())
 		{
-			//if ()
-			port = ++m_cur_use_port;
+			 port =  m_unuse_port.back();
+			 m_unuse_port.pop_back();
 			
 			return port;
 		}
-
+		port = ++m_cur_use_port;
 		return port;
 	}
 	void cglobal_rtc_port::brack_port(uint32 port)
 	{
+		m_unuse_port.push_back(port);
 	}
 }
