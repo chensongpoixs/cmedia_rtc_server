@@ -80,6 +80,7 @@ namespace chen {
 			, m_tcc_client(NULL)
 			, m_tcc_server(NULL)
 			, m_rtc_master(master)
+			, m_transportWideCcSeq(0u)
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -241,6 +242,7 @@ namespace chen {
 		RTC::TransportCongestionControlServer*	m_tcc_server;
 
 		crtc_room_master						m_rtc_master;
+		uint32									m_transportWideCcSeq;
 
 	};
 

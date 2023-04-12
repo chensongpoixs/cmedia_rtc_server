@@ -847,14 +847,14 @@ namespace chen {
 	}
 	void crtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-		std::chrono::steady_clock::time_point cur_time_ms;
+		/*std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
-		std::chrono::microseconds ms;
+		std::chrono::microseconds ms;*/
 		OnPacketReceived(socket, data, len, remoteAddr);
-		cur_time_ms = std::chrono::steady_clock::now();
+		/*cur_time_ms = std::chrono::steady_clock::now();
 		dur = cur_time_ms - pre_time;
-		ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+		ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);*/
 		//NORMAL_EX_LOG("udp recv packet [microseconds = %u]", ms.count());
 		/*elapse = static_cast<uint32_t>(ms.count());
 		if (elapse < TICK_TIME)
@@ -878,75 +878,54 @@ namespace chen {
 
 		// Update transport wide sequence number if present.
 		// clang-format off
-//		if (
-//			this->tccClient->GetBweType() == RTC::BweType::TRANSPORT_CC &&
-//			packet->UpdateTransportWideCc01(this->transportWideCcSeq + 1)
-//			)
-//			// clang-format on
-//		{
-//			this->transportWideCcSeq++;
-//
-//			// May emit 'trace' event.
-//			EmitTraceEventProbationType(packet);
-//
-//			webrtc::RtpPacketSendInfo packetInfo;
-//
-//			packetInfo.ssrc = packet->GetSsrc();
-//			packetInfo.transport_sequence_number = this->transportWideCcSeq;
-//			packetInfo.has_rtp_sequence_number = true;
-//			packetInfo.rtp_sequence_number = packet->GetSequenceNumber();
-//			packetInfo.length = packet->GetSize();
-//			packetInfo.pacing_info = pacingInfo;
-//
-//			// Indicate the pacer (and prober) that a packet is to be sent.
-//			this->tccClient->InsertPacket(packetInfo);
-//
-//#ifdef ENABLE_RTC_SENDER_BANDWIDTH_ESTIMATOR
-//			auto* senderBwe = this->senderBwe;
-//			RTC::SenderBandwidthEstimator::SentInfo sentInfo;
-//
-//			sentInfo.wideSeq = this->transportWideCcSeq;
-//			sentInfo.size = packet->GetSize();
-//			sentInfo.isProbation = true;
-//			sentInfo.sendingAtMs = DepLibUV::GetTimeMs();
-//
-//			auto* cb = new onSendCallback([tccClient, &packetInfo, senderBwe, &sentInfo](bool sent) {
-//				if (sent)
-//				{
-//					tccClient->PacketSent(packetInfo, DepLibUV::GetTimeMsInt64());
-//
-//					sentInfo.sentAtMs = DepLibUV::GetTimeMs();
-//
-//					senderBwe->RtpPacketSent(sentInfo);
-//				}
-//			});
-//
-//			SendRtpPacket(nullptr, packet, cb);
-//#else
-//			const auto* cb = new onSendCallback([tccClient, &packetInfo](bool sent) {
-//				if (sent)
-//					tccClient->PacketSent(packetInfo, DepLibUV::GetTimeMsInt64());
-//			});
-//
-//			SendRtpPacket(nullptr, packet, cb);
-//#endif
-//		}
-//		else
-//		{
-//			// May emit 'trace' event.
-//			EmitTraceEventProbationType(packet);
-//
-//			SendRtpPacket(nullptr, packet);
-//		}
-//
-//		this->sendProbationTransmission.Update(packet);
-//
-//		MS_DEBUG_DEV(
-//			"probation sent [seq:%" PRIu16 ", wideSeq:%" PRIu16 ", size:%zu, bitrate:%" PRIu32 "]",
-//			packet->GetSequenceNumber(),
-//			this->transportWideCcSeq,
-//			packet->GetSize(),
-//			this->sendProbationTransmission.GetBitrate(DepLibUV::GetTimeMs()));
+		if (
+			m_tcc_client->GetBweType() == RTC::BweType::TRANSPORT_CC &&
+			packet->UpdateTransportWideCc01(m_transportWideCcSeq + 1)
+			)
+			// clang-format on
+		{
+			m_transportWideCcSeq++;
+
+			// May emit 'trace' event.
+			//EmitTraceEventProbationType(packet);
+
+			webrtc::RtpPacketSendInfo packetInfo;
+
+			packetInfo.ssrc = packet->GetSsrc();
+			packetInfo.transport_sequence_number = m_transportWideCcSeq;
+			packetInfo.has_rtp_sequence_number = true;
+			packetInfo.rtp_sequence_number = packet->GetSequenceNumber();
+			packetInfo.length = packet->GetSize();
+			packetInfo.pacing_info = pacingInfo;
+
+			// Indicate the pacer (and prober) that a packet is to be sent.
+			this->m_tcc_client->InsertPacket(packetInfo);
+
+			NORMAL_EX_LOG("====================>");
+			/*	const auto* cb = new onSendCallback([m_tcc_client, &packetInfo](bool sent) {
+					if (sent)
+						m_tcc_client->PacketSent(packetInfo, uv_util::GetTimeMsInt64());
+				});
+
+				SendRtpPacket(nullptr, packet, cb);*/
+
+		}
+		else
+		{
+			// May emit 'trace' event.
+			//EmitTraceEventProbationType(packet);
+
+			send_rtp_data( packet);
+		}
+
+		//this->sendProbationTransmission.Update(packet);
+
+		//MS_DEBUG_DEV(
+		//	"probation sent [seq:%" PRIu16 ", wideSeq:%" PRIu16 ", size:%zu, bitrate:%" PRIu32 "]",
+		//	packet->GetSequenceNumber(),
+		//	this->transportWideCcSeq,
+		//	packet->GetSize(),
+		//	this->sendProbationTransmission.GetBitrate(uv_util::GetTimeMs()));
 	}
 	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
@@ -1249,14 +1228,14 @@ namespace chen {
 
 			case RTC::RTCP::Type::PSFB:
 			{
-				DEBUG_EX_LOG("RTC::RTCP::Type::PSFB");
+				//DEBUG_EX_LOG("RTC::RTCP::Type::PSFB");
 				auto* feedback = static_cast<RTC::RTCP::FeedbackPsPacket*>(packet);
 
 				switch (feedback->GetMessageType())
 				{
 				case RTC::RTCP::FeedbackPs::MessageType::PLI:
 				{
-					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::PLI");
+					//DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::PLI");
 					auto* consumer = m_all_rtp_listener.get_consumer(feedback ->GetMediaSsrc());
 					if (!consumer)
 					{
@@ -1281,7 +1260,7 @@ namespace chen {
 
 				case RTC::RTCP::FeedbackPs::MessageType::FIR:
 				{
-					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::FIR");
+					//DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::FIR");
 					// Must iterate FIR items.
 					auto* fir = static_cast<RTC::RTCP::FeedbackPsFirPacket*>(packet);
 
@@ -1331,7 +1310,7 @@ namespace chen {
 
 				case RTC::RTCP::FeedbackPs::MessageType::AFB:
 				{
-					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::AFB");
+				//	DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::AFB");
 					RTC::RTCP::FeedbackPsAfbPacket* afb = static_cast<RTC::RTCP::FeedbackPsAfbPacket*>(feedback);
 
 					// Store REMB info.
@@ -1433,11 +1412,13 @@ namespace chen {
 
 					case RTC::RTCP::FeedbackRtp::MessageType::TCC:
 					{
-						DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::TCC");
-		//				auto* feedback = static_cast<RTC::RTCP::FeedbackRtpTransportPacket*>(packet);
+					//	DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::TCC");
+						auto* feedback = static_cast<RTC::RTCP::FeedbackRtpTransportPacket*>(packet);
 
-		//				if (this->tccClient)
-		//					this->tccClient->ReceiveRtcpTransportFeedback(feedback);
+						if (m_tcc_client)
+						{
+							m_tcc_client->ReceiveRtcpTransportFeedback(feedback);
+						}
 
 		//#ifdef ENABLE_RTC_SENDER_BANDWIDTH_ESTIMATOR
 		//				// Pass it to the SenderBandwidthEstimator client.
@@ -1502,7 +1483,7 @@ namespace chen {
 			case RTC::RTCP::Type::BYE:
 			{
 				//DEBUG_EX_LOG("RTC::RTCP::Type::BYE");
-				NORMAL_EX_LOG("rtcp, ignoring received RTCP BYE");
+				//NORMAL_EX_LOG("rtcp, ignoring received RTCP BYE");
 
 				break;
 			}
