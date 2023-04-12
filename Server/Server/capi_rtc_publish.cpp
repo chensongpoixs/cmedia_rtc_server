@@ -21,12 +21,13 @@ purpose:		api_rtc_publish
 #include "cglobal_config.h"
 #include "crtp_header_extension_uri.h"
 #include "crtc_constants.h"
-
+#include "cglobal_rtc_config.h"
 namespace chen {
 	capi_rtc_publish::~capi_rtc_publish()
 	{
 	}
-	int32 capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname,  const std::string & peerid,  std::string & local_sdp)
+	bool capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname, 
+		const std::string & peerid,  std::string & local_sdp)
 	{
 		 
 		crtc_source_description stream_desc;
@@ -45,6 +46,14 @@ namespace chen {
 		rtc_local_sdp.m_session_config.m_dtls_role = "passive";
 		rtc_local_sdp.m_session_config.m_dtls_version = "auto";
 
+		
+		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(roomname + "/" + peerid);
+		if (!rtc_ssrc_info_ptr)
+		{
+			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), peerid.c_str());
+
+			return false;
+		}
 		rtc_remote_sdp.parse(remote_sdp);
 		_negotiate_publish_capability(rtc_remote_sdp, &stream_desc);
 
@@ -181,7 +190,7 @@ namespace chen {
 		out_sdp_file = NULL;*/
 
 
-		return 0;
+		return true;
 	}
 	bool capi_rtc_publish::_negotiate_publish_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc)
 	{

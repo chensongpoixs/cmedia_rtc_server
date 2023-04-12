@@ -36,6 +36,9 @@ namespace chen {
 		virtual void  on_dtls_transport_connected(ECRYPTO_SUITE srtp_crypto_suite, uint8* srtp_local_key, size_t srtp_local_key_len, uint8* srtp_remote_key, size_t srtp_remote_key_len) = 0;
 	};
 
+
+
+
 	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster
 	{
 	public:
@@ -59,6 +62,7 @@ namespace chen {
 			, m_time_out_ms(uv_util::GetTimeMs())
 			, m_remote_estimator(this)
 			, m_all_rtp_listener()
+			, m_server_ssrc_map()
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -195,6 +199,7 @@ namespace chen {
 		//RTC::RTCP::FeedbackRtpTransportPacket   m_feedback_rtp_transport_packet;
 
 		crtp_listener							m_all_rtp_listener;
+		std::map<uint32, uint32>				m_server_ssrc_map;
 	};
 
 

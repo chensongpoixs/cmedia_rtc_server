@@ -835,6 +835,9 @@
     <ClCompile Include="RtxStream.cpp">
       <Filter>rtc_stream</Filter>
     </ClCompile>
+    <ClCompile Include="cglobal_rtc_config.cpp">
+      <Filter>rtc_config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1586,6 +1589,9 @@
     </ClInclude>
     <ClInclude Include="RtxStream.hpp">
       <Filter>rtc_stream</Filter>
+    </ClInclude>
+    <ClInclude Include="cglobal_rtc_config.h">
+      <Filter>rtc_config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

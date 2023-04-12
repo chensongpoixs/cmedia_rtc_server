@@ -124,7 +124,7 @@ namespace chen {
 			return ReceiveRtpPacketResult::DISCARDED;
 		}*/
 
-		crtc_producer:: mangle_rtp_packet(packet, m_params.params);
+		  mangle_rtp_packet(packet, m_params.params);
 
 		// Post-process the packet.
 		// 处理视频 转的角度
@@ -145,29 +145,30 @@ namespace chen {
 				WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
 				continue;
 			}
-			if (/*params.type*/  get_kind() == "audio")
-			{
-				rtc_ptr->send_rtp_audio_data(packet);
-			}
-			else
-			{
-				if (/*m_all_rtx_video_ssrc*/  get_rtcp_params().params.rtx_ssrc == packet->GetSsrc())
-				{
-					rtc_ptr->send_rtp_rtx_video_data(packet);
-				}
-				else if (/*m_all_video_ssrc*/  get_rtcp_params().params.ssrc == packet->GetSsrc())
-				{
-					m_rtc_ptr->get_remote_estimator()->on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
-					//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
-					//RTC::Codecs::H264::ProcessRtpPacket(packet);
-					rtc_ptr->send_rtp_video_data(packet);
-				}
-				else
-				{
-					WARNING_EX_LOG("[rtc type = %s][video rtx ][not find ssrc = %u][]", m_rtc_ptr->get_rtc_type() == ERtcClientPlayer ? "rtc_player" : "rtc_publisher", packet->GetSsrc());
-				}
+			rtc_ptr->send_rtp_data(packet);
+			//if (/*params.type*/  get_kind() == "audio")
+			//{
+			//	rtc_ptr->send_rtp_audio_data(packet);
+			//}
+			//else
+			//{
+			//	if (/*m_all_rtx_video_ssrc*/  get_rtcp_params().params.rtx_ssrc == packet->GetSsrc())
+			//	{
+			//		rtc_ptr->send_rtp_rtx_video_data(packet);
+			//	}
+			//	else if (/*m_all_video_ssrc*/  get_rtcp_params().params.ssrc == packet->GetSsrc())
+			//	{
+			//		m_rtc_ptr->get_remote_estimator()->on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
+			//		//NORMAL_EX_LOG("[video][rtp ][ssrc = %u][size = %u][GetSequenceNumber = %u][GetPayloadType = %u][timestamp = %u][marker = %u]", packet->GetSsrc(), len, packet->GetSequenceNumber(), packet->GetPayloadType(), packet->GetTimestamp(), packet->HasMarker());
+			//		//RTC::Codecs::H264::ProcessRtpPacket(packet);
+			//		rtc_ptr->send_rtp_video_data(packet);
+			//	}
+			//	else
+			//	{
+			//		WARNING_EX_LOG("[rtc type = %s][video rtx ][not find ssrc = %u][]", m_rtc_ptr->get_rtc_type() == ERtcClientPlayer ? "rtc_player" : "rtc_publisher", packet->GetSsrc());
+			//	}
 
-			}
+			//}
 
 		}
 		return true;
@@ -363,11 +364,18 @@ namespace chen {
 		// Mangle the payload type.
 
 		// Mangle the SSRC.
-		//{
-		//	// 2.  修改为服务端ssrc   这个可能是因为不同端可能会冲突的问题吧
-		//	 
-		//	packet->SetSsrc(mappedSsrc);
-		//}
+		{
+			// 2.  修改为服务端ssrc   这个可能是因为不同端可能会冲突的问题吧
+			std::map<uint32, uint32>::const_iterator iter =  m_server_ssrc_map.find(packet->GetSsrc());
+			if (iter == m_server_ssrc_map.end())
+			{
+				WARNING_EX_LOG("not find ssrc = %u failed !!!", packet->GetSsrc());
+			}
+			else
+			{
+				packet->SetSsrc(iter->second);
+			} 
+		}
 
 		// Mangle RTP header extensions.
 		{

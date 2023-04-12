@@ -25,13 +25,14 @@ purpose:		api_rtc_publish
 #include "crtc_ssrc_generator.h"
 #include "crtc_constants.h"
 #include "crtp_header_extension_uri.h"
-
+#include "cglobal_rtc_config.h"
 
 namespace chen {
 	capi_rtc_player::~capi_rtc_player()
 	{
 	}
-	int32 capi_rtc_player::do_serve_client(const std::string & remote_sdp, const std::string & roomname, const std::string & peerid, const std::string & video_peerid, std::string & local_sdp)
+	bool capi_rtc_player::do_serve_client(const std::string & remote_sdp, const std::string & roomname,
+		const std::string & peerid, const std::string & video_peerid, std::string & local_sdp)
 	{
 		crtc_source_description stream_desc;
 		crtc_sdp rtc_remote_sdp;
@@ -49,6 +50,14 @@ namespace chen {
 		rtc_local_sdp.m_session_config.m_dtls_role = "passive";
 		rtc_local_sdp.m_session_config.m_dtls_version = "auto";
 
+
+		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(roomname + "/" + video_peerid);
+		if (!rtc_ssrc_info_ptr)
+		{
+			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), video_peerid.c_str());
+
+			return false;
+		}
 		rtc_remote_sdp.parse(remote_sdp);
 		std::map<uint32_t, crtc_track_description*> play_sub_relations;
 		// audio track description
@@ -61,7 +70,7 @@ namespace chen {
 			audio_track_desc->m_msid = c_rand.rand_str(36);
 			//audio_track_desc->m_msid_tracker = c_rand.rand_str(36);;
 			//audio_track_desc->m_mid = "0";
-			uint32_t audio_ssrc = c_rtc_ssrc_generator.generate_ssrc();
+			uint32_t audio_ssrc = rtc_ssrc_info_ptr->m_audio_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
 			audio_track_desc->m_ssrc = audio_ssrc;
 			audio_track_desc->m_direction = "sendonly";
 
@@ -77,7 +86,7 @@ namespace chen {
 			video_track_desc->m_id = "video-" + c_rand.rand_str(8);
 			video_track_desc->m_msid = c_rand.rand_str(36);
 			//video_track_desc->m_mid = "1";
-			uint32_t video_ssrc = c_rtc_ssrc_generator.generate_ssrc();
+			uint32_t video_ssrc = rtc_ssrc_info_ptr->m_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
 			video_track_desc->m_ssrc = video_ssrc;
 			video_track_desc->m_direction = "sendonly";
 
@@ -87,7 +96,7 @@ namespace chen {
 			video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
 			crtx_payload_des *rtx_video_payload = new crtx_payload_des(kRtxVideoPayloadType, kVideoPayloadType);
 			video_track_desc->m_rtx_ptr = rtx_video_payload;
-			video_track_desc->m_rtx_ssrc = c_rtc_ssrc_generator.generate_ssrc();
+			video_track_desc->m_rtx_ssrc = rtc_ssrc_info_ptr->m_rtx_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
 		}
 		///////////////////////////////////////////
 
@@ -247,7 +256,7 @@ namespace chen {
 
 
 		NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
-		return 0;
+		return true;
 	}
 	bool capi_rtc_player::_negotiate_play_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc, std::map<uint32_t, crtc_track_description*>& sub_relations)
 	{

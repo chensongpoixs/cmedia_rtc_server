@@ -32,12 +32,13 @@ namespace chen {
 
 		};
 	public:
-		explicit crtc_producer(crtc_transport *ptr, const std::string & kind, const crtp_params& params)
+		explicit crtc_producer(crtc_transport *ptr, const std::string & kind, const crtp_params& params, const std::map<uint32, uint32> & ssrc_table)
 		: m_kind(kind)
 		, m_params(params)
 		, m_ssrc_rtp_stream_map()
 		, m_rtx_ssrc_rtp_stream_map()
 		, m_rtc_ptr(ptr)
+		, m_server_ssrc_map(ssrc_table)
 		{}
 		virtual ~crtc_producer();
 
@@ -51,7 +52,7 @@ namespace chen {
 
 		void request_key_frame(uint32 mapped_ssrc);
 
-		static bool  mangle_rtp_packet(RTC::RtpPacket * packet, const crtp_stream::crtp_stream_params & params);
+		bool  mangle_rtp_packet(RTC::RtpPacket * packet, const crtp_stream::crtp_stream_params & params);
 		const crtp_params & get_rtcp_params() const { return m_params; }
 	public:
 
@@ -67,6 +68,7 @@ namespace chen {
 		std::map<uint32, crtp_stream_recv*>			m_ssrc_rtp_stream_map;
 		std::map<uint32, crtp_stream_recv*>			m_rtx_ssrc_rtp_stream_map;
 		crtc_transport *							m_rtc_ptr;
+		std::map<uint32, uint32>					m_server_ssrc_map;
 	};
 }
 

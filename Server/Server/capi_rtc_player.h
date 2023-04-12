@@ -23,7 +23,7 @@ namespace chen {
 		explicit capi_rtc_player() {}
 		virtual ~capi_rtc_player();
 
-		int32 do_serve_client(const std::string &remote_sdp, const std::string & roomname, const std::string & peerid, const std::string & video_peerid, std::string & local_sdp);
+		bool do_serve_client(const std::string &remote_sdp, const std::string & roomname, const std::string & peerid, const std::string & video_peerid, std::string & local_sdp);
 
 	private:
 		//TODO: Use StreamDescription to negotiate and remove first negotiate_play_capability function

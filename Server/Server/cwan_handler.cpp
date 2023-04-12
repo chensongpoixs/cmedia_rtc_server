@@ -19,7 +19,7 @@ purpose:	网络数据的收发
 #include "cshare_proto_error.h"
 #include "cglobal_rtc.h"
 #include "capi_rtc_publish.h"
-
+#include "cglobal_rtc_config.h"
 #include "capi_rtc_player.h"
 #include "ctransport_mgr.h"
 namespace chen {
@@ -265,7 +265,12 @@ namespace chen {
 			std::string sdp = value["data"]["offer"].asCString();
 			std::string roomname = value["data"]["roomname"].asCString();
 			std::string peerid = value["data"]["peerid"].asCString();
-
+			if (!g_global_rtc_config.get_stream_uri(roomname + "/" + peerid))
+			{
+				WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), peerid.c_str());
+				send_msg(S2C_rtc_publisher, EShareRtcCreateMediaSsrcInfo, reply);
+				return true;
+			}
 			std::string local_sdp;
 			auto iter = g_transport_mgr.m_all_stream_url_map.find(roomname + "/" + peerid);
 			if (iter == g_transport_mgr.m_all_stream_url_map.end())
@@ -329,7 +334,13 @@ namespace chen {
 			std::string roomname = value["data"]["roomname"].asCString();
 			std::string video_peerid = value["data"]["video_peerid"].asCString();
 			std::string peerid = value["data"]["peerid"].asCString();
-
+			if (!g_global_rtc_config.get_stream_uri(roomname + "/" + video_peerid))
+			{
+				//EShareRtcCreateMediaSsrcInfo
+				WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), video_peerid.c_str());
+				send_msg(S2C_rtc_player, EShareRtcCreateMediaSsrcInfo, reply);
+				return true;
+			}
 			std::string local_sdp;
 
 			player.do_serve_client(sdp, roomname,  peerid, video_peerid,  local_sdp);

@@ -28,6 +28,9 @@ purpose:		crtc_transport
 #include "crtp_header_extensions.h"
 #include "crtc_producer.h"
 #include "cuv_ip.h"
+
+#include "cglobal_rtc_config.h"
+
 namespace chen {
 	crtc_transport::~crtc_transport()
 	{
@@ -56,54 +59,59 @@ namespace chen {
 		m_dtls_ptr = new crtc_dtls(this);
 		m_dtls_ptr->init();
 
-		
-
-		if (m_rtc_client_type == ERtcClientPlayer)
+		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(m_local_sdp.m_msids[0]);
+		if (!rtc_ssrc_info_ptr)
 		{
-			for (std::vector<cmedia_desc>::iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
-			{
-				for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
-				{
-					if (iter->is_audio())
-					{
-						if (m_all_audio_ssrc == 0)
-						{
-							m_all_audio_ssrc = ssrc_iter->m_ssrc;
-						}
-						else if (m_all_rtx_audio_ssrc == 0)
-						{
-							m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
-						}
-						else
-						{
-							WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
-						}
-					}
-					if (iter->is_video())
-					{
-						//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
-						if (m_all_video_ssrc == 0)
-						{
-							m_all_video_ssrc = ssrc_iter->m_ssrc;
-						}
-						else if (m_all_rtx_video_ssrc == 0)
-						{
-							m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
-						}
-						else
-						{
-							WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
-						}
-					}
-					if (iter->m_payload_types.size())
-					{
-						m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
-					}
-
-				}
-			}
+			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s]", m_local_sdp.m_msids[0].c_str()); 
 		}
-		else if (m_rtc_client_type == ERtcClientPublisher)
+
+		//if (m_rtc_client_type == ERtcClientPlayer)
+		//{
+		//	for (std::vector<cmedia_desc>::iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
+		//	{
+		//		for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
+		//		{
+		//			if (iter->is_audio())
+		//			{
+		//				if (m_all_audio_ssrc == 0)
+		//				{
+		//					m_all_audio_ssrc = ssrc_iter->m_ssrc;
+		//				}
+		//				else if (m_all_rtx_audio_ssrc == 0)
+		//				{
+		//					m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
+		//				}
+		//				else
+		//				{
+		//					WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+		//				}
+		//			}
+		//			if (iter->is_video())
+		//			{
+		//				//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
+		//				if (m_all_video_ssrc == 0)
+		//				{
+		//					m_all_video_ssrc = ssrc_iter->m_ssrc;
+		//				}
+		//				else if (m_all_rtx_video_ssrc == 0)
+		//				{
+		//					m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
+		//				}
+		//				else
+		//				{
+		//					WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+		//				}
+		//			}
+		//			if (iter->m_payload_types.size())
+		//			{
+		//				m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
+		//			}
+
+		//		}
+		//	}
+		//}
+		//else 
+		if (m_rtc_client_type == ERtcClientPublisher)
 		{
 
 			if (stream_desc.m_audio_track_desc_ptr)
@@ -113,9 +121,16 @@ namespace chen {
 				params.params.payload_type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_pt;
 				params.params.ssrc = stream_desc.m_audio_track_desc_ptr->m_ssrc;
 				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
+				
+				if (rtc_ssrc_info_ptr)
+				{
+					if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc)).second)
+					{
+						WARNING_EX_LOG("audio insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc);
+					}
+				}
 
-
-				crtc_producer * producer_ptr = new crtc_producer(this, "audio", params);
+				crtc_producer * producer_ptr = new crtc_producer(this, "audio", params, m_server_ssrc_map);
 				if (!m_all_rtp_listener.add_producer(stream_desc.m_audio_track_desc_ptr->m_ssrc, producer_ptr))
 				{
 					WARNING_EX_LOG("add producer audio failed (ssrc = %u)", stream_desc.m_audio_track_desc_ptr->m_ssrc);
@@ -135,12 +150,25 @@ namespace chen {
 					params.params.use_fir = true;
 					params.params.use_pli = true;
 					crtc_producer * producer_ptr = NULL; 
-
+					if (rtc_ssrc_info_ptr)
+					{
+						if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_video_ssrc)).second)
+						{
+							WARNING_EX_LOG("video insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_video_ssrc);
+						}
+					}
 					if (rtc_track->m_rtx_ptr)
 					{
 						params.params.rtx_payload_type = rtc_track->m_rtx_ptr->m_pt;
 						params.params.rtx_ssrc = rtc_track->m_rtx_ssrc;
-						producer_ptr = new crtc_producer(this, "video", params);;
+						if (rtc_ssrc_info_ptr)
+						{
+							if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_video_ssrc)).second)
+							{
+								WARNING_EX_LOG("video rtx  insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_rtx_video_ssrc);
+							}
+						}
+						producer_ptr = new crtc_producer(this, "video", params, m_server_ssrc_map);;
 						if (!m_all_rtp_listener.add_producer(rtc_track->m_rtx_ssrc, producer_ptr))
 						{
 							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_rtx_ssrc);
@@ -148,7 +176,7 @@ namespace chen {
 					}
 					else
 					{
-						producer_ptr = new crtc_producer(this, "video", params);;
+						producer_ptr = new crtc_producer(this, "video", params, m_server_ssrc_map);;
 					}
 				
 					
@@ -158,49 +186,49 @@ namespace chen {
 					}
 				}
 			}
-			for (std::vector<cmedia_desc>::iterator iter = m_remote_sdp.m_media_descs.begin(); iter != m_remote_sdp.m_media_descs.end(); ++iter)
-			{
-				for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
-				{
-					if (iter->is_audio())
-					{
-						//m_all_audio_ssrcs.push_back(ssrc_iter->m_ssrc);
-						if(m_all_audio_ssrc == 0)
-						{
-							m_all_audio_ssrc = ssrc_iter->m_ssrc;
-						}
-						else if (m_all_rtx_audio_ssrc == 0)
-						{
-							m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
-						}
-						else
-						{
-							WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
-						}
-					}
-					if (iter->is_video())
-					{
-						//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
-						if (m_all_video_ssrc == 0)
-						{
-							m_all_video_ssrc = ssrc_iter->m_ssrc;
-						}
-						else if (m_all_rtx_video_ssrc == 0)
-						{
-							m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
-						}
-						else
-						{
-							WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
-						}
-					}
-					if (iter->m_payload_types.size())
-					{
-						m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
-					}
+			//for (std::vector<cmedia_desc>::iterator iter = m_remote_sdp.m_media_descs.begin(); iter != m_remote_sdp.m_media_descs.end(); ++iter)
+			//{
+			//	for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
+			//	{
+			//		if (iter->is_audio())
+			//		{
+			//			//m_all_audio_ssrcs.push_back(ssrc_iter->m_ssrc);
+			//			if(m_all_audio_ssrc == 0)
+			//			{
+			//				m_all_audio_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else if (m_all_rtx_audio_ssrc == 0)
+			//			{
+			//				m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else
+			//			{
+			//				WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+			//			}
+			//		}
+			//		if (iter->is_video())
+			//		{
+			//			//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
+			//			if (m_all_video_ssrc == 0)
+			//			{
+			//				m_all_video_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else if (m_all_rtx_video_ssrc == 0)
+			//			{
+			//				m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else
+			//			{
+			//				WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+			//			}
+			//		}
+			//		if (iter->m_payload_types.size())
+			//		{
+			//			m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
+			//		}
 
-				}
-			}
+			//	}
+			//}
 
 
 
@@ -374,24 +402,24 @@ namespace chen {
 		}*/
 		if (m_current_socket_ptr && m_srtp_send_session_ptr)
 		{
-			{
-				for (const cmedia_desc& media : m_local_sdp.m_media_descs)
-				{
-					if (media.m_type != "audio")
-					{
-						continue;
-					}
-					//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
-					if (media.m_ssrc_groups.size())
-					{
-						DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_groups[0].m_ssrcs);
-						packet->SetSsrc(media.m_ssrc_groups[0].m_ssrcs[0]);
-						break;
-					}
-					//if (media)
-				}
-			}
-			
+			//{
+			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
+			//	{
+			//		if (media.m_type != "audio")
+			//		{
+			//			continue;
+			//		}
+			//		//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
+			//		if (media.m_ssrc_groups.size())
+			//		{
+			//			DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_groups[0].m_ssrcs);
+			//			packet->SetSsrc(media.m_ssrc_groups[0].m_ssrcs[0]);
+			//			break;
+			//		}
+			//		//if (media)
+			//	}
+			//}
+			//
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 			if (!m_srtp_send_session_ptr->EncryptRtp( &data,  &len))
