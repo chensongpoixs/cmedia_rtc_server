@@ -19,6 +19,7 @@ Copyright boost
 #include "ReceiverReport.hpp"
 #include "crtp_stream.h"
 #include "FeedbackRtpNack.hpp"
+#include "RateCalculator.hpp"
 namespace chen {
 	class crtp_stream_send : public crtp_stream
 	{
@@ -55,19 +56,22 @@ namespace chen {
 
 		//void receive_nack();//crtcp_nack
 		void receive_nack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket);
-		/*void ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType);
-		void ReceiveRtcpReceiverReport(RTC::RTCP::ReceiverReport* report);
-		RTC::RTCP::SenderReport* GetRtcpSenderReport(uint64_t nowMs);*/
+		/*void ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType);*/
+		void receive_rtcp_receiver_report(RTC::RTCP::ReceiverReport* report);
+		/*RTC::RTCP::SenderReport* GetRtcpSenderReport(uint64_t nowMs);*/
 		//RTC::RTCP::SdesChunk* GetRtcpSdesChunk();
 
-
+	public:
+		virtual void pause() ;
+		virtual void resume();
+		virtual uint32  get_bitrate(uint64  nowMs);
 	protected:
 
 	private:
 		void _store_packet(RTC::RtpPacket * packet);
 		void _clear_buffer();
 		
-
+		void UpdateScore(RTC::RTCP::ReceiverReport* report);
 		//void FillRetransmissionContainer(uint16_t seq, uint16_t bitmask);
 	private:
 
@@ -78,7 +82,7 @@ namespace chen {
 		size_t						m_buffer_size{ 0u };
 		std::vector<StorageItem>	m_storage;
 		uint16						m_rtx_seq{ 0u };
-		//RTC::RtpDataCounter transmissionCounter;
+		 RTC::RtpDataCounter		m_transmission_counter;
 	};
 } 
 #endif //_C_RTP_STREAM_SEND_H_

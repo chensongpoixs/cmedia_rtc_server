@@ -76,8 +76,8 @@ namespace chen {
 	{
 		int32 err = 0;
 
-		consumer = new crtc_consumer();
-		m_consumers.push_back(consumer);
+		//consumer = new crtc_consumer();
+		//m_consumers.push_back(consumer);
 
 		// TODO: FIXME: Implements edge cluster.
 

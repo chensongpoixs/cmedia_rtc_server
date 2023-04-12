@@ -62,7 +62,7 @@ namespace RTC
 			size_t GetSize() const override
 			{
 				using namespace chen;
-				NORMAL_EX_LOG("[sizeof(CommonHeader) = %u][sizeof(Header) = %u]", sizeof(CommonHeader), sizeof(Header)	);
+				//NORMAL_EX_LOG("[sizeof(CommonHeader) = %u][sizeof(Header) = %u]", sizeof(CommonHeader), sizeof(Header)	);
 				return sizeof(CommonHeader) + sizeof(Header);
 			}
 

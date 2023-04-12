@@ -17,7 +17,7 @@ purpose:		rtc_listener
 #include <map>
 #include "crtc_sdp.h"
 #include "crtc_producer.h"
-
+#include "crtc_consumer.h"
 namespace chen {
 
 	class crtp_listener
@@ -33,9 +33,18 @@ namespace chen {
 		bool add_producer(uint32 ssrc,  crtc_producer * producer);
 		void remove_producer(uint32 ssrc);
 
+
 		crtc_producer * get_producer(const RTC::RtpPacket * packet )   ;
 		crtc_producer * get_producer(uint32 ssrc) const ;
-		
+
+
+		////////////////////////////////////////////////////////////////////////
+
+
+		bool add_consumer(uint32 ssrc, crtc_consumer* consumer);
+		void remote_consumer(uint32 ssrc);
+		crtc_consumer * get_consumer(const RTC::RtpPacket * packet);
+		crtc_consumer * get_consumer(uint32 ssrc) const;
 	public:
 		// Table of SSRC / Producer pairs.
 		std::unordered_map<uint32, crtc_producer*>			m_ssrcTable;
@@ -43,6 +52,11 @@ namespace chen {
 		std::unordered_map<std::string, crtc_producer*>		m_midTable;
 		//  Table of RID / Producer pairs.
 		std::unordered_map<std::string, crtc_producer*>		m_ridTable;
+
+
+		std::unordered_map<uint32, crtc_consumer*>			m_ssrc_consumer_table;
+
+
 	protected:
 	private:
 	};

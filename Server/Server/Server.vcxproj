@@ -362,7 +362,9 @@
     <ClCompile Include="SeqManager.cpp" />
     <ClCompile Include="SimpleConsumer.cpp" />
     <ClCompile Include="StunPacket.cpp" />
+    <ClCompile Include="TransportCongestionControlClient.cpp" />
     <ClCompile Include="TransportCongestionControlServer.cpp" />
+    <ClCompile Include="TrendCalculator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="buffer.h" />
@@ -615,7 +617,9 @@
     <ClInclude Include="SimpleConsumer.hpp" />
     <ClInclude Include="StunPacket.hpp" />
     <ClInclude Include="Tools.hpp" />
+    <ClInclude Include="TransportCongestionControlClient.hpp" />
     <ClInclude Include="TransportCongestionControlServer.hpp" />
+    <ClInclude Include="TrendCalculator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

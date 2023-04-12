@@ -17,8 +17,7 @@
 namespace RTC
 {
 	class TransportCongestionControlClient : public webrtc::PacketRouter,
-		public webrtc::TargetTransferRateObserver, chen::ctimer
-											/*, public Timer::Listener*/
+		public webrtc::TargetTransferRateObserver, chen::ctimer ::Listener 
 	{
 	public:
 		struct Bitrates
@@ -95,7 +94,7 @@ namespace RTC
 
 		/* Pure virtual methods inherited from RTC::Timer. */
 	public:
-		void OnTimer(/*Timer* timer*/) ;
+		void OnTimer(ctimer* timer) ;
 
 	private:
 		// Passed by argument.
@@ -104,7 +103,7 @@ namespace RTC
 		webrtc::NetworkControllerFactoryInterface* controllerFactory{ nullptr };
 		webrtc::RtpTransportControllerSend* rtpTransportControllerSend{ nullptr };
 		RTC::RtpProbationGenerator* probationGenerator{ nullptr };
-		//Timer* processTimer{ nullptr };
+		ctimer* processTimer{ nullptr };
 		// Others.
 		RTC::BweType bweType;
 		uint32_t initialAvailableBitrate{ 0u };

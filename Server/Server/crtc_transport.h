@@ -22,6 +22,10 @@ purpose:		crtc_transport
 #include "cremote_estimator_proxy.h"
 #include "FeedbackRtpTransport.hpp"
 #include "crtp_listener.h"
+#include "TransportCongestionControlServer.hpp"
+#include "TransportCongestionControlServer.hpp"
+#include "TransportCongestionControlClient.hpp"
+
 namespace chen {
 
 	class cdtls_session;
@@ -39,7 +43,9 @@ namespace chen {
 
 
 
-	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster
+	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster,
+		public RTC::TransportCongestionControlClient::Listener,
+		public RTC::TransportCongestionControlServer::Listener
 	{
 	public:
 		explicit crtc_transport()
@@ -63,6 +69,8 @@ namespace chen {
 			, m_remote_estimator(this)
 			, m_all_rtp_listener()
 			, m_server_ssrc_map()
+			, m_tcc_client(NULL)
+			, m_tcc_server(NULL)
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -97,7 +105,7 @@ namespace chen {
 		void send_rtp_rtx_video_data(RTC::RtpPacket* packet);
 
 
-
+		void send_consumer(RTC::RtpPacket* packet);
 		// rtcp  
 		void send_rtcp_packet(RTC::RTCP::Packet* packet);
 		bool send_rtcp(const uint8 * data, size_t len);
@@ -117,6 +125,20 @@ namespace chen {
 	public:
 		virtual void OnUdpSocketPacketReceived(
 			cudp_socket* socket, const uint8_t* data, size_t len, const struct sockaddr* remoteAddr);
+
+
+	public:
+		void OnTransportCongestionControlServerSendRtcpPacket(
+			RTC::TransportCongestionControlServer* tccServer, RTC::RTCP::Packet* packet);
+
+	public:
+		virtual void OnTransportCongestionControlClientBitrates(
+			RTC::TransportCongestionControlClient* tccClient,
+			RTC::TransportCongestionControlClient::Bitrates& bitrates) ;
+		virtual void OnTransportCongestionControlClientSendRtpPacket(
+			RTC::TransportCongestionControlClient* tccClient,
+			RTC::RtpPacket* packet,
+			const webrtc::PacedPacketInfo& pacingInfo)  ;
 	public:
 
 	private:
@@ -200,6 +222,8 @@ namespace chen {
 
 		crtp_listener							m_all_rtp_listener;
 		std::map<uint32, uint32>				m_server_ssrc_map;
+		RTC::TransportCongestionControlClient*	m_tcc_client;
+		RTC::TransportCongestionControlServer*	m_tcc_server;
 	};
 
 

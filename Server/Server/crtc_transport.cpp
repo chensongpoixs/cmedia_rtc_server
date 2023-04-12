@@ -65,53 +65,119 @@ namespace chen {
 			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s]", m_local_sdp.m_msids[0].c_str()); 
 		}
 
-		//if (m_rtc_client_type == ERtcClientPlayer)
-		//{
-		//	for (std::vector<cmedia_desc>::iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
-		//	{
-		//		for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
-		//		{
-		//			if (iter->is_audio())
-		//			{
-		//				if (m_all_audio_ssrc == 0)
-		//				{
-		//					m_all_audio_ssrc = ssrc_iter->m_ssrc;
-		//				}
-		//				else if (m_all_rtx_audio_ssrc == 0)
-		//				{
-		//					m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
-		//				}
-		//				else
-		//				{
-		//					WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
-		//				}
-		//			}
-		//			if (iter->is_video())
-		//			{
-		//				//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
-		//				if (m_all_video_ssrc == 0)
-		//				{
-		//					m_all_video_ssrc = ssrc_iter->m_ssrc;
-		//				}
-		//				else if (m_all_rtx_video_ssrc == 0)
-		//				{
-		//					m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
-		//				}
-		//				else
-		//				{
-		//					WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
-		//				}
-		//			}
-		//			if (iter->m_payload_types.size())
-		//			{
-		//				m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
-		//			}
+		if (m_rtc_client_type == ERtcClientPlayer)
+		{
+			if (stream_desc.m_audio_track_desc_ptr)
+			{
+				crtc_producer::crtp_params params;
+				params.mid = stream_desc.m_audio_track_desc_ptr->m_mid;
+				params.params.payload_type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_pt;
+				params.params.ssrc = stream_desc.m_audio_track_desc_ptr->m_ssrc;
+				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
 
-		//		}
-		//	}
-		//}
-		//else 
-		if (m_rtc_client_type == ERtcClientPublisher)
+				/*if (rtc_ssrc_info_ptr)
+				{
+					if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc)).second)
+					{
+						WARNING_EX_LOG("audio insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc);
+					}
+				}*/
+
+				crtc_consumer * consumer_ptr = new crtc_consumer(this, "audio", params);
+				if (!m_all_rtp_listener.add_consumer(stream_desc.m_audio_track_desc_ptr->m_ssrc, consumer_ptr))
+				{
+					WARNING_EX_LOG("add consumer_ptr audio failed (ssrc = %u)", stream_desc.m_audio_track_desc_ptr->m_ssrc);
+				}
+
+			}
+
+			{
+				for (const crtc_track_description * rtc_track : stream_desc.m_video_track_descs)
+				{
+					crtc_producer::crtp_params params;
+					params.mid = rtc_track->m_mid;
+					params.params.payload_type = rtc_track->m_media_ptr->m_pt;
+					params.params.ssrc = rtc_track->m_ssrc;
+					params.params.type = rtc_track->m_type;
+					params.params.use_nack = true;
+					params.params.use_fir = true;
+					params.params.use_pli = true;
+					crtc_consumer * consumer_ptr = NULL;
+					 
+					if (rtc_track->m_rtx_ptr)
+					{
+						params.params.rtx_payload_type = rtc_track->m_rtx_ptr->m_pt;
+						params.params.rtx_ssrc = rtc_track->m_rtx_ssrc;
+						if (rtc_ssrc_info_ptr)
+						{
+							if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_video_ssrc)).second)
+							{
+								WARNING_EX_LOG("video rtx  insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_rtx_video_ssrc);
+							}
+						}
+						consumer_ptr = new crtc_consumer(this, "video", params );;
+						if (!m_all_rtp_listener.add_consumer(rtc_track->m_rtx_ssrc, consumer_ptr))
+						{
+							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_rtx_ssrc);
+						}
+					}
+					else
+					{
+						consumer_ptr = new crtc_consumer(this, "video", params );;
+					}
+
+
+					if (!m_all_rtp_listener.add_consumer(rtc_track->m_ssrc, consumer_ptr))
+					{
+						WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_ssrc);
+					}
+				}
+			}
+
+
+			//for (std::vector<cmedia_desc>::iterator iter = m_local_sdp.m_media_descs.begin(); iter != m_local_sdp.m_media_descs.end(); ++iter)
+			//{
+			//	for (std::vector<cssrc_info>::iterator ssrc_iter = iter->m_ssrc_infos.begin(); ssrc_iter != iter->m_ssrc_infos.end(); ++ssrc_iter)
+			//	{
+			//		if (iter->is_audio())
+			//		{
+			//			if (m_all_audio_ssrc == 0)
+			//			{
+			//				m_all_audio_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else if (m_all_rtx_audio_ssrc == 0)
+			//			{
+			//				m_all_rtx_audio_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else
+			//			{
+			//				WARNING_EX_LOG("audio rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+			//			}
+			//		}
+			//		if (iter->is_video())
+			//		{
+			//			//m_all_video_ssrcs.push_back(ssrc_iter->m_ssrc);
+			//			if (m_all_video_ssrc == 0)
+			//			{
+			//				m_all_video_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else if (m_all_rtx_video_ssrc == 0)
+			//			{
+			//				m_all_rtx_video_ssrc = ssrc_iter->m_ssrc;
+			//			}
+			//			else
+			//			{
+			//				WARNING_EX_LOG("video rtx --> ssrc = %u", ssrc_iter->m_ssrc);
+			//			}
+			//		}
+			//		if (iter->m_payload_types.size())
+			//		{
+			//			m_ssrc_media_type_map[ssrc_iter->m_ssrc] = iter->m_payload_types[0].m_payload_type;
+			//		} 
+			//	}
+			//}
+		}
+		else  if (m_rtc_client_type == ERtcClientPublisher)
 		{
 
 			if (stream_desc.m_audio_track_desc_ptr)
@@ -324,6 +390,14 @@ namespace chen {
 			delete m_srtp_recv_session_ptr;
 			m_srtp_recv_session_ptr = NULL;
 		}
+		if (m_tcc_client)
+		{
+			m_tcc_client->TransportDisconnected();
+		}
+		if (m_tcc_server )
+		{
+			m_tcc_server->TransportDisconnected();
+		}
 		
 	}
 	bool crtc_transport::is_active() const
@@ -420,6 +494,7 @@ namespace chen {
 			//	}
 			//}
 			//
+			//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 			if (!m_srtp_send_session_ptr->EncryptRtp( &data,  &len))
@@ -537,6 +612,16 @@ namespace chen {
 		}
 		return false;
 	}
+	void crtc_transport::send_consumer(RTC::RtpPacket * packet)
+	{
+		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet->GetSsrc());
+		if (!consumer_ptr)
+		{
+			WARNING_EX_LOG("not find consumer ssrc = %u", packet->GetSsrc());
+			return;
+		}
+		consumer_ptr->send_rtp_packet(packet);
+	}
 	void crtc_transport::send_rtcp_packet(RTC::RTCP::Packet * packet)
 	{
 		if (m_current_socket_ptr && m_srtp_send_session_ptr)
@@ -650,6 +735,18 @@ namespace chen {
 			}
 		}
 		m_rtc_net_state = ERtcNetworkStateEstablished;
+		if (!m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
+		{
+			m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
+			m_tcc_server->SetMaxIncomingBitrate(800000000);
+			m_tcc_server->TransportConnected();
+		}
+		if (!m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
+		{
+			m_tcc_client   = new RTC::TransportCongestionControlClient(
+				this, RTC::BweType::TRANSPORT_CC, 600000u, 600000u);
+			m_tcc_client->TransportConnected();
+		}
 	}
 
 	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
@@ -733,6 +830,92 @@ namespace chen {
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - elapse));
 		}*/
+	}
+	void crtc_transport::OnTransportCongestionControlServerSendRtcpPacket(RTC::TransportCongestionControlServer * tccServer, RTC::RTCP::Packet * packet)
+	{
+		packet->Serialize(RTC::RTCP::Buffer);
+		NORMAL_EX_LOG("--->");
+		send_rtcp_packet(packet);
+	}
+	void crtc_transport::OnTransportCongestionControlClientBitrates(RTC::TransportCongestionControlClient * tccClient, RTC::TransportCongestionControlClient::Bitrates & bitrates)
+	{
+	}
+	void crtc_transport::OnTransportCongestionControlClientSendRtpPacket(RTC::TransportCongestionControlClient * tccClient, RTC::RtpPacket * packet, const webrtc::PacedPacketInfo & pacingInfo)
+	{
+		// Update abs-send-time if present.
+		packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+
+		// Update transport wide sequence number if present.
+		// clang-format off
+//		if (
+//			this->tccClient->GetBweType() == RTC::BweType::TRANSPORT_CC &&
+//			packet->UpdateTransportWideCc01(this->transportWideCcSeq + 1)
+//			)
+//			// clang-format on
+//		{
+//			this->transportWideCcSeq++;
+//
+//			// May emit 'trace' event.
+//			EmitTraceEventProbationType(packet);
+//
+//			webrtc::RtpPacketSendInfo packetInfo;
+//
+//			packetInfo.ssrc = packet->GetSsrc();
+//			packetInfo.transport_sequence_number = this->transportWideCcSeq;
+//			packetInfo.has_rtp_sequence_number = true;
+//			packetInfo.rtp_sequence_number = packet->GetSequenceNumber();
+//			packetInfo.length = packet->GetSize();
+//			packetInfo.pacing_info = pacingInfo;
+//
+//			// Indicate the pacer (and prober) that a packet is to be sent.
+//			this->tccClient->InsertPacket(packetInfo);
+//
+//#ifdef ENABLE_RTC_SENDER_BANDWIDTH_ESTIMATOR
+//			auto* senderBwe = this->senderBwe;
+//			RTC::SenderBandwidthEstimator::SentInfo sentInfo;
+//
+//			sentInfo.wideSeq = this->transportWideCcSeq;
+//			sentInfo.size = packet->GetSize();
+//			sentInfo.isProbation = true;
+//			sentInfo.sendingAtMs = DepLibUV::GetTimeMs();
+//
+//			auto* cb = new onSendCallback([tccClient, &packetInfo, senderBwe, &sentInfo](bool sent) {
+//				if (sent)
+//				{
+//					tccClient->PacketSent(packetInfo, DepLibUV::GetTimeMsInt64());
+//
+//					sentInfo.sentAtMs = DepLibUV::GetTimeMs();
+//
+//					senderBwe->RtpPacketSent(sentInfo);
+//				}
+//			});
+//
+//			SendRtpPacket(nullptr, packet, cb);
+//#else
+//			const auto* cb = new onSendCallback([tccClient, &packetInfo](bool sent) {
+//				if (sent)
+//					tccClient->PacketSent(packetInfo, DepLibUV::GetTimeMsInt64());
+//			});
+//
+//			SendRtpPacket(nullptr, packet, cb);
+//#endif
+//		}
+//		else
+//		{
+//			// May emit 'trace' event.
+//			EmitTraceEventProbationType(packet);
+//
+//			SendRtpPacket(nullptr, packet);
+//		}
+//
+//		this->sendProbationTransmission.Update(packet);
+//
+//		MS_DEBUG_DEV(
+//			"probation sent [seq:%" PRIu16 ", wideSeq:%" PRIu16 ", size:%zu, bitrate:%" PRIu32 "]",
+//			packet->GetSequenceNumber(),
+//			this->transportWideCcSeq,
+//			packet->GetSize(),
+//			this->sendProbationTransmission.GetBitrate(DepLibUV::GetTimeMs()));
 	}
 	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
@@ -835,6 +1018,23 @@ namespace chen {
 
 				return;
 			}
+
+
+			// Apply the Transport RTP header extension ids so the RTP listener can use them.
+			packet->SetMidExtensionId(EMID);
+			 packet->SetRidExtensionId(ERTP_STREAM_ID);
+			 packet->SetRepairedRidExtensionId(EREPAIRED_RTP_STREAM_ID);
+			packet->SetAbsSendTimeExtensionId(EABS_SEND_TIME);
+			packet->SetTransportWideCc01ExtensionId(ETRANSPORT_WIDE_CC_01);
+
+			auto nowMs = uv_util::GetTimeMs();
+
+			// Feed the TransportCongestionControlServer.
+			if (m_tcc_server )
+			{
+				m_tcc_server->IncomingPacket(nowMs, packet);
+			}
+
 			crtc_producer * producer_ptr = m_all_rtp_listener.get_producer(packet->GetSsrc());
 			if (!producer_ptr)
 			{
@@ -908,8 +1108,26 @@ namespace chen {
 
 		{
 			//NORMAL_EX_LOG("rtcp unprotect rtp OK !!!-------->>>>>>>");
+			RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
 
+			if (!packet)
+			{
+				WARNING_EX_LOG( "rtcp received data is not a valid RTCP compound or single packet");
 
+				return;
+			}
+			// Handle each RTCP packet.
+			while (packet)
+			{
+				_handler_rtcp_packet(packet);
+
+				auto* previousPacket = packet;
+
+				packet = packet->GetNext();
+
+				delete previousPacket;
+			}
+			return;
 			cbuffer buffer((char *)data, len);
 
 			crtcp_compound rtcp_compound;
@@ -955,47 +1173,45 @@ namespace chen {
 				//rr->Dump();
 				for (auto it = rr->Begin(); it != rr->End(); ++it)
 				{
-					auto& report = *it;
-					//auto* consumer = GetConsumerByMediaSsrc(report->GetSsrc());
+					//RTC::RTCP::ReceiverReport& report = *it;
+					auto* consumer = m_all_rtp_listener.get_consumer((*it)->GetSsrc());
 
-					//if (!consumer)
-					//{
-					//	// Special case for the RTP probator.
-					//	if (report->GetSsrc() == RTC::RtpProbationSsrc)
-					//	{
-					//		continue;
-					//	}
+					if (!consumer)
+					{
+						// Special case for the RTP probator.
+						if ((*it)->GetSsrc() == RTC::RtpProbationSsrc)
+						{
+							continue;
+						}
 
-					//	MS_DEBUG_TAG(
-					//		rtcp,
-					//		"no Consumer found for received Receiver Report [ssrc:%" PRIu32 "]",
-					//		report->GetSsrc());
+						DEBUG_EX_LOG( "rtcp no Consumer found for received Receiver Report [ssrc:%" PRIu32 "]",
+							(*it)->GetSsrc());
 
-					//	continue;
-					//}
+						continue;
+					}
 
-					//consumer->ReceiveRtcpReceiverReport(report);
+					consumer->receive_rtcp_receiver_report((*it));
 				}
 
-				//if (this->tccClient && !this->mapConsumers.empty())
-				//{
-				//	float rtt = 0;
+				if (m_tcc_client && !m_all_rtp_listener.m_ssrc_consumer_table.empty())
+				{
+					float rtt = 0;
 
-				//	// Retrieve the RTT from the first active consumer.
-				//	for (auto& kv : this->mapConsumers)
-				//	{
-				//		auto* consumer = kv.second;
+					// Retrieve the RTT from the first active consumer.
+					for (auto& kv : m_all_rtp_listener.m_ssrc_consumer_table)
+					{
+						auto* consumer = kv.second;
 
-				//		if (consumer->IsActive())
-				//		{
-				//			rtt = consumer->GetRtt();
+						//if (consumer->IsActive())
+						{
+							rtt = consumer->get_rtt();
 
-				//			break;
-				//		}
-				//	}
+							break;
+						}
+					}
 
-				//	this->tccClient->ReceiveRtcpReceiverReport(rr, rtt, DepLibUV::GetTimeMsInt64());
-				//}
+					m_tcc_client->ReceiveRtcpReceiverReport(rr, rtt, uv_util::GetTimeMsInt64());
+				}
 
 				break;
 			}
@@ -1218,25 +1434,23 @@ namespace chen {
 			{
 				RTC::RTCP::SenderReportPacket* sr = static_cast<RTC::RTCP::SenderReportPacket*>(packet);
 				DEBUG_EX_LOG("RTC::RTCP::Type::SR");
-				sr->Dump();
+				//sr->Dump();
 				// Even if Sender Report packet can only contains one report.
-				/*for (auto it = sr->Begin(); it != sr->End(); ++it)
+				for (auto it = sr->Begin(); it != sr->End(); ++it)
 				{
 					auto& report = *it;
-					auto* producer = this->rtpListener.GetProducer(report->GetSsrc());
+					auto* producer = m_all_rtp_listener.get_producer(report->GetSsrc());//this->rtpListener.GetProducer(report->GetSsrc());
 
 					if (!producer)
 					{
-						MS_DEBUG_TAG(
-							rtcp,
-							"no Producer found for received Sender Report [ssrc:%" PRIu32 "]",
+						DEBUG_EX_LOG( "no Producer found for received Sender Report [ssrc:%" PRIu32 "]",
 							report->GetSsrc());
 
 						continue;
 					}
 
-					producer->ReceiveRtcpSenderReport(report);
-				}*/
+					producer->receive_rtcp_sender_report(report);
+				} 
 
 				break;
 			}

@@ -63,13 +63,13 @@ namespace chen {
 			fflush(out_file_ptr);*/
 
 
-			chen::crtc_transport rtc;
-			g_dtls_certificate.init();
+			//chen::crtc_transport rtc;
+			//g_dtls_certificate.init();
 
-			chen::capi_rtc_publish rtc_publish;
+			//chen::capi_rtc_publish rtc_publish;
 
-			std::string local_sdp;
-			rtc_publish.do_serve_client(remote, roomname, peerid, local_sdp);
+			//std::string local_sdp;
+			//rtc_publish.do_serve_client(remote, roomname, peerid, local_sdp);
 
 			return 0;
 		}

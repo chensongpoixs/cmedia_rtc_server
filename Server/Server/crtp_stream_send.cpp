@@ -43,10 +43,10 @@ namespace chen {
 
 		if (!m_storage.empty())
 		{ 
-			
+			_store_packet(packet);
 		}
 		// Increase transmission counter.
-		//this->transmissionCounter.Update(packet);
+		m_transmission_counter.Update(packet);
 		return true;
 	}
 
@@ -89,6 +89,62 @@ namespace chen {
 		//		}
 		//	}
 		//}
+	}
+
+	void crtp_stream_send::receive_rtcp_receiver_report(RTC::RTCP::ReceiverReport * report)
+	{
+		// Get the NTP representation of the current timestamp.
+		uint64_t nowMs = uv_util::GetTimeMs();
+		auto ntp = rtc_time::TimeMs2Ntp(nowMs);
+
+		// Get the compact NTP representation of the current timestamp.
+		uint32_t compactNtp = (ntp.seconds & 0x0000FFFF) << 16;
+
+		compactNtp |= (ntp.fractions & 0xFFFF0000) >> 16;
+		//<<<<<<< HEAD
+				// NTP时间戳的中间32位
+		//=======
+				//  NTP时间戳的中间32位
+		//>>>>>>> 20adb84c0b9b03c2ea608d143e974cef7a4a3e62
+		uint32_t lastSr = report->GetLastSenderReport();
+
+		// 记录接收SR的时间与发送SR的时间差
+		uint32_t dlsr = report->GetDelaySinceLastSenderReport();
+
+		// RTT in 1/2^16 second fractions.
+		uint32_t rtt{ 0 };
+
+		// If no Sender Report was received by the remote endpoint yet, ignore lastSr
+		// and dlsr values in the Receiver Report.
+		if (lastSr && dlsr && (compactNtp > dlsr + lastSr))
+		{
+			//INFO_EX_LOG("[lastSr = %u][dlstr = %u][compactNtp = %u]", lastSr, dlsr, compactNtp);
+			rtt = compactNtp - dlsr - lastSr;
+		}
+		else
+		{
+			//INFO_EX_LOG("[lastSr = %u][dlstr = %u][compactNtp = %u]", lastSr, dlsr, compactNtp);
+		}
+		// RTT in milliseconds.
+		m_rtt = static_cast<float>(rtt >> 16) * 1000;
+		m_rtt += (static_cast<float>(rtt & 0x0000FFFF) / 65536) * 1000;
+
+		if (this->m_rtt > 0.0f)
+		{
+			this->m_has_rtt = true;
+		}
+
+		//自接收开始漏包总数，迟到包不算漏包，重传有可以导致负数
+//=======
+
+//>>>>>>> 20adb84c0b9b03c2ea608d143e974cef7a4a3e62
+		this->m_packets_lost = report->GetTotalLost();
+
+		//上一次报告之后从SSRC_n来包的漏包比列
+		this->m_fraction_lost = report->GetFractionLost();
+		//INFO_EX_LOG("[packetsLost = %u][fractionLost = %u][rtt = %u]", packetsLost, fractionLost, rtt);
+		// Update the score with the received RR.
+		UpdateScore(report);
 	}
 
 	//void RtpStreamSend::ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType)
@@ -199,7 +255,21 @@ namespace chen {
 
 
 
-	void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
+void crtp_stream_send::pause()
+{
+	_clear_buffer();
+}
+
+void crtp_stream_send::resume()
+{
+}
+
+uint32 crtp_stream_send::get_bitrate(uint64 nowMs)
+{
+	return uint32();
+}
+
+void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 	{
 		if (packet->GetSize() > RTC::MtuSize)
 		{
@@ -278,6 +348,178 @@ namespace chen {
 	}
 	void crtp_stream_send::_clear_buffer()
 	{
+		if (this->m_storage.empty())
+		{
+			return;
+		}
+
+		for (uint32_t idx{ 0 }; idx < this->m_buffer.size(); ++idx)
+		{
+			auto* storageItem = this->m_buffer[idx];
+
+			if (!storageItem)
+			{
+				cassert(!this->m_buffer[idx], "key should be NULL");
+
+				continue;
+			}
+
+			// Reset (free RTP packet) the storage item.
+			resetStorageItem(storageItem);
+
+			// Unfill the buffer item.
+			this->m_buffer[idx] = nullptr;
+		}
+
+		// Reset buffer.
+		this->m_buffer_start_idx = 0;
+		this->m_buffer_size = 0;
+	}
+
+	void crtp_stream_send::UpdateScore(RTC::RTCP::ReceiverReport * report)
+	{
+		// Calculate number of packets sent in this interval.
+	// 1. 发送总包数
+		size_t totalSent = m_transmission_counter.GetPacketCount();
+		// 2. 先前时刻发送包数
+		size_t sent = totalSent - m_sent_prior_score;
+		// 3. 记录当前时刻总发送包数
+		this->m_sent_prior_score = totalSent;
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				// Calculate number of packets lost in this interval.
+				// 4. 总丢包数
+		uint32_t totalLost = report->GetTotalLost() > 0 ? report->GetTotalLost() : 0;
+		uint32_t lost;
+		//INFO_EX_LOG("[totalSent = %u][sent = %u][totalLost = %u]", totalSent, sent, totalLost);
+		// 5. 上一时刻到现在时刻是否有丢包
+		// | ...     |        <-->          |
+		// |     上一个时刻                  现在
+		//
+		if (totalLost < this->m_lost_prior_score)
+		{
+			lost = 0;
+		}
+		else
+		{
+			lost = totalLost - this->m_lost_prior_score;
+		}
+
+		// 6. 记录当前时刻总丢包数
+		this->m_lost_prior_score = totalLost;
+
+		// Calculate number of packets repaired in this interval.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// 7. 记录总修复包 丢包修复总数量
+		size_t totalRepaired = this->m_packets_repaired;
+		// 8. 上一个时刻到现在修复包的数量
+		uint32_t repaired = totalRepaired - this->m_repaired_prior_score;
+		// 9. 记录当前时刻总修复包的数量
+		this->m_repaired_prior_score = totalRepaired;
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				// Calculate number of packets retransmitted in this interval.
+				// 10 . 记录总重新发送包的数量
+		auto totatRetransmitted = this->m_packets_retransmitted;
+		// 11. 上一个时刻到现在重新发送包的数量
+		uint32_t retransmitted = totatRetransmitted - this->m_retransmitted_prior_score;
+		//INFO_EX_LOG("[totalRepaired = %u][repaired = %u][packetsRetransmitted = %u]", totalRepaired, repaired, packetsRetransmitted);
+		// 12. 记录当前时刻总重新发送包数量
+		this->m_retransmitted_prior_score = totatRetransmitted;
+
+		// We didn't send any packet.
+		// 13. 判断上一个时刻到现在之间没有发送包
+		if (sent == 0)
+		{
+			//INFO_EX_LOG("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+			 update_score(10);
+
+			return;
+		}
+		// 14. 上一个时刻到现在丢包数量大于发送包数量 ， 就修改丢包总数为正常发送包数量哈
+		if (lost > sent)
+		{
+			lost = sent;
+		}
+		// 15. 上一个时刻到现在 修复包数量大于丢包数量， 就修改包为丢包数量哈
+		if (repaired > lost)
+		{
+			repaired = lost;
+		}
+
+#if MS_LOG_DEV_LEVEL == 3
+		MS_DEBUG_TAG(
+			score,
+			"[totalSent:%zu, totalLost:%" PRIi32 ", totalRepaired:%zu",
+			totalSent,
+			totalLost,
+			totalRepaired);
+
+		MS_DEBUG_TAG(
+			score,
+			"fixed values [sent:%zu, lost:%" PRIu32 ", repaired:%" PRIu32 ", retransmitted:%" PRIu32,
+			sent,
+			lost,
+			repaired,
+			retransmitted);
+#endif
+		// 16. 上一个时刻到现在修复包比率 = 修复包/发送包
+		auto repairedRatio = static_cast<float>(repaired) / static_cast<float>(sent);
+		// 17. 上一个时刻到现在修复包权重 =   [1/(修复包比率 + 1))] ^ 4 =====> ||||||||||||
+		auto repairedWeight = std::pow(1 / (repairedRatio + 1), 4);
+		//INFO_EX_LOG("== [repairedRatio = %s][repairedWeight = %s]", std::to_string(repairedRatio).c_str(), std::to_string(repairedWeight).c_str());
+		cassert(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
+
+
+		// 18. 上一个时刻到现在 修复包数量大于0 , 修复包权重格式 = repairedWeight  * (修复包/ 重新发送包)
+		if (retransmitted > 0)
+		{
+			repairedWeight *= static_cast<float>(repaired) / retransmitted;
+		}
+
+		// 19. 丢包数量 重新估计  = lost -  (修复包 * 重新发送包)  ????
+		lost -= repaired * repairedWeight;
+
+		// 20. 上一个时刻到现在已经完成传输包/总发送包比例 =  (发送总包数量 - 发送无效总包数量) / 发送总包数量
+		auto deliveredRatio = static_cast<float>(sent - lost) / static_cast<float>(sent);
+
+		// 21. 分数 计算公式 =  函数即四舍五入取偶((有效总包数量 ^ 4) * 10) 
+		auto score = static_cast<uint8_t>(std::round(std::pow(deliveredRatio, 4) * 10));
+
+
+
+
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//                                        分析评估算法步骤
+		//   1. 目的 评估网络情况是否良好    -----> 就判断掉包数  --> 每个时刻掉包数都是不同所以如何判断？？？？ 每个时刻掉包数呢 准确哈
+		//
+		//   2. 每个时刻的掉包 修复权重  
+		//   
+		//   3. 每个时刻从新发送包量 对修复权重影响 
+		//
+		//   4. 掉包评估数量
+		//
+		//
+		//    ---------------------------------------最终公式----------------------------------------------------   
+		//
+		//       ① [1/(最近时刻修复包比率 + 1)] ^ 4
+		//       ② 判断是否从新发送包情况    如果有从新发送包情况  就需要在调整修复比率  公式就变成 =   ([1/(最近时刻修复包比率 + 1)] ^ 4) * ( 最近时刻修复包 /  最近从新发送包)
+		//       ③ 调整掉包数  = 掉包数 - (修复包 * 从新发送包)
+		//
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#if MS_LOG_DEV_LEVEL == 3
+		MS_DEBUG_TAG(
+			score,
+			"[deliveredRatio:%f, repairedRatio:%f, repairedWeight:%f, new lost:%" PRIu32 ", score:%" PRIu8
+			"]",
+			deliveredRatio,
+			repairedRatio,
+			repairedWeight,
+			lost,
+			score);
+#endif
+		//INFO_EX_LOG("[pdatescore = %u]", score);
+		update_score(score);
 	}
 
 	// This method looks for the requested RTP packets and inserts them into the

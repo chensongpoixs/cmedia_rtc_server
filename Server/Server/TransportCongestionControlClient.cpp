@@ -27,8 +27,7 @@ namespace RTC
 	  RTC::BweType bweType,
 	  uint32_t initialAvailableBitrate,
 	  uint32_t maxOutgoingBitrate)
-	  : ctimer(),
-		listener(listener), bweType(bweType),
+	  :  listener(listener), bweType(bweType),
 	    initialAvailableBitrate(std::max<uint32_t>(initialAvailableBitrate, MinBitrate)),
 	    maxOutgoingBitrate(maxOutgoingBitrate)
 	{
@@ -52,12 +51,12 @@ namespace RTC
 
 		this->probationGenerator = new RTC::RtpProbationGenerator();
 
-		//this->processTimer = new Timer(this);
-		ctimer::init();
+		this->processTimer = new chen::ctimer(this);
+		//ctimer::init();
 		// NOTE: This is supposed to recover computed available bandwidth after
 		// network issues.
 		this->rtpTransportControllerSend->EnablePeriodicAlrProbing(true);
-		Start(std::min(
+		processTimer->Start(std::min(
 				// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
 				this->rtpTransportControllerSend->packet_sender()->TimeUntilNextProcess(),
 				// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
@@ -87,8 +86,8 @@ namespace RTC
 		this->probationGenerator = nullptr;
 
 		
-		//delete this->processTimer;
-		//this->processTimer = nullptr;
+		 delete this->processTimer;
+		 this->processTimer = nullptr;
 	}
 
 	void TransportCongestionControlClient::TransportConnected()
@@ -376,11 +375,11 @@ namespace RTC
 		return this->probationGenerator->GetNextPacket(size);
 	}
 
-	void TransportCongestionControlClient::OnTimer(/*Timer* timer*/)
+	void TransportCongestionControlClient::OnTimer(ctimer* timer)
 	{
 		//MS_TRACE();
 
-		//if (timer == this->processTimer)
+		 if (timer == this->processTimer)
 		{
 			// Time to call RtpTransportControllerSend::Process().
 			this->rtpTransportControllerSend->Process();
@@ -395,7 +394,7 @@ namespace RTC
 			//	// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
 			//	this->controllerFactory->GetProcessInterval().ms()
 			//));
-			Start(std::min<uint64_t>(
+			processTimer->Start(std::min<uint64_t>(
 				// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
 				this->rtpTransportControllerSend->packet_sender()->TimeUntilNextProcess(),
 				// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.

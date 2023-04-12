@@ -838,6 +838,12 @@
     <ClCompile Include="cglobal_rtc_config.cpp">
       <Filter>rtc_config</Filter>
     </ClCompile>
+    <ClCompile Include="TransportCongestionControlClient.cpp">
+      <Filter>congestion_controller</Filter>
+    </ClCompile>
+    <ClCompile Include="TrendCalculator.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1592,6 +1598,12 @@
     </ClInclude>
     <ClInclude Include="cglobal_rtc_config.h">
       <Filter>rtc_config</Filter>
+    </ClInclude>
+    <ClInclude Include="TransportCongestionControlClient.hpp">
+      <Filter>congestion_controller</Filter>
+    </ClInclude>
+    <ClInclude Include="TrendCalculator.hpp">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

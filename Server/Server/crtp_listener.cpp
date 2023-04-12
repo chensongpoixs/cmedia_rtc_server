@@ -48,4 +48,39 @@ namespace chen {
 		return nullptr;
 	}
 
+	bool crtp_listener::add_consumer(uint32 ssrc, crtc_consumer * consumer)
+	{
+		if (!m_ssrc_consumer_table.insert(std::make_pair(ssrc, consumer)).second)
+		{
+			WARNING_EX_LOG("insert producer rtp listener failed (ssrc = %u)", ssrc);
+			return false;
+		}
+		return true;
+	}
+
+	void crtp_listener::remote_consumer(uint32 ssrc)
+	{
+		m_ssrc_consumer_table.erase(ssrc);
+	}
+
+	crtc_consumer * crtp_listener::get_consumer(const RTC::RtpPacket * packet)
+	{
+		std::unordered_map<uint32, crtc_consumer*>::iterator iter = m_ssrc_consumer_table.find(packet->GetSsrc());
+		if (iter != m_ssrc_consumer_table.end())
+		{
+			return iter->second;
+		}
+		return nullptr;
+	}
+
+	crtc_consumer * crtp_listener::get_consumer(uint32 ssrc) const
+	{
+		std::unordered_map<uint32, crtc_consumer*>::const_iterator iter = m_ssrc_consumer_table.find(ssrc);
+		if (iter != m_ssrc_consumer_table.end())
+		{
+			return iter->second;
+		}
+		return nullptr;
+	}
+
 }

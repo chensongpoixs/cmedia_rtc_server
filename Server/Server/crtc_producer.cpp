@@ -145,7 +145,7 @@ namespace chen {
 				WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
 				continue;
 			}
-			rtc_ptr->send_rtp_data(packet);
+			rtc_ptr->send_consumer(packet);
 			//if (/*params.type*/  get_kind() == "audio")
 			//{
 			//	rtc_ptr->send_rtp_audio_data(packet);

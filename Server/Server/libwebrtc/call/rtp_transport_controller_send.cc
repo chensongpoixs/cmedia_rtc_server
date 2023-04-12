@@ -281,7 +281,7 @@ void RtpTransportControllerSend::MaybeCreateControllers() {
 }
 
 void RtpTransportControllerSend::UpdateControllerWithTimeInterval() {
-  DEBUG_EX_LOG("<<<<<");
+  //DEBUG_EX_LOG("<<<<<");
 
   // RTC_DCHECK(controller_);
  // MS_ASSERT(controller_, "controller not set");
