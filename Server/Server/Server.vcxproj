@@ -172,6 +172,7 @@
     <ClCompile Include="cglobal_config.cpp" />
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cglobal_rtc_config.cpp" />
+    <ClCompile Include="cglobal_rtc_port.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
     <ClCompile Include="cice_server.cpp" />
     <ClCompile Include="cifaddrs_android.cc" />
@@ -398,6 +399,7 @@
     <ClInclude Include="cglobal_config.h" />
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cglobal_rtc_config.h" />
+    <ClInclude Include="cglobal_rtc_port.h" />
     <ClInclude Include="cguard_reply.h" />
     <ClInclude Include="cice_server.h" />
     <ClInclude Include="cifaddrs_android.h" />

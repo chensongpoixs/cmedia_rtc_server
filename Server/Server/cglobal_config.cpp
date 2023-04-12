@@ -8,7 +8,7 @@ purpose:		_C_DTLS_ _H_
 
 ************************************************************************************************/
 #include "cglobal_config.h"
-
+#include "ccfg.h"
 
 #include "csocket_util.h"
 #include "clog.h"
@@ -30,6 +30,8 @@ namespace chen {
 		{
 			SYSTEM_LOG("[ip = %s]", ip.c_str());
 		}
+		m_all_ips.clear();
+		m_all_ips.insert(  g_cfg.get_string(ECI_RtcWanIp) );
 		SYSTEM_LOG("network all end OK !!!");
 
 

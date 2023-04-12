@@ -38,13 +38,14 @@ namespace chen {
 		set_string(ECI_WebSocketWanIp, "websocket_wan_ip", "0.0.0.0");
 		set_uint32(ECI_WebSocketWanPort, "websocket_wan_port", 9500);
 
-		set_uint32(ECI_RtcMinPort, "rtc_min_port", 50000); // 
-		set_uint32(ECI_RtcMaxPort, "rtc_max_port", 60000);
-		set_string(ECI_RtcAnnouncedIp, "rtc_announced_ip", "127.0.0.1");
+		set_uint32(ECI_RtcMinPort, "rtc_min_port", 9000); // 
+		set_uint32(ECI_RtcMaxPort, "rtc_max_port", 9100);
+		set_string(ECI_RtcWanIp, "rtc_wan_ip", "127.0.0.1");
 
 		set_uint32(ECI_LogLevel, "log_level", ELogLevel_Num);
 
 		set_uint32(ECI_StunTimeOut, "stun_time_out", 5000);
+		 
 
 		//配置表的值
 		load_cfg_file();

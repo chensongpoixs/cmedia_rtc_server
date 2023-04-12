@@ -29,13 +29,15 @@ namespace chen {
 		ECI_WebSocketWanPort,
 
 		// RTC config
+		ECI_RtcWanIp,
 		ECI_RtcMinPort,
 		ECI_RtcMaxPort,
 
-		ECI_RtcAnnouncedIp,
+		
 
 		ECI_LogLevel,
 		ECI_StunTimeOut,//stun_timeout
+		 
 		ECI_Max,
 	};
 	class ccfg : public cconfig

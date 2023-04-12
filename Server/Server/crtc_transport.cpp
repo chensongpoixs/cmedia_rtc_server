@@ -35,6 +35,8 @@ purpose:		crtc_transport
 #include <unordered_map>
 
 namespace chen {
+
+	static const char * wan_ip = "0.0.0.0";
 	crtc_transport::~crtc_transport()
 	{
 		int32  count = 34;
@@ -52,7 +54,8 @@ namespace chen {
 
 		for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
 		{
-			cudp_socket * socket_ptr = new   cudp_socket(this, (*iter).m_ip, (*iter).m_port);
+			std::string ip = wan_ip;
+			cudp_socket * socket_ptr = new   cudp_socket(this,  ip, (*iter).m_port);
 			m_udp_sockets.push_back(socket_ptr);
 			socket_ptr = NULL;
 		}

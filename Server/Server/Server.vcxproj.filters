@@ -844,6 +844,9 @@
     <ClCompile Include="TrendCalculator.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
+    <ClCompile Include="cglobal_rtc_port.cpp">
+      <Filter>global_config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1604,6 +1607,9 @@
     </ClInclude>
     <ClInclude Include="TrendCalculator.hpp">
       <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cglobal_rtc_port.h">
+      <Filter>global_config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

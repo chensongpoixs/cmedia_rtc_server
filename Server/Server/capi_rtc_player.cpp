@@ -26,7 +26,7 @@ purpose:		api_rtc_publish
 #include "crtc_constants.h"
 #include "crtp_header_extension_uri.h"
 #include "cglobal_rtc_config.h"
-
+#include "cglobal_rtc_port.h"
 namespace chen {
 	capi_rtc_player::~capi_rtc_player()
 	{
@@ -165,7 +165,7 @@ namespace chen {
 		// We allows to mock the eip of server.
 		if (true)
 		{
-			static  int32 udp_port = 4000;//_srs_config->get_rtc_server_listen();
+			//static  int32 udp_port = 4000;//_srs_config->get_rtc_server_listen();
 			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
 			std::string protocol = "udp";//_srs_config->get_rtc_server_protocol();
 
@@ -174,7 +174,7 @@ namespace chen {
 			for (std::set<std::string>::const_iterator iter = g_global_config.get_all_ips().begin(); iter != g_global_config.get_all_ips().end(); ++iter)
 			{
 				std::string hostname = *iter;/*"172.20.10.2";*/
-				int32 uport = udp_port++;
+				int32 uport = g_global_rtc_port.get_new_port();//;udp_port++;
 				//parse_hostport(*it, hostname, uport);
 				//int32 tport = tcp_port; 
 				//parse_hostport(*it, hostname, tport);

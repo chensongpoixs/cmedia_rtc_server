@@ -25,7 +25,7 @@ purpose:		cmedia_server
 #include "csrtp_session.h"
 #include "crtc_transport.h"
 #include "ctransport_mgr.h"
-
+#include "cglobal_rtc_port.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -106,6 +106,11 @@ namespace chen {
 		SYSTEM_LOG("dtls certificate init ");
 
 		if (!g_room_mgr.init())
+		{
+			return false;
+		}
+		SYSTEM_LOG("rtc port init ...");
+		if (!g_global_rtc_port.init())
 		{
 			return false;
 		}
@@ -209,7 +214,8 @@ namespace chen {
 		g_global_config.destroy();
 		SYSTEM_LOG("global config destroy OK !!!");
 
-
+		g_global_rtc_port.destroy();
+		SYSTEM_LOG("global rtc port config destroy ok !!!");
 		//1 log
 		LOG::destroy();
 		printf("Log Destroy OK!\n");
