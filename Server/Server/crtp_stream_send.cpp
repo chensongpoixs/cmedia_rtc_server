@@ -147,6 +147,22 @@ namespace chen {
 		UpdateScore(report);
 	}
 
+	void crtp_stream_send::receive_key_frame_request(RTC::RTCP::FeedbackPs::MessageType messageType)
+	{
+		switch (messageType)
+		{
+		case RTC::RTCP::FeedbackPs::MessageType::PLI:
+			m_pli_count++;
+			break;
+
+		case RTC::RTCP::FeedbackPs::MessageType::FIR:
+			m_fir_count++;
+			break;
+
+		default:;
+		}
+	}
+
 	//void RtpStreamSend::ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType)
 	//{
 	//	MS_TRACE();

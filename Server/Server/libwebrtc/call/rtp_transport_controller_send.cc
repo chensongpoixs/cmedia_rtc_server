@@ -212,7 +212,7 @@ void RtpTransportControllerSend::OnReceivedRtcpReceiverReport(
     const ReportBlockList& report_blocks,
     int64_t rtt_ms,
     int64_t now_ms) {
-  DEBUG_EX_LOG("<<<<< rtt_ms:%" PRIi64, rtt_ms);
+ // DEBUG_EX_LOG("<<<<< rtt_ms:%" PRIi64, rtt_ms);
 
   OnReceivedRtcpReceiverReportBlocks(report_blocks, now_ms);
 

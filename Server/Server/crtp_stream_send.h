@@ -61,6 +61,9 @@ namespace chen {
 		/*RTC::RTCP::SenderReport* GetRtcpSenderReport(uint64_t nowMs);*/
 		//RTC::RTCP::SdesChunk* GetRtcpSdesChunk();
 
+
+
+		void receive_key_frame_request(RTC::RTCP::FeedbackPs::MessageType messageType);
 	public:
 		virtual void pause() ;
 		virtual void resume();

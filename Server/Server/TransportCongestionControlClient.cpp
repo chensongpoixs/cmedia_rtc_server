@@ -309,17 +309,17 @@ namespace RTC
 		// Also emit the event fast if we detect a high BWE value increase.
 		else if (this->bitrates.availableBitrate > previousAvailableBitrate * 1.50)
 		{
-			DEBUG_EX_LOG("bwe, high BWE value increase detected, notifying the listener [now:%u, before:%u]",
-			  this->bitrates.availableBitrate,
-			  previousAvailableBitrate);
+		//	DEBUG_EX_LOG("bwe, high BWE value increase detected, notifying the listener [now:%u, before:%u]",
+		//	  this->bitrates.availableBitrate,
+		//	  previousAvailableBitrate);
 
 			notify = true;
 		}
 
 		if (notify)
 		{
-			DEBUG_EX_LOG( "notifying the listener with new available bitrate:%u"  ,
-			  this->bitrates.availableBitrate);
+			//DEBUG_EX_LOG( "notifying the listener with new available bitrate:%u"  ,
+			 // this->bitrates.availableBitrate);
 
 			this->lastAvailableBitrateEventAtMs = nowMs;
 
@@ -353,7 +353,7 @@ namespace RTC
 		else
 			this->bitrates.availableBitrate = static_cast<uint32_t>(targetTransferRate.target_rate.bps());
 
-		DEBUG_EX_LOG("new available bitrate:%u"  , this->bitrates.availableBitrate);
+		//DEBUG_EX_LOG("new available bitrate:%u"  , this->bitrates.availableBitrate);
 
 		MayEmitAvailableBitrateEvent(previousAvailableBitrate);
 	}

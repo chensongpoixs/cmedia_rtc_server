@@ -110,4 +110,38 @@ namespace chen {
 		return m_rtp_stream_send_ptr->get_rtt();
 	}
 
+	void crtc_consumer::receive_key_frame_request(RTC::RTCP::FeedbackPs::MessageType messageType, uint32_t ssrc)
+	{
+		switch (messageType)
+		{
+			case RTC::RTCP::FeedbackPs::MessageType::PLI:
+			{
+				//EmitTraceEventPliType(ssrc); 
+				break;
+			} 
+			case RTC::RTCP::FeedbackPs::MessageType::FIR:
+			{
+				//EmitTraceEventFirType(ssrc); 
+				break;
+			}
+
+			default:;
+		}
+
+		m_rtp_stream_send_ptr ->receive_key_frame_request(messageType);
+		//RequestKeyFrame();
+	}
+
+	void crtc_consumer::request_key_frame()
+	{
+		if (m_kind != "video")
+		{
+			return;
+		}
+		if (m_rtc_ptr)
+		{
+			m_rtc_ptr->OnTransportConsumerKeyFrameRequested();
+		}
+	}
+
 }

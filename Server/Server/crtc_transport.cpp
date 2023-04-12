@@ -30,6 +30,9 @@ purpose:		crtc_transport
 #include "cuv_ip.h"
 
 #include "cglobal_rtc_config.h"
+#include "FeedbackPsAfb.hpp"
+#include "FeedbackPsRemb.hpp"
+
 
 namespace chen {
 	crtc_transport::~crtc_transport()
@@ -215,6 +218,7 @@ namespace chen {
 					params.params.use_nack = true;
 					params.params.use_fir = true;
 					params.params.use_pli = true;
+					m_key_frame_ssrc = params.params.ssrc;
 					crtc_producer * producer_ptr = NULL; 
 					if (rtc_ssrc_info_ptr)
 					{
@@ -393,10 +397,16 @@ namespace chen {
 		if (m_tcc_client)
 		{
 			m_tcc_client->TransportDisconnected();
+			delete m_tcc_client;
+			m_tcc_client = NULL;
 		}
 		if (m_tcc_server )
 		{
 			m_tcc_server->TransportDisconnected();
+
+			delete m_tcc_server;
+
+			m_tcc_server = NULL;
 		}
 		
 	}
@@ -418,11 +428,13 @@ namespace chen {
 		//if (this->params.usePli)
 		//if (m_request_keyframe > 0)
 		{
-			DEBUG_EX_LOG("rtcp, rtx, sending PLI [ssrc:%" PRIu32 "], [m_request_keyframe = %" PRIu32 "]", m_all_video_ssrc, m_request_keyframe);
+			DEBUG_EX_LOG("rtcp, rtx, sending PLI [ssrc:%" PRIu32 "], [m_request_keyframe = %" PRIu32 "]", m_key_frame_ssrc, m_request_keyframe);
 			m_request_keyframe = 0;
 			// Sender SSRC should be 0 since there is no media sender involved, but
 			// some implementations like gstreamer will fail to process it otherwise.
-			RTC::RTCP::FeedbackPsPliPacket packet(m_all_video_ssrc, m_all_video_ssrc);
+
+			 
+			RTC::RTCP::FeedbackPsPliPacket packet(m_key_frame_ssrc, m_key_frame_ssrc);
 
 			packet.Serialize(RTC::RTCP::Buffer);
 			send_rtcp_packet(&packet);
@@ -448,6 +460,9 @@ namespace chen {
 		//	// Notify the listener.
 		//	static_cast<RTC::RtpStreamRecv::Listener*>(this->listener)->OnRtpStreamSendRtcpPacket(this, &packet);
 		//}
+	}
+	void crtc_transport::OnTransportConsumerKeyFrameRequested()
+	{
 	}
 	void crtc_transport::send_rtp_data(void * data, int32 size)
 	{
@@ -513,26 +528,26 @@ namespace chen {
 			WARNING_EX_LOG("");
 			return;
 		}*/
-		if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_audio_ssrc != 0)
-		{
-			packet->SetSsrc(m_all_audio_ssrc);
-			std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_audio_ssrc);
+		//if (m_current_socket_ptr && m_srtp_send_session_ptr && m_all_audio_ssrc != 0)
+		//{
+		//	packet->SetSsrc(m_all_audio_ssrc);
+		//	std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_audio_ssrc);
 
-			if (iter != m_ssrc_media_type_map.end())
-			{
-				packet->SetPayloadType(iter->second);
-			}
-			 
-			const uint8_t* data = packet->GetData();
-			size_t len = packet->GetSize();
-			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
-			{
-				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
-				return;
-			}
-		//	NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
-		}
+		//	if (iter != m_ssrc_media_type_map.end())
+		//	{
+		//		packet->SetPayloadType(iter->second);
+		//	}
+		//	 
+		//	const uint8_t* data = packet->GetData();
+		//	size_t len = packet->GetSize();
+		//	if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+		//	{
+		//		WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+		//		return;
+		//	}
+		////	NORMAL_EX_LOG("rtp data size = %u", len);
+		//	m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		//}
 	}
 	void crtc_transport::send_rtp_video_data(RTC::RtpPacket * packet)
 	{
@@ -548,53 +563,53 @@ namespace chen {
 			cmd << "[first = " << pi.first << "][ second = " << pi.second << "]";
 		}*/
 		//NORMAL_EX_LOG("[-->%s]", cmd.str().c_str());
-		if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_video_ssrc != 0)
-		{
-			packet->SetSsrc(m_all_video_ssrc);
-			//size_t size = m_ssrc_media_type_map.size();
+		//if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_video_ssrc != 0)
+		//{
+		//	packet->SetSsrc(m_all_video_ssrc);
+		//	//size_t size = m_ssrc_media_type_map.size();
 
 
 
-			std::map<uint32, uint32 >::const_iterator iter =  m_ssrc_media_type_map.find(m_all_video_ssrc);
-		
-			if (iter != m_ssrc_media_type_map.end())
-			{
-				packet->SetPayloadType(iter->second);
-			}
-			 
-			const uint8_t* data = packet->GetData();
-			size_t len = packet->GetSize();
-			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
-			{
-				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
-				return;
-			}
-			//NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
-		}
+		//	std::map<uint32, uint32 >::const_iterator iter =  m_ssrc_media_type_map.find(m_all_video_ssrc);
+		//
+		//	if (iter != m_ssrc_media_type_map.end())
+		//	{
+		//		packet->SetPayloadType(iter->second);
+		//	}
+		//	 
+		//	const uint8_t* data = packet->GetData();
+		//	size_t len = packet->GetSize();
+		//	if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+		//	{
+		//		WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+		//		return;
+		//	}
+		//	//NORMAL_EX_LOG("rtp data size = %u", len);
+		//	m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		//}
 	}
 	void crtc_transport::send_rtp_rtx_video_data(RTC::RtpPacket * packet)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_rtx_video_ssrc != 0)
-		{
-			packet->SetSsrc(m_all_rtx_video_ssrc);
-			std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_rtx_video_ssrc);
+		//if (m_current_socket_ptr && m_srtp_send_session_ptr &&  m_all_rtx_video_ssrc != 0)
+		//{
+		//	packet->SetSsrc(m_all_rtx_video_ssrc);
+		//	std::map<uint32, uint32 >::const_iterator iter = m_ssrc_media_type_map.find(m_all_rtx_video_ssrc);
 
-			if (iter != m_ssrc_media_type_map.end())
-			{
-				packet->SetPayloadType(iter->second);
-			}
-			 
-			const uint8_t* data = packet->GetData();
-			size_t len = packet->GetSize();
-			if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
-			{
-				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
-				return;
-			}
-			//NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
-		}
+		//	if (iter != m_ssrc_media_type_map.end())
+		//	{
+		//		packet->SetPayloadType(iter->second);
+		//	}
+		//	 
+		//	const uint8_t* data = packet->GetData();
+		//	size_t len = packet->GetSize();
+		//	if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+		//	{
+		//		WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+		//		return;
+		//	}
+		//	//NORMAL_EX_LOG("rtp data size = %u", len);
+		//	m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		//}
 	}
 
 	bool crtc_transport::send_rtcp(const uint8 * data, size_t len)
@@ -834,7 +849,7 @@ namespace chen {
 	void crtc_transport::OnTransportCongestionControlServerSendRtcpPacket(RTC::TransportCongestionControlServer * tccServer, RTC::RTCP::Packet * packet)
 	{
 		packet->Serialize(RTC::RTCP::Buffer);
-		NORMAL_EX_LOG("--->");
+		//NORMAL_EX_LOG("--->");
 		send_rtcp_packet(packet);
 	}
 	void crtc_transport::OnTransportCongestionControlClientBitrates(RTC::TransportCongestionControlClient * tccClient, RTC::TransportCongestionControlClient::Bitrates & bitrates)
@@ -1168,7 +1183,7 @@ namespace chen {
 		{
 			case RTC::RTCP::Type::RR:
 			{
-				DEBUG_EX_LOG("RTC::RTCP::Type::RR");
+				//DEBUG_EX_LOG("RTC::RTCP::Type::RR");
 				RTC::RTCP::ReceiverReportPacket* rr = static_cast<RTC::RTCP::ReceiverReportPacket*>(packet);
 				//rr->Dump();
 				for (auto it = rr->Begin(); it != rr->End(); ++it)
@@ -1226,32 +1241,24 @@ namespace chen {
 				case RTC::RTCP::FeedbackPs::MessageType::PLI:
 				{
 					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::PLI");
-					/*auto* consumer = GetConsumerByMediaSsrc(feedback->GetMediaSsrc());
-
-					if (feedback->GetMediaSsrc() == RTC::RtpProbationSsrc)
+					auto* consumer = m_all_rtp_listener.get_consumer(feedback ->GetMediaSsrc());
+					if (!consumer)
 					{
-						break;
-					}
-					else if (!consumer)
-					{
-						MS_DEBUG_TAG(
-							rtcp,
-							"no Consumer found for received PLI Feedback packet "
+						WARNING_EX_LOG( "rtcp no Consumer found for received PLI Feedback packet "
 							"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
 							feedback->GetSenderSsrc(),
 							feedback->GetMediaSsrc());
 
 						break;
 					}
-*/
+					
 					NORMAL_EX_LOG(
 						"rtcp PLI received, requesting key frame for Consumer "
 						"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
 						feedback->GetSenderSsrc(),
 						feedback->GetMediaSsrc());
 
-					//consumer->ReceiveKeyFrameRequest(
-					//	RTC::RTCP::FeedbackPs::MessageType::PLI, feedback->GetMediaSsrc());
+					 consumer->receive_key_frame_request( RTC::RTCP::FeedbackPs::MessageType::PLI, feedback->GetMediaSsrc());
 
 					break;
 				}
@@ -1264,7 +1271,17 @@ namespace chen {
 
 					for (auto it = fir->Begin(); it != fir->End(); ++it)
 					{
-						/*auto& item = *it;
+						crtc_consumer* consumer = m_all_rtp_listener.get_consumer((*it)->GetSsrc());
+						if (!consumer)
+						{
+							DEBUG_EX_LOG( "no Consumer found for received FIR Feedback packet "
+								"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 ", item ssrc:%" PRIu32 "]",
+								feedback->GetSenderSsrc(),
+								feedback->GetMediaSsrc(),
+								(*it)->GetSsrc());
+							continue;;
+						}
+						 /*auto& item = *it;
 						auto* consumer = GetConsumerByMediaSsrc(item->GetSsrc());
 
 						if (item->GetSsrc() == RTC::RtpProbationSsrc)
@@ -1285,12 +1302,12 @@ namespace chen {
 						}*/
 
 						NORMAL_EX_LOG(" rtcp, FIR received, requesting key frame for Consumer "
-							"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 ", item ssrc: "   "]",
+							"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 ", item ssrc: "  PRIu32 "]",
 							feedback->GetSenderSsrc(),
-							feedback->GetMediaSsrc());// ,
-							/*item->GetSsrc())*/;
+							feedback->GetMediaSsrc() ,
+						(*it)->GetSsrc()) ;
 
-						//consumer->ReceiveKeyFrameRequest(feedback->GetMessageType(), item->GetSsrc());
+						 consumer->receive_key_frame_request(feedback->GetMessageType(), (*it)->GetSsrc());
 					}
 
 					break;
@@ -1299,38 +1316,36 @@ namespace chen {
 				case RTC::RTCP::FeedbackPs::MessageType::AFB:
 				{
 					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::AFB");
-					//auto* afb = static_cast<RTC::RTCP::FeedbackPsAfbPacket*>(feedback);
+					RTC::RTCP::FeedbackPsAfbPacket* afb = static_cast<RTC::RTCP::FeedbackPsAfbPacket*>(feedback);
 
-					//// Store REMB info.
-					//if (afb->GetApplication() == RTC::RTCP::FeedbackPsAfbPacket::Application::REMB)
-					//{
-					//	auto* remb = static_cast<RTC::RTCP::FeedbackPsRembPacket*>(afb);
+					// Store REMB info.
+					if (afb->GetApplication() == RTC::RTCP::FeedbackPsAfbPacket::Application::REMB)
+					{
+						auto* remb = static_cast<RTC::RTCP::FeedbackPsRembPacket*>(afb);
 
-					//	// Pass it to the TCC client.
-					//	// clang-format off
-					//	if (
-					//		this->tccClient &&
-					//		this->tccClient->GetBweType() == RTC::BweType::REMB
-					//		)
-					//		// clang-format on
-					//	{
-					//		this->tccClient->ReceiveEstimatedBitrate(remb->GetBitrate());
-					//	}
+						// Pass it to the TCC client.
+						// clang-format off
+						if (
+							this->m_tcc_client &&
+							this->m_tcc_client->GetBweType() == RTC::BweType::REMB
+							)
+							// clang-format on
+						{
+							this->m_tcc_client->ReceiveEstimatedBitrate(remb->GetBitrate());
+						}
 
-					//	break;
-					//}
-					//else
-					//{
-					//	MS_DEBUG_TAG(
-					//		rtcp,
-					//		"ignoring unsupported %s Feedback PS AFB packet "
-					//		"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
-					//		RTC::RTCP::FeedbackPsPacket::MessageType2String(feedback->GetMessageType()).c_str(),
-					//		feedback->GetSenderSsrc(),
-					//		feedback->GetMediaSsrc());
+						break;
+					}
+					else
+					{
+						DEBUG_EX_LOG( "rtcp ignoring unsupported %s Feedback PS AFB packet "
+							"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+							RTC::RTCP::FeedbackPsPacket::MessageType2String(feedback->GetMessageType()).c_str(),
+							feedback->GetSenderSsrc(),
+							feedback->GetMediaSsrc());
 
-					//	break;
-					//}
+						break;
+					}
 				}
 
 				default:
@@ -1433,7 +1448,7 @@ namespace chen {
 			case RTC::RTCP::Type::SR:
 			{
 				RTC::RTCP::SenderReportPacket* sr = static_cast<RTC::RTCP::SenderReportPacket*>(packet);
-				DEBUG_EX_LOG("RTC::RTCP::Type::SR");
+				//DEBUG_EX_LOG("RTC::RTCP::Type::SR");
 				//sr->Dump();
 				// Even if Sender Report packet can only contains one report.
 				for (auto it = sr->Begin(); it != sr->End(); ++it)
@@ -1457,7 +1472,7 @@ namespace chen {
 
 			case RTC::RTCP::Type::SDES:
 			{
-				DEBUG_EX_LOG("RTC::RTCP::Type::SDES");
+				//DEBUG_EX_LOG("RTC::RTCP::Type::SDES");
 				// According to RFC 3550 section 6.1 "a CNAME item MUST be included in
 				// in each compound RTCP packet". So this is true even for compound
 				// packets sent by endpoints that are not sending any RTP stream to us
@@ -1470,7 +1485,7 @@ namespace chen {
 
 			case RTC::RTCP::Type::BYE:
 			{
-				DEBUG_EX_LOG("RTC::RTCP::Type::BYE");
+				//DEBUG_EX_LOG("RTC::RTCP::Type::BYE");
 				NORMAL_EX_LOG("rtcp, ignoring received RTCP BYE");
 
 				break;

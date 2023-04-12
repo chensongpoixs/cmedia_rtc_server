@@ -38,6 +38,11 @@ namespace chen {
 
 		void receive_rtcp_receiver_report(RTC::RTCP::ReceiverReport* report);
 		float get_rtt();
+
+		void  receive_key_frame_request(RTC::RTCP::FeedbackPs::MessageType messageType, uint32_t ssrc);
+
+
+		void  request_key_frame();
 	protected:
 	private:
 		crtc_transport			*			m_rtc_ptr;

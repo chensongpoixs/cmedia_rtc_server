@@ -41,14 +41,21 @@ namespace chen {
 	};
 
 
-
+	struct crtc_room_master
+	{
+		std::string m_room_name;
+		std::string m_user_name;
+		crtc_room_master () 
+			: m_room_name("")
+			, m_user_name(""){}
+	};
 
 	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster,
 		public RTC::TransportCongestionControlClient::Listener,
 		public RTC::TransportCongestionControlServer::Listener
 	{
 	public:
-		explicit crtc_transport()
+		explicit crtc_transport(const crtc_room_master & master)
 		: m_local_sdp ()
 		, m_remote_sdp ()
 		, m_rtc_net_state(ERtcNetworkStateInit)
@@ -58,10 +65,11 @@ namespace chen {
 		, m_srtp_send_session_ptr(NULL)
 		, m_srtp_recv_session_ptr(NULL)
 			, m_players_ssrc_map()
-			, m_all_audio_ssrc(0)
+			/*, m_all_audio_ssrc(0)
 			, m_all_rtx_audio_ssrc(0)
 			, m_all_video_ssrc(0)
-			, m_all_rtx_video_ssrc(0)
+			, m_all_rtx_video_ssrc(0)*/
+			, m_key_frame_ssrc(0)
 			, m_ssrc_media_type_map()
 			, m_rtc_client_type(ERtcClientNone)
 			, m_request_keyframe(0)
@@ -71,6 +79,7 @@ namespace chen {
 			, m_server_ssrc_map()
 			, m_tcc_client(NULL)
 			, m_tcc_server(NULL)
+			, m_rtc_master(master)
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -97,6 +106,9 @@ namespace chen {
 		}
 		  cremote_estimator_proxy* get_remote_estimator() { return &m_remote_estimator; }
 		const ERtcClientType get_rtc_type() { return m_rtc_client_type; }
+
+	public:
+		void OnTransportConsumerKeyFrameRequested();
 	public:
 		void send_rtp_data(void * data, int32 size);
 		void send_rtp_data(RTC::RtpPacket* packet);
@@ -203,11 +215,14 @@ namespace chen {
 		std::map<uint32, crtc_player_stream*>	m_players_ssrc_map;
 
 		//////////////////////
-		uint32									m_all_audio_ssrc;
-		uint32									m_all_rtx_audio_ssrc;
+		/*uint32									m_all_audio_ssrc;
+		uint32									m_all_rtx_audio_ssrc;*/
 		////////////////////////////////////////////////////////////////
-		uint32									m_all_video_ssrc;
-		uint32									m_all_rtx_video_ssrc;
+		/*uint32									m_all_video_ssrc;
+		uint32									m_all_rtx_video_ssrc;*/
+
+
+		uint32									m_key_frame_ssrc;
 
 		std::map<uint32, uint32 >				m_ssrc_media_type_map;
 
@@ -224,6 +239,9 @@ namespace chen {
 		std::map<uint32, uint32>				m_server_ssrc_map;
 		RTC::TransportCongestionControlClient*	m_tcc_client;
 		RTC::TransportCongestionControlServer*	m_tcc_server;
+
+		crtc_room_master						m_rtc_master;
+
 	};
 
 

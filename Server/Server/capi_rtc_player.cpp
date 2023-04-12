@@ -229,8 +229,10 @@ namespace chen {
 		// We must setup the local SDP, then initialize the session object.
 		//session->set_local_sdp(local_sdp);
 	//	session->set_state_as_waiting_stun();
-
-		crtc_transport * transport_ptr = new crtc_transport();
+		crtc_room_master master;
+		master.m_room_name = roomname;
+		master.m_user_name = video_peerid;
+		crtc_transport * transport_ptr = new crtc_transport(master);
 		transport_ptr->create_players(play_sub_relations);
 		transport_ptr->init( ERtcClientPlayer, rtc_remote_sdp, rtc_local_sdp, stream_desc);
 		transport_ptr->set_state_as_waiting_stun();
