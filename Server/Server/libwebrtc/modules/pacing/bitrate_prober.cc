@@ -218,8 +218,8 @@ size_t BitrateProber::RecommendedMinProbeSize() const {
 void BitrateProber::ProbeSent(int64_t now_ms, size_t bytes) {
   // RTC_DCHECK(probing_state_ == ProbingState::kActive);
   // RTC_DCHECK_GT(bytes, 0);
-  //MS_ASSERT(probing_state_ == ProbingState::kActive, "probing not active");
-  //MS_ASSERT(bytes > 0, "bytes must be > 0");
+  cassert(probing_state_ == ProbingState::kActive, "probing not active");
+  cassert(bytes > 0, "bytes must be > 0");
 
   if (!clusters_.empty()) {
     ProbeCluster* cluster = &clusters_.front();
@@ -254,8 +254,8 @@ void BitrateProber::ProbeSent(int64_t now_ms, size_t bytes) {
 int64_t BitrateProber::GetNextProbeTime(const ProbeCluster& cluster) {
   // RTC_CHECK_GT(cluster.pace_info.send_bitrate_bps, 0);
   // RTC_CHECK_GE(cluster.time_started_ms, 0);
-  //MS_ASSERT(cluster.pace_info.send_bitrate_bps > 0, "cluster.pace_info.send_bitrate_bps must be > 0");
-  //MS_ASSERT(cluster.time_started_ms > 0, "cluster.time_started_ms must be > 0");
+  cassert(cluster.pace_info.send_bitrate_bps > 0, "cluster.pace_info.send_bitrate_bps must be > 0");
+  cassert(cluster.time_started_ms > 0, "cluster.time_started_ms must be > 0");
 
   // Compute the time delta from the cluster start to ensure probe bitrate stays
   // close to the target bitrate. Result is in milliseconds.

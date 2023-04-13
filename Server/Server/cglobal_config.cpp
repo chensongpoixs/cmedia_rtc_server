@@ -26,12 +26,16 @@ namespace chen {
 			return false;
 		}
 		SYSTEM_LOG("network all ip : ");
+		
+		if (g_cfg.get_string(ECI_RtcWanIp) != "127.0.0.1")
+		{
+			m_all_ips.clear();
+			m_all_ips.insert(g_cfg.get_string(ECI_RtcWanIp));
+		}
 		for (const std::string & ip : m_all_ips)
 		{
 			SYSTEM_LOG("[ip = %s]", ip.c_str());
 		}
-		m_all_ips.clear();
-		m_all_ips.insert(  g_cfg.get_string(ECI_RtcWanIp) );
 		SYSTEM_LOG("network all end OK !!!");
 
 

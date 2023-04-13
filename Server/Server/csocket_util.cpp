@@ -339,7 +339,7 @@ namespace chen {
 		if (strstr(network.description().c_str(), "VMnet") != nullptr) 
 		{
 			//不排除WMnet 网卡
-			WARNING_EX_LOG("VMnet  [ip = %s]", network.ip().ToString().c_str());
+			//WARNING_EX_LOG("VMnet  [ip = %s]", network.ip().ToString().c_str());
 			//return true;
 		}
 #endif
@@ -462,10 +462,10 @@ namespace chen {
 					network_ptr.AddIP(ip);
 					bool ignored = IsIgnoredNetwork(network_ptr);
 					network_ptr.set_ignored(ignored);
-					NORMAL_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
+				//	NORMAL_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
 					if (network_ptr.ignored() || adapter_type == ADAPTER_TYPE_LOOPBACK)
 					{
-						 WARNING_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
+						// WARNING_EX_LOG("[name = %s][description = %s][ip = %s][adapter_type = %d][ignored = %d]", name.c_str(), description.c_str(), ip.ToString().c_str(), adapter_type, ignored);
 					}
 					else
 					{

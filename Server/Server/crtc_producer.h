@@ -54,6 +54,10 @@ namespace chen {
 
 		bool  mangle_rtp_packet(RTC::RtpPacket * packet, const crtp_stream::crtp_stream_params & params);
 		const crtp_params & get_rtcp_params() const { return m_params; }
+
+
+	public:
+		void OnProducerSendRtcpPacket(RTC::RTCP::Packet* packet);
 	public:
 
 	private:

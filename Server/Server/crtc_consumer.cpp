@@ -18,7 +18,7 @@ namespace chen {
 			, m_sync_required(true)
 			, m_rtp_seq_manager()
 	{
-		m_rtp_stream_send_ptr = new crtp_stream_send(m_rtp_params.params);
+		m_rtp_stream_send_ptr = new crtp_stream_send(this, m_rtp_params.params);
 		if (m_rtp_params.params.rtx_ssrc)
 		{
 			m_rtp_stream_send_ptr->set_rtx(m_rtp_params.params.rtx_payload_type, m_rtp_params.params.rtx_ssrc);
@@ -109,6 +109,11 @@ namespace chen {
 		packet->SetSequenceNumber(origSeq);
 	}
 
+	void crtc_consumer::receive_nack(RTC::RTCP::FeedbackRtpNackPacket * nackPacket)
+	{
+		m_rtp_stream_send_ptr->receive_nack(nackPacket);
+	}
+
 	void crtc_consumer::receive_rtcp_receiver_report(RTC::RTCP::ReceiverReport * report)
 	{
 		m_rtp_stream_send_ptr->receive_rtcp_receiver_report(report);
@@ -140,6 +145,14 @@ namespace chen {
 		m_rtp_stream_send_ptr ->receive_key_frame_request(messageType);
 		//RequestKeyFrame();
 		request_key_frame();
+	}
+
+	void crtc_consumer::OnRtpStreamRetransmitRtpPacket(crtp_stream * stream, RTC::RtpPacket * packet)
+	{
+		if (m_rtc_ptr)
+		{
+			m_rtc_ptr->OnConsumerRetransmitRtpPacket(this, packet);
+		}
 	}
 
 	void crtc_consumer::request_key_frame()

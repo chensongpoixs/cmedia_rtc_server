@@ -15,14 +15,16 @@ Copyright boost
 #include "cbuffer.h"
 #include "H264.hpp"
 #include "FeedbackRtpNack.hpp"
+ #include "crtc_producer.h"
 namespace chen {
 
 	/* Static. */
 
 	 
 
-	crtp_stream_recv::crtp_stream_recv(const crtp_stream::crtp_stream_params & params)
-		: crtp_stream(params)
+	crtp_stream_recv::crtp_stream_recv(crtc_producer *ptr, const crtp_stream::crtp_stream_params & params)
+		: m_rtc_producer_ptr(ptr)
+		, crtp_stream(params)
 		, m_expected_prior(0u)
 		, m_expected_prior_score(0u)
 		, m_received_prior(0u)
@@ -122,7 +124,7 @@ namespace chen {
 
 			return false;
 		}
-
+		//NORMAL_EX_LOG("");
 		cassert(packet->GetSsrc() == m_params.rtx_ssrc, "invalid ssrc on RTX packet");
 
 		// Check that the payload type corresponds to the one negotiated.
@@ -183,8 +185,10 @@ namespace chen {
 		}
 
 		// Process the packet at codec level.
-		//if (packet->GetPayloadType() == GetPayloadType())
-		//	RTC::Codecs::Tools::ProcessRtpPacket(packet, GetMimeType());
+		if (m_params.type == "video")
+		{
+			RTC::Codecs::H264::ProcessRtpPacket(packet);
+		}
 
 		// Mark the packet as retransmitted.
 		crtp_stream::packet_retransmitted(packet);
@@ -509,7 +513,10 @@ namespace chen {
 		m_nack_packet_count += numPacketsRequested;
 
 		packet.Serialize(RTC::RTCP::Buffer);
-
+		if (m_rtc_producer_ptr)
+		{
+			m_rtc_producer_ptr->OnProducerSendRtcpPacket(&packet);
+		}
 		// Notify the listener.
 		//static_cast<RTC::RtpStreamRecv::Listener*>(this->listener)->OnRtpStreamSendRtcpPacket(this, &packet);
 		//crtcp_nack rtcp_nack(get_ssrc());

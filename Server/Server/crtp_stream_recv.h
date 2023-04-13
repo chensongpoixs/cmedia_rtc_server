@@ -20,11 +20,14 @@ Copyright boost
 #include "ReceiverReport.hpp"
 #include "ctimer.h"
 #include "NackGenerator.hpp"
+//#include "crtc_producer.h"
 namespace chen {
+	
+	class crtc_producer;
 	class crtp_stream_recv : public crtp_stream, public ctimer::Listener, public RTC::NackGenerator::Listener
 	{
 	public:
-		explicit crtp_stream_recv(const crtp_stream::crtp_stream_params & params);
+		explicit crtp_stream_recv(crtc_producer * ptr, const crtp_stream::crtp_stream_params & params);
 		
 		virtual ~crtp_stream_recv();
 
@@ -82,6 +85,7 @@ namespace chen {
 		
 
 	private:
+		crtc_producer * m_rtc_producer_ptr;
 		uint32			m_expected_prior{ 0u };      // Packets expected at last interval.
 		uint32			m_expected_prior_score{ 0u }; // Packets expected at last interval for score calculation.
 		uint32			m_received_prior{ 0u };      // Packets received at last interval.

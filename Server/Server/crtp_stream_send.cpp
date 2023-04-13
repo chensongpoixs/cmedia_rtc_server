@@ -9,7 +9,20 @@ Copyright boost
 ************************************************************************************************/
 #include "crtp_stream_send.h"
 #include "crandom.h"
+#include "crtc_consumer.h"
 namespace chen {
+
+
+	static constexpr size_t MaxRequestedPackets{ 17 };
+	thread_local static std::vector<crtp_stream_send::StorageItem*> RetransmissionContainer(
+		MaxRequestedPackets + 1);
+
+	// Don't retransmit packets older than this (ms).
+	static constexpr uint32_t MaxRetransmissionDelay{ 2000u  };
+	static constexpr uint32_t DefaultRtt{ 100 };
+
+
+
 	static void resetStorageItem(crtp_stream_send::StorageItem* storageItem)
 	{
 		 
@@ -56,39 +69,43 @@ namespace chen {
 
 		m_nack_count++;
 
-		//for (auto it = nackPacket->Begin(); it != nackPacket->End(); ++it)
-		//{
-		//	RTC::RTCP::FeedbackRtpNackItem* item = *it;
+		for (auto it = nackPacket->Begin(); it != nackPacket->End(); ++it)
+		{
+			RTC::RTCP::FeedbackRtpNackItem* item = *it;
 
-		//	m_nack_packet_count += item->CountRequestedPackets();
+			m_nack_packet_count += item->CountRequestedPackets();
 
-		//	FillRetransmissionContainer(item->GetPacketId(), item->GetLostPacketBitmask());
+			FillRetransmissionContainer(item->GetPacketId(), item->GetLostPacketBitmask());
 
-		//	for (auto* storageItem : RetransmissionContainer)
-		//	{
-		//		if (!storageItem)
-		//		{
-		//			break;
-		//		}
+			for (auto* storageItem : RetransmissionContainer)
+			{
+				if (!storageItem)
+				{
+					break;
+				}
 
-		//		// Note that this is an already RTX encoded packet if RTX is used
-		//		// (FillRetransmissionContainer() did it).
-		//		RtpPacket* packet = storageItem->packet;
+				// Note that this is an already RTX encoded packet if RTX is used
+				// (FillRetransmissionContainer() did it).
+				RTC::RtpPacket* packet = storageItem->packet;
 
-		//		// Retransmit the packet.
-		//		static_cast<RTC::RtpStreamSend::Listener*>(this->listener)
-		//			->OnRtpStreamRetransmitRtpPacket(this, packet);
+				// Retransmit the packet.
+				/*static_cast<RTC::RtpStreamSend::Listener*>(this->listener)
+					->OnRtpStreamRetransmitRtpPacket(this, packet);*/
+				if (m_rtc_consumer_ptr)
+				{
+					NORMAL_EX_LOG("rtx ---> seq = %u", packet->GetSequenceNumber());
+					m_rtc_consumer_ptr->OnRtpStreamRetransmitRtpPacket(this, packet);
+				}
+				// Mark the packet as retransmitted.
+				crtp_stream_send::packet_retransmitted(packet);
 
-		//		// Mark the packet as retransmitted.
-		//		crtp_stream_send::packet_retransmitted(packet);
-
-		//		// Mark the packet as repaired (only if this is the first retransmission).
-		//		if (storageItem->sentTimes == 1)
-		//		{
-		//			crtp_stream_send::packet_repaired(packet);
-		//		}
-		//	}
-		//}
+				// Mark the packet as repaired (only if this is the first retransmission).
+				if (storageItem->sentTimes == 1)
+				{
+					crtp_stream_send::packet_repaired(packet);
+				}
+			}
+		}
 	}
 
 	void crtp_stream_send::receive_rtcp_receiver_report(RTC::RTCP::ReceiverReport * report)
@@ -327,8 +344,10 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 
 			// If this was the item referenced by the buffer start index, move it to
 			// the next one.
-			//if (this->bufferStartIdx == seq)
-				//UpdateBufferStartIdx();
+			if (this->m_buffer_start_idx == seq)
+			{
+				UpdateBufferStartIdx();
+			}
 		}
 		// Buffer not yet full, add an entry.
 		else if (m_buffer_size < m_storage.size())
@@ -352,7 +371,7 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 			m_buffer[m_buffer_start_idx] = nullptr;
 
 			// Move the buffer start index.
-			//UpdateBufferStartIdx();
+			UpdateBufferStartIdx();
 
 			// Take the freed storage item.
 			storageItem = firstStorageItem;
@@ -390,6 +409,23 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 		// Reset buffer.
 		this->m_buffer_start_idx = 0;
 		this->m_buffer_size = 0;
+	}
+
+	void crtp_stream_send::UpdateBufferStartIdx()
+	{
+		uint16_t seq = this->m_buffer_start_idx + 1;
+
+		for (uint32_t idx{ 0 }; idx < this->m_buffer.size(); ++idx, ++seq)
+		{
+			auto* storageItem = this->m_buffer[seq];
+
+			if (storageItem)
+			{
+				this->m_buffer_start_idx = seq;
+
+				break;
+			}
+		}
 	}
 
 	void crtp_stream_send::UpdateScore(RTC::RTCP::ReceiverReport * report)
@@ -543,166 +579,162 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 	//
 	// If RTX is used the stored packet will be RTX encoded now (if not already
 	// encoded in a previous resend).
-	//void crtp_stream_send::FillRetransmissionContainer(uint16_t seq, uint16_t bitmask)
-	//{
-	//	//MS_TRACE();
+	void crtp_stream_send::FillRetransmissionContainer(uint16_t seq, uint16_t bitmask)
+	{
+		//MS_TRACE();
 
-	//	// Ensure the container's first element is 0.
-	//	RetransmissionContainer[0] = nullptr;
+		// Ensure the container's first element is 0.
+		RetransmissionContainer[0] = nullptr;
 
-	//	// If NACK is not supported, exit.
-	//	if (!this->params.useNack)
-	//	{
-	//		MS_WARN_TAG(rtx, "NACK not supported");
+		// If NACK is not supported, exit.
+		if (!this->m_params.use_nack)
+		{
+			WARNING_EX_LOG( "rtx , NACK not supported");
 
-	//		return;
-	//	}
+			return;
+		}
 
-	//	// Look for each requested packet.
-	//	uint64_t nowMs = DepLibUV::GetTimeMs();
-	//	uint16_t rtt = (this->rtt != 0u ? this->rtt : DefaultRtt);
-	//	uint16_t currentSeq = seq;
-	//	bool requested{ true };
-	//	size_t containerIdx{ 0 };
+		// Look for each requested packet.
+		uint64_t nowMs = uv_util::GetTimeMs();
+		uint16_t rtt = (this->m_rtt != 0u ? this->m_rtt : DefaultRtt);
+		uint16_t currentSeq = seq;
+		bool requested{ true };
+		size_t containerIdx{ 0 };
 
-	//	// Variables for debugging.
-	//	uint16_t origBitmask = bitmask;
-	//	uint16_t sentBitmask{ 0b0000000000000000 };
-	//	bool isFirstPacket{ true };
-	//	bool firstPacketSent{ false };
-	//	uint8_t bitmaskCounter{ 0 };
-	//	bool tooOldPacketFound{ false };
+		// Variables for debugging.
+		uint16_t origBitmask = bitmask;
+		uint16_t sentBitmask{ 0b0000000000000000 };
+		bool isFirstPacket{ true };
+		bool firstPacketSent{ false };
+		uint8_t bitmaskCounter{ 0 };
+		bool tooOldPacketFound{ false };
 
-	//	while (requested || bitmask != 0)
-	//	{
-	//		bool sent = false;
+		while (requested || bitmask != 0)
+		{
+			bool sent = false;
 
-	//		if (requested)
-	//		{
-	//			auto* storageItem = this->buffer[currentSeq];
-	//			RTC::RtpPacket* packet{ nullptr };
-	//			uint32_t diffMs;
+			if (requested)
+			{
+				auto* storageItem = this->m_buffer[currentSeq];
+				RTC::RtpPacket* packet{ nullptr };
+				uint32_t diffMs = 0;
 
-	//			// Calculate the elapsed time between the max timestampt seen and the
-	//			// requested packet's timestampt (in ms).
-	//			if (storageItem)
-	//			{
-	//				packet = storageItem->packet;
+				// Calculate the elapsed time between the max timestampt seen and the
+				// requested packet's timestampt (in ms).
+				if (storageItem)
+				{
+					packet = storageItem->packet;
 
-	//				uint32_t diffTs = this->maxPacketTs - packet->GetTimestamp();
+					uint32_t diffTs = this->m_max_packet_ts - packet->GetTimestamp();
 
-	//				diffMs = diffTs * 1000 / this->params.clockRate;
-	//			}
+					diffMs = diffTs * 1000 / (9000)/*this->m_params.clock_rate*/;
+				}
+				//NORMAL_EX_LOG("[diffMS = %u]", uv_util::GetTimeUs() - packet->GetTimestamp());
+				// Packet not found.
+				if (!storageItem)
+				{
+					// Do nothing.
+				}
+				// Don't resend the packet if older than MaxRetransmissionDelay ms.
+				else if (diffMs > MaxRetransmissionDelay)
+				{
+					if (!tooOldPacketFound)
+					{
+						WARNING_EX_LOG( "rtx ignoring retransmission for too old packet "
+							"[seq:%" PRIu16 ", max age:%" PRIu32 "ms, packet age:%" PRIu32 "ms]",
+							packet->GetSequenceNumber(),
+							MaxRetransmissionDelay,
+							diffMs);
 
-	//			// Packet not found.
-	//			if (!storageItem)
-	//			{
-	//				// Do nothing.
-	//			}
-	//			// Don't resend the packet if older than MaxRetransmissionDelay ms.
-	//			else if (diffMs > MaxRetransmissionDelay)
-	//			{
-	//				if (!tooOldPacketFound)
-	//				{
-	//					MS_WARN_TAG(
-	//						rtx,
-	//						"ignoring retransmission for too old packet "
-	//						"[seq:%" PRIu16 ", max age:%" PRIu32 "ms, packet age:%" PRIu32 "ms]",
-	//						packet->GetSequenceNumber(),
-	//						MaxRetransmissionDelay,
-	//						diffMs);
+						tooOldPacketFound = true;
+					}
+				}
+				// Don't resent the packet if it was resent in the last RTT ms.
+				// clang-format off
+				else if (
+					storageItem->resentAtMs != 0u &&
+					nowMs - storageItem->resentAtMs <= static_cast<uint64_t>(rtt)
+					)
+					// clang-format on
+				{
+					DEBUG_EX_LOG( "ignoring retransmission for a packet already resent in the last RTT ms "
+						"[seq:%" PRIu16 ", rtt:%" PRIu32 "]",
+						packet->GetSequenceNumber(),
+						rtt);
+				}
+				// Stored packet is valid for retransmission. Resend it.
+				else
+				{
+					// If we use RTX and the packet has not yet been resent, encode it now.
+					if (has_rtx())
+					{
+						// Increment RTX seq.
+						++this->m_rtx_seq;
 
-	//					tooOldPacketFound = true;
-	//				}
-	//			}
-	//			// Don't resent the packet if it was resent in the last RTT ms.
-	//			// clang-format off
-	//			else if (
-	//				storageItem->resentAtMs != 0u &&
-	//				nowMs - storageItem->resentAtMs <= static_cast<uint64_t>(rtt)
-	//				)
-	//				// clang-format on
-	//			{
-	//				MS_DEBUG_TAG(
-	//					rtx,
-	//					"ignoring retransmission for a packet already resent in the last RTT ms "
-	//					"[seq:%" PRIu16 ", rtt:%" PRIu32 "]",
-	//					packet->GetSequenceNumber(),
-	//					rtt);
-	//			}
-	//			// Stored packet is valid for retransmission. Resend it.
-	//			else
-	//			{
-	//				// If we use RTX and the packet has not yet been resent, encode it now.
-	//				if (HasRtx())
-	//				{
-	//					// Increment RTX seq.
-	//					++this->rtxSeq;
+						if (!storageItem->rtxEncoded)
+						{
+							packet->RtxEncode(this->m_params.rtx_payload_type, this->m_params.rtx_ssrc, this->m_rtx_seq);
 
-	//					if (!storageItem->rtxEncoded)
-	//					{
-	//						packet->RtxEncode(this->params.rtxPayloadType, this->params.rtxSsrc, this->rtxSeq);
+							storageItem->rtxEncoded = true;
+						}
+						else
+						{
+							packet->SetSequenceNumber(this->m_rtx_seq);
+						}
+					}
 
-	//						storageItem->rtxEncoded = true;
-	//					}
-	//					else
-	//					{
-	//						packet->SetSequenceNumber(this->rtxSeq);
-	//					}
-	//				}
+					// Save when this packet was resent.
+					storageItem->resentAtMs = nowMs;
 
-	//				// Save when this packet was resent.
-	//				storageItem->resentAtMs = nowMs;
+					// Increase the number of times this packet was sent.
+					storageItem->sentTimes++;
 
-	//				// Increase the number of times this packet was sent.
-	//				storageItem->sentTimes++;
+					// Store the storage item in the container and then increment its index.
+					RetransmissionContainer[containerIdx++] = storageItem;
 
-	//				// Store the storage item in the container and then increment its index.
-	//				RetransmissionContainer[containerIdx++] = storageItem;
+					sent = true;
 
-	//				sent = true;
+					if (isFirstPacket)
+						firstPacketSent = true;
+				}
+			}
 
-	//				if (isFirstPacket)
-	//					firstPacketSent = true;
-	//			}
-	//		}
+			requested = (bitmask & 1) != 0;
+			bitmask >>= 1;
+			++currentSeq;
 
-	//		requested = (bitmask & 1) != 0;
-	//		bitmask >>= 1;
-	//		++currentSeq;
+			if (!isFirstPacket)
+			{
+				sentBitmask |= (sent ? 1 : 0) << bitmaskCounter;
+				++bitmaskCounter;
+			}
+			else
+			{
+				isFirstPacket = false;
+			}
+		}
 
-	//		if (!isFirstPacket)
-	//		{
-	//			sentBitmask |= (sent ? 1 : 0) << bitmaskCounter;
-	//			++bitmaskCounter;
-	//		}
-	//		else
-	//		{
-	//			isFirstPacket = false;
-	//		}
-	//	}
+		// If not all the requested packets was sent, log it.
+		if (!firstPacketSent || origBitmask != sentBitmask)
+		{
+			WARNING_EX_LOG(
+				"could not resend all packets [seq:%" PRIu16
+				", first:%s, "
+				"bitmask:" MS_UINT16_TO_BINARY_PATTERN ", sent bitmask:" MS_UINT16_TO_BINARY_PATTERN "]",
+				seq,
+				firstPacketSent ? "yes" : "no",
+				MS_UINT16_TO_BINARY(origBitmask),
+				MS_UINT16_TO_BINARY(sentBitmask));
+		}
+		else
+		{
+			DEBUG_EX_LOG(
+				"all packets resent [seq:%" PRIu16 ", bitmask:" MS_UINT16_TO_BINARY_PATTERN "]",
+				seq,
+				MS_UINT16_TO_BINARY(origBitmask));
+		}
 
-	//	// If not all the requested packets was sent, log it.
-	//	if (!firstPacketSent || origBitmask != sentBitmask)
-	//	{
-	//		MS_WARN_DEV(
-	//			"could not resend all packets [seq:%" PRIu16
-	//			", first:%s, "
-	//			"bitmask:" MS_UINT16_TO_BINARY_PATTERN ", sent bitmask:" MS_UINT16_TO_BINARY_PATTERN "]",
-	//			seq,
-	//			firstPacketSent ? "yes" : "no",
-	//			MS_UINT16_TO_BINARY(origBitmask),
-	//			MS_UINT16_TO_BINARY(sentBitmask));
-	//	}
-	//	else
-	//	{
-	//		MS_DEBUG_DEV(
-	//			"all packets resent [seq:%" PRIu16 ", bitmask:" MS_UINT16_TO_BINARY_PATTERN "]",
-	//			seq,
-	//			MS_UINT16_TO_BINARY(origBitmask));
-	//	}
-
-	//	// Set the next container element to null.
-	//	RetransmissionContainer[containerIdx] = nullptr;
-	//}
+		// Set the next container element to null.
+		RetransmissionContainer[containerIdx] = nullptr;
+	}
 }

@@ -88,7 +88,8 @@ namespace chen {
 		 {}
 
 		virtual ~crtc_transport();
-
+	public:
+		using onSendCallback = const std::function<void(bool sent)>;
 	public:
 		bool init(ERtcClientType rtc_client_type, const crtc_sdp & remote_sdp, const crtc_sdp & local_sdp, const crtc_source_description& stream_desc);
 
@@ -112,9 +113,22 @@ namespace chen {
 
 	public:
 		void OnTransportConsumerKeyFrameRequested();
+
+
+	public:
+		/* Pure virtual methods inherited from RTC::Consumer::Listener. */
+	public:
+		//void OnConsumerSendRtpPacket(crtc_consumer* consumer, RTC::RtpPacket* packet) override;
+		void OnConsumerRetransmitRtpPacket(crtc_consumer* consumer, RTC::RtpPacket* packet)  ;
+		/*void OnConsumerKeyFrameRequested(crtc_consumer* consumer, uint32_t mappedSsrc) override;
+		void OnConsumerNeedBitrateChange(crtc_consumer* consumer) override;
+		void OnConsumerNeedZeroBitrate(crtc_consumer* consumer) override;
+		void OnConsumerProducerClosed(crtc_consumer* consumer) override;*/
 	public:
 		void send_rtp_data(void * data, int32 size);
 		void send_rtp_data(RTC::RtpPacket* packet);
+
+		void send_rtp_packet(RTC::RtpPacket* packet, cudp_socket_handler::onSendCallback *cb);
 		void send_rtp_audio_data(RTC::RtpPacket* packet);
 		void send_rtp_video_data(RTC::RtpPacket* packet);
 		void send_rtp_rtx_video_data(RTC::RtpPacket* packet);

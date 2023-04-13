@@ -35,12 +35,14 @@ namespace chen {
 	public:
 		void send_rtp_packet(RTC::RtpPacket* packet);
 
-
+		void receive_nack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket);
 		void receive_rtcp_receiver_report(RTC::RTCP::ReceiverReport* report);
 		float get_rtt();
 
 		void  receive_key_frame_request(RTC::RTCP::FeedbackPs::MessageType messageType, uint32_t ssrc);
 
+
+		void OnRtpStreamRetransmitRtpPacket(crtp_stream* stream, RTC::RtpPacket* packet);
 
 		void  request_key_frame();
 	protected:

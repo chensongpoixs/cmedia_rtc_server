@@ -329,7 +329,7 @@ namespace chen {
 		
 		if (m_params.params.payload_type == packet->GetPayloadType() && m_params.params.ssrc == packet->GetSsrc())
 		{
-			crtp_stream_recv * rtp_stream = new crtp_stream_recv(m_params.params);
+			crtp_stream_recv * rtp_stream = new crtp_stream_recv(this, m_params.params);
 			if (!m_ssrc_rtp_stream_map.insert(std::make_pair(m_params.params.ssrc, rtp_stream)).second)
 			{ 
 				WARNING_EX_LOG("rtp stream insert (ssrc = %u)  failed ", m_params.params.ssrc);
@@ -538,6 +538,14 @@ namespace chen {
 
 		return true;
 		return true;
+	}
+
+	void crtc_producer::OnProducerSendRtcpPacket(RTC::RTCP::Packet* packet)
+	{
+		if (m_rtc_ptr)
+		{
+			m_rtc_ptr->send_rtcp_packet(packet);
+		}
 	}
 
 }

@@ -485,6 +485,74 @@ namespace chen {
 		}
 		iter->second->request_key_frame();
 	}
+	void crtc_transport::OnConsumerRetransmitRtpPacket(crtc_consumer * consumer, RTC::RtpPacket * packet)
+	{
+		// Update abs-send-time if present.
+		packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+
+		// Update transport wide sequence number if present.
+		// clang-format off
+		if (
+			this->m_tcc_client &&
+			this->m_tcc_client->GetBweType() == RTC::BweType::TRANSPORT_CC &&
+			packet->UpdateTransportWideCc01(this->m_transportWideCcSeq + 1)
+			)
+			// clang-format on
+		{
+			this->m_transportWideCcSeq++;
+
+			auto* tccClient = this->m_tcc_client;
+			webrtc::RtpPacketSendInfo packetInfo;
+
+			packetInfo.ssrc = packet->GetSsrc();
+			packetInfo.transport_sequence_number = this->m_transportWideCcSeq;
+			packetInfo.has_rtp_sequence_number = true;
+			packetInfo.rtp_sequence_number = packet->GetSequenceNumber();
+			packetInfo.length = packet->GetSize();
+			packetInfo.pacing_info = this->m_tcc_client->GetPacingInfo();
+
+			// Indicate the pacer (and prober) that a packet is to be sent.
+			this->m_tcc_client->InsertPacket(packetInfo);
+
+#ifdef ENABLE_RTC_SENDER_BANDWIDTH_ESTIMATOR
+			auto* senderBwe = this->senderBwe;
+			RTC::SenderBandwidthEstimator::SentInfo sentInfo;
+
+			sentInfo.wideSeq = this->transportWideCcSeq;
+			sentInfo.size = packet->GetSize();
+			sentInfo.sendingAtMs = DepLibUV::GetTimeMs();
+
+			auto* cb = new onSendCallback([tccClient, &packetInfo, senderBwe, &sentInfo](bool sent) {
+				if (sent)
+				{
+					tccClient->PacketSent(packetInfo, DepLibUV::GetTimeMsInt64());
+
+					sentInfo.sentAtMs = DepLibUV::GetTimeMs();
+
+					senderBwe->RtpPacketSent(sentInfo);
+				}
+			});
+
+			SendRtpPacket(consumer, packet, cb);
+#else
+			  cudp_socket_handler::onSendCallback* cb = new cudp_socket_handler::onSendCallback([tccClient, &packetInfo](bool sent) {
+				if (sent)
+				{
+					tccClient->PacketSent(packetInfo, uv_util::GetTimeMsInt64());
+				}
+			});
+
+			send_rtp_packet(  packet, cb);
+#endif
+		}
+		else
+		{
+			send_rtp_data(packet);
+			//SendRtpPacket(consumer, packet);
+		}
+
+		//this->sendRtxTransmission.Update(packet);
+	}
 	void crtc_transport::send_rtp_data(void * data, int32 size)
 	{
 		/*if (m_rtc_net_state != ERtcNetworkStateEstablished)
@@ -541,6 +609,59 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
+		}
+	}
+	void crtc_transport::send_rtp_packet(RTC::RtpPacket * packet, cudp_socket_handler::onSendCallback * cb)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			//{
+			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
+			//	{
+			//		if (media.m_type != "audio")
+			//		{
+			//			continue;
+			//		}
+			//		//for (const  cssrc_group & ssrc_group : media.m_ssrc_groups)
+			//		if (media.m_ssrc_groups.size())
+			//		{
+			//			DEBUG_EX_LOG("audio ssrc = %u, --> find ssrc = %u", packet->GetSsrc(), media.m_ssrc_groups[0].m_ssrcs);
+			//			packet->SetSsrc(media.m_ssrc_groups[0].m_ssrcs[0]);
+			//			break;
+			//		}
+			//		//if (media)
+			//	}
+			//}
+			//
+			//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+			const uint8_t* data = packet->GetData();
+			size_t len = packet->GetSize();
+
+			if (len != 512 && !m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+			{
+				if (cb)
+				{
+					(*cb)(false);
+					delete cb;
+				}
+				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+				return;
+			}
+			//NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			if (cb)
+			{
+				(*cb)(true);
+				delete cb;
+			}
+		}
+		else
+		{
+			if (cb)
+			{
+				(*cb)(false);
+				delete cb;
+			}
 		}
 	}
 	void crtc_transport::send_rtp_audio_data(RTC::RtpPacket * packet)
@@ -1367,44 +1488,35 @@ namespace chen {
 
 			case RTC::RTCP::Type::RTPFB:
 			{
-				DEBUG_EX_LOG("RTC::RTCP::Type::RTPFB");
+				//DEBUG_EX_LOG("RTC::RTCP::Type::RTPFB");
 				auto* feedback = static_cast<RTC::RTCP::FeedbackRtpPacket*>(packet);
 				//auto* consumer = GetConsumerByMediaSsrc(feedback->GetMediaSsrc());
+				crtc_consumer* consumer = m_all_rtp_listener.get_consumer(feedback->GetMediaSsrc());
+				// If no Consumer is found and this is not a Transport Feedback for the
+				// probation SSRC or any Consumer RTX SSRC, ignore it.
+				//
+				// clang-format off
+				if (!consumer && feedback->GetMessageType() != RTC::RTCP::FeedbackRtp::MessageType::TCC &&
+					( feedback->GetMediaSsrc() != RTC::RtpProbationSsrc ||
+						!m_all_rtp_listener.get_consumer(feedback->GetMediaSsrc()) ) )
+					// clang-format on
+				{
+					DEBUG_EX_LOG( "rtcp , no Consumer found for received Feedback packet "
+						"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
+						feedback->GetSenderSsrc(),
+						feedback->GetMediaSsrc());
 
-				//// If no Consumer is found and this is not a Transport Feedback for the
-				//// probation SSRC or any Consumer RTX SSRC, ignore it.
-				////
-				//// clang-format off
-				//if (
-				//	!consumer &&
-				//	feedback->GetMessageType() != RTC::RTCP::FeedbackRtp::MessageType::TCC &&
-				//	(
-				//		feedback->GetMediaSsrc() != RTC::RtpProbationSsrc ||
-				//		!GetConsumerByRtxSsrc(feedback->GetMediaSsrc())
-				//		)
-				//	)
-				//	// clang-format on
-				//{
-				//	MS_DEBUG_TAG(
-				//		rtcp,
-				//		"no Consumer found for received Feedback packet "
-				//		"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
-				//		feedback->GetSenderSsrc(),
-				//		feedback->GetMediaSsrc());
-
-				//	break;
-				//}
+					break;
+				}
 
 				switch (feedback->GetMessageType())
 				{
 					case RTC::RTCP::FeedbackRtp::MessageType::NACK:
 					{
 						DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::NACK");
-						/*if (!consumer)
+						 if (!consumer)
 						{
-							MS_DEBUG_TAG(
-								rtcp,
-								"no Consumer found for received NACK Feedback packet "
+							DEBUG_EX_LOG( "rtcp , no Consumer found for received NACK Feedback packet "
 								"[sender ssrc:%" PRIu32 ", media ssrc:%" PRIu32 "]",
 								feedback->GetSenderSsrc(),
 								feedback->GetMediaSsrc());
@@ -1414,7 +1526,7 @@ namespace chen {
 
 						auto* nackPacket = static_cast<RTC::RTCP::FeedbackRtpNackPacket*>(packet);
 
-						consumer->ReceiveNack(nackPacket);*/
+						consumer->receive_nack(nackPacket); 
 
 						break;
 					}

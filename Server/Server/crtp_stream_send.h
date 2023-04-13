@@ -20,7 +20,9 @@ Copyright boost
 #include "crtp_stream.h"
 #include "FeedbackRtpNack.hpp"
 #include "RateCalculator.hpp"
+
 namespace chen {
+	class crtc_consumer;
 	class crtp_stream_send : public crtp_stream
 	{
 	public:
@@ -38,14 +40,15 @@ namespace chen {
 			bool rtxEncoded{ false };
 		};
 	public:
-		crtp_stream_send(const crtp_stream::crtp_stream_params & params) 
-		: crtp_stream(params)
+		crtp_stream_send(crtc_consumer * ptr, const crtp_stream::crtp_stream_params & params)
+		: m_rtc_consumer_ptr(ptr)
+		, crtp_stream(params)
 		, m_lost_prior_score(0u)
 		, m_sent_prior_score(0u)
-		, m_buffer()
+		, m_buffer(65536, nullptr)
 		, m_buffer_start_idx(0u)
 		, m_buffer_size(0u)
-		, m_storage()
+		, m_storage(600u)
 		, m_rtx_seq(0u)
 		{}
 		~crtp_stream_send();
@@ -73,11 +76,11 @@ namespace chen {
 	private:
 		void _store_packet(RTC::RtpPacket * packet);
 		void _clear_buffer();
-		
+		void UpdateBufferStartIdx();
 		void UpdateScore(RTC::RTCP::ReceiverReport* report);
-		//void FillRetransmissionContainer(uint16_t seq, uint16_t bitmask);
+		 void FillRetransmissionContainer(uint16_t seq, uint16_t bitmask);
 	private:
-
+		crtc_consumer	*			m_rtc_consumer_ptr;
 		uint32						m_lost_prior_score{ 0u }; // Packets lost at last interval for score calculation.
 		uint32						m_sent_prior_score{ 0u }; // Packets sent at last interval for score calculation.
 		std::vector<StorageItem*>	m_buffer;
