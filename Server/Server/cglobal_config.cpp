@@ -30,8 +30,8 @@ namespace chen {
 		{
 			SYSTEM_LOG("[ip = %s]", ip.c_str());
 		}
-		m_all_ips.clear();
-		m_all_ips.insert(  g_cfg.get_string(ECI_RtcWanIp) );
+		//m_all_ips.clear();
+		//m_all_ips.insert(  g_cfg.get_string(ECI_RtcWanIp) );
 		SYSTEM_LOG("network all end OK !!!");
 
 

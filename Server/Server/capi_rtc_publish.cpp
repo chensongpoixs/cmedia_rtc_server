@@ -403,6 +403,7 @@ namespace chen {
 					//return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid H.264 payload type");
 				}
 				std::vector<cmedia_payload_type> rtx_payloads = remote_media_desc.find_media_with_encoding_name("rtx");
+				std::vector<cmedia_payload_type> ulpfec_payloads = remote_media_desc.find_media_with_encoding_name("ulpfec");
 				int32 video_payload_type = 0;
 				std::deque<cmedia_payload_type> backup_payloads;
 				for (int32 j = 0; j < (int32)payloads.size(); j++)
@@ -476,6 +477,10 @@ namespace chen {
 								track_desc.m_rtx_ptr = (rtx_video_payload);
 								break;
 							}
+						}
+						if (!ulpfec_payloads.empty())
+						{
+							track_desc.m_ulpfec_ptr = new ccodec_payload(ulpfec_payloads[0].m_payload_type, "ulpfec", ulpfec_payloads[0].m_clock_rate );
 						}
 						// Only choose first match H.264 payload type.
 						break;
@@ -747,7 +752,11 @@ namespace chen {
 				local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
 
 			}
-			
+			  if (video_track->m_ulpfec_ptr)
+			{
+				  ccodec_payload* payload = dynamic_cast<ccodec_payload*>(video_track->m_ulpfec_ptr);
+				local_media_desc.m_payload_types.push_back(payload->generate_media_payload_type());
+			}  
 			/* if (video_track->m_red_ptr)
 			{
 				cred_paylod* payload = dynamic_cast<cred_paylod*>(video_track->m_red_ptr);
