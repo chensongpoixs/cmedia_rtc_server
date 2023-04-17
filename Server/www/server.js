@@ -20,6 +20,10 @@ var io= socketIo(server);//将socket.io注入express模块
 app.use(serveIndex('./rtc'));
 app.use(express.static('./rtc'));
 
+
+//app.use(serveIndex('./cloud_render'));
+//app.use(express.static('./cloud_render'));
+
  
 app.get("/rtc",function (req,res,next) {
     res.sendFile(__dirname+"/rtc/publisher.html");

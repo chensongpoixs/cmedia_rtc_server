@@ -534,7 +534,34 @@ function createPeerConnection()
         });
 		 
 		 
-		 
+		  pc.addEventListener('icegatheringstatechange', (state) => {
+			console.log(' +++ rtc sdk core debugger  icegatheringstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!' , state);
+               
+            switch (pc.iceConnectionState) {
+				 case 'checking':
+                  console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+					//this.emit('@connectionstatechange', 'connecting');
+					
+                    break;
+                case 'connected':
+                case 'completed':
+					console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                    //this.emit('@connectionstatechange', 'connected');
+                    break;
+                case 'failed':
+				console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'failed');
+                    break;
+                case 'disconnected':
+				console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                  //  this.emit('@connectionstatechange', 'disconnected');
+                    break;
+                case 'closed':
+				console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'closed');
+                    break;
+            }
+        });
 		 
 		/**
 		 当PeerConnection 对象收到远端音视频流时
