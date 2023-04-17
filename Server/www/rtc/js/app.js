@@ -172,6 +172,8 @@ function emitControllerAxisMove(controllerIndex, axisIndex, analogValue) {
     Data.setUint8(1, controllerIndex);
     Data.setUint8(2, axisIndex);
     Data.setFloat64(3, analogValue, true);
+  //  let str = Data.getString(0, Data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
     sendInputData(Data.buffer);
 }
 
@@ -423,11 +425,11 @@ function showAfkOverlay() {
     afk.countdown = afk.closeTimeout;
     updateAfkOverlayText();
 
-    /*
+    
 	if (inputOptions.controlScheme == ControlSchemeType.LockedMouse) {
         document.exitPointerLock();
     }
-	*/
+	
 
     afk.countdownTimer = setInterval(function() {
         afk.countdown--;
@@ -481,7 +483,27 @@ function createWebRtcOffer() {
 function sendInputData(data) {
     if (webRtcPlayerObj) {
         resetAfkWarningTimer();
-        webRtcPlayerObj.send(data);
+       // webRtcPlayerObj.send(data);
+
+         if (ws && ws.readyState === WS_OPEN_STATE) 
+        { 
+
+            let textDecoder = new TextDecoder("utf-8");
+            let str = textDecoder.decode(data);
+           
+            //console.log('CS--> data channel  : = ', str);
+            
+            let offersdp  = JSON.stringify({
+                    msg_id: 210,
+                    datachannel:   str
+                });
+           // console.log(`-> SS: offer:\n${offersdp}`);
+            
+            
+             
+            ws.send(offersdp); 
+
+        }
     }
 }
 
@@ -1198,6 +1220,9 @@ function emitDescriptor(messageType, descriptor) {
         data.setUint16(byteIdx, descriptorAsString.charCodeAt(i), true);
         byteIdx += 2;
     }
+
+    //let str = data.getString(0, data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
     sendInputData(data.buffer);
 }
 
@@ -1347,6 +1372,8 @@ function emitMouseMove(x, y, deltaX, deltaY) {
     Data.setUint16(3, coord.y, true);
     Data.setInt16(5, delta.x, true);
     Data.setInt16(7, delta.y, true);
+   // let str = Data.getString(0, Data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
     sendInputData(Data.buffer);
 }
 
@@ -1360,6 +1387,8 @@ function emitMouseDown(button, x, y) {
     Data.setUint8(1, button);
     Data.setUint16(2, coord.x, true);
     Data.setUint16(4, coord.y, true);
+   // let str = Data.getString(0, Data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
     sendInputData(Data.buffer);
 }
 
@@ -1373,6 +1402,8 @@ function emitMouseUp(button, x, y) {
     Data.setUint8(1, button);
     Data.setUint16(2, coord.x, true);
     Data.setUint16(4, coord.y, true);
+   // let str = Data.getString(0, Data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
     sendInputData(Data.buffer);
 }
 
@@ -1386,6 +1417,8 @@ function emitMouseWheel(delta, x, y) {
     Data.setInt16(1, delta, true);
     Data.setUint16(3, coord.x, true);
     Data.setUint16(5, coord.y, true);
+    //let str = Data.getString(0, Data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
     sendInputData(Data.buffer);
 }
 
@@ -1500,6 +1533,8 @@ function registerMouseEnterAndLeaveEvents(playerElement) {
         }
         let Data = new DataView(new ArrayBuffer(1));
         Data.setUint8(0, MessageType.MouseEnter);
+    //    let str = data.getString(0, data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
         sendInputData(Data.buffer);
         playerElement.pressMouseButtons(e);
     };
@@ -1510,6 +1545,8 @@ function registerMouseEnterAndLeaveEvents(playerElement) {
         }
         let Data = new DataView(new ArrayBuffer(1));
         Data.setUint8(0, MessageType.MouseLeave);
+  //      let str = data.getString(0, data.byteLength, "utf-8");
+  //  console.log('str ===== ', str);
         sendInputData(Data.buffer);
         playerElement.releaseMouseButtons(e);
     };
@@ -1526,13 +1563,13 @@ function registerLockedMouseEvents(playerElement) {
     document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
 
     playerElement.onclick = function() {
-       // playerElement.requestPointerLock();
+        playerElement.requestPointerLock();
     };
 	
 	document.addEventListener("mousemove", updatePosition, false);
 	
     // Respond to lock state change events
-    /*
+    
 	// mouse
 	document.addEventListener('pointerlockchange', lockStateChange, false);
     document.addEventListener('mozpointerlockchange', lockStateChange, false);
@@ -1547,7 +1584,7 @@ function registerLockedMouseEvents(playerElement) {
             document.removeEventListener("mousemove", updatePosition, false);
         }
     }
-	*/
+	
 
     function updatePosition(e) {
         x += e.movementX;
@@ -1685,7 +1722,8 @@ function registerTouchEvents(playerElement) {
             data.setUint8(byte, coord.inRange ? 1 : 0, true); // mark the touch as in the player or not
             byte += 1;
         }
-        
+      //  let str = data.getString(0, data.byteLength, "utf-8");
+   // console.log('str ===== ', str);
         sendInputData(data.buffer);
     }
 
@@ -1839,6 +1877,8 @@ function registerKeyboardEvents() {
         let data = new DataView(new ArrayBuffer(3));
         data.setUint8(0, MessageType.KeyPress);
         data.setUint16(1, e.charCode, true);
+   //     let str = data.getString(0, data.byteLength, "utf-8");
+  //  console.log('str ===== ', str);
         sendInputData(data.buffer);
     };
 }

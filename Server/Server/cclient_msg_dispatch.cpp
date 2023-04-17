@@ -23,6 +23,8 @@ namespace chen {
 		_register_msg_handler(C2S_JoinRoom, "C2S_JoinRoom", &cwan_session::handler_join_room);
 		_register_msg_handler(C2S_DestroyRoom, "C2S_DestroyRoom", &cwan_session::handler_destroy_room);
 		_register_msg_handler(C2S_WebrtcMessage, "C2S_WebrtcMessage", &cwan_session::handler_webrtc_message);
+		_register_msg_handler(C2S_RtcDataChannel, "C2S_RtcDataChannel", &cwan_session::handler_rtc_datachannel);
+
 		_register_msg_handler(C2S_CreateRtc, "C2S_CreateRtc", &cwan_session::handler_create_rtc);
 		_register_msg_handler(C2S_RtcConnect, "C2S_ConnectRtc", &cwan_session::handler_connect_rtc);
 		_register_msg_handler(C2S_RtcProduce, "C2S_RtcProduce", &cwan_session::handler_rtc_produce);

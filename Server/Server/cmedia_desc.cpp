@@ -299,9 +299,16 @@ if (!getline(is,word,delim)) {\
 	{
 		int32 err = 0;
 		os << "m=" << m_type << " " << m_port << " " << m_protos;
-		for (std::vector<cmedia_payload_type>::iterator iter = m_payload_types.begin(); iter != m_payload_types.end(); ++iter) 
+		if (m_type != "application")
 		{
-			os << " " << iter->m_payload_type;
+			for (std::vector<cmedia_payload_type>::iterator iter = m_payload_types.begin(); iter != m_payload_types.end(); ++iter)
+			{
+				os << " " << iter->m_payload_type;
+			}
+		}
+		else
+		{
+			os << " webrtc-datachannel";
 		}
 
 		os << kCRLF;
@@ -335,65 +342,76 @@ if (!getline(is,word,delim)) {\
 			os << kCRLF;
 		}
 
-		for (std::map<int32, std::string>::iterator it = m_extmaps.begin(); it != m_extmaps.end(); ++it) 
+		if (m_type != "application")
 		{
-			os << "a=extmap:" << it->first << " " << it->second << kCRLF;
-		}
-		if (m_sendonly) 
-		{
-			os << "a=sendonly" << kCRLF;
-		}
-		if (m_recvonly) 
-		{
-			os << "a=recvonly" << kCRLF;
-		}
-		if (m_sendrecv)
-		{
-			os << "a=sendrecv" << kCRLF;
-		}
-		if (m_inactive) 
-		{
-			os << "a=inactive" << kCRLF;
-		}
-
-		if (m_rtcp_mux)
-		{
-			os << "a=rtcp-mux" << kCRLF;
-		}
-
-		if (m_rtcp_rsize)
-		{
-			os << "a=rtcp-rsize" << kCRLF;
-		}
-
-		for (std::vector<cmedia_payload_type>::iterator iter = m_payload_types.begin(); iter != m_payload_types.end(); ++iter) 
-		{
-			if ((err = iter->encode(os)) != 0) 
+			for (std::map<int32, std::string>::iterator it = m_extmaps.begin(); it != m_extmaps.end(); ++it)
 			{
-				WARNING_EX_LOG("encode media payload failed");
-				return EMediaRtcSdpEncodeMediaPayloadFailed;
-				//return srs_error_wrap(err, "encode media payload failed");
+				os << "a=extmap:" << it->first << " " << it->second << kCRLF;
+			}
+			if (m_sendonly)
+			{
+				os << "a=sendonly" << kCRLF;
+			}
+			if (m_recvonly)
+			{
+				os << "a=recvonly" << kCRLF;
+			}
+			if (m_sendrecv)
+			{
+				os << "a=sendrecv" << kCRLF;
+			}
+			if (m_inactive)
+			{
+				os << "a=inactive" << kCRLF;
+			}
+
+			if (m_rtcp_mux)
+			{
+				os << "a=rtcp-mux" << kCRLF;
+			}
+
+			if (m_rtcp_rsize)
+			{
+				os << "a=rtcp-rsize" << kCRLF;
+			}
+
+			for (std::vector<cmedia_payload_type>::iterator iter = m_payload_types.begin(); iter != m_payload_types.end(); ++iter)
+			{
+				if ((err = iter->encode(os)) != 0)
+				{
+					WARNING_EX_LOG("encode media payload failed");
+					return EMediaRtcSdpEncodeMediaPayloadFailed;
+					//return srs_error_wrap(err, "encode media payload failed");
+				}
+			}
+			for (std::vector<cssrc_group>::iterator iter = m_ssrc_groups.begin(); iter != m_ssrc_groups.end(); ++iter)
+			{
+				if ((err = iter->encode(os)) != 0)
+				{
+					WARNING_EX_LOG("encode ssrc groups  failed");
+					return EMediaRtcSdpEncodeMediaPayloadFailed;
+					//return srs_error_wrap(err, "encode media payload failed");
+				}
+			}
+			for (std::vector<cssrc_info>::iterator iter = m_ssrc_infos.begin(); iter != m_ssrc_infos.end(); ++iter)
+			{
+				cssrc_info& ssrc_info = *iter;
+
+				if ((err = ssrc_info.encode(os)) != 0)
+				{
+					WARNING_EX_LOG("encode ssrc failed");
+					return EMediaRtcSdpEncodeSsrcFailed;
+					//return srs_error_wrap(err, "encode ssrc failed");
+				}
 			}
 		}
-		for (std::vector<cssrc_group>::iterator iter = m_ssrc_groups.begin(); iter != m_ssrc_groups.end(); ++iter)
+		else
 		{
-			if ((err = iter->encode(os)) != 0)
-			{
-				WARNING_EX_LOG("encode ssrc groups  failed");
-				return EMediaRtcSdpEncodeMediaPayloadFailed;
-				//return srs_error_wrap(err, "encode media payload failed");
-			}
-		}
-		for (std::vector<cssrc_info>::iterator iter = m_ssrc_infos.begin(); iter != m_ssrc_infos.end(); ++iter)
-		{
-			cssrc_info& ssrc_info = *iter;
+			//a=sctp-port:5000
+			//a = max - message - size:100000
+			os << "a=sctp-port:" << m_sctp_port << kCRLF;
+			os << "a=max-message-size:" << m_max_message_size << kCRLF;
 
-			if ((err = ssrc_info.encode(os)) != 0) 
-			{
-				WARNING_EX_LOG("encode ssrc failed");
-				return EMediaRtcSdpEncodeSsrcFailed;
-				//return srs_error_wrap(err, "encode ssrc failed");
-			}
 		}
 
 		int foundation = 0;
@@ -567,7 +585,40 @@ if (!getline(is,word,delim)) {\
 		{
 			m_inactive = true;
 		}
-		else {
+		else if (attribute == "sctp-port")
+		{
+			/*
+			m=application 9 UDP/DTLS/SCTP webrtc-datachannel
+			c=IN IP4 0.0.0.0
+			a=ice-ufrag:8v0H
+			a=ice-pwd:FA6Q/0n5Roei34bXjdj9r6XV
+			a=ice-options:trickle
+			a=fingerprint:sha-256 4D:D0:FE:BA:1C:50:1F:01:4D:6D:11:46:B8:E1:B4:24:3B:A6:B7:A7:D9:AC:A9:08:E2:E9:B5:58:3A:32:A3:70
+			a=setup:actpass
+			a=mid:1
+			a=sctp-port:5000
+			a=max-message-size:262144
+			//////////////////
+			m=application 7 UDP/DTLS/SCTP webrtc-datachannel
+			c=IN IP4 127.0.0.1
+			a=setup:active
+			a=mid:1
+			a=ice-ufrag:szh6424zwhq59x4e
+			a=ice-pwd:q934moyhaf4rrve8zmkh7lnar4l0wgnx
+			a=candidate:udpcandidate 1 udp 1076302079 192.168.160.1 9017 typ host
+			a=end-of-candidates
+			a=ice-options:renomination
+			a=sctp-port:5000
+			a=max-message-size:100000
+			*/
+			m_sctp_port = atoi(value.c_str());
+		}
+		else if (attribute == "max-message-size")
+		{
+			m_max_message_size = atoi(value.c_str());
+		}
+		else
+		{
 			return m_session_info.parse_attribute(attribute, value);
 		}
 

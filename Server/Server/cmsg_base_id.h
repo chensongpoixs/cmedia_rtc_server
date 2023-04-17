@@ -26,6 +26,9 @@ namespace chen {
 
 		C2S_WebrtcMessage,
 		S2C_WebrtcMessage,
+		C2S_RtcDataChannel,
+		S2C_RtcDataChannel,
+		S2C_RtcDataChannelUpdate,
 		
 		//C2S_CreateAnswar,
 		//S2C_CreateAnswar,

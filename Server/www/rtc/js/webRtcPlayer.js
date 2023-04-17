@@ -255,7 +255,7 @@
                 }
 
                 datachannel.onmessage = function (e) {
-                  //console.log(`Got message (${label})`, e.data)
+                  console.log(`Got message (${label})`, e.data)
                   if (self.onDataChannelMessage)
                     self.onDataChannelMessage(e.data);
                 }
@@ -480,7 +480,7 @@
             setupTracksToSendAsync(self.pcClient).finally(function()
             {
                 setupPeerConnection(self.pcClient);
-               // self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
+                self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
                 handleCreateOffer(self.pcClient);
             });
             
@@ -516,9 +516,9 @@
         //Sends data across the datachannel
         this.send = function(data)
 		{
-			console.log('--------------->');
+			console.log('---------------> self.dcClient.readyState = ', self.dcClient.readyState);
             if(self.dcClient && self.dcClient.readyState == 'open'){
-                //console.log('Sending data on dataconnection', self.dcClient)
+                console.log('Sending data on dataconnection', self.dcClient)
                 self.dcClient.send(data);
             }
         };

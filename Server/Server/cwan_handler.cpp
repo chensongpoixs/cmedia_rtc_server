@@ -186,6 +186,31 @@ namespace chen {
 
 		return true;
 	}
+	bool cwan_session::handler_rtc_datachannel(Json::Value & value)
+	{
+		if (!m_room_name.empty() && g_room_mgr.m_master[m_room_name] != 0)
+		{
+			Json::Value reply;
+			if (!value.isMember("datachannel") || !value["datachannel"].isString())
+			{
+				WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] !!! ", m_session_id, value.asCString());
+				send_msg(S2C_RtcDataChannel, EShareProtoData, reply);
+				return false;
+			}
+			cwan_session * session_ptr = g_wan_server.get_session(g_room_mgr.m_master[m_room_name]);
+			if (!session_ptr)
+			{
+				//EShareProtoOk
+				send_msg(S2C_RtcDataChannel, EShareProtoOk, reply);
+				return false;
+			}
+			/*	Json::Value msg;
+				msg["datachannel"] = value["datachannel"];*/
+			session_ptr->send_msg(S2C_RtcDataChannelUpdate, EShareProtoOk, value["datachannel"]);
+			send_msg(S2C_RtcDataChannel, EShareProtoOk, reply);
+		}
+		return true;
+	}
 	/*bool	cwan_session::handler_create_answer(Json::Value& value)
 	{
 		return true;
@@ -278,6 +303,13 @@ namespace chen {
 				publisher.do_serve_client(sdp, roomname, peerid, local_sdp);
 				reply["sdp"] = local_sdp;
 				reply["type"] = "answer";
+				//if (m_master)
+				{
+					m_room_name = roomname;
+					m_user_name = peerid;
+					m_master = true;
+					g_room_mgr.m_master[m_room_name] = m_session_id;
+				}
 				send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
 			}
 			else
@@ -346,6 +378,8 @@ namespace chen {
 			player.do_serve_client(sdp, roomname,  peerid, video_peerid,  local_sdp);
 			reply["sdp"] = local_sdp;
 			reply["type"] = "answer";
+			m_room_name = roomname;
+			m_user_name = peerid;
 			send_msg(S2C_rtc_player, EShareProtoOk, reply);
 			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
 		}

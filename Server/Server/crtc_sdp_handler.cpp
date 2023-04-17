@@ -227,16 +227,18 @@ namespace chen {
 		m_media_descs.push_back(cmedia_desc(media));
 		m_media_descs.back().m_protos = proto;
 		m_media_descs.back().m_port = port;
-
-		int fmt;
-		while (is >> fmt)
+		if (media != "application")
 		{
-			m_media_descs.back().m_payload_types.push_back(cmedia_payload_type(fmt));
-		}
+			int fmt;
+			while (is >> fmt)
+			{
+				m_media_descs.back().m_payload_types.push_back(cmedia_payload_type(fmt));
+			}
 
-		if (!m_in_media_session)
-		{
-			m_in_media_session = true;
+			if (!m_in_media_session)
+			{
+				m_in_media_session = true;
+			}
 		}
 
 		return 0;

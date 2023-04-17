@@ -52,6 +52,9 @@ namespace chen {
 		bool	handler_destroy_room(Json::Value& value);
 
 		bool	handler_webrtc_message(Json::Value& value);
+
+
+		bool    handler_rtc_datachannel(Json::Value& value);
 		//bool	handler_create_answer(Json::Value& value);
 		//bool	handler_candidate(Json::Value& value);
 		//bool	handler_create_room(  Json::Value & value);
@@ -90,7 +93,7 @@ namespace chen {
 	
 	private:
 		uint64_t					m_session_id; //会话id
-
+		bool					m_master;
 		std::string				m_room_name;
 		std::string				m_user_name;
 		EClientConnectType      m_client_connect_type;

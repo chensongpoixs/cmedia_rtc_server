@@ -288,7 +288,7 @@ function conn()
 			// 创建PeerConnection 并绑定音视频轨
 			createPeerConnection();
 			bindTracks();
-			
+			//setupDataChannel();
 			//设置button状态
 			btnConn.disabled = true;
 			btnLeave.disabled = false;
@@ -598,6 +598,39 @@ function bindTracks()
 	
 	 
 }
+
+
+
+function setupDataChannel()
+{
+	console.log(' create datachannel ..... !!!');
+	if (pc === null  )
+	{
+		console.log('pc is null or undefined!!!');
+		return;
+	}
+	let datachannel = pc.createDataChannel('chat', {ordered: true});
+    console.log(`Created datachannel `);
+    // Inform browser we would like binary data as an ArrayBuffer (FF chooses Blob by default!)
+    datachannel.binaryType = "arraybuffer";
+    datachannel.onopen = function (e) {
+      console.log(`data channel ( connect`);
+      if(self.onDataChannelConnected){
+        self.onDataChannelConnected();
+      }
+    }
+
+    datachannel.onclose = function (e) {
+      console.log(`data channel  closed`);
+    }
+
+    datachannel.onmessage = function (e) {
+      console.log(`Got message  `, e.data);
+       
+    }
+
+}
+
 
 
 

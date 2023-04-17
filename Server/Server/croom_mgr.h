@@ -26,6 +26,13 @@ namespace chen {
 
 
 	public:
+
+
+
+		std::unordered_map<std::string, uint32>   m_master;
+
+
+
 		bool init();
 
 		void update(uint32 uDeltaTime);

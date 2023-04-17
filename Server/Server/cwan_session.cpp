@@ -20,6 +20,7 @@ purpose:	网络数据的收发
 namespace chen {
 	cwan_session::cwan_session()
 		: m_session_id(0)
+		, m_master(false)
 		, m_room_name("")
 		, m_user_name("")
 		, m_client_connect_type(EClientConnectNone)
@@ -72,6 +73,11 @@ namespace chen {
 	{
 		m_client_connect_type = EClientConnectNone;
 
+		if (m_master)
+		{
+			g_room_mgr.m_master[m_room_name] = 0;
+		}
+		m_master = false;
 
 
 		// 退出房间

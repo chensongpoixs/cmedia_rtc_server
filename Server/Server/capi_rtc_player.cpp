@@ -139,6 +139,17 @@ namespace chen {
 
 		_generate_play_local_sdp(roomname, peerid, rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
 
+		// datachannel -->
+		const cmedia_desc & application_media =  rtc_remote_sdp.m_media_descs.back();
+
+		if (application_media.m_type == "application")
+		{
+			//m_media_descs.push_back(cmedia_desc(media));
+			rtc_local_sdp.m_media_descs.push_back(application_media);
+
+		}
+
+
 		// All tracks default as inactive, so we must enable them.
 	//	session->set_all_tracks_status(req->get_stream_url(), ruc->publish_, true);
 

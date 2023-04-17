@@ -200,7 +200,9 @@ namespace chen {
 			, m_candidates()
 			, m_ssrc_groups()
 			, m_ssrc_infos()
-			, m_extmaps() {}
+			, m_extmaps() 
+			, m_sctp_port(5000)
+			, m_max_message_size(262144){}
 		virtual ~cmedia_desc(){}
 
 	public:
@@ -237,7 +239,7 @@ namespace chen {
 
 	public:
 		csession_info						m_session_info;
-		std::string							m_type; // audio  or video
+		std::string							m_type; // audio  or video  or applicaiton datachannel 
 		int32								m_port;
 		
 		bool								m_rtcp_mux;
@@ -260,7 +262,9 @@ namespace chen {
 		std::vector<cssrc_info>				m_ssrc_infos;
 
 		std::map<int32, std::string>		m_extmaps;
-
+		// datachannel 
+		uint32								m_sctp_port; // datachannel defaulef 5000
+		uint64								m_max_message_size;
 
 
 
