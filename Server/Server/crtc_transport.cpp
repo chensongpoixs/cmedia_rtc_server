@@ -9,7 +9,7 @@ purpose:		crtc_transport
 ************************************************************************************************/
 #include "crtc_transport.h"
 #include "clog.h"
-
+#include "ccrypto_random.h"
 #include "ctransport_util.h"
 #include "crtc_track_description.h"
 #include "ccfg.h"
@@ -307,6 +307,7 @@ namespace chen {
 
 
 		}
+		m_timer_ptr = new ctimer(this);
 		
 		return true;
 	}
@@ -363,13 +364,13 @@ namespace chen {
 	}
 	void crtc_transport::update(uint32 uDeltaTime)
 	{
-		m_feedback_gcc_timer += uDeltaTime;
-		if (m_feedback_gcc_timer > 100)
-		{
-			m_feedback_gcc_timer -= 100;
-			m_remote_estimator.send_periodic_Feedbacks();
-			//NORMAL_EX_LOG("[m_rtc_net_state = %u]", m_rtc_net_state);
-		}
+		//m_feedback_gcc_timer += uDeltaTime;
+		//if (m_feedback_gcc_timer > 100)
+		//{
+		//	m_feedback_gcc_timer -= 100;
+		//	m_remote_estimator.send_periodic_Feedbacks();
+		//	//NORMAL_EX_LOG("[m_rtc_net_state = %u]", m_rtc_net_state);
+		//}
 		
 	}
 	void crtc_transport::destroy()
@@ -381,7 +382,12 @@ namespace chen {
 			delete m_dtls_ptr;
 			m_dtls_ptr = NULL;
 		}
-		
+		if (m_timer_ptr)
+		{
+			m_timer_ptr->Stop();
+			delete m_timer_ptr;
+			m_timer_ptr = NULL;
+		}
 		for (std::vector<cudp_socket*>::iterator iter = m_udp_sockets.begin(); iter != m_udp_sockets.end(); ++iter)
 		{
 			cudp_socket* ptr = *iter;
@@ -904,6 +910,10 @@ namespace chen {
 			m_tcc_client   = new RTC::TransportCongestionControlClient(
 				this, RTC::BweType::TRANSPORT_CC, 600000u, 600000u);
 			m_tcc_client->TransportConnected();
+		}
+		if (m_timer_ptr)
+		{
+			m_timer_ptr->Start(static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs / 2));
 		}
 	}
 
@@ -1878,6 +1888,49 @@ namespace chen {
 		//	return srs_error_wrap(err, "handle rtcp");
 		//}
 		return true;
+	}
+
+	void crtc_transport::OnTimer(ctimer * timer)
+	{
+		// RTCP timer.
+		if (timer == m_timer_ptr)
+		{
+			auto interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
+			uint64_t nowMs = uv_util::GetTimeMs();
+			m_remote_estimator.send_periodic_Feedbacks();
+			//SendRtcp(nowMs);
+
+			// Recalculate next RTCP interval.
+			//if (!this->mapConsumers.empty())
+			//{
+			//	// Transmission rate in kbps.
+			//	uint32_t rate{ 0 };
+
+			//	// Get the RTP sending rate.
+			//	for (auto& kv : this->mapConsumers)
+			//	{
+			//		auto* consumer = kv.second;
+
+			//		rate += consumer->GetTransmissionRate(nowMs) / 1000;
+			//	}
+
+			//	// Calculate bandwidth: 360 / transmission bandwidth in kbit/s.
+			//	if (rate != 0u)
+			//		interval = 360000 / rate;
+
+			//	if (interval > RTC::RTCP::MaxVideoIntervalMs)
+			//		interval = RTC::RTCP::MaxVideoIntervalMs;
+			//}
+			interval = RTC::RTCP::MaxVideoIntervalMs;
+			/*
+			 * The interval between RTCP packets is varied randomly over the range
+			 * [0.5,1.5] times the calculated interval to avoid unintended synchronization
+			 * of all participants.
+			 */
+			interval *= static_cast<float>(s_crypto_random.GetRandomUInt(5, 15)) / 10;
+
+			m_timer_ptr->Start(interval);
+		}
 	}
 
 	bool crtc_transport::_on_rtcp_feedback_twcc(char * data, int32 nb_data)

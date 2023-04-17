@@ -52,7 +52,7 @@ namespace chen {
 
 	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster,
 		public RTC::TransportCongestionControlClient::Listener,
-		public RTC::TransportCongestionControlServer::Listener
+		public RTC::TransportCongestionControlServer::Listener, chen::ctimer::Listener
 	{
 	public:
 		explicit crtc_transport(const crtc_room_master & master)
@@ -83,6 +83,7 @@ namespace chen {
 			, m_transportWideCcSeq(0u)
 			, m_udp_ports()
 			, m_tcp_ports()
+			, m_timer_ptr(NULL)
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -194,6 +195,9 @@ namespace chen {
 
 		bool _dispatch_rtcp(crtcp_common* rtcp);
 
+
+		public:
+			void OnTimer(ctimer* timer)  ;
 	private:
 		// p2p net 
 		bool _on_rtcp_feedback_twcc(char * data, int32 nb_data);
@@ -261,6 +265,7 @@ namespace chen {
 		uint32									m_transportWideCcSeq;
 		std::vector<uint32>									m_udp_ports;
 		std::vector< uint32>									m_tcp_ports;
+		ctimer				*					m_timer_ptr;
 	};
 
 
