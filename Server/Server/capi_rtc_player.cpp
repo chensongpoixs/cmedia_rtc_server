@@ -279,6 +279,8 @@ namespace chen {
 		for (int i = 0; i < (int)remote_sdp.m_media_descs.size(); ++i) {
 			const cmedia_desc& remote_media_desc = remote_sdp.m_media_descs.at(i);
 			std::vector<cmedia_payload_type> rtx_payloads = remote_media_desc.find_media_with_encoding_name("rtx");
+			std::vector<cmedia_payload_type> ulpfec_payloads = remote_media_desc.find_media_with_encoding_name("ulpfec");
+			
 			if (remote_media_desc.is_video())
 			{
 				nn_any_video_parsed++;
@@ -544,6 +546,11 @@ namespace chen {
 							}
 						}
 					}
+					 if (!ulpfec_payloads.empty())
+					{
+						 track->m_fec_ssrc = c_rtc_ssrc_generator.generate_ssrc();
+						 track->m_ulpfec_ptr = new ccodec_payload(ulpfec_payloads[0].m_payload_type, "ulpfec", ulpfec_payloads[0].m_clock_rate);
+					} 
 				}
 				// TODO: FIXME: set audio_payload rtcp_fbs_,
 				// according by whether downlink is support transport algorithms.
@@ -1059,6 +1066,10 @@ namespace chen {
 		if (track->m_rtx_ptr) {
 			crtx_payload_des* rtx_payload = (crtx_payload_des*)track->m_rtx_ptr;
 			local_media_desc.m_payload_types.push_back(rtx_payload->generate_media_payload_type());
+		}
+		if (track->m_ulpfec_ptr) {
+			ccodec_payload* ulpfec_payload = (ccodec_payload*)track->m_ulpfec_ptr;
+			local_media_desc.m_payload_types.push_back(ulpfec_payload->generate_media_payload_type());
 		}
 	}
 

@@ -39,6 +39,10 @@ purpose:		api_rtc_publish
 //#include "ccapturer_track_source.h"
 #include "ccapturer_tracksource.h"
 #include "external_video_encoder_factory.h"
+
+#include "api/rtp_transceiver_interface.h"
+#include "media/base/rid_description.h"
+
 namespace chen {
 
 	class DummySetSessionDescriptionObserver
@@ -72,7 +76,8 @@ namespace chen {
 			printf("[%s][%d] init peer connect failed !!!\n", __FUNCTION__, __LINE__);
 			return;
 		}
-
+		webrtc::PeerConnectionInterface::RTCOfferAnswerOptions options;
+		
 		peer_connection_->CreateOffer(this, webrtc::PeerConnectionInterface::RTCOfferAnswerOptions());
 
 	}
@@ -98,8 +103,8 @@ namespace chen {
 			nullptr /* default_adm */,
 			webrtc::CreateBuiltinAudioEncoderFactory(),
 			webrtc::CreateBuiltinAudioDecoderFactory(),
-			CreateBuiltinExternalVideoEncoderFactory(),
-			//webrtc::CreateBuiltinVideoEncoderFactory(),
+	//CreateBuiltinExternalVideoEncoderFactory(),
+			webrtc::CreateBuiltinVideoEncoderFactory(),
 			webrtc::CreateBuiltinVideoDecoderFactory(), nullptr /* audio_mixer */,
 			nullptr /* audio_processing */);
 
@@ -209,11 +214,60 @@ namespace chen {
 		/*rtc::scoped_refptr<ProxyVideoTrackSource> video_device*/m_video_track_source_ptr = ProxyVideoTrackSource::Create();
 		if (m_video_track_source_ptr)
 		{
+
+
+
+			/*
+			// For video
+webrtc::PeerConnectionInterface::RTCConfiguration configuration;
+peer_connection_ = peer_connection_factory_->CreatePeerConnection(configuration, nullptr, nullptr, this);
+webrtc::RtpEncodingParameters encoding_params;
+encoding_params.rid = "video";
+webrtc::RtpTransceiverInit video_transceiver_init;
+video_transceiver_init.direction = webrtc::RtpTransceiverDirection::kSendRecv;
+video_transceiver_init.stream_ids.push_back("video_stream");
+video_transceiver_init.send_encodings.push_back(encoding_params);
+auto video_transceiver = peer_connection_->AddTransceiver(webrtc::VideoTrackInterface::Create(), offer_options.AddTransceiver(video_transceiver_init));
+			*/
+
 			rtc::scoped_refptr<webrtc::VideoTrackInterface> video_track_proxy_ptr = peer_connection_factory_->CreateVideoTrack(kVideoLabel, m_video_track_source_ptr);
-
+			
+			//video_track_proxy_ptr->
 			//main_wnd_->StartLocalRenderer(video_track_proxy_ptr);
+			/*webrtc::RtpEncodingParameters encoding_params;
+			encoding_params.rid = "video";
+			webrtc::RtpTransceiverInit video_transceiver_init;
+			video_transceiver_init.direction = webrtc::RtpTransceiverDirection::kSendRecv;
+			video_transceiver_init.stream_ids.push_back("video_stream");
+			video_transceiver_init.send_encodings.push_back(encoding_params);*/
 
-			result_or_error = peer_connection_->AddTrack(video_track_proxy_ptr, { kStreamId });
+			 webrtc::RtpTransceiverInit transceiver_init;
+			// transceiver_init
+			// transceiver_init.send_encodings.emplace_back();
+			// transceiver_init.send_encodings[0].fec.emplace_back();
+			 
+			//transceiver_init.direction = webrtc::RtpTransceiverDirection::kSendOnly;
+			//transceiver_init.stream_ids.push_back(kStreamId);
+			//transceiver_init.send_encodings.emplace_back();
+			//webrtc::RtpEncodingParameters prams;
+			//transceiver_init.send_encodings[0].rid = "rid0";
+			/*	transceiver_init.send_encodings.emplace_back();
+				transceiver_init.send_encodings[1].rid = "rid1";*/
+			/*peer_connection_->AddTransceiver(webrtc::VideoTrackInterface::Create(), transceiver_init);
+			result_or_error = peer_connection_->AddTrack(video_track_proxy_ptr, { kStreamId });*/
+			//webrtc::RtpTransceiverInit transceiverInit;
+			/*
+			* Define a stream id so the generated local description is correct.
+			* - with a stream id:    "a=ssrc:<ssrc-id> mslabel:<value>"
+			* - without a stream id: "a=ssrc:<ssrc-id> mslabel:"
+			*
+			* The second is incorrect (https://tools.ietf.org/html/rfc5576#section-4.1)
+			*/
+		//	transceiverInit.stream_ids.emplace_back("0");
+
+
+			webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpTransceiverInterface>> result = peer_connection_->AddTransceiver(video_track_proxy_ptr, transceiver_init);
+
 			if (!result_or_error.ok())
 			{
 				RTC_LOG(LS_ERROR) << "Failed to add video track to PeerConnection: "

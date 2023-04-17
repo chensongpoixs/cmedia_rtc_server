@@ -36,6 +36,13 @@ namespace chen {
 		{
 			SYSTEM_LOG("[ip = %s]", ip.c_str());
 		}
+/*
+<<<<<<< HEAD
+=======
+		//m_all_ips.clear();
+		//m_all_ips.insert(  g_cfg.get_string(ECI_RtcWanIp) );
+>>>>>>> 5240c474c356b74491ccd4581b123fee0001079a
+*/
 		SYSTEM_LOG("network all end OK !!!");
 
 

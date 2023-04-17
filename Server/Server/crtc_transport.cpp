@@ -1174,6 +1174,7 @@ namespace chen {
 			{
 				m_tcc_server->IncomingPacket(nowMs, packet);
 			}
+			NORMAL_EX_LOG("[payload_type = %u]", packet->GetPayloadType());
 
 			crtc_producer * producer_ptr = m_all_rtp_listener.get_producer(packet->GetSsrc());
 			if (!producer_ptr)
