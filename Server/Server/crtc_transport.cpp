@@ -1127,7 +1127,7 @@ namespace chen {
 		// TODO@chensong 2023-2-23 native rtc 客户端推流  会有一个522长度数据 srtp 解码崩溃问题 --> 
 		if (len == 522 || len == 512)
 		{
-			WARNING_EX_LOG("rtp %u data [%s]",len, str2hex((const char *)data, len).c_str());
+			//WARNING_EX_LOG("rtp %u data [%s]",len, str2hex((const char *)data, len).c_str());
 			static uint32 count = 0;
 		//	++count;
 			std::string file_name = "./rtp/rtp.core."+std::to_string(len)+"._" + std::to_string(++count) + ".yuv";

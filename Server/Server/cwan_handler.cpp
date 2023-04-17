@@ -27,7 +27,7 @@ namespace chen {
 	void cwan_session::handler_msg(uint64_t session_id, const void* p, uint32 size)
 	{
 		// 1. 登录状态判断
-		NORMAL_EX_LOG("[session_id = %u][p = %s]", session_id, p);
+		//NORMAL_EX_LOG("[session_id = %u][p = %s]", session_id, p);
 		if (!m_json_reader.parse((const char *)p, (const char *)p + size, m_json_response))
 		{
 			ERROR_EX_LOG("parse json failed !!! [session_id = %llu][json = %s]", session_id, p);

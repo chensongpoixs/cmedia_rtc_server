@@ -146,7 +146,7 @@ void RtpTransportControllerSend::RegisterTargetTransferRateObserver(
 }
 
 void RtpTransportControllerSend::OnNetworkAvailability(bool network_available) {
-  DEBUG_EX_LOG("<<<<< network_available:%s", network_available ? "true" : "false");
+ // DEBUG_EX_LOG("<<<<< network_available:%s", network_available ? "true" : "false");
 
   NetworkAvailability msg;
   msg.at_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
@@ -178,7 +178,7 @@ void RtpTransportControllerSend::EnablePeriodicAlrProbing(bool enable) {
 
 void RtpTransportControllerSend::OnSentPacket(
     const rtc::SentPacket& sent_packet, size_t size) {
-  DEBUG_EX_LOG("<<<<< size:%zu", size);
+  //DEBUG_EX_LOG("<<<<< size:%zu", size);
 
   absl::optional<SentPacket> packet_msg =
       transport_feedback_adapter_.ProcessSentPacket(sent_packet);
@@ -190,7 +190,7 @@ void RtpTransportControllerSend::OnSentPacket(
 
 void RtpTransportControllerSend::OnTransportOverheadChanged(
     size_t transport_overhead_bytes_per_packet) {
-  DEBUG_EX_LOG("<<<<< transport_overhead_bytes_per_packet:%zu", transport_overhead_bytes_per_packet);
+ // DEBUG_EX_LOG("<<<<< transport_overhead_bytes_per_packet:%zu", transport_overhead_bytes_per_packet);
 
   if (transport_overhead_bytes_per_packet >= kMaxOverheadBytes) {
     ERROR_EX_LOG("transport overhead exceeds: %zu", kMaxOverheadBytes);
@@ -199,7 +199,7 @@ void RtpTransportControllerSend::OnTransportOverheadChanged(
 }
 
 void RtpTransportControllerSend::OnReceivedEstimatedBitrate(uint32_t bitrate) {
-  DEBUG_EX_LOG("<<<<< bitrate:%zu", bitrate);
+  //DEBUG_EX_LOG("<<<<< bitrate:%zu", bitrate);
 
   RemoteBitrateReport msg;
   msg.receive_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
@@ -235,7 +235,7 @@ void RtpTransportControllerSend::OnAddPacket(
 
 void RtpTransportControllerSend::OnTransportFeedback(
     const RTC::RTCP::FeedbackRtpTransportPacket& feedback) {
-  DEBUG_EX_LOG("<<<<<");
+  //DEBUG_EX_LOG("<<<<<");
 
   absl::optional<TransportPacketsFeedback> feedback_msg =
       transport_feedback_adapter_.ProcessTransportFeedback(
@@ -298,7 +298,7 @@ void RtpTransportControllerSend::UpdateControllerWithTimeInterval() {
 }
 
 void RtpTransportControllerSend::UpdateStreamsConfig() {
-  DEBUG_EX_LOG("<<<<<");
+ // DEBUG_EX_LOG("<<<<<");
 
   streams_config_.at_time = Timestamp::ms(static_cast<uint64_t>(uv_hrtime() / 1000000u));
   if (controller_)

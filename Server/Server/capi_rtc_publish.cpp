@@ -478,10 +478,10 @@ namespace chen {
 								break;
 							}
 						}
-						if (!ulpfec_payloads.empty())
+						/*if (!ulpfec_payloads.empty())
 						{
 							track_desc.m_ulpfec_ptr = new ccodec_payload(ulpfec_payloads[0].m_payload_type, "ulpfec", ulpfec_payloads[0].m_clock_rate );
-						}
+						}*/
 						// Only choose first match H.264 payload type.
 						break;
 					}
