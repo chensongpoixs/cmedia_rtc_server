@@ -13,7 +13,7 @@ let initMethod = typeof kbEvent.initKeyboardEvent !== 'undefined' ? "initKeyboar
 let webRtcPlayerObj = null;
 let print_stats = false;
 let print_inputs = false;
-let connect_on_load = false;
+let connect_on_load = true;
 
 let is_reconnection = false;
 let ws;
@@ -174,7 +174,7 @@ function emitControllerAxisMove(controllerIndex, axisIndex, analogValue) {
     Data.setFloat64(3, analogValue, true);
   //  let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    sendInputData(Data.buffer);
+   // sendInputData(Data.buffer);
 }
 
 function gamepadConnectHandler(e) {
@@ -479,23 +479,37 @@ function createWebRtcOffer() {
         showTextOverlay('Unable to setup video');
     }
 }
+function arrayBufferToString(buffer, encoding = 'gb2312') {
+  const decoder = new TextDecoder(encoding);
+  return decoder.decode(buffer);
+}
 
+function buf2hex(buffer) { // buffer is an ArrayBuffer
+  return [...new Uint8Array(buffer)]
+      .map(x => x.toString(2).padStart(1, '0'))
+      .join(' ');
+}
+function bufhex(buffer) { // buffer is an ArrayBuffer
+  return [...new Uint8Array(buffer)]
+      .map(x => x.toString(16).padStart(2, '0'))
+      .join('');
+}
 function sendInputData(data) {
     if (webRtcPlayerObj) {
         resetAfkWarningTimer();
        // webRtcPlayerObj.send(data);
-
+       //console.log('hex = ', bufhex(data));
          if (ws && ws.readyState === WS_OPEN_STATE) 
         { 
 
-            let textDecoder = new TextDecoder("utf-8");
-            let str = textDecoder.decode(data);
+           // let textDecoder = new TextDecoder("utf-8");
+           // let str = textDecoder.decode(data);
            
             //console.log('CS--> data channel  : = ', str);
-            
+            //arrayBufferToString(data) 
             let offersdp  = JSON.stringify({
                     msg_id: 210,
-                    datachannel:   str
+                    datachannel:    data
                 });
            // console.log(`-> SS: offer:\n${offersdp}`);
             
@@ -1223,7 +1237,8 @@ function emitDescriptor(messageType, descriptor) {
 
     //let str = data.getString(0, data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    sendInputData(data.buffer);
+   // sendInputData(data.buffer);
+   // sendInputData({Type : });
 }
 
 // A UI interation will occur when the user presses a button powered by
@@ -1248,11 +1263,11 @@ function emitCommand(descriptor) {
 }
 
 function requestInitialSettings() {
-    sendInputData(new Uint8Array([MessageType.RequestInitialSettings]).buffer);
+   // sendInputData(new Uint8Array([MessageType.RequestInitialSettings]).buffer);
 }
 
 function requestQualityControl() {
-    sendInputData(new Uint8Array([MessageType.RequestQualityControl]).buffer);
+   // sendInputData(new Uint8Array([MessageType.RequestQualityControl]).buffer);
 }
 
 let playerElementClientRect = undefined;
@@ -1266,7 +1281,8 @@ function setupNormalizeAndQuantize() {
     if (playerElement && videoElement.length > 0) {
         let playerAspectRatio = playerElement.clientHeight / playerElement.clientWidth;
         let videoAspectRatio = videoElement[0].videoHeight / videoElement[0].videoWidth;
-
+        console.log('playerAspectRatio =', playerAspectRatio);
+        console.log('videoAspectRatio =', videoAspectRatio);
         // Unsigned XY positions are the ratio (0.0..1.0) along a viewport axis,
         // quantized into an uint16 (0..65536).
         // Signed XY deltas are the ratio (-1.0..1.0) along a viewport axis,
@@ -1281,17 +1297,22 @@ function setupNormalizeAndQuantize() {
                 console.log('Setup Normalize and Quantize for playerAspectRatio > videoAspectRatio');
             }
             let ratio = playerAspectRatio / videoAspectRatio;
+            console.log('ratio = ', ratio);
             // Unsigned.
             normalizeAndQuantizeUnsigned = (x, y) => {
                 let normalizedX = x / playerElement.clientWidth;
                 let normalizedY = ratio * (y / playerElement.clientHeight - 0.5) + 0.5;
-                if (normalizedX < 0.0 || normalizedX > 1.0 || normalizedY < 0.0 || normalizedY > 1.0) {
+                //console.log('normalizedX = ' + normalizedX + ', normalizedY = '+ normalizedY);
+                if (normalizedX < 0.0 || normalizedX > 1.0 || normalizedY < 0.0 || normalizedY > 1.0) 
+                {
                     return {
                         inRange: false,
                         x: 65535,
                         y: 65535
                     };
-                } else {
+                }
+                else 
+                {
                     return {
                         inRange: true,
                         x: normalizedX * 65536,
@@ -1374,7 +1395,14 @@ function emitMouseMove(x, y, deltaX, deltaY) {
     Data.setInt16(7, delta.y, true);
    // let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    sendInputData(Data.buffer);
+   // sendInputData(Data.buffer);
+    sendInputData({
+        type : MessageType.MouseMove,
+        x : coord.x,
+        y : coord.y,
+        delta_x: delta.x,
+        delta_y: delta.y 
+    });
 }
 
 function emitMouseDown(button, x, y) {
@@ -1389,7 +1417,14 @@ function emitMouseDown(button, x, y) {
     Data.setUint16(4, coord.y, true);
    // let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    sendInputData(Data.buffer);
+    //sendInputData(Data.buffer);
+
+    sendInputData({
+        type : MessageType.MouseDown,
+        button : button,
+        x : coord.x,
+        y : coord.y 
+    });
 }
 
 function emitMouseUp(button, x, y) {
@@ -1404,7 +1439,13 @@ function emitMouseUp(button, x, y) {
     Data.setUint16(4, coord.y, true);
    // let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    sendInputData(Data.buffer);
+   // sendInputData(Data.buffer);
+    sendInputData({
+        type : MessageType.MouseUp,
+        button : button,
+        x : coord.x,
+        y : coord.y 
+    });
 }
 
 function emitMouseWheel(delta, x, y) {
@@ -1419,7 +1460,13 @@ function emitMouseWheel(delta, x, y) {
     Data.setUint16(5, coord.y, true);
     //let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    sendInputData(Data.buffer);
+    //sendInputData(Data.buffer);
+     sendInputData({
+        type : MessageType.MouseWheel,
+        delta : delta,
+        x : coord.x,
+        y : coord.y 
+    });
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
@@ -1535,7 +1582,10 @@ function registerMouseEnterAndLeaveEvents(playerElement) {
         Data.setUint8(0, MessageType.MouseEnter);
     //    let str = data.getString(0, data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-        sendInputData(Data.buffer);
+       // sendInputData(Data.buffer);
+         sendInputData({
+        type : MessageType.MouseEnter 
+    });
         playerElement.pressMouseButtons(e);
     };
 
@@ -1547,7 +1597,10 @@ function registerMouseEnterAndLeaveEvents(playerElement) {
         Data.setUint8(0, MessageType.MouseLeave);
   //      let str = data.getString(0, data.byteLength, "utf-8");
   //  console.log('str ===== ', str);
-        sendInputData(Data.buffer);
+       // sendInputData(Data.buffer);
+        sendInputData({
+        type : MessageType.MouseLeave 
+    });
         playerElement.releaseMouseButtons(e);
     };
 }
@@ -1563,7 +1616,7 @@ function registerLockedMouseEvents(playerElement) {
     document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
 
     playerElement.onclick = function() {
-        playerElement.requestPointerLock();
+        //playerElement.requestPointerLock();
     };
 	
 	document.addEventListener("mousemove", updatePosition, false);
@@ -1724,7 +1777,7 @@ function registerTouchEvents(playerElement) {
         }
       //  let str = data.getString(0, data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-        sendInputData(data.buffer);
+       // sendInputData(data.buffer);
     }
 
     if (inputOptions.fakeMouseWithTouches) {
@@ -1847,7 +1900,12 @@ function registerKeyboardEvents() {
         if (print_inputs) {
             console.log(`key down ${e.keyCode}, repeat = ${e.repeat}`);
         }
-        sendInputData(new Uint8Array([MessageType.KeyDown, getKeyCode(e), e.repeat]).buffer);
+      //  sendInputData(new Uint8Array([MessageType.KeyDown, getKeyCode(e), e.repeat]).buffer);
+        sendInputData({
+        type : MessageType.KeyDown,
+        keyCode : getKeyCode(e),
+        repeat: e.repeat
+    });
         // Backspace is not considered a keypress in JavaScript but we need it
         // to be so characters may be deleted in a UE4 text entry field.
         if (e.keyCode === SpecialKeyCodes.BackSpace) {
@@ -1864,7 +1922,12 @@ function registerKeyboardEvents() {
         if (print_inputs) {
             console.log(`key up ${e.keyCode}`);
         }
-        sendInputData(new Uint8Array([MessageType.KeyUp, getKeyCode(e)]).buffer);
+      //  sendInputData(new Uint8Array([MessageType.KeyUp, getKeyCode(e)]).buffer);
+         sendInputData({
+        type : MessageType.KeyUp,
+        keyCode : getKeyCode(e),
+        repeat: e.repeat
+    });
         if (inputOptions.suppressBrowserKeys && isKeyCodeBrowserKey(e.keyCode)) {
             e.preventDefault();
         }
@@ -1879,7 +1942,11 @@ function registerKeyboardEvents() {
         data.setUint16(1, e.charCode, true);
    //     let str = data.getString(0, data.byteLength, "utf-8");
   //  console.log('str ===== ', str);
-        sendInputData(data.buffer);
+      //  sendInputData(data.buffer);
+         sendInputData({
+        type : MessageType.KeyPress,
+        keyCode : e.charCode 
+    });
     };
 }
 
@@ -1935,7 +2002,7 @@ function connect() {
     ws = new WebSocket(ws_url);
 
     ws.onmessage = function(event) {
-        console.log(`<- SS: ${event.data}`);
+        //console.log(`<- SS: ${event.data}`);
        
 	    let msg = JSON.parse(event.data);
 		/*
@@ -1953,7 +2020,13 @@ function connect() {
 		} else if (msg.type === 'iceCandidate') {
             onWebRtcIce(msg.candidate);
 		*/
-        } else {
+        }
+        else if (msg.msg_id === 211)
+        {
+ 
+        } 
+        else 
+        {
             console.log(`invalid SS message type: ${msg.type}`);
         }
 	  

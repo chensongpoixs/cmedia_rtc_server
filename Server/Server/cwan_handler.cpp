@@ -191,9 +191,9 @@ namespace chen {
 		if (!m_room_name.empty() && g_room_mgr.m_master[m_room_name] != 0)
 		{
 			Json::Value reply;
-			if (!value.isMember("datachannel") || !value["datachannel"].isString())
+			if (!value.isMember("datachannel") || !value["datachannel"].isObject())
 			{
-				WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] !!! ", m_session_id, value.asCString());
+				WARNING_EX_LOG("[session_id = %llu]not find cmd type, [value = %s] !!! ", m_session_id, value.toStyledString().c_str());
 				send_msg(S2C_RtcDataChannel, EShareProtoData, reply);
 				return false;
 			}

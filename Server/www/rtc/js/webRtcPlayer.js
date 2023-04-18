@@ -480,7 +480,7 @@
             setupTracksToSendAsync(self.pcClient).finally(function()
             {
                 setupPeerConnection(self.pcClient);
-                self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
+                //self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
                 handleCreateOffer(self.pcClient);
             });
             

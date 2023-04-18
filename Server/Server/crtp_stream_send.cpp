@@ -93,7 +93,7 @@ namespace chen {
 					->OnRtpStreamRetransmitRtpPacket(this, packet);*/
 				if (m_rtc_consumer_ptr)
 				{
-					NORMAL_EX_LOG("rtx ---> seq = %u", packet->GetSequenceNumber());
+					//NORMAL_EX_LOG("rtx ---> seq = %u", packet->GetSequenceNumber());
 					m_rtc_consumer_ptr->OnRtpStreamRetransmitRtpPacket(this, packet);
 				}
 				// Mark the packet as retransmitted.

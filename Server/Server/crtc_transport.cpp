@@ -494,7 +494,7 @@ namespace chen {
 	void crtc_transport::OnConsumerRetransmitRtpPacket(crtc_consumer * consumer, RTC::RtpPacket * packet)
 	{
 		// Update abs-send-time if present.
-		packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+		//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 
 		// Update transport wide sequence number if present.
 		// clang-format off
@@ -1011,7 +1011,7 @@ namespace chen {
 	void crtc_transport::OnTransportCongestionControlClientSendRtpPacket(RTC::TransportCongestionControlClient * tccClient, RTC::RtpPacket * packet, const webrtc::PacedPacketInfo & pacingInfo)
 	{
 		// Update abs-send-time if present.
-		packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+		//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 
 		// Update transport wide sequence number if present.
 		// clang-format off
@@ -1038,13 +1038,14 @@ namespace chen {
 			// Indicate the pacer (and prober) that a packet is to be sent.
 			this->m_tcc_client->InsertPacket(packetInfo);
 
-			NORMAL_EX_LOG("====================>");
+			//NORMAL_EX_LOG("====================>");
 			/*	const auto* cb = new onSendCallback([m_tcc_client, &packetInfo](bool sent) {
 					if (sent)
 						m_tcc_client->PacketSent(packetInfo, uv_util::GetTimeMsInt64());
 				});
 
 				SendRtpPacket(nullptr, packet, cb);*/
+			send_rtp_data(packet);
 
 		}
 		else
@@ -1524,7 +1525,7 @@ namespace chen {
 				{
 					case RTC::RTCP::FeedbackRtp::MessageType::NACK:
 					{
-						DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::NACK");
+						DEBUG_EX_LOG("[%s] RTC::RTCP::FeedbackRtp::MessageType::NACK, ", m_local_sdp.m_msids[0].c_str());
 						 if (!consumer)
 						{
 							DEBUG_EX_LOG( "rtcp , no Consumer found for received NACK Feedback packet "
@@ -1897,7 +1898,7 @@ namespace chen {
 		{
 			auto interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
 			uint64_t nowMs = uv_util::GetTimeMs();
-			m_remote_estimator.send_periodic_Feedbacks();
+		//	m_remote_estimator.send_periodic_Feedbacks();
 			//SendRtcp(nowMs);
 
 			// Recalculate next RTCP interval.
