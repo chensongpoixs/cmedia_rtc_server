@@ -268,7 +268,7 @@ namespace chen {
 
 
 
-		NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
+		//NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
 		return true;
 	}
 	bool capi_rtc_player::_negotiate_play_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc, std::map<uint32_t, crtc_track_description*>& sub_relations)

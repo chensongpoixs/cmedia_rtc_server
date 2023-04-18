@@ -439,7 +439,7 @@ if (!getline(is,word,delim)) {\
 				<< " typ " << iter->m_type
 				<< " generation 0" << kCRLF;
 
-			NORMAL_EX_LOG("local SDP candidate line=%s", os.str().c_str());
+			//NORMAL_EX_LOG("local SDP candidate line=%s", os.str().c_str());
 		}
 
 		return 0;

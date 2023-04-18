@@ -183,7 +183,7 @@ namespace chen {
 
 
 
-		NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
+		//NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
 
 
 		/*FILE * out_sdp_file = ::fopen("api_rtc_sdp.sdp", "wb+");

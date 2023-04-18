@@ -31,8 +31,8 @@ inline static void onFakeConnection(uv_stream_t* /*handle*/, int /*status*/)
 namespace RTC
 {
 
-	static const uint16 g_rtcMinPort = 40000;
-	static const uint16 g_rtcMaxPort = 60000;
+	   uint16_t g_rtcMinPort ;
+	   uint16_t g_rtcMaxPort;
 	/* Class variables. */
 
 	thread_local std::unordered_map<std::string, std::vector<bool>> PortManager::mapUdpIpPorts;
