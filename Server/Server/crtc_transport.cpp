@@ -307,6 +307,11 @@ namespace chen {
 
 
 		}
+
+
+
+		m_sctp_association_ptr = new csctp_association(this, 10, 10, 100000, 21000);
+
 		m_timer_ptr = new ctimer(this);
 		
 		return true;
@@ -421,6 +426,11 @@ namespace chen {
 			delete m_tcc_server;
 
 			m_tcc_server = NULL;
+		}
+		if (m_sctp_association_ptr)
+		{
+			delete m_sctp_association_ptr;
+			m_sctp_association_ptr = NULL;
 		}
 		
 	}
@@ -776,6 +786,14 @@ namespace chen {
 		}
 		return false;
 	}
+	bool crtc_transport::send_sctp_data(const uint8 * data, size_t len)
+	{
+		if (m_dtls_ptr)
+		{
+			m_dtls_ptr->send_application_data(data, len);
+		}
+		return true;
+	}
 	void crtc_transport::send_consumer(RTC::RtpPacket * packet)
 	{
 		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet->GetSsrc());
@@ -837,6 +855,7 @@ namespace chen {
 	void crtc_transport::on_dtls_application_data(const uint8 * data, int32 size)
 	{
 		NORMAL_EX_LOG("application data --> data channel -->>>>>>>");
+		_on_application_data_receviced(data, size);
 	}
 
 	void crtc_transport::on_dtls_transport_connected(ECRYPTO_SUITE srtp_crypto_suite, uint8 * srtp_local_key, size_t srtp_local_key_len, uint8 * srtp_remote_key, size_t srtp_remote_key_len)
@@ -910,6 +929,11 @@ namespace chen {
 			m_tcc_client   = new RTC::TransportCongestionControlClient(
 				this, RTC::BweType::TRANSPORT_CC, 600000u, 600000u);
 			m_tcc_client->TransportConnected();
+
+		}
+		if (m_sctp_association_ptr)
+		{
+			m_sctp_association_ptr->TransportConnected();
 		}
 		if (m_timer_ptr)
 		{
@@ -1065,6 +1089,102 @@ namespace chen {
 		//	packet->GetSize(),
 		//	this->sendProbationTransmission.GetBitrate(uv_util::GetTimeMs()));
 	}
+	void crtc_transport::OnSctpAssociationConnecting(csctp_association * sctpAssociation)
+	{
+		WARNING_EX_LOG("");
+	}
+
+	void crtc_transport::OnSctpAssociationConnected(csctp_association* sctpAssociation)
+	{
+		WARNING_EX_LOG("");
+		// Tell all DataConsumers.
+		/*for (auto& kv : this->mapDataConsumers)
+		{
+			auto* dataConsumer = kv.second;
+
+			if (dataConsumer->GetType() == RTC::DataConsumer::Type::SCTP)
+			{
+				dataConsumer->SctpAssociationConnected();
+			}
+		}*/
+	}
+
+	void crtc_transport::OnSctpAssociationFailed(csctp_association * sctpAssociation)
+	{
+		WARNING_EX_LOG("");
+		/*for (auto& kv : this->mapDataConsumers)
+		{
+			auto* dataConsumer = kv.second;
+
+			if (dataConsumer->GetType() == RTC::DataConsumer::Type::SCTP)
+			{
+				dataConsumer->SctpAssociationClosed();
+			}
+		}*/
+	}
+
+	void crtc_transport::OnSctpAssociationClosed(csctp_association * sctpAssociation)
+	{
+		WARNING_EX_LOG("");
+		// Tell all DataConsumers.
+		/*for (auto& kv : this->mapDataConsumers)
+		{
+			auto* dataConsumer = kv.second;
+
+			if (dataConsumer->GetType() == RTC::DataConsumer::Type::SCTP)
+			{
+				dataConsumer->SctpAssociationClosed();
+			}
+		}*/
+	}
+
+	void crtc_transport::OnSctpAssociationSendData(csctp_association * sctpAssociation, const uint8_t * data, size_t len)
+	{
+		WARNING_EX_LOG("");
+		// Ignore if destroying.
+		// NOTE: This is because when the child class (i.e. WebRtcTransport) is deleted,
+		// its destructor is called first and then the parent Transport's destructor,
+		// and we would end here calling SendSctpData() which is an abstract method.
+		/*if (this->destroying)
+			return;*/
+
+		if (this->m_sctp_association_ptr)
+		{
+			send_sctp_data(data, len);
+		}
+	}
+
+	void crtc_transport::OnSctpAssociationMessageReceived(csctp_association * sctpAssociation, uint16_t streamId, uint32_t ppid, const uint8_t * msg, size_t len)
+	{
+		WARNING_EX_LOG("");
+		// TODO@chensong 2023-04-20
+		// data channel -->>> >>
+		//RTC::DataProducer* dataProducer = this->sctpListener.GetDataProducer(streamId);
+
+		//if (!dataProducer)
+		//{
+		//	MS_WARN_TAG(
+		//		sctp, "no suitable DataProducer for received SCTP message [streamId:%" PRIu16 "]", streamId);
+
+		//	return;
+		//}
+
+		//// Pass the SCTP message to the corresponding DataProducer.
+		//try
+		//{
+		//	dataProducer->ReceiveMessage(ppid, msg, len);
+		//}
+		//catch (std::exception& error)
+		//{
+		//	// Nothing to do.
+		//}
+	}
+
+	void crtc_transport::OnSctpAssociationBufferedAmount(csctp_association * sctpAssociation, uint32_t len)
+	{
+		WARNING_EX_LOG("");
+	}
+
 	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
 
@@ -1312,6 +1432,16 @@ namespace chen {
 
 			 
 		}
+	}
+
+	void crtc_transport::_on_application_data_receviced(const uint8 * data, size_t len)
+	{
+		if (!m_sctp_association_ptr)
+		{
+			DEBUG_EX_LOG("ignoring SCTP packet (SCTP not enabled)");
+			return;
+		}
+		m_sctp_association_ptr->ProcessSctpData(data, len);
 	}
 
 	void crtc_transport::_handler_rtcp_packet(RTC::RTCP::Packet * packet)

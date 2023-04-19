@@ -39,10 +39,10 @@ namespace chen
 
 		csrtp_session::init();
 		SYSTEM_LOG("sctp session init OK !!!");
-		/*if (!g_sctp_association_mgr.init())
+		if (!g_sctp_association_mgr.init())
 		{
 			return false;
-		}*/
+		}
 		 
 		/*SYSTEM_LOG("sctp_association_mgr init OK !!!");
 		RTC::DtlsTransport::ClassInit();
@@ -52,9 +52,9 @@ namespace chen
 	void cglobal_rtc::destory()
 	{
 		/*RTC::DtlsTransport::ClassDestroy();
-		SYSTEM_LOG("DtlsTransport destroy OK !!!");
+		SYSTEM_LOG("DtlsTransport destroy OK !!!");*/
 		g_sctp_association_mgr.destroy();
-		SYSTEM_LOG("sctp_association_mrg destory OK !!!");*/
+		SYSTEM_LOG("sctp_association_mrg destory OK !!!");
 		csrtp_session::destroy();
 		SYSTEM_LOG("srtp_session destroy OK !!!"); 
 		m_json_rtp_capabilities.clear();

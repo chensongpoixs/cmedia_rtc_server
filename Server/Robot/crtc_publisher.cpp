@@ -106,7 +106,7 @@ namespace chen {
 	//CreateBuiltinExternalVideoEncoderFactory(),
 			webrtc::CreateBuiltinVideoEncoderFactory(),
 			webrtc::CreateBuiltinVideoDecoderFactory(), nullptr /* audio_mixer */,
-			nullptr /* audio_processing */);
+			nullptr /* audio_processing */ );
 
 		if (!peer_connection_factory_) {
 			/*main_wnd_->MessageBox("Error", "Failed to initialize PeerConnectionFactory",
@@ -122,6 +122,7 @@ namespace chen {
 			DeletePeerConnection();*/
 		}
 
+	
 		//AddTracks();
 		_add_tracks();
 
@@ -136,11 +137,19 @@ namespace chen {
 		//webrtc::PeerConnectionInterface::IceServer server;
 		//server.uri = GetPeerConnectionString();
 		//config.servers.push_back(server);
+		// Enable ULPFEC
+		/*webrtc::RtpExtension ulpfec_extension;
+		ulpfec_extension.uri = "urn:ietf:params:rtp-hdrext:ulpfec";
+		config.header_extensions.push_back(ulpfec_extension);*/
+		//config.
+		
 		printf("[%s][%d] config.sdp_semantics = %d\n", __FUNCTION__, __LINE__, config.sdp_semantics);
 
 		peer_connection_ = peer_connection_factory_->CreatePeerConnection(config, nullptr, nullptr, this);
 		printf("[%s][%d] fff  config.sdp_semantics = %d\n", __FUNCTION__, __LINE__, config.sdp_semantics);
 
+
+		//peer_connection_->SetConfiguration(config, );
 		return peer_connection_ != nullptr;
 	}
 	void crtc_publisher::set_remoter_description(std::string sdp)
@@ -199,6 +208,7 @@ namespace chen {
 		{
 			return;  // Already added tracks.
 		}
+		
 		///////////////////////////////////////////////AUDIO///////////////////////////////////////////////////////////
 		rtc::scoped_refptr<webrtc::AudioSourceInterface> audio_source_ptr = peer_connection_factory_->CreateAudioSource(cricket::AudioOptions());
 
@@ -242,6 +252,7 @@ auto video_transceiver = peer_connection_->AddTransceiver(webrtc::VideoTrackInte
 			video_transceiver_init.send_encodings.push_back(encoding_params);*/
 
 			 webrtc::RtpTransceiverInit transceiver_init;
+			 //transceiver_init.fec = true;
 			// transceiver_init
 			// transceiver_init.send_encodings.emplace_back();
 			// transceiver_init.send_encodings[0].fec.emplace_back();

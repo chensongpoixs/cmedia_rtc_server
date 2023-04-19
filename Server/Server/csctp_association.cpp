@@ -102,8 +102,8 @@ namespace chen {
 		return 1;
 	}
 
-	csctp_association::csctp_association(cwebrtc_transport * transport, uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size)
-		: m_webrtc_transport_ptr(transport)
+	csctp_association::csctp_association(csctp_association::Listener * transport, uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size)
+		: m_transport_ptr(transport)
 		, m_id(0u)
 		, m_os(os)
 		, m_mis(mis)
@@ -339,12 +339,12 @@ namespace chen {
 			// Announce connecting state.
 			m_state = ESCTPSTATE::ESCTP_CONNECTING;
 			
-			m_webrtc_transport_ptr->OnSctpAssociationConnecting(this);
+			m_transport_ptr->OnSctpAssociationConnecting(this);
 		}
 		catch (.../*const MediaSoupError&*/ /*error*/)
 		{
 			m_state = ESCTPSTATE::ESCTP_FAILED;
-			m_webrtc_transport_ptr->OnSctpAssociationFailed(this);
+			m_transport_ptr->OnSctpAssociationFailed(this);
 		}
 	}
 	void csctp_association::ProcessSctpData(const uint8_t * data, size_t len)
@@ -502,7 +502,7 @@ namespace chen {
 		MS_DUMP_DATA(data, len);
 #endif
 
-		//this->listener->OnSctpAssociationSendData(this, data, len);
+		m_transport_ptr->OnSctpAssociationSendData(this, data, len);
 	}
 	void csctp_association::OnUsrSctpReceiveSctpData(uint16_t streamId, uint16_t ssn, uint32_t ppid, int flags, const uint8_t * data, size_t len)
 	{
@@ -552,8 +552,8 @@ namespace chen {
 
 			DEBUG_EX_LOG("notifying listener [eor:1, buffer len:%zu]", m_message_buffer_len);
 
-			/*this->listener->OnSctpAssociationMessageReceived(
-				this, streamId, ppid, this->messageBuffer, this->messageBufferLen);*/
+			m_transport_ptr->OnSctpAssociationMessageReceived(
+				this, streamId, ppid, m_message_buffer, m_message_buffer_len);
 
 			m_message_buffer_len = 0;
 		}
@@ -609,7 +609,7 @@ namespace chen {
 				if (m_state != ESCTPSTATE::ESCTP_CONNECTED)
 				{
 					m_state = ESCTPSTATE::ESCTP_CONNECTED;
-					//this->listener->OnSctpAssociationConnected(this);
+					m_transport_ptr->OnSctpAssociationConnected(this);
 				}
 
 				break;
@@ -640,7 +640,7 @@ namespace chen {
 				if (m_state != ESCTPSTATE::ESCTP_CLOSED)
 				{
 					m_state = ESCTPSTATE::ESCTP_CLOSED;
-					//this->listener->OnSctpAssociationClosed(this);
+					m_transport_ptr->OnSctpAssociationClosed(this);
 				}
 
 				break;
@@ -664,7 +664,7 @@ namespace chen {
 				if (m_state != ESCTPSTATE::ESCTP_CONNECTED)
 				{
 					m_state = ESCTPSTATE::ESCTP_CONNECTED;
-					//this->listener->OnSctpAssociationConnected(this);
+					m_transport_ptr->OnSctpAssociationConnected(this);
 				}
 
 				break;
@@ -677,7 +677,7 @@ namespace chen {
 				if (m_state != ESCTPSTATE::ESCTP_CLOSED)
 				{
 					m_state = ESCTPSTATE::ESCTP_CLOSED;
-					//this->listener->OnSctpAssociationClosed(this);
+					m_transport_ptr->OnSctpAssociationClosed(this);
 				}
 
 				break;
@@ -704,7 +704,7 @@ namespace chen {
 				if (m_state != ESCTPSTATE::ESCTP_FAILED)
 				{
 					 m_state = ESCTPSTATE::ESCTP_FAILED;
-					//this->listener->OnSctpAssociationFailed(this);
+					m_transport_ptr->OnSctpAssociationFailed(this);
 				}
 
 				break;
@@ -754,7 +754,7 @@ namespace chen {
 			if (m_state != ESCTPSTATE::ESCTP_CLOSED)
 			{
 				m_state = ESCTPSTATE::ESCTP_CLOSED;
-				//this->listener->OnSctpAssociationClosed(this);
+				m_transport_ptr->OnSctpAssociationClosed(this);
 			}
 
 			break;
@@ -894,7 +894,7 @@ namespace chen {
 
 		if (m_sctp_buffered_amount != previousSctpBufferedAmount)
 		{
-			//this->listener->OnSctpAssociationBufferedAmount(this, this->sctpBufferedAmount);
+			m_transport_ptr->OnSctpAssociationBufferedAmount(this, m_sctp_buffered_amount);
 		}
 	}
 }
