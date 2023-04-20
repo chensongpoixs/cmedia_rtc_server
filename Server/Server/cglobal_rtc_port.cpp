@@ -10,6 +10,7 @@ purpose:		_C_DTLS_ _H_
 #include "cglobal_rtc_port.h"
 #include "ccfg.h"
 #include "clog.h"
+#include "PortManager.hpp"
 namespace chen {
 	cglobal_rtc_port g_global_rtc_port;
 	cglobal_rtc_port::~cglobal_rtc_port()
@@ -25,6 +26,8 @@ namespace chen {
 
 		m_min_port = g_cfg.get_uint32(ECI_RtcMinPort);
 		m_max_port = g_cfg.get_uint32(ECI_RtcMaxPort);
+		RTC::g_rtcMinPort = m_min_port;
+		RTC::g_rtcMaxPort = m_max_port;
 		m_cur_use_port = m_min_port - 1;
 		return true;
 	}
@@ -37,18 +40,20 @@ namespace chen {
 	uint32 cglobal_rtc_port::get_new_port()
 	{
 		uint32 port = 0;
-		 if (!m_unuse_port.empty())
+		if (!m_unuse_port.empty())
 		{
-			 port =  m_unuse_port.back();
-			 m_unuse_port.pop_back();
-			
+			port = m_unuse_port.back();
+			m_unuse_port.pop_back();
+
 			return port;
 		}
+		 
 		port = ++m_cur_use_port;
+		
 		return port;
 	}
 	void cglobal_rtc_port::brack_port(uint32 port)
 	{
-		m_unuse_port.push_back(port);
+		m_unuse_port.push_front(port);
 	}
 }

@@ -439,7 +439,7 @@ if (!getline(is,word,delim)) {\
 				<< " typ " << iter->m_type
 				<< " generation 0" << kCRLF;
 
-			NORMAL_EX_LOG("local SDP candidate line=%s", os.str().c_str());
+			//NORMAL_EX_LOG("local SDP candidate line=%s", os.str().c_str());
 		}
 
 		return 0;
@@ -612,6 +612,10 @@ if (!getline(is,word,delim)) {\
 			a=max-message-size:100000
 			*/
 			m_sctp_port = atoi(value.c_str());
+		}
+		else if (attribute == "sctpmap")
+		{
+			m_sctp_port = 5000;
 		}
 		else if (attribute == "max-message-size")
 		{

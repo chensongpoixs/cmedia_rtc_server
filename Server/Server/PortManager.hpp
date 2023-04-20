@@ -57,6 +57,9 @@ namespace RTC
 		thread_local static std::unordered_map<std::string, std::vector<bool>> mapUdpIpPorts;
 		thread_local static std::unordered_map<std::string, std::vector<bool>> mapTcpIpPorts;
 	};
+
+	extern	uint16_t g_rtcMinPort  ;
+	extern uint16_t g_rtcMaxPort;
 } // namespace RTC
 
 #endif

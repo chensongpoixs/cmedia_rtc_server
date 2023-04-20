@@ -13,7 +13,7 @@ purpose:		crtc_transport
 #include "ctransport_util.h"
 #include "crtc_track_description.h"
 #include "ccfg.h"
-
+#include "cstr2digit.h"
 #include "cdigit2str.h"
 #include "crandom.h"
 #include "cdtls_certificate.h"
@@ -309,8 +309,16 @@ namespace chen {
 		}
 
 
+		 
+		//TODO@chensong 2023-04-20 datachannel -->
+		const cmedia_desc & application_media = m_remote_sdp.m_media_descs.back();
 
-		m_sctp_association_ptr = new csctp_association(this, 10, 10, 100000, 21000);
+		if (application_media.m_type == "application")
+		{
+			//m_media_descs.push_back(cmedia_desc(media));
+			m_sctp_association_ptr = new csctp_association(this, 10, 10, application_media.m_max_message_size, 21000);
+		}
+		
 
 		m_timer_ptr = new ctimer(this);
 		
@@ -794,6 +802,20 @@ namespace chen {
 		}
 		return true;
 	}
+	void crtc_transport::send_sctp_data(uint16_t streamId, uint32_t ppid, const uint8_t * msg, size_t len)
+	{
+		if (m_rtc_net_state != ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG("rtc status = %u", m_rtc_net_state);
+			return;
+		}
+		if (!m_sctp_association_ptr)
+		{
+			WARNING_EX_LOG("not open data channel !!!");
+			return;
+		}
+		m_sctp_association_ptr->SendSctpMessage(streamId, ppid, msg, len);
+	}
 	void crtc_transport::send_consumer(RTC::RtpPacket * packet)
 	{
 		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet->GetSsrc());
@@ -1156,9 +1178,32 @@ namespace chen {
 
 	void crtc_transport::OnSctpAssociationMessageReceived(csctp_association * sctpAssociation, uint16_t streamId, uint32_t ppid, const uint8_t * msg, size_t len)
 	{
-		WARNING_EX_LOG("");
+		WARNING_EX_LOG("[hex = %s]", str2hex((const char *)msg, len).c_str());
+		
 		// TODO@chensong 2023-04-20
 		// data channel -->>> >>
+		/*if (m_rtc_net_state != ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG();
+			return;
+		}*/
+
+
+		ctransport_mgr::STREAM_URL_MAP::iterator iter = g_transport_mgr.m_all_stream_url_map.find(m_rtc_master.m_room_name + "/" + m_rtc_master.m_user_name);
+		
+		if (iter != g_transport_mgr.m_all_stream_url_map.end())
+		{
+			if (iter->second)
+			{
+				iter->second->send_sctp_data(0, ppid, msg, len);
+			}
+			
+		}
+		/*if (m_sctp_association_ptr)
+		{
+			m_sctp_association_ptr->SendSctpMessage(streamId, ppid, msg, len);
+		}*/
+		//send_sctp_data(msg, len);
 		//RTC::DataProducer* dataProducer = this->sctpListener.GetDataProducer(streamId);
 
 		//if (!dataProducer)

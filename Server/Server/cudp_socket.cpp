@@ -30,6 +30,7 @@ namespace chen {
 	{
 		 if (!m_fixedPort)
 		 {
+			 //NORMAL_EX_LOG("[ip = %s][port = %u]", m_local_ip.c_str(), m_local_port);
 			 RTC::PortManager::UnbindUdp(m_local_ip, m_local_port);
 		 }
 	}

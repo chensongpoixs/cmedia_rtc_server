@@ -146,7 +146,8 @@ namespace chen {
 		{
 			//m_media_descs.push_back(cmedia_desc(media));
 			rtc_local_sdp.m_media_descs.push_back(application_media);
-			rtc_local_sdp.m_groups.push_back("2");
+			//rtc_local_sdp.m_media_descs.back().m_max_message_size = 10000;
+			rtc_local_sdp.m_groups.push_back(std::to_string(rtc_local_sdp.m_groups.size()));
 		}
 
 
@@ -268,7 +269,7 @@ namespace chen {
 
 
 
-		NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
+		//NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
 		return true;
 	}
 	bool capi_rtc_player::_negotiate_play_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc, std::map<uint32_t, crtc_track_description*>& sub_relations)

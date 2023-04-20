@@ -351,6 +351,86 @@ namespace chen {
 	{
 		usrsctp_conninput(reinterpret_cast<void*>(m_id), data, len, 0);
 	}
+	void csctp_association::SendSctpMessage(uint16_t streamId, uint32_t ppid, const uint8_t * msg, size_t len)
+	{
+		// This must be controlled by the DataConsumer.
+		cassert_desc(
+			len <= this->m_max_sctp_message_size,
+			"given message exceeds max allowed message size [message size:%zu, max message size:%zu]",
+			len,
+			this->m_max_sctp_message_size);
+
+		//const auto& parameters = dataConsumer->GetSctpStreamParameters();
+
+		// Fill stcp_sendv_spa.
+		struct sctp_sendv_spa spa; // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+		std::memset(&spa, 0, sizeof(spa));
+		spa.sendv_flags = SCTP_SEND_SNDINFO_VALID;
+		spa.sendv_sndinfo.snd_sid = streamId;
+		spa.sendv_sndinfo.snd_ppid = htonl(ppid);
+		spa.sendv_sndinfo.snd_flags = SCTP_EOR;
+
+		// If ordered it must be reliable.
+		//if (parameters.ordered)
+		//{
+		//	spa.sendv_prinfo.pr_policy = SCTP_PR_SCTP_NONE;
+		//	spa.sendv_prinfo.pr_value = 0;
+		//}
+		//// Configure reliability: https://tools.ietf.org/html/rfc3758
+		//else
+		{
+			spa.sendv_flags |= SCTP_SEND_PRINFO_VALID;
+			spa.sendv_sndinfo.snd_flags |= SCTP_UNORDERED;
+
+			/*if (parameters.maxPacketLifeTime != 0)
+			{
+				spa.sendv_prinfo.pr_policy = SCTP_PR_SCTP_TTL;
+				spa.sendv_prinfo.pr_value = parameters.maxPacketLifeTime;
+			}
+			else if (parameters.maxRetransmits != 0)*/
+			{
+				spa.sendv_prinfo.pr_policy = SCTP_PR_SCTP_RTX;
+				spa.sendv_prinfo.pr_value = 1000;/*parameters.maxRetransmits*/;
+			}
+		}
+
+		this->m_sctp_buffered_amount += len;
+
+		// Notify the listener about the buffered amount increase regardless
+		// usrsctp_sendv result.
+		// In case of failure the correct value will be later provided by usrsctp
+		// via onSendSctpData.
+		m_transport_ptr->OnSctpAssociationBufferedAmount(this, this->m_sctp_buffered_amount);
+
+		int ret = usrsctp_sendv(
+			this->m_socket, msg, len, nullptr, 0, &spa, static_cast<socklen_t>(sizeof(spa)), SCTP_SENDV_SPA, 0);
+
+		if (ret < 0)
+		{
+			bool sctpSendBufferFull = errno == EWOULDBLOCK || errno == EAGAIN;
+
+			// SCTP send buffer being full is legit, not an error.
+			if (sctpSendBufferFull)
+			{
+
+				DEBUG_EX_LOG( "sctp, error sending SCTP message [sid:%" PRIu16 ", ppid:%" PRIu32 ", message size:%zu]: %s",   streamId, ppid, len, std::strerror(errno));
+
+			}
+			else
+			{
+				WARNING_EX_LOG(
+					"sctp, error sending SCTP message [sid:%" PRIu16 ", ppid:%" PRIu32 ", message size:%zu]: %s",
+					 streamId,
+					ppid,
+					len,
+					std::strerror(errno));
+			}
+
+			 
+		}
+		 
+	}
 	void csctp_association::reply(Json::Value & value)
 	{
 		// Add port (always 5000). 
@@ -542,7 +622,7 @@ namespace chen {
 		{
 			DEBUG_EX_LOG("directly notifying listener [eor:1, buffer len:0]");
 
-			//this->listener->OnSctpAssociationMessageReceived(this, streamId, ppid, data, len);
+			m_transport_ptr->OnSctpAssociationMessageReceived(this, streamId, ppid, data, len);
 		}
 		// If end of message and there is buffered data, append data and notify buffer.
 		else if (eor && m_message_buffer_len != 0)

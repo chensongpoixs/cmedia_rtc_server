@@ -38,8 +38,8 @@ namespace chen {
 		set_string(ECI_WebSocketWanIp, "websocket_wan_ip", "0.0.0.0");
 		set_uint32(ECI_WebSocketWanPort, "websocket_wan_port", 9500);
 
-		set_uint32(ECI_RtcMinPort, "rtc_min_port", 9000); // 
-		set_uint32(ECI_RtcMaxPort, "rtc_max_port", 9100);
+		set_uint32(ECI_RtcMinPort, "rtc_min_port", 20000); // 
+		set_uint32(ECI_RtcMaxPort, "rtc_max_port", 30000);
 		set_string(ECI_RtcWanIp, "rtc_wan_ip", "127.0.0.1");
 
 		set_uint32(ECI_LogLevel, "log_level", ELogLevel_Num);
