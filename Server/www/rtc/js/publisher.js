@@ -622,6 +622,25 @@ function createPeerConnection()
 		
 		*/
 		pc.ontrack = getRemoteStream;
+		 let datachannel = pc.createDataChannel('rtc', null);
+                console.log(`Created datachannel`)
+
+                // Inform browser we would like binary data as an ArrayBuffer (FF chooses Blob by default!)
+                datachannel.binaryType = "arraybuffer";
+                
+                datachannel.onopen = function (e) {
+                  console.log(`data channel   connect`)
+                   
+                }
+
+                datachannel.onclose = function (e) {
+                  console.log(`data channel  closed`)
+                }
+
+                datachannel.onmessage = function (e) {
+                  console.log(`Got message  `, e.data)
+                   
+                }
 	}
 	else 
 	{

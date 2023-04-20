@@ -202,7 +202,7 @@ namespace chen {
 			, m_ssrc_infos()
 			, m_extmaps() 
 			, m_sctp_port(5000)
-			, m_max_message_size(262144){}
+			, m_max_message_size(10000){}
 		virtual ~cmedia_desc(){}
 
 	public:

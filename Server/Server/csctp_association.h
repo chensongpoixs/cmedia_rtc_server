@@ -75,7 +75,7 @@ namespace chen
 		size_t get_sctp_buffered_amount() const { return m_sctp_buffered_amount; }
 
 		void ProcessSctpData(const uint8_t* data, size_t len);
-
+		void SendSctpMessage(uint16_t streamId, uint32_t ppid, const uint8_t* msg, size_t len );
 	public:
 		/// Json
 		void reply(Json::Value& value);

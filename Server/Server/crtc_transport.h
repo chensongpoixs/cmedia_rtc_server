@@ -144,6 +144,11 @@ namespace chen {
 
 	public:
 		bool send_sctp_data(const uint8* data, size_t len);
+
+		void send_sctp_data(uint16_t streamId,
+			uint32_t ppid,
+			const uint8_t* msg,
+			size_t len);
 	public:
 		// virtual
 		virtual int32 write_dtls_data(void* data, int size);

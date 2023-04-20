@@ -63,6 +63,18 @@ namespace chen {
 		// All tracks default as inactive, so we must enable them.
 	//	session->set_all_tracks_status(req->get_stream_url(), ruc->publish_, true);
 
+		// datachannel -->
+		const cmedia_desc & application_media = rtc_remote_sdp.m_media_descs.back();
+
+		if (application_media.m_type == "application")
+		{
+			//m_media_descs.push_back(cmedia_desc(media));
+			rtc_local_sdp.m_media_descs.push_back(application_media);
+		//	rtc_local_sdp.m_media_descs.back().m_max_message_size = 10000;
+			rtc_local_sdp.m_groups.push_back(std::to_string(rtc_local_sdp.m_groups.size()));
+		}
+
+
 		std::string local_pwd = c_rand.rand_str(32);
 		std::string local_ufrag = "";
 		// TODO: FIXME: Rename for a better name, it's not an username.

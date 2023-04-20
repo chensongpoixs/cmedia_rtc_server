@@ -114,3 +114,5 @@ io.on('connection', (socket)=> {
 	});
 
 });
+
+/// url : http://127.0.0.1:8088/cloud_player.html?roomname=chensong&videousername=chensong
