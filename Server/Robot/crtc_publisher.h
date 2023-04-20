@@ -13,6 +13,7 @@ purpose:		api_rtc_publish
 #include "api/media_stream_interface.h"
 #include "api/peer_connection_interface.h"
 #include <string>
+#include "cdata_channel.h"
 #include "cnet_types.h"
 namespace chen {
 	class cclient;
@@ -100,6 +101,7 @@ namespace chen {
 		cclient * m_callback_ptr;
 
 		rtc::scoped_refptr<ProxyVideoTrackSource>   m_video_track_source_ptr{nullptr};
+		rtc::scoped_refptr<cdata_channel>	 m_data_channel_ptr;
 	};
 }
 

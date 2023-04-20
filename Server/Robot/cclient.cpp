@@ -455,7 +455,8 @@ namespace chen {
 					WARNING_EX_LOG("notification websocket protoo not find msg_id  msg = %s", response.dump().c_str());
 					continue;
 				}
-				if (response["result"] == 0 )
+				uint32 msg_id = response["msg_id"].get<uint32>();
+				if (msg_id == 1073)
 				{
 					m_rtc_publisher_ptr->set_remoter_description(response["data"]["sdp"]);
 				}
