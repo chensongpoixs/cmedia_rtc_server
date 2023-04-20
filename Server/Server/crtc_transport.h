@@ -25,7 +25,7 @@ purpose:		crtc_transport
 #include "TransportCongestionControlServer.hpp"
 #include "TransportCongestionControlServer.hpp"
 #include "TransportCongestionControlClient.hpp"
-
+#include "csctp_association.h"
 namespace chen {
 
 	class cdtls_session;
@@ -52,7 +52,8 @@ namespace chen {
 
 	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster,
 		public RTC::TransportCongestionControlClient::Listener,
-		public RTC::TransportCongestionControlServer::Listener, chen::ctimer::Listener
+		public RTC::TransportCongestionControlServer::Listener, 
+		public chen::ctimer::Listener, public csctp_association::Listener
 	{
 	public:
 		explicit crtc_transport(const crtc_room_master & master)
@@ -84,6 +85,7 @@ namespace chen {
 			, m_udp_ports()
 			, m_tcp_ports()
 			, m_timer_ptr(NULL)
+			, m_sctp_association_ptr(NULL)
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -139,6 +141,9 @@ namespace chen {
 		// rtcp  
 		void send_rtcp_packet(RTC::RTCP::Packet* packet);
 		bool send_rtcp(const uint8 * data, size_t len);
+
+	public:
+		bool send_sctp_data(const uint8* data, size_t len);
 	public:
 		// virtual
 		virtual int32 write_dtls_data(void* data, int size);
@@ -169,8 +174,25 @@ namespace chen {
 			RTC::TransportCongestionControlClient* tccClient,
 			RTC::RtpPacket* packet,
 			const webrtc::PacedPacketInfo& pacingInfo)  ;
-	public:
 
+
+		public:
+			virtual void OnSctpAssociationConnecting(csctp_association* sctpAssociation)  ;
+			virtual void OnSctpAssociationConnected(csctp_association* sctpAssociation)  ;
+			virtual void OnSctpAssociationFailed(csctp_association* sctpAssociation)  ;
+			virtual void OnSctpAssociationClosed(csctp_association* sctpAssociation)  ;
+			virtual void OnSctpAssociationSendData(
+				csctp_association* sctpAssociation, const uint8_t* data, size_t len)  ;
+			virtual void OnSctpAssociationMessageReceived(
+				csctp_association* sctpAssociation,
+				uint16_t streamId,
+				uint32_t ppid,
+				const uint8_t* msg,
+				size_t len) ;
+			virtual void OnSctpAssociationBufferedAmount(
+				csctp_association* sctpAssociation, uint32_t len)  ;
+	public:
+		
 	private:
 
 		void _on_stun_data_received(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
@@ -179,6 +201,7 @@ namespace chen {
 		void _on_rtp_data_received(cudp_socket* socket, const uint8* data, size_t len, const sockaddr*remoteAddr );
 		void _on_rtcp_data_received(cudp_socket* socket, const uint8* data, size_t len, const sockaddr*remoteAddr );
 		// data channel 
+		void  _on_application_data_receviced(const uint8* data, size_t len);
 		//void _on_application_data_receviced(cudp_socket* socket, const uint8* data, size_t len, const sockaddr*remoteAddr);
 
 	private:
@@ -266,6 +289,7 @@ namespace chen {
 		std::vector<uint32>									m_udp_ports;
 		std::vector< uint32>									m_tcp_ports;
 		ctimer				*					m_timer_ptr;
+		csctp_association *						m_sctp_association_ptr;
 	};
 
 

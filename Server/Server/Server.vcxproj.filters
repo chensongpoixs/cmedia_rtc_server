@@ -847,6 +847,12 @@
     <ClCompile Include="cglobal_rtc_port.cpp">
       <Filter>global_config</Filter>
     </ClCompile>
+    <ClCompile Include="csctp_association.cpp">
+      <Filter>sctp</Filter>
+    </ClCompile>
+    <ClCompile Include="csctp_association_mgr.cpp">
+      <Filter>sctp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1610,6 +1616,12 @@
     </ClInclude>
     <ClInclude Include="cglobal_rtc_port.h">
       <Filter>global_config</Filter>
+    </ClInclude>
+    <ClInclude Include="csctp_association.h">
+      <Filter>sctp</Filter>
+    </ClInclude>
+    <ClInclude Include="csctp_association_mgr.h">
+      <Filter>sctp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

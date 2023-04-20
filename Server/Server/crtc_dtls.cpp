@@ -300,7 +300,7 @@ namespace chen {
 	void crtc_dtls::update(uint32 uDeltaTime)
 	{
 		// Workaround for https://github.com/openssl/openssl/issues/7998.
-		if (m_handshake_done_for_us/*this->handshakeDone*/)
+		if (m_handshake_done/*m_handshake_done_for_us*//*this->handshakeDone*/)
 		{
 			NORMAL_EX_LOG("handshake is done so return");
 
@@ -322,7 +322,7 @@ namespace chen {
 		// well.
 		if (m_ssl_ptr)
 		{
-			if (m_handshake_done_for_us)
+			if (m_handshake_done/*m_handshake_done_for_us*/)
 			{
 				SSL_shutdown(m_ssl_ptr);
 				send_pending_outgoing_dtlsdata();
@@ -408,7 +408,7 @@ namespace chen {
 		if (read > 0)
 		{
 			// It is allowed to receive DTLS data even before validating remote fingerprint.
-			if (!m_handshake_done_for_us /*!this->handshakeDone*/)
+			if (!m_handshake_done /*!this->handshakeDone*/)
 			{
 				WARNING_EX_LOG( "ignoring application data received while DTLS handshake not done");
 
@@ -419,6 +419,42 @@ namespace chen {
 			m_callback_ptr->on_dtls_application_data(  g_ssl_read_buffer, static_cast<size_t>(read));
 		}
 
+	}
+
+	void crtc_dtls::send_application_data(const uint8* data, size_t len)
+	{
+		if (!m_handshake_done)
+		{
+			WARNING_EX_LOG("cannot send application data while DTLS is not fully connected");
+			return;
+		}
+		if (len == 0)
+		{
+			WARNING_EX_LOG( "ignoring 0 length data");
+
+			return;
+		}
+
+		int written;
+
+		written = SSL_write(this->m_ssl_ptr, static_cast<const void*>(data), static_cast<int>(len));
+
+		if (written < 0)
+		{
+			WARNING_EX_LOG("SSL_write() failed");
+
+			if (!_check_status(written))
+			{
+				return;
+			}
+		}
+		else if (written != static_cast<int>(len))
+		{
+			WARNING_EX_LOG(  "OpenSSL SSL_write() wrote less (%d bytes) than given data (%zu bytes)", written, len);
+		}
+
+		// Send data.
+		send_pending_outgoing_dtlsdata();
 	}
 
 	void crtc_dtls::send_pending_outgoing_dtlsdata()
@@ -591,7 +627,7 @@ namespace chen {
 
 			//this->handshakeDoneNow = true;
 			m_handshake_done_for_us = true;
-			process_handshake();
+			
 		}
 
 		// NOTE: checking SSL_get_shutdown(this->ssl) & SSL_RECEIVED_SHUTDOWN here upon
@@ -643,7 +679,12 @@ namespace chen {
 		default:
 			WARNING_EX_LOG(  "SSL status: unknown error");
 		}
-
+		if (m_handshake_done_for_us)
+		{
+			m_handshake_done_for_us = false;
+			m_handshake_done = true;
+			return process_handshake();
+		}
 		// Check if the handshake (or re-handshake) has been done right now.
 		//if (this->handshakeDoneNow)
 		//{

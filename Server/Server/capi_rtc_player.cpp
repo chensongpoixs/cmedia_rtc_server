@@ -146,7 +146,7 @@ namespace chen {
 		{
 			//m_media_descs.push_back(cmedia_desc(media));
 			rtc_local_sdp.m_media_descs.push_back(application_media);
-
+			rtc_local_sdp.m_groups.push_back("2");
 		}
 
 

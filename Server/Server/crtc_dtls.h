@@ -47,6 +47,7 @@ namespace chen {
 		 , m_ssl_bio_write_network_ptr(NULL)
 		 , m_dtls_status(EDtlsStateInit)
 		 , m_handshake_done_for_us(false)
+		 , m_handshake_done(false)
 		 , m_role("")
 		 , m_remote_cert(""){}
 		virtual  ~crtc_dtls();
@@ -73,6 +74,9 @@ namespace chen {
 		 bool start_active_handshake(const std::string & type);
 
 		 void process_dtls_data(const uint8* data, int32 len);
+
+
+		 void send_application_data(const uint8* data, size_t len);
 	 public:
 
 		 void send_pending_outgoing_dtlsdata();
@@ -103,6 +107,7 @@ namespace chen {
 		 // Whether the handshake is done, for us only.
 		// @remark For us only, means peer maybe not done, we also need to handle the DTLS packet.
 		 bool								m_handshake_done_for_us;
+		 bool								m_handshake_done;
 		 std::string						m_role;
 		 std::string						m_remote_cert;
 

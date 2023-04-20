@@ -35,7 +35,31 @@ namespace chen
 	class csctp_association
 	{
 	public:
-		csctp_association(cwebrtc_transport * transport, uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size);
+		class Listener
+		{
+		public:
+			virtual ~Listener() = default;
+
+		public:
+			virtual void OnSctpAssociationConnecting(csctp_association* sctpAssociation) = 0;
+			virtual void OnSctpAssociationConnected(csctp_association* sctpAssociation) = 0;
+			virtual void OnSctpAssociationFailed(csctp_association* sctpAssociation) = 0;
+			virtual void OnSctpAssociationClosed(csctp_association* sctpAssociation) = 0;
+			virtual void OnSctpAssociationSendData(
+				csctp_association* sctpAssociation, const uint8_t* data, size_t len) = 0;
+			virtual void OnSctpAssociationMessageReceived(
+				csctp_association* sctpAssociation,
+				uint16_t streamId,
+				uint32_t ppid,
+				const uint8_t* msg,
+				size_t len) = 0;
+			virtual void OnSctpAssociationBufferedAmount(
+				csctp_association* sctpAssociation, uint32_t len) = 0;
+		protected:
+		private:
+		};
+	public:
+		csctp_association(csctp_association::Listener * transport, uint16_t os, uint16_t mis, size_t max_sctp_message_size, size_t sctp_send_buffer_size);
 			
 		~csctp_association();
 
@@ -68,7 +92,7 @@ namespace chen
 		void OnUsrSctpReceiveSctpNotification(union sctp_notification* notification, size_t len);
 		void OnUsrSctpSentData(uint32_t freeBuffer);
 	private:
-		cwebrtc_transport *			m_webrtc_transport_ptr;
+		csctp_association::Listener *			m_transport_ptr;
 		uintptr_t					m_id;// { 0u };
 		uint16_t					m_os;  // default [1024u]
 		uint16_t					m_mis; // default [1024u]
