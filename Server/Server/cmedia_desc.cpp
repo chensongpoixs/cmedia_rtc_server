@@ -613,6 +613,10 @@ if (!getline(is,word,delim)) {\
 			*/
 			m_sctp_port = atoi(value.c_str());
 		}
+		else if (attribute == "sctpmap")
+		{
+			m_sctp_port = 5000;
+		}
 		else if (attribute == "max-message-size")
 		{
 			m_max_message_size = atoi(value.c_str());
