@@ -818,7 +818,7 @@ namespace chen {
 	}
 	void crtc_transport::send_consumer(RTC::RtpPacket * packet)
 	{
-		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet->GetSsrc());
+		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet);
 		if (!consumer_ptr)
 		{
 			WARNING_EX_LOG("not find consumer ssrc = %u", packet->GetSsrc());
@@ -1352,7 +1352,7 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("[payload_type = %u]", packet->GetPayloadType());
 
-			crtc_producer * producer_ptr = m_all_rtp_listener.get_producer(packet->GetSsrc());
+			crtc_producer * producer_ptr = m_all_rtp_listener.get_producer(packet );
 			if (!producer_ptr)
 			{
 				WARNING_EX_LOG("not find ssrc =%u failed !!!", packet->GetSsrc());
@@ -1520,26 +1520,29 @@ namespace chen {
 					consumer->receive_rtcp_receiver_report((*it));
 				}
 
-				if (m_tcc_client && !m_all_rtp_listener.m_ssrc_consumer_table.empty())
 				{
-					float rtt = 0;
-
-					// Retrieve the RTT from the first active consumer.
-					for (auto& kv : m_all_rtp_listener.m_ssrc_consumer_table)
+					std::lock_guard<std::mutex> lock(m_all_rtp_listener.m_ssrc_mutex);
+					if (m_tcc_client && !m_all_rtp_listener.m_ssrc_consumer_table.empty())
 					{
-						auto* consumer = kv.second;
+						float rtt = 0;
 
-						//if (consumer->IsActive())
+						// Retrieve the RTT from the first active consumer.
+						for (auto& kv : m_all_rtp_listener.m_ssrc_consumer_table)
 						{
-							rtt = consumer->get_rtt();
+							auto* consumer = kv.second;
 
-							break;
+							//if (consumer->IsActive())
+							{
+								rtt = consumer->get_rtt();
+
+								break;
+							}
 						}
+
+						m_tcc_client->ReceiveRtcpReceiverReport(rr, rtt, uv_util::GetTimeMsInt64());
 					}
 
-					m_tcc_client->ReceiveRtcpReceiverReport(rr, rtt, uv_util::GetTimeMsInt64());
 				}
-
 				break;
 			}
 
