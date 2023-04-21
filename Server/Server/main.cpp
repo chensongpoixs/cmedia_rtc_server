@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 	 
 	RegisterSignal();
 
-	const char* config_filename = "server.cfg";
+	const char* config_filename = "media_server.cfg";
 	if (argc > 1)
 	{
 		config_filename = argv[1];
