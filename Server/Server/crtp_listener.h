@@ -26,7 +26,8 @@ namespace chen {
 		explicit crtp_listener() 
 		: m_ssrcTable()
 		, m_midTable()
-		, m_ridTable(){}
+		, m_ridTable()
+		, m_ssrc_consumer_table(){}
 
 		virtual ~crtp_listener();
 	public:
@@ -45,8 +46,7 @@ namespace chen {
 		void remote_consumer(uint32 ssrc);
 		crtc_consumer * get_consumer( RTC::RtpPacket * packet);
 		crtc_consumer * get_consumer(uint32 ssrc)  ;
-	public:
-		std::mutex											m_ssrc_mutex;
+	public: 
 		// Table of SSRC / Producer pairs.
 		std::unordered_map<uint32, crtc_producer*>			m_ssrcTable;
 		//  Table of MID / Producer pairs.

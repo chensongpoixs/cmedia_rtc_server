@@ -1521,7 +1521,7 @@ namespace chen {
 				}
 
 				{
-					std::lock_guard<std::mutex> lock(m_all_rtp_listener.m_ssrc_mutex);
+					 
 					if (m_tcc_client && !m_all_rtp_listener.m_ssrc_consumer_table.empty())
 					{
 						float rtt = 0;
