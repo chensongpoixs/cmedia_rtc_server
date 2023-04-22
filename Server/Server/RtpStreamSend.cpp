@@ -1,5 +1,21 @@
-#define MS_CLASS "RTC::RtpStreamSend"
-// #define MS_LOG_DEV_LEVEL 3
+﻿/*
+
+输赢不重要，答案对你们有什么意义才重要。
+
+光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
+
+
+我可能会遇到很多的人，听他们讲好2多的故事，我来写成故事或编成歌，用我学来的各种乐器演奏它。
+然后还可能在一个国家遇到一个心仪我的姑娘，她可能会被我帅气的外表捕获，又会被我深邃的内涵吸引，在某个下雨的夜晚，她会全身淋透然后要在我狭小的住处换身上的湿衣服。
+3小时候后她告诉我她其实是这个国家的公主，她愿意向父皇求婚。我不得已告诉她我是穿越而来的男主角，我始终要回到自己的世界。
+然后我的身影慢慢消失，我看到她眼里的泪水，心里却没有任何痛苦，我才知道，原来我的心被丢掉了，我游历全世界的原因，就是要找回自己的本心。
+于是我开始有意寻找各种各样失去心的人，我变成一块砖头，一颗树，一滴水，一朵白云，去听大家为什么会失去自己的本心。
+我发现，刚出生的宝宝，本心还在，慢慢的，他们的本心就会消失，收到了各种黑暗之光的侵蚀。
+从一次争论，到嫉妒和悲愤，还有委屈和痛苦，我看到一只只无形的手，把他们的本心扯碎，蒙蔽，偷走，再也回不到主人都身边。
+我叫他本心猎手。他可能是和宇宙同在的级别 但是我并不害怕，我仔细回忆自己平淡的一生 寻找本心猎手的痕迹。
+沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
+安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
+*/
 
 #include "RtpStreamSend.hpp"
 //#include "Logger.hpp"
@@ -166,13 +182,13 @@ namespace RTC
 
 		compactNtp |= (ntp.fractions & 0xFFFF0000) >> 16;
 //<<<<<<< HEAD
-		// NTPʱ������м�32λ
+		// NTPÊ±¼ä´ÁµÄÖÐ¼ä32Î»
 //=======
-		//  NTPʱ������м�32λ
+		//  NTPÊ±¼ä´ÁµÄÖÐ¼ä32Î»
 //>>>>>>> 20adb84c0b9b03c2ea608d143e974cef7a4a3e62
 		uint32_t lastSr = report->GetLastSenderReport();
 		
-		// ��¼����SR��ʱ���뷢��SR��ʱ���
+		// ¼ÇÂ¼½ÓÊÕSRµÄÊ±¼äÓë·¢ËÍSRµÄÊ±¼ä²î
 		uint32_t dlsr   = report->GetDelaySinceLastSenderReport();
 		
 		// RTT in 1/2^16 second fractions.
@@ -198,13 +214,13 @@ namespace RTC
 			this->hasRtt = true;
 		}
 
-		//�Խ��տ�ʼ©���������ٵ�������©�����ش��п��Ե��¸���
+		//×Ô½ÓÊÕ¿ªÊ¼Â©°ü×ÜÊý£¬³Ùµ½°ü²»ËãÂ©°ü£¬ÖØ´«ÓÐ¿ÉÒÔµ¼ÖÂ¸ºÊý
 //=======
 
 //>>>>>>> 20adb84c0b9b03c2ea608d143e974cef7a4a3e62
 		this->packetsLost  = report->GetTotalLost();
 
-		//��һ�α���֮���SSRC_n������©������
+		//ÉÏÒ»´Î±¨¸æÖ®ºó´ÓSSRC_nÀ´°üµÄÂ©°ü±ÈÁÐ
 		this->fractionLost = report->GetFractionLost();
 		//INFO_EX_LOG("[packetsLost = %u][fractionLost = %u][rtt = %u]", packetsLost, fractionLost, rtt);
 		// Update the score with the received RR.
@@ -585,21 +601,21 @@ namespace RTC
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Calculate number of packets sent in this interval.
-		// 1. �����ܰ���
+		// 1. ·¢ËÍ×Ü°üÊý
 		size_t totalSent = this->transmissionCounter.GetPacketCount();
-		// 2. ��ǰʱ�̷��Ͱ���
+		// 2. ÏÈÇ°Ê±¿Ì·¢ËÍ°üÊý
 		size_t sent      = totalSent - this->sentPriorScore;
-		// 3. ��¼��ǰʱ���ܷ��Ͱ���
+		// 3. ¼ÇÂ¼µ±Ç°Ê±¿Ì×Ü·¢ËÍ°üÊý
 		this->sentPriorScore = totalSent;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Calculate number of packets lost in this interval.
-		// 4. �ܶ�����
+		// 4. ×Ü¶ª°üÊý
 		uint32_t totalLost = report->GetTotalLost() > 0 ? report->GetTotalLost() : 0;
 		uint32_t lost;
 		//INFO_EX_LOG("[totalSent = %u][sent = %u][totalLost = %u]", totalSent, sent, totalLost);
-		// 5. ��һʱ�̵�����ʱ���Ƿ��ж���
+		// 5. ÉÏÒ»Ê±¿Ìµ½ÏÖÔÚÊ±¿ÌÊÇ·ñÓÐ¶ª°ü
 		// | ...     |        <-->          |
-		// |     ��һ��ʱ��                  ����
+		// |     ÉÏÒ»¸öÊ±¿Ì                  ÏÖÔÚ
 		//
 		if (totalLost < this->lostPriorScore)
 		{
@@ -610,30 +626,30 @@ namespace RTC
 			lost = totalLost - this->lostPriorScore;
 		}
 
-		// 6. ��¼��ǰʱ���ܶ�����
+		// 6. ¼ÇÂ¼µ±Ç°Ê±¿Ì×Ü¶ª°üÊý
 		this->lostPriorScore = totalLost;
 
 		// Calculate number of packets repaired in this interval.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// 7. ��¼���޸��� �����޸�������
+		// 7. ¼ÇÂ¼×ÜÐÞ¸´°ü ¶ª°üÐÞ¸´×ÜÊýÁ¿
 		size_t totalRepaired = this->packetsRepaired;
-		// 8. ��һ��ʱ�̵������޸���������
+		// 8. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚÐÞ¸´°üµÄÊýÁ¿
 		uint32_t repaired  = totalRepaired - this->repairedPriorScore;
-		// 9. ��¼��ǰʱ�����޸���������
+		// 9. ¼ÇÂ¼µ±Ç°Ê±¿Ì×ÜÐÞ¸´°üµÄÊýÁ¿
 		this->repairedPriorScore = totalRepaired;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Calculate number of packets retransmitted in this interval.
-		// 10 . ��¼�����·��Ͱ�������
+		// 10 . ¼ÇÂ¼×ÜÖØÐÂ·¢ËÍ°üµÄÊýÁ¿
 		auto totatRetransmitted = this->packetsRetransmitted;
-		// 11. ��һ��ʱ�̵��������·��Ͱ�������
+		// 11. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚÖØÐÂ·¢ËÍ°üµÄÊýÁ¿
 		uint32_t retransmitted  = totatRetransmitted - this->retransmittedPriorScore;
 		//INFO_EX_LOG("[totalRepaired = %u][repaired = %u][packetsRetransmitted = %u]", totalRepaired, repaired, packetsRetransmitted);
-		// 12. ��¼��ǰʱ�������·��Ͱ�����
+		// 12. ¼ÇÂ¼µ±Ç°Ê±¿Ì×ÜÖØÐÂ·¢ËÍ°üÊýÁ¿
 		this->retransmittedPriorScore = totatRetransmitted;
 
 		// We didn't send any packet.
-		// 13. �ж���һ��ʱ�̵�����֮��û�з��Ͱ�
+		// 13. ÅÐ¶ÏÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚÖ®¼äÃ»ÓÐ·¢ËÍ°ü
 		if (sent == 0)
 		{
 			//INFO_EX_LOG("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
@@ -641,12 +657,12 @@ namespace RTC
 
 			return;
 		}
-		// 14. ��һ��ʱ�̵����ڶ����������ڷ��Ͱ����� �� ���޸Ķ�������Ϊ�������Ͱ�������
+		// 14. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚ¶ª°üÊýÁ¿´óÓÚ·¢ËÍ°üÊýÁ¿ £¬ ¾ÍÐÞ¸Ä¶ª°ü×ÜÊýÎªÕý³£·¢ËÍ°üÊýÁ¿¹þ
 		if (lost > sent)
 		{
 			lost = sent;
 		}
-		// 15. ��һ��ʱ�̵����� �޸����������ڶ��������� ���޸İ�Ϊ����������
+		// 15. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚ ÐÞ¸´°üÊýÁ¿´óÓÚ¶ª°üÊýÁ¿£¬ ¾ÍÐÞ¸Ä°üÎª¶ª°üÊýÁ¿¹þ
 		if (repaired > lost)
 		{
 			repaired = lost;
@@ -668,27 +684,27 @@ namespace RTC
 		  repaired,
 		  retransmitted);
 #endif
-		// 16. ��һ��ʱ�̵������޸������� = �޸���/���Ͱ�
+		// 16. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚÐÞ¸´°ü±ÈÂÊ = ÐÞ¸´°ü/·¢ËÍ°ü
 		auto repairedRatio  = static_cast<float>(repaired) / static_cast<float>(sent);
-		// 17. ��һ��ʱ�̵������޸���Ȩ�� =   [1/(�޸������� + 1))] ^ 4 =====> ||||||||||||
+		// 17. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚÐÞ¸´°üÈ¨ÖØ =   [1/(ÐÞ¸´°ü±ÈÂÊ + 1))] ^ 4 =====> ||||||||||||
 		auto repairedWeight = std::pow(1 / (repairedRatio + 1), 4);
 		//INFO_EX_LOG("== [repairedRatio = %s][repairedWeight = %s]", std::to_string(repairedRatio).c_str(), std::to_string(repairedWeight).c_str());
 		cassert(retransmitted >= repaired, "repaired packets cannot be more than retransmitted ones");
 
 
-		// 18. ��һ��ʱ�̵����� �޸�����������0 , �޸���Ȩ�ظ�ʽ = repairedWeight  * (�޸���/ ���·��Ͱ�)
+		// 18. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚ ÐÞ¸´°üÊýÁ¿´óÓÚ0 , ÐÞ¸´°üÈ¨ÖØ¸ñÊ½ = repairedWeight  * (ÐÞ¸´°ü/ ÖØÐÂ·¢ËÍ°ü)
 		if (retransmitted > 0)
 		{
 			repairedWeight *= static_cast<float>(repaired) / retransmitted;
 		}
 
-		// 19. �������� ���¹���  = lost -  (�޸��� * ���·��Ͱ�)  ????
+		// 19. ¶ª°üÊýÁ¿ ÖØÐÂ¹À¼Æ  = lost -  (ÐÞ¸´°ü * ÖØÐÂ·¢ËÍ°ü)  ????
 		lost -= repaired * repairedWeight;
 
-		// 20. ��һ��ʱ�̵������Ѿ���ɴ����/�ܷ��Ͱ����� =  (�����ܰ����� - ������Ч�ܰ�����) / �����ܰ�����
+		// 20. ÉÏÒ»¸öÊ±¿Ìµ½ÏÖÔÚÒÑ¾­Íê³É´«Êä°ü/×Ü·¢ËÍ°ü±ÈÀý =  (·¢ËÍ×Ü°üÊýÁ¿ - ·¢ËÍÎÞÐ§×Ü°üÊýÁ¿) / ·¢ËÍ×Ü°üÊýÁ¿
 		auto deliveredRatio = static_cast<float>(sent - lost) / static_cast<float>(sent);
 
-		// 21. ���� ���㹫ʽ =  ��������������ȡż((��Ч�ܰ����� ^ 4) * 10) 
+		// 21. ·ÖÊý ¼ÆËã¹«Ê½ =  º¯Êý¼´ËÄÉáÎåÈëÈ¡Å¼((ÓÐÐ§×Ü°üÊýÁ¿ ^ 4) * 10) 
 		auto score          = static_cast<uint8_t>(std::round(std::pow(deliveredRatio, 4) * 10));
 
 
@@ -696,21 +712,21 @@ namespace RTC
 
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//                                        ���������㷨����
-		//   1. Ŀ�� ������������Ƿ�����    -----> ���жϵ�����  --> ÿ��ʱ�̵��������ǲ�ͬ��������жϣ������� ÿ��ʱ�̵������� ׼ȷ��
+		//                                        ·ÖÎöÆÀ¹ÀËã·¨²½Öè
+		//   1. Ä¿µÄ ÆÀ¹ÀÍøÂçÇé¿öÊÇ·ñÁ¼ºÃ    -----> ¾ÍÅÐ¶Ïµô°üÊý  --> Ã¿¸öÊ±¿Ìµô°üÊý¶¼ÊÇ²»Í¬ËùÒÔÈçºÎÅÐ¶Ï£¿£¿£¿£¿ Ã¿¸öÊ±¿Ìµô°üÊýÄØ ×¼È·¹þ
 		//
-		//   2. ÿ��ʱ�̵ĵ��� �޸�Ȩ��  
+		//   2. Ã¿¸öÊ±¿ÌµÄµô°ü ÐÞ¸´È¨ÖØ  
 		//   
-		//   3. ÿ��ʱ�̴��·��Ͱ��� ���޸�Ȩ��Ӱ�� 
+		//   3. Ã¿¸öÊ±¿Ì´ÓÐÂ·¢ËÍ°üÁ¿ ¶ÔÐÞ¸´È¨ÖØÓ°Ïì 
 		//
-		//   4. ������������
+		//   4. µô°üÆÀ¹ÀÊýÁ¿
 		//
 		//
-		//    ---------------------------------------���չ�ʽ----------------------------------------------------   
+		//    ---------------------------------------×îÖÕ¹«Ê½----------------------------------------------------   
 		//
-		//       �� [1/(���ʱ���޸������� + 1)] ^ 4
-		//       �� �ж��Ƿ���·��Ͱ����    ����д��·��Ͱ����  ����Ҫ�ڵ����޸�����  ��ʽ�ͱ�� =   ([1/(���ʱ���޸������� + 1)] ^ 4) * ( ���ʱ���޸��� /  ������·��Ͱ�)
-		//       �� ����������  = ������ - (�޸��� * ���·��Ͱ�)
+		//       ¢Ù [1/(×î½üÊ±¿ÌÐÞ¸´°ü±ÈÂÊ + 1)] ^ 4
+		//       ¢Ú ÅÐ¶ÏÊÇ·ñ´ÓÐÂ·¢ËÍ°üÇé¿ö    Èç¹ûÓÐ´ÓÐÂ·¢ËÍ°üÇé¿ö  ¾ÍÐèÒªÔÚµ÷ÕûÐÞ¸´±ÈÂÊ  ¹«Ê½¾Í±ä³É =   ([1/(×î½üÊ±¿ÌÐÞ¸´°ü±ÈÂÊ + 1)] ^ 4) * ( ×î½üÊ±¿ÌÐÞ¸´°ü /  ×î½ü´ÓÐÂ·¢ËÍ°ü)
+		//       ¢Û µ÷Õûµô°üÊý  = µô°üÊý - (ÐÞ¸´°ü * ´ÓÐÂ·¢ËÍ°ü)
 		//
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if MS_LOG_DEV_LEVEL == 3

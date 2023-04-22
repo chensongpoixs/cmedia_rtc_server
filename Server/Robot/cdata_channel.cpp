@@ -61,8 +61,14 @@ namespace chen {
 	}
 	void cdata_channel::OnMessage(const webrtc::DataBuffer & buffer)
 	{
-		std::string s = std::string(buffer.data.data<char>(), buffer.data.size());
-		printf("DataConsumer -------------- %s -----------------------------------\n", s.c_str());
+		static uint32 count = 0;
+		if (count++ > 200)
+		{
+			printf("count = %u\n", count);
+			count = 0;
+		}
+		//std::string s = std::string(buffer.data.data<char>(), buffer.data.size());
+		//printf("DataConsumer -------------- %s -----------------------------------\n", s.c_str());
 		//this->listener->OnMessage(this, buffer);
 		//s_input_device.OnMessage(0, buffer);
 	}
