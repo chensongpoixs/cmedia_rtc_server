@@ -2024,7 +2024,9 @@ if (!getline(is,word,delim)) {\
 	 {
 		 os << m_ice_lite << kCRLF;
 	 }
-
+	 std::sort(m_groups.begin(), m_groups.end(), []( std::string  mid1,  std::string mid2) {
+		 return    atoi(mid2.c_str() ) > atoi(mid1.c_str());
+	 });
 	 if (!m_groups .empty()) {
 		 os << "a=group:" << m_group_policy ;
 		 for (std::vector<std::string>::iterator iter = m_groups .begin(); iter != m_groups .end(); ++iter) {
@@ -2047,7 +2049,9 @@ if (!getline(is,word,delim)) {\
 		 return EMediaRtcSdpEncodeSessionInfoFailed;
 		 //return srs_error_wrap(err, "encode session info failed");
 	 }
-
+	 std::sort(m_media_descs.begin(), m_media_descs.end(), [](const cmedia_desc & media1, const cmedia_desc &media2) {
+		 return     atoi(media2.m_mid.c_str())> atoi(media1.m_mid.c_str());
+	 });
 	 for (std::vector<cmedia_desc>::iterator iter = m_media_descs .begin(); iter != m_media_descs .end(); ++iter) {
 		 if ((err = (*iter).encode(os)) != 0)
 		 {
