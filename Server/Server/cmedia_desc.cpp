@@ -70,8 +70,8 @@ if (!getline(is,word,delim)) {\
 		m_cname = cname;
 		m_msid = stream_id;
 		m_msid_tracker = track_id;
-		m_mslabel = m_msid;
-		m_label = m_msid_tracker;
+		m_mslabel = "";
+		m_label = "";
 
 	}
 	int32 cssrc_info::encode(std::ostringstream & os)

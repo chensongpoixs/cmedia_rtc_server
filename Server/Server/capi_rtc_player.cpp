@@ -49,7 +49,7 @@ namespace chen {
 		由客户端先发起client hello*/
 		rtc_local_sdp.m_session_config.m_dtls_role = "passive";
 		rtc_local_sdp.m_session_config.m_dtls_version = "auto";
-
+		std::string planname = roomname + "/" +peerid;
 
 		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(roomname + "/" + video_peerid);
 		if (!rtc_ssrc_info_ptr)
@@ -67,7 +67,7 @@ namespace chen {
 
 			audio_track_desc->m_type = "audio";
 			audio_track_desc->m_id = "audio-" + c_rand.rand_str(8);
-			audio_track_desc->m_msid = c_rand.rand_str(36);
+			audio_track_desc->m_msid = planname;//c_rand.rand_str(36);
 			//audio_track_desc->m_msid_tracker = c_rand.rand_str(36);;
 			//audio_track_desc->m_mid = "0";
 			uint32_t audio_ssrc = rtc_ssrc_info_ptr->m_audio_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
@@ -84,7 +84,7 @@ namespace chen {
 
 			video_track_desc->m_type = "video";
 			video_track_desc->m_id = "video-" + c_rand.rand_str(8);
-			video_track_desc->m_msid = c_rand.rand_str(36);
+			video_track_desc->m_msid = planname;// c_rand.rand_str(36);
 			//video_track_desc->m_mid = "1";
 			uint32_t video_ssrc = rtc_ssrc_info_ptr->m_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
 			video_track_desc->m_ssrc = video_ssrc;
