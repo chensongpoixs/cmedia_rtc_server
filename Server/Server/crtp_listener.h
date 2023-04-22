@@ -34,8 +34,8 @@ namespace chen {
 		void remove_producer(uint32 ssrc);
 
 
-		crtc_producer * get_producer(const RTC::RtpPacket * packet )   ;
-		crtc_producer * get_producer(uint32 ssrc) const ;
+		crtc_producer * get_producer(  RTC::RtpPacket * packet )   ;
+		crtc_producer * get_producer(uint32 ssrc)   ;
 
 
 		////////////////////////////////////////////////////////////////////////
@@ -43,9 +43,10 @@ namespace chen {
 
 		bool add_consumer(uint32 ssrc, crtc_consumer* consumer);
 		void remote_consumer(uint32 ssrc);
-		crtc_consumer * get_consumer(const RTC::RtpPacket * packet);
-		crtc_consumer * get_consumer(uint32 ssrc) const;
+		crtc_consumer * get_consumer( RTC::RtpPacket * packet);
+		crtc_consumer * get_consumer(uint32 ssrc)  ;
 	public:
+		std::mutex											m_ssrc_mutex;
 		// Table of SSRC / Producer pairs.
 		std::unordered_map<uint32, crtc_producer*>			m_ssrcTable;
 		//  Table of MID / Producer pairs.

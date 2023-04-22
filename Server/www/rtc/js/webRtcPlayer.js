@@ -131,7 +131,7 @@
             video.playsInline = true;
             video.disablepictureinpicture = true;
             video.muted = self.startVideoMuted;;
-			
+			 video.style.objectFit = 'fill';
             video.addEventListener('loadedmetadata', function(e){
                 if(self.onVideoInitialised){
                     self.onVideoInitialised();
@@ -480,7 +480,7 @@
             setupTracksToSendAsync(self.pcClient).finally(function()
             {
                 setupPeerConnection(self.pcClient);
-                //self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
+                self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
                 handleCreateOffer(self.pcClient);
             });
             

@@ -223,11 +223,11 @@ function conn()
 	ws.onmessage = function(event)
     {
         
-        console.log(`<- S2C : ${event.data}`);
+      //  console.log(`<- S2C : ${event.data}`);
 
         let msg = JSON.parse(event.data);
         // 
-		console.log('recv message  = ', msg);
+		//console.log('recv message  = ', msg);
         if (msg.msg_id === 1073) // S2C_Login
         {
         	 answer.value = msg.data.sdp;

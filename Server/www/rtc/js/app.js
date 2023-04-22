@@ -174,7 +174,7 @@ function emitControllerAxisMove(controllerIndex, axisIndex, analogValue) {
     Data.setFloat64(3, analogValue, true);
   //  let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-   // sendInputData(Data.buffer);
+    sendInputData(Data.buffer);
 }
 
 function gamepadConnectHandler(e) {
@@ -494,7 +494,20 @@ function bufhex(buffer) { // buffer is an ArrayBuffer
       .map(x => x.toString(16).padStart(2, '0'))
       .join('');
 }
+function xsendInputData(data) {
+    // if (webRtcPlayerObj) {
+    //     resetAfkWarningTimer();
+    //      webRtcPlayerObj.send(data);
+    //  }
+      
+}
+
 function sendInputData(data) {
+    if (webRtcPlayerObj) {
+        resetAfkWarningTimer();
+         webRtcPlayerObj.send(data);
+     }
+	 return;
     if (webRtcPlayerObj) {
         resetAfkWarningTimer();
        // webRtcPlayerObj.send(data);
@@ -681,7 +694,7 @@ function setupWebRtcPlayer(htmlElement, config) {
         }
     }
 
-/*webRtcPlayerObj.onDataChannelMessage = function(data) {
+        webRtcPlayerObj.onDataChannelMessage = function(data) {
         let view = new Uint8Array(data);
 
         if (view[0] === ToClientMessageType.QualityControlOwnership) {
@@ -746,7 +759,7 @@ function setupWebRtcPlayer(htmlElement, config) {
         } else {
             console.error(`unrecognized data received, packet ID ${view[0]}`);
         }
-    };*/
+    }; 
 
     registerInputs(webRtcPlayerObj.video);
 
@@ -1237,7 +1250,7 @@ function emitDescriptor(messageType, descriptor) {
 
     //let str = data.getString(0, data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-   // sendInputData(data.buffer);
+   sendInputData(data.buffer);
    // sendInputData({Type : });
 }
 
@@ -1263,11 +1276,11 @@ function emitCommand(descriptor) {
 }
 
 function requestInitialSettings() {
-   // sendInputData(new Uint8Array([MessageType.RequestInitialSettings]).buffer);
+    sendInputData(new Uint8Array([MessageType.RequestInitialSettings]).buffer);
 }
 
 function requestQualityControl() {
-   // sendInputData(new Uint8Array([MessageType.RequestQualityControl]).buffer);
+    sendInputData(new Uint8Array([MessageType.RequestQualityControl]).buffer);
 }
 
 let playerElementClientRect = undefined;
@@ -1280,7 +1293,9 @@ function setupNormalizeAndQuantize() {
 
     if (playerElement && videoElement.length > 0) {
         let playerAspectRatio = playerElement.clientHeight / playerElement.clientWidth;
+        console.log('playerElement.clientHeight = ' + playerElement.clientHeight + ', playerElement.clientWidth = ' + playerElement.clientWidth);
         let videoAspectRatio = videoElement[0].videoHeight / videoElement[0].videoWidth;
+        console.log('videoElement[0].videoHeight = ' + videoElement[0].videoHeight + ', videoElement[0].videoWidth = ' + videoElement[0].videoWidth);
         console.log('playerAspectRatio =', playerAspectRatio);
         console.log('videoAspectRatio =', videoAspectRatio);
         // Unsigned XY positions are the ratio (0.0..1.0) along a viewport axis,
@@ -1292,8 +1307,10 @@ function setupNormalizeAndQuantize() {
         // Hack: Currently we set an out-of-range position to an extreme (65535)
         // as we can't yet accurately detect mouse enter and leave events
         // precisely inside a video with an aspect ratio which causes mattes.
-        if (playerAspectRatio > videoAspectRatio) {
-            if (print_inputs) {
+        if (playerAspectRatio > videoAspectRatio) 
+        {
+            if (print_inputs) 
+            {
                 console.log('Setup Normalize and Quantize for playerAspectRatio > videoAspectRatio');
             }
             let ratio = playerAspectRatio / videoAspectRatio;
@@ -1301,8 +1318,8 @@ function setupNormalizeAndQuantize() {
             // Unsigned.
             normalizeAndQuantizeUnsigned = (x, y) => {
                 let normalizedX = x / playerElement.clientWidth;
-                let normalizedY = ratio * (y / playerElement.clientHeight - 0.5) + 0.5;
-                //console.log('normalizedX = ' + normalizedX + ', normalizedY = '+ normalizedY);
+                let normalizedY =  ratio * (y / playerElement.clientHeight - 0.5) + 0.5;
+                console.log('normalizedX = ' + normalizedX + ', normalizedY = '+ normalizedY);
                 if (normalizedX < 0.0 || normalizedX > 1.0 || normalizedY < 0.0 || normalizedY > 1.0) 
                 {
                     return {
@@ -1337,7 +1354,9 @@ function setupNormalizeAndQuantize() {
                     y: normalizedY * 32767
                 };
             };
-        } else {
+        }
+         else 
+        {
             if (print_inputs) {
                 console.log('Setup Normalize and Quantize for playerAspectRatio <= videoAspectRatio');
             }
@@ -1386,6 +1405,9 @@ function emitMouseMove(x, y, deltaX, deltaY) {
         console.log(`x: ${x}, y:${y}, dX: ${deltaX}, dY: ${deltaY}`);
     }
     let coord = normalizeAndQuantizeUnsigned(x, y);
+	if (print_inputs) {
+        console.log(`x: ${coord.x}, y:${coord.y}, dX: ${deltaX}, dY: ${deltaY}`);
+    }
     let delta = normalizeAndQuantizeSigned(deltaX, deltaY);
     let Data = new DataView(new ArrayBuffer(9));
     Data.setUint8(0, MessageType.MouseMove);
@@ -1395,14 +1417,14 @@ function emitMouseMove(x, y, deltaX, deltaY) {
     Data.setInt16(7, delta.y, true);
    // let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-   // sendInputData(Data.buffer);
-    sendInputData({
-        type : MessageType.MouseMove,
-        x : coord.x,
-        y : coord.y,
-        delta_x: delta.x,
-        delta_y: delta.y 
-    });
+   sendInputData(Data.buffer);
+    // sendInputData({
+    //     type : MessageType.MouseMove,
+    //     x : coord.x,
+    //     y : coord.y,
+    //     delta_x: delta.x,
+    //     delta_y: delta.y 
+    // });
 }
 
 function emitMouseDown(button, x, y) {
@@ -1417,14 +1439,14 @@ function emitMouseDown(button, x, y) {
     Data.setUint16(4, coord.y, true);
    // let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    //sendInputData(Data.buffer);
-
-    sendInputData({
-        type : MessageType.MouseDown,
-        button : button,
-        x : coord.x,
-        y : coord.y 
-    });
+    sendInputData(Data.buffer);
+return;
+    // sendInputData({
+    //     type : MessageType.MouseDown,
+    //     button : button,
+    //     x : coord.x,
+    //     y : coord.y 
+    // });
 }
 
 function emitMouseUp(button, x, y) {
@@ -1439,13 +1461,13 @@ function emitMouseUp(button, x, y) {
     Data.setUint16(4, coord.y, true);
    // let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-   // sendInputData(Data.buffer);
-    sendInputData({
-        type : MessageType.MouseUp,
-        button : button,
-        x : coord.x,
-        y : coord.y 
-    });
+    sendInputData(Data.buffer);
+    // sendInputData({
+    //     type : MessageType.MouseUp,
+    //     button : button,
+    //     x : coord.x,
+    //     y : coord.y 
+    // });
 }
 
 function emitMouseWheel(delta, x, y) {
@@ -1460,13 +1482,13 @@ function emitMouseWheel(delta, x, y) {
     Data.setUint16(5, coord.y, true);
     //let str = Data.getString(0, Data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-    //sendInputData(Data.buffer);
-     sendInputData({
-        type : MessageType.MouseWheel,
-        delta : delta,
-        x : coord.x,
-        y : coord.y 
-    });
+    sendInputData(Data.buffer);
+    //  sendInputData({
+    //     type : MessageType.MouseWheel,
+    //     delta : delta,
+    //     x : coord.x,
+    //     y : coord.y 
+    // });
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
@@ -1582,10 +1604,10 @@ function registerMouseEnterAndLeaveEvents(playerElement) {
         Data.setUint8(0, MessageType.MouseEnter);
     //    let str = data.getString(0, data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-       // sendInputData(Data.buffer);
-         sendInputData({
-        type : MessageType.MouseEnter 
-    });
+        sendInputData(Data.buffer);
+    //      sendInputData({
+    //     type : MessageType.MouseEnter 
+    // });
         playerElement.pressMouseButtons(e);
     };
 
@@ -1597,10 +1619,10 @@ function registerMouseEnterAndLeaveEvents(playerElement) {
         Data.setUint8(0, MessageType.MouseLeave);
   //      let str = data.getString(0, data.byteLength, "utf-8");
   //  console.log('str ===== ', str);
-       // sendInputData(Data.buffer);
-        sendInputData({
-        type : MessageType.MouseLeave 
-    });
+        sendInputData(Data.buffer);
+    //     sendInputData({
+    //     type : MessageType.MouseLeave 
+    // });
         playerElement.releaseMouseButtons(e);
     };
 }
@@ -1639,7 +1661,10 @@ function registerLockedMouseEvents(playerElement) {
     }
 	
 
-    function updatePosition(e) {
+    function updatePosition(e) 
+	{
+		console.log('=========================================');
+		console.log(e);
         x += e.movementX;
         y += e.movementY;
         if (x > styleWidth) {
@@ -1654,27 +1679,29 @@ function registerLockedMouseEvents(playerElement) {
         if (y < 0) {
             y = styleHeight - y;
         }
-        emitMouseMove(x, y, e.movementX, e.movementY);
+       // console.log(e);
+        //emitMouseMove(x, y, e.movementX, e.movementY);
+        emitMouseMove(e.clientX, e.clientY, e.movementX, e.movementY);
     }
 
     playerElement.onmousedown = function(e) {
-        emitMouseDown(e.button, x, y);
+        emitMouseDown(e.button,e.clientX, e.clientY);
     };
 
     playerElement.onmouseup = function(e) {
-        emitMouseUp(e.button, x, y);
+        emitMouseUp(e.button, e.clientX, e.clientY);
     };
 
     playerElement.onmousewheel = function(e) {
-        emitMouseWheel(e.wheelDelta, x, y);
+        emitMouseWheel(e.wheelDelta, e.clientX, e.clientY);
     };
 
     playerElement.pressMouseButtons = function(e) {
-        pressMouseButtons(e.buttons, x, y);
+        pressMouseButtons(e.buttons, e.clientX, e.clientY);
     };
 
     playerElement.releaseMouseButtons = function(e) {
-        releaseMouseButtons(e.buttons, x, y);
+        releaseMouseButtons(e.buttons,e.clientX, e.clientY);
     };
 }
 
@@ -1686,17 +1713,20 @@ function registerHoveringMouseEvents(playerElement) {
     //styleCursor = 'default';  // Showing cursor
 
     playerElement.onmousemove = function(e) {
-        emitMouseMove(e.offsetX, e.offsetY, e.movementX, e.movementY);
+       // emitMouseMove(e.offsetX, e.offsetY, e.movementX, e.movementY);
+        emitMouseMove(e.clientX, e.clientY, e.movementX, e.movementY);
         e.preventDefault();
     };
 
     playerElement.onmousedown = function(e) {
-        emitMouseDown(e.button, e.offsetX, e.offsetY);
+       // emitMouseDown(e.button, e.offsetX, e.offsetY);
+        emitMouseDown(e.button, e.clientX, e.clientY);
         e.preventDefault();
     };
 
     playerElement.onmouseup = function(e) {
-        emitMouseUp(e.button, e.offsetX, e.offsetY);
+      //  emitMouseUp(e.button, e.offsetX, e.offsetY);
+        emitMouseUp(e.button, e.clientX, e.clientY);
         e.preventDefault();
     };
 
@@ -1706,28 +1736,33 @@ function registerHoveringMouseEvents(playerElement) {
     // the mouse can get stuck.
     // https://github.com/facebook/react/issues/5531
     playerElement.oncontextmenu = function(e) {
-        emitMouseUp(e.button, e.offsetX, e.offsetY);
+       // emitMouseUp(e.button, e.offsetX, e.offsetY);
+        emitMouseUp(e.button, e.clientX, e.clientY);
         e.preventDefault();
     };
 
     if ('onmousewheel' in playerElement) {
         playerElement.onmousewheel = function(e) {
-            emitMouseWheel(e.wheelDelta, e.offsetX, e.offsetY);
+            //emitMouseWheel(e.wheelDelta, e.offsetX, e.offsetY);
+              emitMouseWheel(e.wheelDelta, e.clientX, e.clientY);
             e.preventDefault();
         };
     } else {
         playerElement.addEventListener('DOMMouseScroll', function(e) {
-            emitMouseWheel(e.detail * -120, e.offsetX, e.offsetY);
+          //  emitMouseWheel(e.detail * -120, e.offsetX, e.offsetY);
+            emitMouseWheel(e.detail * -120, e.clientX, e.clientY);
             e.preventDefault();
         }, false);
     }
 
     playerElement.pressMouseButtons = function(e) {
-        pressMouseButtons(e.buttons, e.offsetX, e.offsetY);
+        //pressMouseButtons(e.buttons, e.offsetX, e.offsetY);
+         pressMouseButtons(e.buttons, e.clientX, e.clientY);
     };
 
     playerElement.releaseMouseButtons = function(e) {
-        releaseMouseButtons(e.buttons, e.offsetX, e.offsetY);
+        //releaseMouseButtons(e.buttons, e.offsetX, e.offsetY);
+        releaseMouseButtons(e.buttons, e.clientX, e.clientY);
     };
 }
 
@@ -1777,7 +1812,7 @@ function registerTouchEvents(playerElement) {
         }
       //  let str = data.getString(0, data.byteLength, "utf-8");
    // console.log('str ===== ', str);
-       // sendInputData(data.buffer);
+        sendInputData(data.buffer);
     }
 
     if (inputOptions.fakeMouseWithTouches) {
@@ -1900,12 +1935,12 @@ function registerKeyboardEvents() {
         if (print_inputs) {
             console.log(`key down ${e.keyCode}, repeat = ${e.repeat}`);
         }
-      //  sendInputData(new Uint8Array([MessageType.KeyDown, getKeyCode(e), e.repeat]).buffer);
-        sendInputData({
-        type : MessageType.KeyDown,
-        keyCode : getKeyCode(e),
-        repeat: e.repeat
-    });
+       sendInputData(new Uint8Array([MessageType.KeyDown, getKeyCode(e), e.repeat]).buffer);
+        //sendInputData({
+    //     type : MessageType.KeyDown,
+    //     keyCode : getKeyCode(e),
+    //     repeat: e.repeat
+    // });
         // Backspace is not considered a keypress in JavaScript but we need it
         // to be so characters may be deleted in a UE4 text entry field.
         if (e.keyCode === SpecialKeyCodes.BackSpace) {
@@ -1922,12 +1957,12 @@ function registerKeyboardEvents() {
         if (print_inputs) {
             console.log(`key up ${e.keyCode}`);
         }
-      //  sendInputData(new Uint8Array([MessageType.KeyUp, getKeyCode(e)]).buffer);
-         sendInputData({
-        type : MessageType.KeyUp,
-        keyCode : getKeyCode(e),
-        repeat: e.repeat
-    });
+       sendInputData(new Uint8Array([MessageType.KeyUp, getKeyCode(e)]).buffer);
+    //      sendInputData({
+    //     type : MessageType.KeyUp,
+    //     keyCode : getKeyCode(e),
+    //     repeat: e.repeat
+    // });
         if (inputOptions.suppressBrowserKeys && isKeyCodeBrowserKey(e.keyCode)) {
             e.preventDefault();
         }
@@ -1942,11 +1977,11 @@ function registerKeyboardEvents() {
         data.setUint16(1, e.charCode, true);
    //     let str = data.getString(0, data.byteLength, "utf-8");
   //  console.log('str ===== ', str);
-      //  sendInputData(data.buffer);
-         sendInputData({
-        type : MessageType.KeyPress,
-        keyCode : e.charCode 
-    });
+       sendInputData(data.buffer);
+    //      sendInputData({
+    //     type : MessageType.KeyPress,
+    //     keyCode : e.charCode 
+    // });
     };
 }
 
@@ -1997,7 +2032,9 @@ function connect() {
     }
 
 	//window.location.href.replace('http://', 'ws://').replace('https://', 'wss://')
-	var ws_url = 'ws://192.168.1.175:9500';
+	var rtc_ip = getQueryVariable('rtc_ip');
+	var rtc_port =  getQueryVariable('rtc_port');
+	var ws_url = 'ws://'+rtc_ip+':'+rtc_port;
 
     ws = new WebSocket(ws_url);
 
