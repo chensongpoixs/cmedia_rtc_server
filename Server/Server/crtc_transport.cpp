@@ -1258,7 +1258,7 @@ namespace chen {
 
 	void crtc_transport::OnSctpAssociationBufferedAmount(csctp_association * sctpAssociation, uint32_t len)
 	{
-		WARNING_EX_LOG("");
+		//WARNING_EX_LOG("");
 	}
 
 	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
