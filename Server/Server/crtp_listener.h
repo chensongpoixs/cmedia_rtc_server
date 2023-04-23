@@ -50,6 +50,7 @@ namespace chen {
 		void destroy();
 	public:
 		bool add_producer(uint32 ssrc,  crtc_producer * producer);
+		bool add_rtx_add_producer(uint32 ssrc, crtc_producer * producer);
 		void remove_producer(uint32 ssrc);
 
 
@@ -68,6 +69,7 @@ namespace chen {
 	public: 
 		// Table of SSRC / Producer pairs.
 		std::map<uint32, crtc_producer*>			m_ssrcTable;
+		std::map<uint32 , crtc_producer*>			m_ssrc_rtx_table;
 		//  Table of MID / Producer pairs.
 		std::unordered_map<std::string, crtc_producer*>		m_midTable;
 		//  Table of RID / Producer pairs.

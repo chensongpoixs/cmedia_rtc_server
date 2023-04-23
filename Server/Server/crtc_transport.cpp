@@ -274,7 +274,7 @@ namespace chen {
 							}
 						}
 						producer_ptr = new crtc_producer(this, "video", params, m_server_ssrc_map);;
-						if (!m_all_rtp_listener.add_producer(rtc_track->m_rtx_ssrc, producer_ptr))
+						if (!m_all_rtp_listener.add_rtx_add_producer(rtc_track->m_rtx_ssrc, producer_ptr))
 						{
 							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_rtx_ssrc);
 						}
@@ -907,7 +907,7 @@ namespace chen {
 
 	void crtc_transport::on_dtls_application_data(const uint8 * data, int32 size)
 	{
-		NORMAL_EX_LOG("application data --> data channel -->>>>>>>");
+		//NORMAL_EX_LOG("application data --> data channel -->>>>>>>");
 		_on_application_data_receviced(data, size);
 	}
 
@@ -1144,12 +1144,12 @@ namespace chen {
 	}
 	void crtc_transport::OnSctpAssociationConnecting(csctp_association * sctpAssociation)
 	{
-		WARNING_EX_LOG("");
+		//WARNING_EX_LOG("");
 	}
 
 	void crtc_transport::OnSctpAssociationConnected(csctp_association* sctpAssociation)
 	{
-		WARNING_EX_LOG("");
+		//WARNING_EX_LOG("");
 		// Tell all DataConsumers.
 		/*for (auto& kv : this->mapDataConsumers)
 		{
@@ -1164,7 +1164,7 @@ namespace chen {
 
 	void crtc_transport::OnSctpAssociationFailed(csctp_association * sctpAssociation)
 	{
-		WARNING_EX_LOG("");
+		//WARNING_EX_LOG("");
 		/*for (auto& kv : this->mapDataConsumers)
 		{
 			auto* dataConsumer = kv.second;
@@ -1178,7 +1178,7 @@ namespace chen {
 
 	void crtc_transport::OnSctpAssociationClosed(csctp_association * sctpAssociation)
 	{
-		WARNING_EX_LOG("");
+		//WARNING_EX_LOG("");
 		// Tell all DataConsumers.
 		/*for (auto& kv : this->mapDataConsumers)
 		{
@@ -1193,7 +1193,7 @@ namespace chen {
 
 	void crtc_transport::OnSctpAssociationSendData(csctp_association * sctpAssociation, const uint8_t * data, size_t len)
 	{
-		WARNING_EX_LOG("");
+		//WARNING_EX_LOG("");
 		// Ignore if destroying.
 		// NOTE: This is because when the child class (i.e. WebRtcTransport) is deleted,
 		// its destructor is called first and then the parent Transport's destructor,
@@ -1209,7 +1209,7 @@ namespace chen {
 
 	void crtc_transport::OnSctpAssociationMessageReceived(csctp_association * sctpAssociation, uint16_t streamId, uint32_t ppid, const uint8_t * msg, size_t len)
 	{
-		WARNING_EX_LOG("[hex = %s]", str2hex((const char *)msg, len).c_str());
+		//WARNING_EX_LOG("[hex = %s]", str2hex((const char *)msg, len).c_str());
 		
 		// TODO@chensong 2023-04-20
 		// data channel -->>> >>

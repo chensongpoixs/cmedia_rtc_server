@@ -42,6 +42,7 @@ namespace chen {
 			}
 			
 		}
+		m_ssrc_rtx_table.clear();
 		m_ssrc_rtx_consumer_table.clear();
 		m_ssrcTable.clear();
 		m_ssrc_consumer_table.clear();
@@ -49,6 +50,17 @@ namespace chen {
 	bool crtp_listener::add_producer(uint32 ssrc, crtc_producer * producer)
 	{ 
 		if (!m_ssrcTable.insert(std::make_pair(ssrc, producer)).second)
+		{
+			WARNING_EX_LOG("insert producer rtp listener failed (ssrc = %u)", ssrc);
+			return false;
+		}
+
+		return true;
+	}
+
+	bool crtp_listener::add_rtx_add_producer(uint32 ssrc, crtc_producer * producer)
+	{
+		if (!m_ssrc_rtx_table.insert(std::make_pair(ssrc, producer)).second)
 		{
 			WARNING_EX_LOG("insert producer rtp listener failed (ssrc = %u)", ssrc);
 			return false;
@@ -66,6 +78,15 @@ namespace chen {
 	{ 
 		std::map<uint32, crtc_producer*>::iterator iter = m_ssrcTable.find(packet->GetSsrc());
 		if (iter != m_ssrcTable.end())
+		{
+			return iter->second;
+		}
+		if (m_ssrc_rtx_table.empty())
+		{
+			return NULL;
+		}
+		iter = m_ssrc_rtx_table.find(packet->GetSsrc());
+		if (iter != m_ssrc_rtx_table.end())
 		{
 			return iter->second;
 		}
