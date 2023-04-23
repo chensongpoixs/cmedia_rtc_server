@@ -48,10 +48,14 @@ namespace chen {
 				!iter->second->is_active())
 			{
 				
-				m_all_consumer_map[iter->second->get_rtp_sdp().m_msids[0]].erase(iter->second);
 				if (iter->second->get_rtc_type() == ERtcClientPublisher)
 				{
-					m_all_stream_url_map.erase(iter->second->get_rtp_sdp().m_msids[0]);
+					m_all_stream_url_map.erase(iter->second->get_stream_name());
+				}
+				else
+				{
+					m_all_consumer_map[iter->second->get_stream_name()].erase(iter->second);
+
 				}
 				iter->second->destroy();
 				crtc_transport* ptr = iter->second;
@@ -77,6 +81,7 @@ namespace chen {
 		}
 		m_all_transport_map.clear();
 		m_all_consumer_map.clear();
+		
 		//m_all_stream_url_map.clear();
 	}
 	crtc_transport * ctransport_mgr::find_username(const std::string & username)

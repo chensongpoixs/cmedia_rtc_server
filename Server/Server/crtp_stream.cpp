@@ -33,6 +33,11 @@ namespace chen {
 	}*/
 	crtp_stream::~crtp_stream()
 	{
+		if (m_rtx_stream_ptr)
+		{
+			delete m_rtx_stream_ptr;
+			m_rtx_stream_ptr = NULL;
+		}
 	}
 	void crtp_stream::set_rtx(uint8 payload_type, uint32 ssrc)
 	{

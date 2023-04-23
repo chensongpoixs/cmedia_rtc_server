@@ -33,8 +33,16 @@ namespace RTC
 		static bool IsSeqHigherThan(const T lhs, const T rhs);
 
 	public:
-		SeqManager() = default;
+		SeqManager()
+			: base(0)
+			, maxOutput(0)
+			, maxInput(0)
+			, dropped() {}
+		// ~SeqManager();
 
+
+
+		void destroy();
 	public:
 		void Sync(T input);
 		void Drop(T input);
@@ -49,6 +57,9 @@ namespace RTC
 		T maxInput{ 0 };
 		std::set<T, SeqLowerThan> dropped;
 	};
+
+	
+
 } // namespace RTC
 
 #endif

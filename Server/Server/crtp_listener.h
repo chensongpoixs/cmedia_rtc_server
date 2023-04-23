@@ -41,9 +41,13 @@ namespace chen {
 		: m_ssrcTable()
 		, m_midTable()
 		, m_ridTable()
-		, m_ssrc_consumer_table(){}
+		, m_ssrc_consumer_table()
+		, m_ssrc_rtx_consumer_table(){}
 
 		virtual ~crtp_listener();
+	public:
+
+		void destroy();
 	public:
 		bool add_producer(uint32 ssrc,  crtc_producer * producer);
 		void remove_producer(uint32 ssrc);
@@ -57,20 +61,21 @@ namespace chen {
 
 
 		bool add_consumer(uint32 ssrc, crtc_consumer* consumer);
+		bool add_rtx_consumer(uint32 ssrc, crtc_consumer* consumer);
 		void remote_consumer(uint32 ssrc);
 		crtc_consumer * get_consumer( RTC::RtpPacket * packet);
 		crtc_consumer * get_consumer(uint32 ssrc)  ;
 	public: 
 		// Table of SSRC / Producer pairs.
-		std::unordered_map<uint32, crtc_producer*>			m_ssrcTable;
+		std::map<uint32, crtc_producer*>			m_ssrcTable;
 		//  Table of MID / Producer pairs.
 		std::unordered_map<std::string, crtc_producer*>		m_midTable;
 		//  Table of RID / Producer pairs.
 		std::unordered_map<std::string, crtc_producer*>		m_ridTable;
 
 
-		std::unordered_map<uint32, crtc_consumer*>			m_ssrc_consumer_table;
-
+		std::map<uint32, crtc_consumer*>			m_ssrc_consumer_table;
+		std::map<uint32, crtc_consumer*>			m_ssrc_rtx_consumer_table;
 
 	protected:
 	private:

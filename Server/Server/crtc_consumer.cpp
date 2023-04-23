@@ -41,6 +41,12 @@ namespace chen {
 	 
 	crtc_consumer::~crtc_consumer()
 	{
+		if (m_rtp_stream_send_ptr)
+		{
+			delete m_rtp_stream_send_ptr;
+			m_rtp_stream_send_ptr = NULL;
+		}
+		//m_rtp_seq_manager.destroy();
 	}
 
 	void crtc_consumer::send_rtp_packet(RTC::RtpPacket* packet)

@@ -54,6 +54,32 @@ namespace chen {
 	}
 	crtp_stream_send::~crtp_stream_send()
 	{
+		if (this->m_storage.empty())
+		{
+			return;
+		}
+
+		for (uint32_t idx{ 0 }; idx < this->m_buffer.size(); ++idx)
+		{
+			auto* storageItem = this->m_buffer[idx];
+
+			if (!storageItem)
+			{
+				cassert(!this->m_buffer[idx], "key should be NULL");
+
+				continue;
+			}
+
+			// Reset (free RTP packet) the storage item.
+			resetStorageItem(storageItem);
+
+			// Unfill the buffer item.
+			this->m_buffer[idx] = nullptr;
+		}
+
+		// Reset buffer.
+		this->m_buffer_start_idx = 0;
+		this->m_buffer_size = 0;
 	}
 	void crtp_stream_send::set_rtx(uint8 payload_type, uint32 ssrc)
 	{

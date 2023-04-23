@@ -49,6 +49,16 @@ namespace RTC
 	{
 		return isSeqHigherThan(lhs, rhs);
 	}
+	/*template<typename T>
+	RTC::SeqManager<T>::~SeqManager()
+	{
+
+	}*/
+	template<typename T>
+	void SeqManager<T>::destroy()
+	{
+		dropped.clear();
+	}
 
 	template<typename T>
 	void SeqManager<T>::Sync(T input)

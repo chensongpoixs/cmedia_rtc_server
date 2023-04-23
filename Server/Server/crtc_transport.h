@@ -125,13 +125,14 @@ namespace chen {
 		  crtc_sdp   get_rtp_sdp()   {
 			return m_local_sdp;
 		}
+		  std::string  get_stream_name() { return m_rtc_master.m_room_name + "/" + m_rtc_master.m_user_name; }
 		  cremote_estimator_proxy* get_remote_estimator() { return &m_remote_estimator; }
 		const ERtcClientType get_rtc_type() { return m_rtc_client_type; }
 
 	public:
 		void OnTransportConsumerKeyFrameRequested();
 
-
+		
 	public:
 		/* Pure virtual methods inherited from RTC::Consumer::Listener. */
 	public:

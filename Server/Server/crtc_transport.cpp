@@ -105,9 +105,12 @@ namespace chen {
 				}*/
 
 				crtc_consumer * consumer_ptr = new crtc_consumer(this, "audio", params);
-				if (!m_all_rtp_listener.add_consumer(stream_desc.m_audio_track_desc_ptr->m_ssrc, consumer_ptr))
+				if (consumer_ptr) 
 				{
-					WARNING_EX_LOG("add consumer_ptr audio failed (ssrc = %u)", stream_desc.m_audio_track_desc_ptr->m_ssrc);
+					if (!m_all_rtp_listener.add_consumer(stream_desc.m_audio_track_desc_ptr->m_ssrc, consumer_ptr))
+					{
+						WARNING_EX_LOG("add consumer_ptr audio failed (ssrc = %u)", stream_desc.m_audio_track_desc_ptr->m_ssrc);
+					}
 				}
 
 			}
@@ -137,9 +140,16 @@ namespace chen {
 							}
 						}
 						consumer_ptr = new crtc_consumer(this, "video", params );;
-						if (!m_all_rtp_listener.add_consumer(rtc_track->m_rtx_ssrc, consumer_ptr))
+						if (consumer_ptr)
 						{
-							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_rtx_ssrc);
+							if (!m_all_rtp_listener.add_rtx_consumer(rtc_track->m_rtx_ssrc, consumer_ptr))
+							{
+								WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_rtx_ssrc);
+							}
+						}
+						else
+						{
+							WARNING_EX_LOG("alloc failed !!!");
 						}
 					}
 					else
@@ -147,11 +157,18 @@ namespace chen {
 						consumer_ptr = new crtc_consumer(this, "video", params );;
 					}
 
-
-					if (!m_all_rtp_listener.add_consumer(rtc_track->m_ssrc, consumer_ptr))
+					if (consumer_ptr)
 					{
-						WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_ssrc);
+						if (!m_all_rtp_listener.add_consumer(rtc_track->m_ssrc, consumer_ptr))
+						{
+							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_ssrc);
+						}
 					}
+					else
+					{
+						WARNING_EX_LOG("alloc failed !!!");
+					}
+					
 				}
 			}
 
@@ -454,7 +471,7 @@ namespace chen {
 			delete m_sctp_association_ptr;
 			m_sctp_association_ptr = NULL;
 		}
-		
+		m_all_rtp_listener.destroy();
 	}
 	bool crtc_transport::is_active() const
 	{
