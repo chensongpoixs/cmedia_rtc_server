@@ -80,7 +80,10 @@ namespace chen {
 
 	crtc_consumer * crtp_listener::get_consumer( RTC::RtpPacket * packet)
 	{
-		 
+		if (m_ssrc_consumer_table.empty())
+		{
+			return NULL;
+		 }
 		std::unordered_map<uint32, crtc_consumer*>::iterator iter = m_ssrc_consumer_table.find(packet->GetSsrc());
 		if (iter != m_ssrc_consumer_table.end())
 		{
@@ -91,6 +94,10 @@ namespace chen {
 
 	crtc_consumer * crtp_listener::get_consumer(uint32 ssrc)  
 	{ 
+		if (m_ssrc_consumer_table.empty())
+		{
+			return NULL;
+		}
 		std::unordered_map<uint32, crtc_consumer*>::const_iterator iter = m_ssrc_consumer_table.find(ssrc);
 		if (iter != m_ssrc_consumer_table.end())
 		{
