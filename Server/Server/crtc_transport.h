@@ -157,6 +157,8 @@ namespace chen {
 		void send_rtcp_packet(RTC::RTCP::Packet* packet);
 		bool send_rtcp(const uint8 * data, size_t len);
 
+		void send_rtcp_compound_packet(RTC::RTCP::CompoundPacket* packet);
+
 	public:
 		bool send_sctp_data(const uint8* data, size_t len);
 

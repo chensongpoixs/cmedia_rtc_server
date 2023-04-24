@@ -982,6 +982,8 @@ namespace chen {
 			local_media_desc.m_extmaps = audio_track->m_extmaps;
 
 			local_media_desc.m_mid = audio_track->m_mid;
+			local_media_desc.m_msid = audio_track->m_msid;
+			local_media_desc.m_msid_tracker = audio_track->m_id;
 			local_sdp.m_groups.push_back(local_media_desc.m_mid);
 
 			 
@@ -1046,7 +1048,8 @@ namespace chen {
 		local_media_desc.m_protos = "UDP/TLS/RTP/SAVPF";
 		local_media_desc.m_rtcp_mux = true;
 		local_media_desc.m_rtcp_rsize = true;
-
+		local_media_desc.m_msid = "";
+		local_media_desc.m_msid_tracker = "";
 		local_media_desc.m_extmaps = track->m_extmaps;
 
 		// If mid not duplicated, use mid_ of track. Otherwise, use transformed mid.
@@ -1118,6 +1121,8 @@ namespace chen {
 			}
 
 			cmedia_desc& local_media_desc = local_sdp.m_media_descs.back();
+			local_media_desc.m_msid = track->m_msid;
+			local_media_desc.m_msid_tracker = track->m_id;
 			local_media_desc.m_ssrc_infos.push_back(cssrc_info(track->m_ssrc, cname, track->m_msid, track->m_id));
 
 			if (track->m_rtx_ptr && track->m_rtx_ssrc)

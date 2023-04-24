@@ -516,9 +516,9 @@
         //Sends data across the datachannel
         this.send = function(data)
 		{
-			console.log('---------------> self.dcClient.readyState = ', self.dcClient.readyState);
+		//	console.log('---------------> self.dcClient.readyState = ', self.dcClient.readyState);
             if(self.dcClient && self.dcClient.readyState == 'open'){
-                console.log('Sending data on dataconnection', self.dcClient)
+                //console.log('Sending data on dataconnection', self.dcClient)
                 self.dcClient.send(data);
             }
         };

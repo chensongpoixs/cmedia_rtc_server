@@ -1295,9 +1295,9 @@ function setupNormalizeAndQuantize() {
         let playerAspectRatio = playerElement.clientHeight / playerElement.clientWidth;
         console.log('playerElement.clientHeight = ' + playerElement.clientHeight + ', playerElement.clientWidth = ' + playerElement.clientWidth);
         let videoAspectRatio = videoElement[0].videoHeight / videoElement[0].videoWidth;
-        console.log('videoElement[0].videoHeight = ' + videoElement[0].videoHeight + ', videoElement[0].videoWidth = ' + videoElement[0].videoWidth);
-        console.log('playerAspectRatio =', playerAspectRatio);
-        console.log('videoAspectRatio =', videoAspectRatio);
+       // console.log('videoElement[0].videoHeight = ' + videoElement[0].videoHeight + ', videoElement[0].videoWidth = ' + videoElement[0].videoWidth);
+       // console.log('playerAspectRatio =', playerAspectRatio);
+      //  console.log('videoAspectRatio =', videoAspectRatio);
         // Unsigned XY positions are the ratio (0.0..1.0) along a viewport axis,
         // quantized into an uint16 (0..65536).
         // Signed XY deltas are the ratio (-1.0..1.0) along a viewport axis,
@@ -1314,12 +1314,12 @@ function setupNormalizeAndQuantize() {
                 console.log('Setup Normalize and Quantize for playerAspectRatio > videoAspectRatio');
             }
             let ratio = playerAspectRatio / videoAspectRatio;
-            console.log('ratio = ', ratio);
+          //  console.log('ratio = ', ratio);
             // Unsigned.
             normalizeAndQuantizeUnsigned = (x, y) => {
                 let normalizedX = x / playerElement.clientWidth;
                 let normalizedY =  ratio * (y / playerElement.clientHeight - 0.5) + 0.5;
-                console.log('normalizedX = ' + normalizedX + ', normalizedY = '+ normalizedY);
+               // console.log('normalizedX = ' + normalizedX + ', normalizedY = '+ normalizedY);
                 if (normalizedX < 0.0 || normalizedX > 1.0 || normalizedY < 0.0 || normalizedY > 1.0) 
                 {
                     return {
@@ -1663,8 +1663,8 @@ function registerLockedMouseEvents(playerElement) {
 
     function updatePosition(e) 
 	{
-		console.log('=========================================');
-		console.log(e);
+		//console.log('=========================================');
+		//console.log(e);
         x += e.movementX;
         y += e.movementY;
         if (x > styleWidth) {
@@ -1686,22 +1686,27 @@ function registerLockedMouseEvents(playerElement) {
 
     playerElement.onmousedown = function(e) {
         emitMouseDown(e.button,e.clientX, e.clientY);
+		//e.preventDefault();
     };
 
     playerElement.onmouseup = function(e) {
         emitMouseUp(e.button, e.clientX, e.clientY);
+		//e.preventDefault();
     };
 
     playerElement.onmousewheel = function(e) {
         emitMouseWheel(e.wheelDelta, e.clientX, e.clientY);
+		//e.preventDefault();
     };
 
     playerElement.pressMouseButtons = function(e) {
         pressMouseButtons(e.buttons, e.clientX, e.clientY);
+		//e.preventDefault();
     };
 
     playerElement.releaseMouseButtons = function(e) {
         releaseMouseButtons(e.buttons,e.clientX, e.clientY);
+		//e.preventDefault();
     };
 }
 

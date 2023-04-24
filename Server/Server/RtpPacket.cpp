@@ -698,7 +698,7 @@ namespace RTC
 			ptr += size_t{ this->payloadPadding };
 		}
 
-		//MS_ASSERT(static_cast<size_t>(ptr - buffer) == this->size, "ptr - buffer == this->size");
+		cassert_desc(static_cast<size_t>(ptr - buffer) == this->size, "ptr - buffer == this->size");
 
 		// Create the new RtpPacket instance and return it.
 		auto* packet = new RtpPacket(

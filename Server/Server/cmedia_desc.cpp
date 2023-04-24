@@ -115,7 +115,15 @@ if (!getline(is,word,delim)) {\
 			{
 				os << " " << m_msid_tracker;
 			}
-			os << kCRLF;
+			os << kCRLF; 
+			/*if (!m_msid_tracker.empty())
+			{
+				os << "a=msid:" << m_msid << " " << m_msid_tracker;
+
+
+				os << kCRLF;
+			}*/
+
 		}
 		if (!m_mslabel.empty())
 		{
@@ -145,7 +153,7 @@ if (!getline(is,word,delim)) {\
 			return EMediaRtcSdpInvalidSemantics;
 		}
 
-		os << "a=ssrc_group:" << m_semantic;
+		os << "a=ssrc-group:" << m_semantic;
 		for (size_t i = 0; i < m_ssrcs.size(); ++i)
 		{
 			os << " " << m_ssrcs[i];

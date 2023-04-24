@@ -29,7 +29,8 @@ var offer = document.querySelector('textarea#offer');
 	//将Offer SDP 发送给对端
 	var room_name = getQueryVariable('roomname');
 	var videopeerid	= getQueryVariable('videopeerid');
-
+	var rtc_ip = getQueryVariable('rtc_ip');
+var rtc_port = getQueryVariable('rtc_port');
 // 查看Answer文本窗口
 var answer  = document.querySelector('textarea#answer');
 
@@ -135,7 +136,7 @@ function conn()
         return;
     }
 
-     var ws_url = "ws://192.168.1.175:9500/?roomId=20220927&peerId=chensong";
+     var ws_url = "ws://"+rtc_ip +":"+rtc_port+"/?roomId=20220927&peerId=chensong";
 	console.log('ws_url = ', ws_url);
      ws = new WebSocket(ws_url );
 

@@ -45,7 +45,7 @@ namespace chen {
 
 
 		crtx_payload_des(uint8 pt, uint8 apt)
-			: ccodec_payload(pt, "rtx", 9000)
+			: ccodec_payload(pt, "rtx", 90000)
 			, m_apt(apt)
 		{}
 

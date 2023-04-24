@@ -596,12 +596,14 @@ namespace chen {
 					tccClient->PacketSent(packetInfo, uv_util::GetTimeMsInt64());
 				}
 			});
-
+			  WARNING_EX_LOG("RTX [ssrc = %u][payload_type = %u][seq=%u]", packet->GetSsrc(), packet->GetPayloadType(), packet->GetSequenceNumber());
 			send_rtp_packet(  packet, cb);
 #endif
 		}
 		else
 		{
+			WARNING_EX_LOG("RTX [ssrc = %u][payload_type = %u][seq=%u]", packet->GetSsrc(), packet->GetPayloadType(), packet->GetSequenceNumber());
+
 			send_rtp_data(packet);
 			//SendRtpPacket(consumer, packet);
 		}
@@ -692,7 +694,7 @@ namespace chen {
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 
-			if (len != 512 && !m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+			if (/*len != 512 &&*/ !m_srtp_send_session_ptr->EncryptRtp(&data, &len))
 			{
 				if (cb)
 				{
@@ -824,6 +826,21 @@ namespace chen {
 			return true;
 		}
 		return false;
+	}
+	void crtc_transport::send_rtcp_compound_packet(RTC::RTCP::CompoundPacket * packet)
+	{
+		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		{
+			const uint8_t* data = packet->GetData();
+			size_t len = packet->GetSize();
+			if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
+			{
+				WARNING_EX_LOG("rtcp encrypt reqest key frame failed !!!");
+				return;
+			}
+			//NORMAL_EX_LOG("rtp data size = %u", len);
+			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+		}
 	}
 	bool crtc_transport::send_sctp_data(const uint8 * data, size_t len)
 	{
@@ -1332,7 +1349,7 @@ namespace chen {
 			return;
 		}
 		// TODO@chensong 2023-2-23 native rtc 客户端推流  会有一个522长度数据 srtp 解码崩溃问题 --> 
-		if (len == 522 || len == 512)
+		if (len == 522 /*|| len == 512*/)
 		{
 			//WARNING_EX_LOG("rtp %u data [%s]",len, str2hex((const char *)data, len).c_str());
 			static uint32 count = 0;
@@ -1375,7 +1392,8 @@ namespace chen {
 			packet->SetTransportWideCc01ExtensionId(ETRANSPORT_WIDE_CC_01);
 
 			auto nowMs = uv_util::GetTimeMs();
-
+			//packet->SetTimestamp(nowMs);
+			//NORMAL_EX_LOG("[pakcet timestamp = %u][cur nowms = %u][ms = %u]", packet->GetTimestamp(), ::time(NULL), time(NULL) - packet->GetTimestamp());
 			// Feed the TransportCongestionControlServer.
 			if (m_tcc_server )
 			{
@@ -2109,7 +2127,22 @@ namespace chen {
 			uint64_t nowMs = uv_util::GetTimeMs();
 		//	m_remote_estimator.send_periodic_Feedbacks();
 			//SendRtcp(nowMs);
+			std::unique_ptr<RTC::RTCP::CompoundPacket> packet{ nullptr };
 
+			for (std::pair<const uint32, crtc_consumer*> & p : m_all_rtp_listener.m_ssrc_consumer_table)
+			{
+				// Reset the Compound packet.
+				packet.reset(new RTC::RTCP::CompoundPacket());
+				p.second->get_rtcp(packet.get(), nowMs);
+
+				// Send the RTCP compound packet if there is a sender report.
+				if (packet->HasSenderReport())
+				{
+					packet->Serialize(RTC::RTCP::Buffer);
+					send_rtcp_compound_packet(packet.get());
+					//SendRtcpCompoundPacket(packet.get());
+				}
+			}
 			// Recalculate next RTCP interval.
 			//if (!this->mapConsumers.empty())
 			//{

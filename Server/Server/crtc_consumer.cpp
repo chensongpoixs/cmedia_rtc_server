@@ -85,12 +85,13 @@ namespace chen {
 		// Rewrite packet.
 		//packet->SetSsrc(this->rtpParameters.encodings[0].ssrc);
 		packet->SetSequenceNumber(seq);
-		if (m_rtp_params.params.rtx_ssrc == origSsrc)
+		packet->SetSsrc(m_rtp_params.params.ssrc);
+		/*if (m_rtp_params.params.rtx_ssrc == origSsrc)
 		{
-			 
+
 			packet->SetPayloadType(m_rtp_params.params.rtx_payload_type);
 		}
-		else
+		else*/
 		{
 			packet->SetPayloadType(m_rtp_params.params.payload_type);
 		}
@@ -125,7 +126,7 @@ namespace chen {
 		}
 
 		// Restore packet fields.
-		//packet->SetSsrc(origSsrc);
+		packet->SetSsrc(origSsrc);
 		packet->SetSequenceNumber(origSeq);
 	}
 
@@ -165,6 +166,30 @@ namespace chen {
 		m_rtp_stream_send_ptr ->receive_key_frame_request(messageType);
 		//RequestKeyFrame();
 		request_key_frame();
+	}
+
+	void crtc_consumer::get_rtcp(RTC::RTCP::CompoundPacket * packet, uint64_t nowMs)
+	{
+		//MS_TRACE();
+		////DEBUG_EX_LOG("");
+		//MS_ASSERT(rtpStream == this->rtpStream, "RTP stream does not match");
+
+		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 50)
+			return;
+
+		auto* report = m_rtp_stream_send_ptr->get_rtcp_sender_report(nowMs);
+
+		if (!report)
+			return;
+
+		packet->AddSenderReport(report);
+
+		// Build SDES chunk for this sender.
+		/*auto* sdesChunk = this->rtpStream->GetRtcpSdesChunk();
+
+		packet->AddSdesChunk(sdesChunk);*/
+
+		this->m_last_rtcp_send_time = nowMs;
 	}
 
 	void crtc_consumer::OnRtpStreamRetransmitRtpPacket(crtp_stream * stream, RTC::RtpPacket * packet)

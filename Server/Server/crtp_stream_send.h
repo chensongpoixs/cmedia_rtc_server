@@ -63,7 +63,7 @@ namespace chen {
 		, m_buffer(65536, nullptr)
 		, m_buffer_start_idx(0u)
 		, m_buffer_size(0u)
-		, m_storage(600u)
+		, m_storage(600u) // 缓存大小
 		, m_rtx_seq(0u)
 		{}
 		~crtp_stream_send();
@@ -76,7 +76,7 @@ namespace chen {
 		void receive_nack(RTC::RTCP::FeedbackRtpNackPacket* nackPacket);
 		/*void ReceiveKeyFrameRequest(RTC::RTCP::FeedbackPs::MessageType messageType);*/
 		void receive_rtcp_receiver_report(RTC::RTCP::ReceiverReport* report);
-		/*RTC::RTCP::SenderReport* GetRtcpSenderReport(uint64_t nowMs);*/
+		RTC::RTCP::SenderReport* get_rtcp_sender_report(uint64_t nowMs);
 		//RTC::RTCP::SdesChunk* GetRtcpSdesChunk();
 
 

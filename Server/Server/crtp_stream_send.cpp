@@ -34,7 +34,7 @@ namespace chen {
 		MaxRequestedPackets + 1);
 
 	// Don't retransmit packets older than this (ms).
-	static constexpr uint32_t MaxRetransmissionDelay{ 2000u  };
+	static constexpr uint32_t MaxRetransmissionDelay{ 1000u  };
 	static constexpr uint32_t DefaultRtt{ 100 };
 
 
@@ -116,7 +116,7 @@ namespace chen {
 			RTC::RTCP::FeedbackRtpNackItem* item = *it;
 
 			m_nack_packet_count += item->CountRequestedPackets();
-
+			NORMAL_EX_LOG("[nack size = %u][item->GetPacketId() = %u]", item->CountRequestedPackets(), item->GetPacketId());
 			FillRetransmissionContainer(item->GetPacketId(), item->GetLostPacketBitmask());
 
 			for (auto* storageItem : RetransmissionContainer)
@@ -201,9 +201,38 @@ namespace chen {
 
 		//上一次报告之后从SSRC_n来包的漏包比列
 		this->m_fraction_lost = report->GetFractionLost();
+		//NORMAL_EX_LOG("[this->m_packets_lost = %u][this->m_fraction_lost = %u]", this->m_packets_lost, this->m_fraction_lost);
 		//INFO_EX_LOG("[packetsLost = %u][fractionLost = %u][rtt = %u]", packetsLost, fractionLost, rtt);
 		// Update the score with the received RR.
 		UpdateScore(report);
+	}
+
+	RTC::RTCP::SenderReport* crtp_stream_send::get_rtcp_sender_report(uint64_t nowMs)
+	{
+		if (this->m_transmission_counter.GetPacketCount() == 0u)
+		{
+			return nullptr;
+		}
+
+		auto ntp = rtc_time::TimeMs2Ntp(nowMs);
+		auto* report = new RTC::RTCP::SenderReport();
+
+		// Calculate TS difference between now and maxPacketMs.
+		auto diffMs = nowMs - m_max_packet_ms;
+		auto diffTs = diffMs * 90000 / 1000;
+
+		report->SetSsrc(m_params.ssrc);
+		report->SetPacketCount(m_transmission_counter.GetPacketCount());
+		report->SetOctetCount(m_transmission_counter.GetBytes());
+		report->SetNtpSec(ntp.seconds);
+		report->SetNtpFrac(ntp.fractions);
+		report->SetRtpTs(m_max_packet_ts + diffTs);
+
+		// Update info about last Sender Report.
+		m_last_sender_report_ntp_ms = nowMs;
+		this->m_last_sender_repor_ts = this->m_max_packet_ts + diffTs;
+
+		return report;
 	}
 
 	void crtp_stream_send::receive_key_frame_request(RTC::RTCP::FeedbackPs::MessageType messageType)
@@ -378,6 +407,8 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 
 			if (packet->GetTimestamp() == storedPacket->GetTimestamp())
 			{
+				// 重复包
+				WARNING_EX_LOG("[packet seq = %u]", packet->GetSequenceNumber());
 				return;
 			}
 
@@ -388,6 +419,7 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 			// the next one.
 			if (this->m_buffer_start_idx == seq)
 			{
+				WARNING_EX_LOG("[buffer start index = %u]",m_buffer_start_idx);
 				UpdateBufferStartIdx();
 			}
 		}
@@ -405,7 +437,7 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 		else
 		{
 			StorageItem* firstStorageItem = m_buffer[m_buffer_start_idx];
-
+			//WARNING_EX_LOG("clear buffer start index -->>> video [m_buffer_start_idx = %u]", m_buffer_start_idx);
 			// Reset the first storage item.
 			resetStorageItem(firstStorageItem);
 
@@ -669,7 +701,7 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 
 					uint32_t diffTs = this->m_max_packet_ts - packet->GetTimestamp();
 
-					diffMs = diffTs * 1000 / (9000)/*this->m_params.clock_rate*/;
+					diffMs = diffTs * 1000 / (90000)/*this->m_params.clock_rate*/;
 				}
 				//NORMAL_EX_LOG("[diffMS = %u]", uv_util::GetTimeUs() - packet->GetTimestamp());
 				// Packet not found.
@@ -699,10 +731,10 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 					)
 					// clang-format on
 				{
-					DEBUG_EX_LOG( "ignoring retransmission for a packet already resent in the last RTT ms "
+					/*DEBUG_EX_LOG( "ignoring retransmission for a packet already resent in the last RTT ms "
 						"[seq:%" PRIu16 ", rtt:%" PRIu32 "]",
 						packet->GetSequenceNumber(),
-						rtt);
+						rtt);*/
 				}
 				// Stored packet is valid for retransmission. Resend it.
 				else
@@ -770,10 +802,10 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 		}
 		else
 		{
-			DEBUG_EX_LOG(
+			/*DEBUG_EX_LOG(
 				"all packets resent [seq:%" PRIu16 ", bitmask:" MS_UINT16_TO_BINARY_PATTERN "]",
 				seq,
-				MS_UINT16_TO_BINARY(origBitmask));
+				MS_UINT16_TO_BINARY(origBitmask));*/
 		}
 
 		// Set the next container element to null.

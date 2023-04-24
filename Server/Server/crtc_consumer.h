@@ -56,6 +56,8 @@ namespace chen {
 		void  receive_key_frame_request(RTC::RTCP::FeedbackPs::MessageType messageType, uint32_t ssrc);
 
 
+		void get_rtcp(RTC::RTCP::CompoundPacket* packet,  uint64_t nowMs);//get_rtcp_sender_report
+
 		void OnRtpStreamRetransmitRtpPacket(crtp_stream* stream, RTC::RtpPacket* packet);
 
 		void  request_key_frame();
@@ -70,6 +72,7 @@ namespace chen {
 		bool								m_sync_required;
 
 		RTC::SeqManager<uint16>				m_rtp_seq_manager;
+		uint32								m_last_rtcp_send_time;
 	};
 }
 
