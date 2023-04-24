@@ -83,14 +83,14 @@ namespace chen {
 			uint32_t ppid = ntohl(rcv.rcv_ppid);
 			uint16_t ssn = rcv.rcv_ssn;
 
-			DEBUG_EX_LOG("sctp, data chunk received [length:%zu, streamId:%hu, SSN:%hu, TSN:%u, PPID:%u, context:%u, flags:%d]",
-				len,
+			//DEBUG_EX_LOG("sctp, data chunk received [length:%zu, streamId:%hu, SSN:%hu, TSN:%u, PPID:%u, context:%u, flags:%d]",
+			/*	len,
 				rcv.rcv_sid,
 				rcv.rcv_ssn,
 				rcv.rcv_tsn,
 				ntohl(rcv.rcv_ppid),
 				rcv.rcv_context,
-				flags); 
+				flags); */
 
 			sctpAssociation->OnUsrSctpReceiveSctpData( streamId, ssn, ppid, flags, static_cast<uint8_t*>(data), len);
 		}
@@ -634,7 +634,7 @@ namespace chen {
 		// If end of message and there is no buffered data, notify it directly.
 		if (eor && m_message_buffer_len == 0)
 		{
-			DEBUG_EX_LOG("directly notifying listener [eor:1, buffer len:0]");
+			//DEBUG_EX_LOG("directly notifying listener [eor:1, buffer len:0]");
 
 			m_transport_ptr->OnSctpAssociationMessageReceived(this, streamId, ppid, data, len);
 		}
@@ -644,7 +644,7 @@ namespace chen {
 			std::memcpy(m_message_buffer + m_message_buffer_len, data, len);
 			m_message_buffer_len += len;
 
-			DEBUG_EX_LOG("notifying listener [eor:1, buffer len:%zu]", m_message_buffer_len);
+			//DEBUG_EX_LOG("notifying listener [eor:1, buffer len:%zu]", m_message_buffer_len);
 
 			m_transport_ptr->OnSctpAssociationMessageReceived(
 				this, streamId, ppid, m_message_buffer, m_message_buffer_len);
@@ -663,7 +663,7 @@ namespace chen {
 			std::memcpy(m_message_buffer + m_message_buffer_len, data, len);
 			m_message_buffer_len += len;
 
-			DEBUG_EX_LOG("data buffered [eor:0, buffer len:%zu]", m_message_buffer_len);
+			//DEBUG_EX_LOG("data buffered [eor:0, buffer len:%zu]", m_message_buffer_len);
 		}
 	}
 	void csctp_association::OnUsrSctpReceiveSctpNotification(sctp_notification * notification, size_t len)

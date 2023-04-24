@@ -486,7 +486,7 @@ namespace chen {
 			return;
 		}
 
-		NORMAL_EX_LOG("%" PRIu64 " bytes of DTLS data ready to sent to the peer", read);
+		//NORMAL_EX_LOG("%" PRIu64 " bytes of DTLS data ready to sent to the peer", read);
 
 		m_callback_ptr->write_dtls_data(reinterpret_cast<uint8*>(data), static_cast<size_t>(read));
 		// Clear the BIO buffer.

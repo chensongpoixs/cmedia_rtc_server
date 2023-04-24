@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 	 
 	bool init = chen::g_media_server.init(log_path, config_filename);
 	 
-	moudle_test();
+	//moudle_test();
 	if (init)
 	{
 		init = chen::g_media_server.Loop();
