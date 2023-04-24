@@ -116,7 +116,7 @@ namespace chen {
 			RTC::RTCP::FeedbackRtpNackItem* item = *it;
 
 			m_nack_packet_count += item->CountRequestedPackets();
-			NORMAL_EX_LOG("[nack size = %u][item->GetPacketId() = %u]", item->CountRequestedPackets(), item->GetPacketId());
+			//NORMAL_EX_LOG("[nack size = %u][item->GetPacketId() = %u]", item->CountRequestedPackets(), item->GetPacketId());
 			FillRetransmissionContainer(item->GetPacketId(), item->GetLostPacketBitmask());
 
 			for (auto* storageItem : RetransmissionContainer)
