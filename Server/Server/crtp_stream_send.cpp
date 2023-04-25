@@ -34,7 +34,7 @@ namespace chen {
 		MaxRequestedPackets + 1);
 
 	// Don't retransmit packets older than this (ms).
-	static constexpr uint32_t MaxRetransmissionDelay{ 1000u  };
+	static constexpr uint32_t MaxRetransmissionDelay{ 500u  };
 	static constexpr uint32_t DefaultRtt{ 100 };
 
 

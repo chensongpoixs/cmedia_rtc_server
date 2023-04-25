@@ -596,13 +596,13 @@ namespace chen {
 					tccClient->PacketSent(packetInfo, uv_util::GetTimeMsInt64());
 				}
 			});
-			  WARNING_EX_LOG("RTX [ssrc = %u][payload_type = %u][seq=%u]", packet->GetSsrc(), packet->GetPayloadType(), packet->GetSequenceNumber());
+			  //WARNING_EX_LOG("RTX [ssrc = %u][payload_type = %u][seq=%u]", packet->GetSsrc(), packet->GetPayloadType(), packet->GetSequenceNumber());
 			send_rtp_packet(  packet, cb);
 #endif
 		}
 		else
 		{
-			WARNING_EX_LOG("RTX [ssrc = %u][payload_type = %u][seq=%u]", packet->GetSsrc(), packet->GetPayloadType(), packet->GetSequenceNumber());
+			//WARNING_EX_LOG("RTX [ssrc = %u][payload_type = %u][seq=%u]", packet->GetSsrc(), packet->GetPayloadType(), packet->GetSequenceNumber());
 
 			send_rtp_data(packet);
 			//SendRtpPacket(consumer, packet);
