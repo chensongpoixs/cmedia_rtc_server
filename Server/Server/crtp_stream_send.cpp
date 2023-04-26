@@ -76,7 +76,8 @@ namespace chen {
 			// Unfill the buffer item.
 			this->m_buffer[idx] = nullptr;
 		}
-
+		m_buffer.clear();
+		m_storage.clear();
 		// Reset buffer.
 		this->m_buffer_start_idx = 0;
 		this->m_buffer_size = 0;
@@ -370,7 +371,7 @@ void crtp_stream_send::resume()
 
 uint32 crtp_stream_send::get_bitrate(uint64 nowMs)
 {
-	return uint32();
+	return m_transmission_counter.GetBitrate(nowMs);
 }
 
 void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)

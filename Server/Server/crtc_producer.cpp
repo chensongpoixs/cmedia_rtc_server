@@ -217,6 +217,42 @@ namespace chen {
 		}
 	}
 
+	void crtc_producer::get_rtcp(RTC::RTCP::CompoundPacket * packet, uint64_t nowMs)
+	{
+		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 1000u)
+		{
+			return;
+		}
+
+		 for (auto& kv : this->m_ssrc_rtp_stream_map)
+		{
+			 
+			RTC::RTCP::ReceiverReport*	report = kv.second->get_rtcp_receiver_report();
+
+			packet->AddReceiverReport(report);
+
+			RTC::RTCP::ReceiverReport*	rtxReport = kv.second->get_rtx_rtcp_receiver_report();
+
+			if (rtxReport)
+			{
+				packet->AddReceiverReport(rtxReport);
+			}
+		}
+
+		// Add a receiver reference time report if no present in the packet.
+		if (!packet->HasReceiverReferenceTime())
+		{
+			rtc_time::Ntp				    ntp = rtc_time::TimeMs2Ntp(nowMs);
+			RTC::RTCP::ReceiverReferenceTime* report = new RTC::RTCP::ReceiverReferenceTime();
+
+			report->SetNtpSec(ntp.seconds);
+			report->SetNtpFrac(ntp.fractions);
+			packet->AddReceiverReferenceTime(report);
+		}
+
+		this->m_last_rtcp_send_time = nowMs;
+	}
+
 	void crtc_producer::request_key_frame(uint32 mapped_ssrc)
 	{
 	}
@@ -552,6 +588,19 @@ namespace chen {
 
 		return true;
 		return true;
+	}
+
+	void crtc_producer::receive_rtcp_xrdelay_since_lastrr(RTC::RTCP::DelaySinceLastRr::SsrcInfo * ssrcInfo)
+	{
+		auto it = m_ssrc_rtp_stream_map.find(ssrcInfo->GetSsrc());
+		if (it == this->m_ssrc_rtp_stream_map.end())
+		{
+			WARNING_EX_LOG("rtcp, RtpStream not found [ssrc:%" PRIu32 "]", ssrcInfo->GetSsrc());
+
+			return;
+		}
+		 
+		it->second->receive_rtcp_xrdelay_since_lastrr(ssrcInfo);
 	}
 
 	void crtc_producer::OnProducerSendRtcpPacket(RTC::RTCP::Packet* packet)

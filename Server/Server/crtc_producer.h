@@ -53,6 +53,7 @@ namespace chen {
 		, m_rtx_ssrc_rtp_stream_map()
 		, m_rtc_ptr(ptr)
 		, m_server_ssrc_map(ssrc_table)
+		, m_last_rtcp_send_time(0)
 		{}
 		virtual ~crtc_producer();
 
@@ -64,11 +65,17 @@ namespace chen {
 		 bool    receive_rtp_packet(RTC::RtpPacket* packet);
 		void receive_rtcp_sender_report(RTC::RTCP::SenderReport* report);
 
+
+
+		void get_rtcp(RTC::RTCP::CompoundPacket* packet, uint64_t nowMs);
+
 		void request_key_frame(uint32 mapped_ssrc);
 
 		bool  mangle_rtp_packet(RTC::RtpPacket * packet, const crtp_stream::crtp_stream_params & params);
 		const crtp_params & get_rtcp_params() const { return m_params; }
 
+
+		void receive_rtcp_xrdelay_since_lastrr(RTC::RTCP::DelaySinceLastRr::SsrcInfo* ssrcInfo);
 
 	public:
 		void OnProducerSendRtcpPacket(RTC::RTCP::Packet* packet);
@@ -87,6 +94,7 @@ namespace chen {
 		std::map<uint32, crtp_stream_recv*>			m_rtx_ssrc_rtp_stream_map;
 		crtc_transport *							m_rtc_ptr;
 		std::map<uint32, uint32>					m_server_ssrc_map;
+		uint64										m_last_rtcp_send_time;
 	};
 }
 

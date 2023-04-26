@@ -52,6 +52,8 @@ namespace chen {
 		, m_fir_seq_number(0u)
 		, m_reported_packet_lost(0u)
 		, m_inactive(false)
+		, m_rtt(0)
+		, m_has_rtt(false)
 	{
 		if ( params.use_nack)
 		{
@@ -378,6 +380,46 @@ namespace chen {
 		if (has_rtx())
 		{
 			m_rtx_stream_ptr->receive_rtcp_sender_report(report);
+		}
+	}
+
+	void crtp_stream_recv::receive_rtcp_xrdelay_since_lastrr(RTC::RTCP::DelaySinceLastRr::SsrcInfo * ssrcInfo)
+	{
+		// Get the NTP representation of the current timestamp.
+		uint64_t nowMs = uv_util::GetTimeMs();
+		auto ntp = rtc_time::TimeMs2Ntp(nowMs);
+
+		// Get the compact NTP representation of the current timestamp.
+		uint32_t compactNtp = (ntp.seconds & 0x0000FFFF) << 16;
+
+		compactNtp |= (ntp.fractions & 0xFFFF0000) >> 16;
+
+		uint32_t lastRr = ssrcInfo->GetLastReceiverReport();
+		uint32_t dlrr = ssrcInfo->GetDelaySinceLastReceiverReport();
+
+		// RTT in 1/2^16 second fractions.
+		uint32_t rtt{ 0 };
+
+		// If no Receiver Extended Report was received by the remote endpoint yet,
+		// ignore lastRr and dlrr values in the Sender Extended Report.
+		if (lastRr && dlrr && (compactNtp > dlrr + lastRr))
+		{
+			rtt = compactNtp - dlrr - lastRr;
+		}
+
+		// RTT in milliseconds.
+		this->m_rtt = static_cast<float>(rtt >> 16) * 1000;
+		this->m_rtt += (static_cast<float>(rtt & 0x0000FFFF) / 65536) * 1000;
+
+		if (this->m_rtt > 0.0f)
+		{
+			this->m_has_rtt = true;
+		}
+
+		// Tell it to the NackGenerator.
+		if (this->m_params.use_nack)
+		{
+			this->nackGenerator->UpdateRtt(static_cast<uint32_t>(this->m_rtt));
 		}
 	}
 

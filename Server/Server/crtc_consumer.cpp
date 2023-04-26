@@ -212,4 +212,26 @@ namespace chen {
 		}
 	}
 
+	uint32 crtc_consumer::get_desired_bitrate() const
+	{
+		if (m_kind != "video")
+		{
+			return 0u;
+		}
+		auto nowMs = uv_util::GetTimeMs();
+		auto desiredBitrate = this->m_rtp_stream_send_ptr->get_bitrate(nowMs);
+
+		// If consumer.rtpParameters.encodings[0].maxBitrate was given and it's
+		// greater than computed one, then use it.
+		//auto maxBitrate = this->rtpParameters.encodings[0].maxBitrate;
+		static const uint32 maxBitrate = 8000000u;
+		if (maxBitrate > desiredBitrate)
+		{
+			desiredBitrate = maxBitrate;
+		 }
+
+		return desiredBitrate;
+		return uint32();
+	}
+
 }

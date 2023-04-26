@@ -37,6 +37,14 @@ Copyright boost
 #include "ReceiverReport.hpp"
 #include "ctimer.h"
 #include "NackGenerator.hpp"
+#include "XrDelaySinceLastRr.hpp"
+//#include "crtc_producer.h"
+//#include "SeqManager.hpp"
+//#include "crtp_stream_define.h"
+//#include "crtp_stream.h"
+//#include "cbuffer.h"
+//#include "H264.hpp"
+//#include "FeedbackRtpNack.hpp"
 //#include "crtc_producer.h"
 namespace chen {
 	
@@ -59,7 +67,7 @@ namespace chen {
 		 void receive_rtx_rtcp_sender_report(RTC::RTCP::SenderReport* report);
 		//void ReceiveRtcpXrDelaySinceLastRr(RTC::RTCP::DelaySinceLastRr::SsrcInfo* ssrcInfo);
 
-
+		 void receive_rtcp_xrdelay_since_lastrr(RTC::RTCP::DelaySinceLastRr::SsrcInfo* ssrcInfo);
 
 		 void request_key_frame();
 		/* void pause();
@@ -121,6 +129,8 @@ namespace chen {
 		bool			m_inactive{ false };
 		//TransmissionCounter transmissionCounter;      // Valid media + valid RTX.
 		RtpDataCounter m_media_transmission_counter; // Just valid media.
+		float			m_rtt;
+		bool			m_has_rtt;
 
 
 		 

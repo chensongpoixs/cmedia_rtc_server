@@ -991,7 +991,7 @@ namespace chen {
 		if (!m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
 		{
 			m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
-			m_tcc_server->SetMaxIncomingBitrate(800000000);
+			m_tcc_server->SetMaxIncomingBitrate(800000000u);
 			m_tcc_server->TransportConnected();
 		}
 		if (!m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
@@ -1101,6 +1101,28 @@ namespace chen {
 	}
 	void crtc_transport::OnTransportCongestionControlClientBitrates(RTC::TransportCongestionControlClient * tccClient, RTC::TransportCongestionControlClient::Bitrates & bitrates)
 	{
+		if (!m_tcc_client)
+		{
+			WARNING_EX_LOG(" tcc ptr = NULL");
+			return;
+		}
+		//uint32_t availableBitrate = this->tccClient->GetAvailableBitrate();
+
+		m_tcc_client->RescheduleNextAvailableBitrateEvent();
+
+		uint32_t totalDesiredBitrate{ 0u };
+
+		for (auto& kv : m_all_rtp_listener.m_ssrc_consumer_table)
+		{
+			//auto* consumer = kv.second;
+			auto desiredBitrate = kv.second->get_desired_bitrate();
+
+			totalDesiredBitrate += desiredBitrate;
+		}
+
+		NORMAL_EX_LOG("total desired bitrate: %" PRIu32, totalDesiredBitrate);
+
+		m_tcc_client->SetDesiredBitrate(totalDesiredBitrate, false);
 	}
 	void crtc_transport::OnTransportCongestionControlClientSendRtpPacket(RTC::TransportCongestionControlClient * tccClient, RTC::RtpPacket * packet, const webrtc::PacedPacketInfo & pacingInfo)
 	{
@@ -1861,6 +1883,10 @@ namespace chen {
 					{
 					case RTC::RTCP::ExtendedReportBlock::Type::DLRR:
 					{
+						//DLRR(Delay Last Receiver Report) 是 RTCP(Real - Time Control Protocol) 中的一种报告类型，
+						//用于反映接收方在上一次发送 RTCP 报告后收到的最后一个 RTP 包的时间戳和序列号。
+						//DLRR 信息可以被发送方用来计算网络延迟以及推断音视频质量情况。在 WebRTC 中，RTCP 报告可以帮助调整编码参数，
+						// 控制发包速率，以提高通信质量。webrtc中rtcp中DLRR
 						auto* dlrr = static_cast<RTC::RTCP::DelaySinceLastRr*>(report);
 
 						for (auto it2 = dlrr->Begin(); it2 != dlrr->End(); ++it2)
@@ -1869,21 +1895,22 @@ namespace chen {
 
 							// SSRC should be filled in the sub-block.
 							if (ssrcInfo->GetSsrc() == 0)
+							{
 								ssrcInfo->SetSsrc(xr->GetSsrc());
 
-							/*auto* producer = this->rtpListener.GetProducer(ssrcInfo->GetSsrc());
+							}
+							auto iter = this->m_all_rtp_listener.m_ssrcTable.find((ssrcInfo->GetSsrc()));
 
-							if (!producer)
+							if (iter == this->m_all_rtp_listener.m_ssrcTable.end())
 							{
-								MS_DEBUG_TAG(
-									rtcp,
-									"no Producer found for received Sender Extended Report [ssrc:%" PRIu32 "]",
+								DEBUG_EX_LOG(
+									"rtcp, no Producer found for received Sender Extended Report [ssrc:%" PRIu32 "]",
 									ssrcInfo->GetSsrc());
 
 								continue;
-							}*/
+							} 
 
-							//producer->ReceiveRtcpXrDelaySinceLastRr(ssrcInfo);
+							iter->second ->receive_rtcp_xrdelay_since_lastrr(ssrcInfo);
 						}
 
 						break;
@@ -2142,6 +2169,27 @@ namespace chen {
 					send_rtcp_compound_packet(packet.get());
 					//SendRtcpCompoundPacket(packet.get());
 				}
+			}
+			// Reset the Compound packet.
+			packet.reset(new RTC::RTCP::CompoundPacket());
+			for (std::pair<const uint32, crtc_producer*> & p : m_all_rtp_listener.m_ssrcTable)
+			{
+				// Reset the Compound packet.
+				packet.reset(new RTC::RTCP::CompoundPacket());
+				p.second->get_rtcp(packet.get(), nowMs);
+
+				// Send the RTCP compound packet if there is a sender report.
+				if (packet->HasSenderReport())
+				{
+					packet->Serialize(RTC::RTCP::Buffer);
+					send_rtcp_compound_packet(packet.get());
+					//SendRtcpCompoundPacket(packet.get());
+				}
+			}
+			if (packet->GetReceiverReportCount() != 0u)
+			{
+				packet->Serialize(RTC::RTCP::Buffer);
+				send_rtcp_compound_packet(packet.get());
 			}
 			// Recalculate next RTCP interval.
 			//if (!this->mapConsumers.empty())

@@ -153,6 +153,8 @@ namespace RTC
 	RtpPacket::~RtpPacket()
 	{
 		//MS_TRACE();
+		mapOneByteExtensions.clear();
+		mapTwoBytesExtensions.clear();
 	}
 
 	void RtpPacket::Dump() const
