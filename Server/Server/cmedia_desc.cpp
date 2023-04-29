@@ -75,6 +75,8 @@ if (!getline(is,word,delim)) {\
 			// TODO: FIXME: Remove the test code bellow.
 		  // << ";x-google-max-bitrate=6000;x-google-min-bitrate=5100;x-google-start-bitrate=5000"
 			os << "a=fmtp:" << m_payload_type << " " << m_format_specific_param << kCRLF;
+			os << "a=fmtp:" << m_payload_type << " x-google-max-bitrate=10000;x-google-min-bitrate=4000;x-google-start-bitrate=8000" << kCRLF;
+
 		}
 		return 0;
 	}
