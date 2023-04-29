@@ -50,6 +50,7 @@ namespace chen {
 		cvideo_payload(uint8 pt, std::string encode_name, int32 sample)
 			: ccodec_payload(pt, encode_name, sample)
 			, m_h264_param()
+			, m_bitrate_param()
 		{
 			m_type = "video";
 			m_h264_param.m_profile_level_id = "";
@@ -68,12 +69,14 @@ namespace chen {
 	public:
 
 		int32  set_h264_param_desc(std::string fmtp);
+		int32  set_bitrate_param_desc(std::string fmtp);
 	protected:
 	private:
 
 
 	public:
 		ch264_specific_param		m_h264_param;
+		ccodec_bitrate_param		m_bitrate_param;
 	};
 
 }

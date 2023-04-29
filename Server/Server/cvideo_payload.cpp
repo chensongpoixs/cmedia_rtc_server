@@ -51,6 +51,23 @@ namespace chen {
 		}
 
 		media_payload_type.m_format_specific_param = format_specific_param.str().c_str();
+
+
+
+		std::ostringstream codec_bitrate_param;
+		if (0!= m_bitrate_param.m_min_bitrate)
+		{
+			codec_bitrate_param << "x-google-min-bitrate=" << m_bitrate_param.m_min_bitrate;
+		}
+		if (0!= m_bitrate_param.m_start_bitrate)
+		{
+			codec_bitrate_param << ";x-google-start-bitrate=" << m_bitrate_param.m_start_bitrate;
+		}
+		if (0!=m_bitrate_param.m_max_bitrate)
+		{
+			codec_bitrate_param << ";x-google-max-bitrate=" << m_bitrate_param.m_max_bitrate;
+		}
+		media_payload_type.m_codec_bitrate_param = codec_bitrate_param.str().c_str();
 		return media_payload_type;
 
 		//return cmedia_payload_type();
@@ -66,6 +83,7 @@ namespace chen {
 		cp->m_sample = m_sample;
 		cp->m_rtcp_fbs = m_rtcp_fbs;
 		cp->m_h264_param = m_h264_param;
+		cp->m_bitrate_param = m_bitrate_param;
 		return cp;
 	}
 	int32 cvideo_payload::set_h264_param_desc(std::string fmtp)
@@ -118,5 +136,9 @@ namespace chen {
 
 		return err;
 		//return int32();
+	}
+	int32 cvideo_payload::set_bitrate_param_desc(std::string fmtp)
+	{
+		return parse_codec_bitrate_fmtp(fmtp, m_bitrate_param);
 	}
 }

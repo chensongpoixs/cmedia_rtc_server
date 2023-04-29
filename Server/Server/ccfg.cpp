@@ -57,6 +57,12 @@ namespace chen {
 		set_uint32(ECI_RtcMaxPort, "rtc_max_port", 30000);
 		set_string(ECI_RtcWanIp, "rtc_wan_ip", "127.0.0.1");
 
+		/////////////////////////////////
+		set_uint32(ECI_RtcMinBitrate, "rtc_min_bitrate", 6000u);
+		set_uint32(ECI_RtcStartBitrate, "rtc_start_bitrate", 8000u);
+		set_uint32(ECI_RtcMaxBitrate, "rtc_max_bitrate", 10000u);
+
+
 		set_uint32(ECI_LogLevel, "log_level", ELogLevel_Num);
 
 		set_uint32(ECI_StunTimeOut, "stun_time_out", 5000);
