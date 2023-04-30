@@ -32,6 +32,18 @@ namespace chen {
 
 	}
 
+	void crtc_producer::destroy()
+	{
+		for (std::map<uint32, crtp_stream_recv*>::iterator iter = m_ssrc_rtp_stream_map.begin(); iter != m_ssrc_rtp_stream_map.end(); ++iter)
+		{
+			iter->second->destroy();
+			delete iter->second;
+		}
+		m_ssrc_rtp_stream_map.clear();
+		m_rtx_ssrc_rtp_stream_map.clear();
+		m_server_ssrc_map.clear();
+	}
+
 	bool crtc_producer::receive_rtp_packet(RTC::RtpPacket * packet)
 	{
 		// Reset current packet.

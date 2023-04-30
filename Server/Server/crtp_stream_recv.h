@@ -56,6 +56,8 @@ namespace chen {
 		
 		virtual ~crtp_stream_recv();
 
+
+		void destroy();
 	public:
 		 
 	public:

@@ -41,6 +41,11 @@ namespace chen {
 	 
 	crtc_consumer::~crtc_consumer()
 	{
+		
+	}
+
+	void crtc_consumer::destroy()
+	{
 		if (m_rtp_stream_send_ptr)
 		{
 			delete m_rtp_stream_send_ptr;

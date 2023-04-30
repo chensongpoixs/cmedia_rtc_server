@@ -420,6 +420,8 @@ namespace chen {
 	void crtc_transport::destroy()
 	{
 		DEBUG_EX_LOG("");
+		m_current_socket_ptr = NULL;
+		m_all_rtp_listener.destroy();
 		if (m_dtls_ptr)
 		{
 			m_dtls_ptr->destroy();
@@ -471,7 +473,7 @@ namespace chen {
 			delete m_sctp_association_ptr;
 			m_sctp_association_ptr = NULL;
 		}
-		m_all_rtp_listener.destroy();
+		
 	}
 	bool crtc_transport::is_active() const
 	{
@@ -1566,7 +1568,7 @@ namespace chen {
 		{
 			case RTC::RTCP::Type::RR:
 			{
-				//DEBUG_EX_LOG("RTC::RTCP::Type::RR");
+				DEBUG_EX_LOG("RTC::RTCP::Type::RR");
 				RTC::RTCP::ReceiverReportPacket* rr = static_cast<RTC::RTCP::ReceiverReportPacket*>(packet);
 				//rr->Dump();
 				for (auto it = rr->Begin(); it != rr->End(); ++it)
@@ -1619,7 +1621,7 @@ namespace chen {
 
 			case RTC::RTCP::Type::PSFB:
 			{
-				//DEBUG_EX_LOG("RTC::RTCP::Type::PSFB");
+				DEBUG_EX_LOG("RTC::RTCP::Type::PSFB");
 				auto* feedback = static_cast<RTC::RTCP::FeedbackPsPacket*>(packet);
 
 				switch (feedback->GetMessageType())
@@ -1651,7 +1653,7 @@ namespace chen {
 
 				case RTC::RTCP::FeedbackPs::MessageType::FIR:
 				{
-					//DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::FIR");
+					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::FIR");
 					// Must iterate FIR items.
 					auto* fir = static_cast<RTC::RTCP::FeedbackPsFirPacket*>(packet);
 
@@ -1701,7 +1703,7 @@ namespace chen {
 
 				case RTC::RTCP::FeedbackPs::MessageType::AFB:
 				{
-				//	DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::AFB");
+					DEBUG_EX_LOG("RTC::RTCP::FeedbackPs::MessageType::AFB");
 					RTC::RTCP::FeedbackPsAfbPacket* afb = static_cast<RTC::RTCP::FeedbackPsAfbPacket*>(feedback);
 
 					// Store REMB info.
@@ -1749,7 +1751,7 @@ namespace chen {
 
 			case RTC::RTCP::Type::RTPFB:
 			{
-				//DEBUG_EX_LOG("RTC::RTCP::Type::RTPFB");
+				DEBUG_EX_LOG("RTC::RTCP::Type::RTPFB");
 				auto* feedback = static_cast<RTC::RTCP::FeedbackRtpPacket*>(packet);
 				//auto* consumer = GetConsumerByMediaSsrc(feedback->GetMediaSsrc());
 				crtc_consumer* consumer = m_all_rtp_listener.get_consumer(feedback->GetMediaSsrc());
@@ -1794,7 +1796,7 @@ namespace chen {
 
 					case RTC::RTCP::FeedbackRtp::MessageType::TCC:
 					{
-					//	DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::TCC");
+						DEBUG_EX_LOG("RTC::RTCP::FeedbackRtp::MessageType::TCC");
 						auto* feedback = static_cast<RTC::RTCP::FeedbackRtpTransportPacket*>(packet);
 
 						if (m_tcc_client)
@@ -1827,7 +1829,7 @@ namespace chen {
 			case RTC::RTCP::Type::SR:
 			{
 				RTC::RTCP::SenderReportPacket* sr = static_cast<RTC::RTCP::SenderReportPacket*>(packet);
-				//DEBUG_EX_LOG("RTC::RTCP::Type::SR");
+				DEBUG_EX_LOG("RTC::RTCP::Type::SR");
 				//sr->Dump();
 				// Even if Sender Report packet can only contains one report.
 				for (auto it = sr->Begin(); it != sr->End(); ++it)

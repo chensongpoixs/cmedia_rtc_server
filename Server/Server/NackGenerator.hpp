@@ -65,6 +65,7 @@ namespace RTC
 	public:
 		explicit NackGenerator(Listener* listener);
 		~NackGenerator() override;
+		void destroy();
 
 		bool ReceivePacket(RTC::RtpPacket* packet, bool isRecovered);
 		size_t GetNackListLength() const

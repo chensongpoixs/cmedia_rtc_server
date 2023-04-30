@@ -58,6 +58,18 @@ namespace RTC
 		{
 			//this->timer->destroy();
 			delete this->timer;
+			timer = NULL;
+		}
+	}
+
+	void NackGenerator::destroy()
+	{
+		// Close the timer.
+		if (this->timer)
+		{
+			//this->timer->destroy();
+			delete this->timer;
+			timer = NULL;
 		}
 	}
 

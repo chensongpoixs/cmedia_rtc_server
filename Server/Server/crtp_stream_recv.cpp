@@ -73,10 +73,32 @@ namespace chen {
 
 	crtp_stream_recv::~crtp_stream_recv()
 	{
-		// Close the RTP inactivity check periodic timer.
-		delete this->m_inactivityCheckPeriodicTimer;
+		if (m_inactivityCheckPeriodicTimer)
+		{
+			// Close the RTP inactivity check periodic timer.
+			delete this->m_inactivityCheckPeriodicTimer;
+			m_inactivityCheckPeriodicTimer = NULL;
+		}
+		
+		
 	}
  
+	void crtp_stream_recv::destroy()
+	{
+		if (nackGenerator)
+		{
+			nackGenerator->destroy();
+			nackGenerator.reset(NULL);
+		}
+		// Close the RTP inactivity check periodic timer.
+		if (m_inactivityCheckPeriodicTimer)
+		{
+			// Close the RTP inactivity check periodic timer.
+			delete this->m_inactivityCheckPeriodicTimer;
+			m_inactivityCheckPeriodicTimer = NULL;
+		}
+	}
+
 	bool crtp_stream_recv::receive_packet(RTC::RtpPacket * packet)
 	{
 		// Call the parent method.
@@ -514,7 +536,7 @@ namespace chen {
 
 	void crtp_stream_recv::OnNackGeneratorNackRequired(const std::vector<uint16>& seqNumbers)
 	{
-		cassert(m_params.use_nack, "NACK required but not supported");
+	//	cassert_desc(m_params.use_nack, "NACK required but not supported");
 
 		DEBUG_EX_LOG( "triggering NACK [ssrc:%" PRIu32 ", first seq:%" PRIu16 ", num packets:%zu]",
 			m_params.ssrc,

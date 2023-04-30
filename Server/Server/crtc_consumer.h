@@ -44,8 +44,9 @@ namespace chen {
 	public:
 		crtc_consumer(crtc_transport * ptr, const std::string & kind, const crtc_producer::crtp_params& params);
 			
-		~crtc_consumer();
-
+		virtual ~crtc_consumer();
+	public:
+		void destroy();
 	public:
 		void send_rtp_packet(RTC::RtpPacket* packet);
 
