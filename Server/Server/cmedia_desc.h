@@ -160,8 +160,22 @@ namespace chen {
 	};
 
 
+	struct ccodec_bitrate_param
+	{
+		uint32  m_min_bitrate;
+		uint32  m_start_bitrate;
+		uint32  m_max_bitrate;
+		ccodec_bitrate_param()
+			: m_min_bitrate(0)
+			, m_start_bitrate(0)
+			, m_max_bitrate(0) {}
+	};
+
+
 
 	int32 parse_h264_fmtp(const std::string& fmtp, ch264_specific_param& h264_param);
+
+	int32 parse_codec_bitrate_fmtp(const std::string& fmtp, ccodec_bitrate_param& bitrate_param);
 
 	class cmedia_payload_type
 	{
@@ -173,6 +187,7 @@ namespace chen {
 			, m_encoding_param("")
 			, m_rtcp_fb()
 			, m_format_specific_param("")
+			, m_codec_bitrate_param("")
 			//, m_apt(0)
 			, m_rtx(0)
 			, m_red(0)
@@ -187,6 +202,7 @@ namespace chen {
 		std::string				m_encoding_param;
 		std::vector<std::string>m_rtcp_fb;
 		std::string				m_format_specific_param;
+		std::string			    m_codec_bitrate_param;
 		//uint32					m_apt;
 		uint32					m_rtx;
 		uint32					m_red;

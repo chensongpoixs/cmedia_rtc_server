@@ -56,6 +56,8 @@ namespace chen {
 		, m_last_rtcp_send_time(0)
 		{}
 		virtual ~crtc_producer();
+	public:
+		void destroy();
 
 	public:
 

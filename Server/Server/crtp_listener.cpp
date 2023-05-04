@@ -32,12 +32,14 @@ namespace chen {
 	{
 		for (std::pair<const uint32, crtc_producer*> &p : m_ssrcTable)
 		{
+			p.second->destroy();
 			delete p.second;
 		}
 		for (std::pair<const uint32, crtc_consumer*> &p : m_ssrc_consumer_table)
 		{
 			if (p.second)
 			{
+				p.second->destroy();
 				delete p.second;
 			}
 			

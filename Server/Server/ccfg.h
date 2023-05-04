@@ -49,7 +49,10 @@ namespace chen {
 		ECI_RtcMinPort,
 		ECI_RtcMaxPort,
 
-		
+		//////
+		ECI_RtcMinBitrate,
+		ECI_RtcStartBitrate,
+		ECI_RtcMaxBitrate,
 
 		ECI_LogLevel,
 		ECI_StunTimeOut,//stun_timeout

@@ -86,7 +86,7 @@ namespace chen {
 			, m_scores()
 			, m_active_since_ms(0u)
 		{}
-		~crtp_stream();
+	virtual	~crtp_stream();
 
 	public:
 

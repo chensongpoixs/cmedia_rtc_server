@@ -58,6 +58,18 @@ namespace RTC
 		{
 			//this->timer->destroy();
 			delete this->timer;
+			timer = NULL;
+		}
+	}
+
+	void NackGenerator::destroy()
+	{
+		// Close the timer.
+		if (this->timer)
+		{
+			//this->timer->destroy();
+			delete this->timer;
+			timer = NULL;
 		}
 	}
 
@@ -219,7 +231,7 @@ namespace RTC
 //>>>>>>> e7c53c323244c384996ff48dc36fc15109b527f0
 		for (uint16_t seq = seqStart; seq != seqEnd; ++seq)
 		{
-			assert(this->nackList.find(seq) == this->nackList.end(), "packet already in the NACK list");
+			cassert_desc(this->nackList.find(seq) == this->nackList.end(), "packet already in the NACK list");
 
 			// Do not send NACK for packets that are already recovered by RTX.
 			if (this->recoveredList.find(seq) != this->recoveredList.end())

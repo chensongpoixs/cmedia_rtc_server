@@ -75,6 +75,16 @@ if (!getline(is,word,delim)) {\
 			// TODO: FIXME: Remove the test code bellow.
 		  // << ";x-google-max-bitrate=6000;x-google-min-bitrate=5100;x-google-start-bitrate=5000"
 			os << "a=fmtp:" << m_payload_type << " " << m_format_specific_param << kCRLF;
+			//os << "a=fmtp:" << m_payload_type << " x-google-max-bitrate=10000;x-google-min-bitrate=4000;x-google-start-bitrate=8000" << kCRLF;
+
+		}
+		if (!m_codec_bitrate_param.empty())
+		{
+			// TODO: FIXME: Remove the test code bellow.
+			// << ";x-google-max-bitrate=6000;x-google-min-bitrate=5100;x-google-start-bitrate=5000"
+			os << "a=fmtp:" << m_payload_type << " " << m_codec_bitrate_param << kCRLF;
+			//os << "a=fmtp:" << m_payload_type << " x-google-max-bitrate=10000;x-google-min-bitrate=4000;x-google-start-bitrate=8000" << kCRLF;
+
 		}
 		return 0;
 	}
@@ -210,6 +220,34 @@ if (!getline(is,word,delim)) {\
 
 			//return srs_error_new(ERROR_RTC_SDP_DECODE, "no h264 param: level-asymmetry-allowed");
 		}
+
+		return 0;
+	}
+	int32 parse_codec_bitrate_fmtp(const std::string& fmtp, ccodec_bitrate_param& bitrate_param)
+	{
+		std::vector<std::string> vec = rtc_sdp_util::string_split(fmtp, ";");
+		for (size_t i = 0; i < vec.size(); ++i)
+		{
+			std::vector<std::string> kv = rtc_sdp_util::string_split(vec[i], "=");
+			if (kv.size() != 2)
+			{
+				continue;
+			}
+
+			if (kv[0] == "x-google-min-bitrate")
+			{
+				bitrate_param.m_min_bitrate = std::atoi(kv[1].c_str());
+			}
+			else if (kv[0] == "x-google-start-bitrate")
+			{
+				bitrate_param.m_start_bitrate = std::atoi(kv[1].c_str());
+			}
+			else if (kv[0] == "x-google-max-bitrate")
+			{
+				bitrate_param.m_max_bitrate = std::atoi(kv[1].c_str());
+			}
+		}
+		 
 
 		return 0;
 	}

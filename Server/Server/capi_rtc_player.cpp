@@ -108,6 +108,7 @@ namespace chen {
 			video_track_desc->m_media_ptr = video_payload;
 
 			video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
+			video_payload->set_bitrate_param_desc("x-google-max-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMaxBitrate))+";x-google-min-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMinBitrate))+";x-google-start-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcStartBitrate)));
 			crtx_payload_des *rtx_video_payload = new crtx_payload_des(kRtxVideoPayloadType, kVideoPayloadType);
 			video_track_desc->m_rtx_ptr = rtx_video_payload;
 			video_track_desc->m_rtx_ssrc = rtc_ssrc_info_ptr->m_rtx_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
