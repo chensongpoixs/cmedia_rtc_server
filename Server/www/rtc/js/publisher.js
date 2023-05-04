@@ -81,7 +81,7 @@ var pc = null;
 
 //房间号
 var roomid;
-var username;
+ 
 var socket = null;
 
 //offer描述
@@ -94,6 +94,16 @@ var state = 'init';
 let ws ;
 
 const WS_OPEN_STATE = 1;
+
+
+
+
+var room_name = getQueryVariable('roomname');
+var user_name	= getQueryVariable('username');
+var rtc_ip = getQueryVariable('rtc_ip');
+var rtc_port = getQueryVariable('rtc_port');
+
+
 
 
 /**
@@ -215,7 +225,7 @@ function conn()
         return;
     }
 
-     var ws_url = "ws://127.0.0.1:9500/?roomId=20220927&peerId=chensong";
+     var ws_url = 'ws://'+rtc_ip +':'+rtc_port+'/?roomId=20220927&peerId=chensong';
 	console.log('ws_url = ', ws_url);
      ws = new WebSocket(ws_url );
 
@@ -550,15 +560,14 @@ function getOffer(desc)
 	//offer_desc.roomname = "chensong";
 	//offer_desc.peerid = "chensong";
 	//将Offer SDP 发送给对端
-	var room_name = getQueryVariable('roomname');
-	var videopeerid	= getQueryVariable('videopeerid');
+	 
 	sendMessage(
 				{
 					msg_id: 1072,
 					data:  {
 								offer : desc.sdp,
 								roomname : room_name.toString(),
-								peerid : videopeerid.toString()
+								peerid : user_name.toString()
 						   } 
 				}
 			 );
