@@ -991,13 +991,13 @@ namespace chen {
 		if (!m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
 		{
 			m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
-			m_tcc_server->SetMaxIncomingBitrate(800000000u);
+			m_tcc_server->SetMaxIncomingBitrate(80000000u);
 			m_tcc_server->TransportConnected();
 		}
 		if (!m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
 		{
 			m_tcc_client   = new RTC::TransportCongestionControlClient(
-				this, RTC::BweType::TRANSPORT_CC, 600000u, 600000u);
+				this, RTC::BweType::TRANSPORT_CC, 6000000u, 8000000u);
 			m_tcc_client->TransportConnected();
 
 		}
