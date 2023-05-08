@@ -116,6 +116,7 @@ namespace chen {
 		{
 			// Send the packet.
 			//this->listener->OnConsumerSendRtpPacket(this, packet);
+			//NORMAL_EX_LOG("client [ssrc = %u][seq = %u][timestamp = %u]", packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetTimestamp());
 			m_rtc_ptr->send_rtp_data(packet);
 			// May emit 'trace' event.
 			//EmitTraceEventRtpAndKeyFrameTypes(packet);

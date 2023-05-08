@@ -43,7 +43,7 @@ namespace chen {
 	static uint8        g_ssl_read_buffer[g_ssl_read_buffer_size] = {0};
 	inline static void on_ssl_info(const SSL* ssl, int32 where, int32 ret)
 	{
-		DEBUG_EX_LOG("[where = %d][ret = %d]", where, ret);
+	//	DEBUG_EX_LOG("[where = %d][ret = %d]", where, ret);
 		 static_cast<crtc_dtls*>(SSL_get_ex_data(ssl, 0))->on_ssl_info(where, ret);
 	
 	}
@@ -1012,7 +1012,7 @@ namespace chen {
 		// Create the SRTP remote master key.
 		std::memcpy(srtpRemoteMasterKey, srtpRemoteKey, srtpKeyLength);
 		std::memcpy(srtpRemoteMasterKey + srtpKeyLength, srtpRemoteSalt, srtpSaltLength);
-		NORMAL_EX_LOG("");
+		//NORMAL_EX_LOG("");
 		// Set state and notify the listener.
 		//this->state = DtlsState::CONNECTED;
 		m_callback_ptr->on_dtls_transport_connected( 

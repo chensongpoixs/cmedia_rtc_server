@@ -66,7 +66,11 @@ namespace chen {
 
 		//ReceiveRtpPacketResult result;
 		bool isRtx{ false };
-
+		/*	int32 biff_ms = uv_util::GetTimeMs() - packet->GetTimestamp();
+			if (biff_ms > 150)
+			{
+				NORMAL_EX_LOG("[ssrc = %u][seq = %u][timestamp = %u][biff_ms = %u]", packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetTimestamp(),   biff_ms);
+			}*/
 		// Media packet.
 		if (packet->GetSsrc() == rtpStream->get_ssrc())
 		{

@@ -834,7 +834,7 @@ if (!getline(is,word,delim)) {\
 		std::istringstream is(value);
 		// mid_ means m-line id
 		FETCH(is, m_mid, EMediaRtcSdpInvalidAttrParseMid, "EMediaRtcSdpInvalidAttrParseMid");
-		NORMAL_EX_LOG("mid=%s", m_mid.c_str());
+		//NORMAL_EX_LOG("mid=%s", m_mid.c_str());
 		return 0;
 		//return int32();
 	}
