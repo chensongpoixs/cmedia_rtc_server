@@ -71,6 +71,7 @@ namespace chen {
 			{
 				NORMAL_EX_LOG("[ssrc = %u][seq = %u][timestamp = %u][biff_ms = %u]", packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetTimestamp(),   biff_ms);
 			}*/
+		//NORMAL_EX_LOG("[ssrc = %u][seq = %u][timestamp = %u] ", packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetTimestamp() );
 		// Media packet.
 		if (packet->GetSsrc() == rtpStream->get_ssrc())
 		{

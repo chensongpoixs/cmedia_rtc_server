@@ -46,7 +46,7 @@ namespace chen {
 	bool capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname, 
 		const std::string & peerid,  std::string & local_sdp)
 	{
-		 
+		NORMAL_EX_LOG("[%s]", remote_sdp.c_str());
 		crtc_source_description stream_desc;
 		crtc_sdp rtc_remote_sdp;
 		crtc_sdp rtc_local_sdp;
@@ -563,7 +563,8 @@ namespace chen {
 			if (track_desc.m_type.empty() || !track_desc.m_media_ptr)
 			{
 				ERROR_EX_LOG("no match for track=%s, mid=%s, tracker=%s", remote_media_desc.m_type.c_str(), remote_media_desc.m_mid.c_str(), remote_media_desc.m_msid_tracker.c_str());
-				return false;
+				//return false;
+				continue;
 				//return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no match for track=%s, mid=%s, tracker=%s", remote_media_desc.type_.c_str(), remote_media_desc.mid_.c_str(), remote_media_desc.msid_tracker_.c_str());
 			}
 

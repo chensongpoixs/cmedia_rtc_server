@@ -376,7 +376,9 @@ namespace RTC
 		std::vector<uint16_t> nackBatch = GetNackBatch(NackFilter::TIME);
 
 		if (!nackBatch.empty())
+		{
 			this->listener->OnNackGeneratorNackRequired(nackBatch);
+		}
 
 		MayRunTimer();
 	}

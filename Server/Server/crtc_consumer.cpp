@@ -23,6 +23,11 @@ purpose:		_C_RTC_TRACK_DESCRIPTION_H_
 ************************************************************************************************/
 #include "crtc_consumer.h"
 #include "crtc_transport.h"
+
+#include "ccfg.h"
+
+
+
 namespace chen {
 	crtc_consumer::crtc_consumer(crtc_transport * ptr, const std::string & kind, const crtc_producer::crtp_params & params)
 	  : m_rtc_ptr(ptr)
@@ -230,7 +235,7 @@ namespace chen {
 		// If consumer.rtpParameters.encodings[0].maxBitrate was given and it's
 		// greater than computed one, then use it.
 		//auto maxBitrate = this->rtpParameters.encodings[0].maxBitrate;
-		static const uint32 maxBitrate = 8000000u;
+		static const uint32 maxBitrate = g_cfg.get_uint32(ECI_RtcMaxBitrate);
 		if (maxBitrate > desiredBitrate)
 		{
 			desiredBitrate = maxBitrate;

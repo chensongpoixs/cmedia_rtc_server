@@ -268,7 +268,7 @@ namespace chen {
 						params.params.rtx_ssrc = rtc_track->m_rtx_ssrc;
 						if (rtc_ssrc_info_ptr)
 						{
-							if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_video_ssrc)).second)
+							if (!m_server_ssrc_map.insert(std::make_pair(params.params.rtx_ssrc, rtc_ssrc_info_ptr->m_rtx_video_ssrc)).second)
 							{
 								WARNING_EX_LOG("video rtx  insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_rtx_video_ssrc);
 							}
@@ -993,13 +993,13 @@ namespace chen {
 		if (!m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
 		{
 			m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
-			m_tcc_server->SetMaxIncomingBitrate(80000000u);
+			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate));
 			m_tcc_server->TransportConnected();
 		}
 		if (!m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
 		{
 			m_tcc_client   = new RTC::TransportCongestionControlClient(
-				this, RTC::BweType::TRANSPORT_CC, 6000000u, 8000000u);
+				this, RTC::BweType::TRANSPORT_CC, g_cfg.get_uint32(ECI_RtcStartBitrate), g_cfg.get_uint32(ECI_RtcMaxBitrate));
 			m_tcc_client->TransportConnected();
 
 		}

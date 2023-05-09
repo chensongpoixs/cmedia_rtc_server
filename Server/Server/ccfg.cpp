@@ -59,8 +59,8 @@ namespace chen {
 
 		/////////////////////////////////
 		set_uint32(ECI_RtcMinBitrate, "rtc_min_bitrate", 4000u);
-		set_uint32(ECI_RtcStartBitrate, "rtc_start_bitrate", 8000u);
-		set_uint32(ECI_RtcMaxBitrate, "rtc_max_bitrate", 10000u);
+		set_uint32(ECI_RtcStartBitrate, "rtc_start_bitrate", 4000u);
+		set_uint32(ECI_RtcMaxBitrate, "rtc_max_bitrate", 8000u);
 
 
 		set_uint32(ECI_LogLevel, "log_level", ELogLevel_Num);
