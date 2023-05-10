@@ -103,14 +103,20 @@ namespace RTC
 		}
 
 		RemoveOldData(nowMs);
-		// æ¯”ç‰¹æµ / æ€»çš„æ»‘åŠ¨çª—å£æ¯«ç§’æ•°
+		// 比特流 / 总的滑动窗口毫秒数
 		float scale = this->scale / this->windowSizeMs;
 
 		this->lastTime = nowMs;
-		// å…·ä½“å°±æ˜¯æ»‘åŠ¨çª—å£æ¯”ç‰¹æµçš„å…¬å¼ =  æ€»æ»‘åŠ¨çª—å£ä¸­æœ‰çš„æ•°æ®çš„æ€»å’Œ * 8000 / windowsizems  ;
-		// åŽŸæ¥æˆ‘ä»¥ä¸ºæœ‰ä»€ä¹ˆç‰¹æ®Šå…¬å¼å‘¢ï¼ï¼ï¼
+		// 具体就是滑动窗口比特流的公式 =  总滑动窗口中有的数据的总和 * 8000 / windowsizems  ;
+		// 原来我以为有什么特殊公式呢！！！
+		/*
+		ceil函数：向上取整
+		floor函数：向下取整
+		round函数：四舍五入取整
+		trunc函数：舍尾取整
+		*/
 		this->lastRate = static_cast<uint32_t>(std::trunc(this->totalCount * scale + 0.5f));
-		//trunc()å‡½æ•°æ˜¯cmathæ ‡å¤´çš„åº“å‡½æ•°ï¼Œç”¨äºŽå°†å€¼å››èˆäº”å…¥(æˆªæ–­)ä¸ºé›¶ï¼Œå®ƒæŽ¥å—ä¸€ä¸ªæ•°å­—å¹¶è¿”å›žå…¶å¤§å°ä¸å¤§äºŽç»™å®šæ•°å­—çš„æœ€è¿‘æ•´æ•°å€¼ã€‚
+		//trunc()函数是cmath标头的库函数，用于将值四舍五入(截断)为零，它接受一个数字并返回其大小不大于给定数字的最近整数值
 		return this->lastRate;
 	}
 
@@ -122,16 +128,16 @@ namespace RTC
 		{
 			return;
 		}
-		// 1. è¿™ä¸ªå€¼æ˜¯æ ¹æ® å½“å‰æ¯«ç§’æ•°å‡åŽ»å…¨éƒ¨çš„æ»‘åŠ¨çª—å£æ—¶é—´æ¥è®¡ç®—çš„
+		// 1. 这个值是根据 当前毫秒数减去全部的滑动窗口时间来计算的
 		uint64_t newoldestTime = nowMs - this->windowSizeMs;
 
-		// 2. åˆ¤æ–­æ˜¯å¦å°äºŽæ»‘åŠ¨çª—å£ä¸­æœ€å°çš„æ—¶é—´æ¯«ç§’æ•° ï¼Œ å¦‚æžœå°äºŽå°±ä¸éœ€è¦å¤„ç†å“ˆï¼ˆæ»‘åŠ¨çª—å£ä¸­æ²¡æœ‰è®¡ç®—è¯¥å€¼å“ˆï¼‰
+		// 2. 判断是否小于滑动窗口中最小的时间毫秒数 ， 如果小于就不需要处理哈（滑动窗口中没有计算该值哈）
 		// Oldest item already removed.
 		if (newoldestTime <= this->oldestItemStartTime)
 		{
 			return;
 		}
-		// è¯´æ˜Žä¸Šæ¬¡å‘é€æ•°æ®æ—¶é—´é•¿å¤ªé•¿ï¼Œ è¶…å‡ºæ»‘åŠ¨çª—å£çš„æ—¶é—´é•¿ éœ€è¦é‡ç½®æ»‘åŠ¨çª—å£
+		// 说明上次发送数据时间长太长， 超出滑动窗口的时间长 需要重置滑动窗口
 		// A whole window size time has elapsed since last entry. Reset the buffer.
 		if (newoldestTime > this->newestItemStartTime)
 		{
@@ -139,7 +145,7 @@ namespace RTC
 
 			return;
 		}
-		// ç§»é™¤è¶…å‡ºæ»‘åŠ¨çª—å£æ—¶é—´çš„æ•°æ® count
+		// 移除超出滑动窗口时间的数据 count
 		while (this->oldestItemStartTime < newoldestTime)
 		{
 			BufferItem& oldestItem = buffer[this->oldestItemIndex];
@@ -153,7 +159,7 @@ namespace RTC
 			}
 
 			const BufferItem& newOldestItem = buffer[this->oldestItemIndex];
-			// æ€»æ˜¯è®°å½•æ»‘åŠ¨çª—å£ä¸­æœ€å°æ¯«ç§’æ•°
+			// 总是记录滑动窗口中最小毫秒数
 			this->oldestItemStartTime       = newOldestItem.time;
 		}
 	}

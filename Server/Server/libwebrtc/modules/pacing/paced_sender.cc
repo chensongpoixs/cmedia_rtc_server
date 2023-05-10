@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <utility>
 #include "clog.h"
+#include "cuv_util.h"
 #include <uv.h>
 using namespace chen;
 namespace webrtc {
@@ -55,7 +56,7 @@ PacedSender::PacedSender(PacketRouter* packet_router,
       prober_(*field_trials_),
       probing_send_failure_(false),
       pacing_bitrate_kbps_(0),
-      time_last_process_us_(static_cast<uint64_t>(uv_hrtime() / 1000000u)),
+      time_last_process_us_(uv_util::GetTimeUsInt64()),
       first_sent_packet_ms_(-1),
       packet_counter_(0),
       account_for_audio_(false) {
@@ -139,8 +140,7 @@ void PacedSender::SetAccountForAudioPackets(bool account_for_audio) {
 }
 
 int64_t PacedSender::TimeUntilNextProcess() {
-  int64_t elapsed_time_us =
-	  static_cast<uint64_t>(uv_hrtime() / 1000000u) - time_last_process_us_;
+  int64_t elapsed_time_us = uv_util::GetTimeUsInt64() - time_last_process_us_;
   int64_t elapsed_time_ms = (elapsed_time_us + 500) / 1000;
   // When paused we wake up every 500 ms to send a padding packet to ensure
   // we won't get stuck in the paused state due to no feedback being received.
@@ -169,7 +169,7 @@ int64_t PacedSender::UpdateTimeAndGetElapsedMs(int64_t now_us) {
 }
 
 void PacedSender::Process() {
-  int64_t now_us = static_cast<uint64_t>(uv_hrtime() / 1000000u);
+  int64_t now_us = uv_util::GetTimeUsInt64();
   int64_t elapsed_time_ms = UpdateTimeAndGetElapsedMs(now_us);
 
   if (paused_)
@@ -223,7 +223,7 @@ void PacedSender::Process() {
 
   if (bytes_sent != 0)
   {
-    auto now = static_cast<uint64_t>(uv_hrtime() / 1000000u);
+    auto now = uv_util::GetTimeUsInt64();
 
     OnPaddingSent(now, bytes_sent);
     prober_.ProbeSent((now + 500) / 1000, bytes_sent);

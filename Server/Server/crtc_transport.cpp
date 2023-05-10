@@ -62,6 +62,61 @@ namespace chen {
 		m_remote_sdp = remote_sdp;
 		m_local_sdp = local_sdp;
 		
+
+
+
+		 
+		for (size_t m_i = 0; m_i < m_remote_sdp.m_media_descs.size(); ++m_i)
+		{
+			for (std::map<int32, std::string>::const_iterator it = m_remote_sdp.m_media_descs[m_i].get_extmaps().begin(); it != m_remote_sdp.m_media_descs[m_i].get_extmaps().end(); ++it)
+			{
+				if (it->second == kTWCCExt)
+				{  
+					m_rtp_header_extension_ids.transportWideCc01 = it->first;
+				}
+				else if (it->second == RtpExtension_kRidUri)
+				{
+					m_rtp_header_extension_ids.rid = it->first;
+				}
+				else if (it->second == RtpExtension_kRepairedRidUri)
+				{
+					m_rtp_header_extension_ids.rrid = it->first;
+				}
+				else if (it->second == RtpExtension_kMidUri)
+				{
+					m_rtp_header_extension_ids.mid = it->first; 
+				}
+				else if (it->second == RtpExtension_kAbsSendTimeUri)
+				{
+					m_rtp_header_extension_ids.absSendTime = it->first;
+				}
+				else if (it->second == RtpExtension_kFrameMarkingUri)
+				{
+					m_rtp_header_extension_ids.frameMarking = it->first;
+				}
+				else if (it->second == RtpExtension_kFrameMarking07Uri)
+				{
+					m_rtp_header_extension_ids.frameMarking07 = it->first;
+				}
+				else if (it->second == RtpExtension_kAudioLevelUri)
+				{
+					m_rtp_header_extension_ids.ssrcAudioLevel = it->first;
+				}
+				else if (it->second == RtpExtension_kVideoRotationUri)
+				{
+					m_rtp_header_extension_ids.videoOrientation = it->first;
+				}
+				else if (it->second == RtpExtension_kTimestampOffsetUri)
+				{
+					m_rtp_header_extension_ids.toffset = it->first;
+				}
+			}
+		}
+		
+		 
+
+
+
 		std::vector<ccandidate> candidates =  m_local_sdp.get_candidate();
 
 		//m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
@@ -1409,11 +1464,11 @@ namespace chen {
 
 
 			// Apply the Transport RTP header extension ids so the RTP listener can use them.
-			packet->SetMidExtensionId(EMID);
-			 packet->SetRidExtensionId(ERTP_STREAM_ID);
-			 packet->SetRepairedRidExtensionId(EREPAIRED_RTP_STREAM_ID);
-			packet->SetAbsSendTimeExtensionId(EABS_SEND_TIME);
-			packet->SetTransportWideCc01ExtensionId(ETRANSPORT_WIDE_CC_01);
+			packet->SetMidExtensionId(m_rtp_header_extension_ids.mid);
+			 packet->SetRidExtensionId(m_rtp_header_extension_ids.rid);
+			 packet->SetRepairedRidExtensionId(m_rtp_header_extension_ids.rrid);
+			packet->SetAbsSendTimeExtensionId(m_rtp_header_extension_ids.absSendTime);
+			packet->SetTransportWideCc01ExtensionId(m_rtp_header_extension_ids.transportWideCc01);
 
 			auto nowMs = uv_util::GetTimeMs();
 			//packet->SetTimestamp(nowMs);

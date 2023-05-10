@@ -100,6 +100,7 @@ namespace chen {
 			, m_tcp_ports()
 			, m_timer_ptr(NULL)
 			, m_sctp_association_ptr(NULL)
+			, m_rtp_header_extension_ids()
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 		 {}
@@ -312,6 +313,7 @@ namespace chen {
 		std::vector< uint32>									m_tcp_ports;
 		ctimer				*					m_timer_ptr;
 		csctp_association *						m_sctp_association_ptr;
+		RTC::RtpHeaderExtensionIds				m_rtp_header_extension_ids;
 	};
 
 
