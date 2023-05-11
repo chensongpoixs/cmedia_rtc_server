@@ -1085,6 +1085,11 @@ namespace chen {
 			}
 		}*/
 		m_current_socket_ptr  = socket;
+		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
+		if (m_rtc_net_state == ERtcNetworkStateEstablished)
+		{
+			m_time_out_ms = uv_util::GetTimeMs();
+		}
 		// Check if it's STUN.
 		if (crtc_stun_packet::is_stun(data, len))
 		{
