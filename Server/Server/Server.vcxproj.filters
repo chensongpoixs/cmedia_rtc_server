@@ -1644,5 +1644,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="rtsp_play.sdp">
+      <Filter>rtsp</Filter>
+    </None>
   </ItemGroup>
 </Project>
