@@ -57,6 +57,12 @@ namespace chen {
 		ECI_LogLevel,
 		ECI_StunTimeOut,//stun_timeout
 		 
+
+		// rtsp
+		ECI_RtspWanIp,
+		ECI_RtspWanPort,
+
+
 		ECI_Max,
 	};
 	class ccfg : public cconfig

@@ -68,6 +68,9 @@ namespace chen {
 		set_uint32(ECI_StunTimeOut, "stun_time_out", 5000);
 		 
 
+		set_string(ECI_RtspWanIp, "rtsp_wan_ip", "127.0.0.1");
+		set_uint32(ECI_RtspWanPort, "rtsp_wan_port", 554);
+
 		//é…ç½®è¡¨çš„å€¼
 		load_cfg_file();
 

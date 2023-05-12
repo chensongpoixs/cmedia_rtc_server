@@ -1,9 +1,9 @@
-﻿/********************************************************************
-created:	2019-03-24
+﻿/***********************************************************************************************
+created: 		2023-05-11
 
-author:		chensong
+author:			chensong
 
-purpose:	time tools
+purpose:		_C_DTLS_ _H_
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -19,52 +19,49 @@ purpose:	time tools
 我叫他本心猎手。他可能是和宇宙同在的级别 但是我并不害怕，我仔细回忆自己平淡的一生 寻找本心猎手的痕迹。
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
-*********************************************************************/
 
-#ifndef _C_TIME_API_H
-#define _C_TIME_API_H
-#include "ctime_const.h"
-#include <ctime>
-namespace chen
-{
+************************************************************************************************/
 
-	namespace ctime_base_api
+#ifndef _C_RTSP_SERVER_H_
+#define _C_RTSP_SERVER_H_
+#include "cnet_type.h"
+#include <sstream>
+#include <iostream>
+#include <vector>
+#include <map>
+#include "crtc_sdp.h"
+#include "cmedia_desc.h"
+#include "cdtls_session.h"
+namespace chen {
+
+
+
+	class crtsp_server
 	{
-		// ÉèÖÃÊ±Çø
-		void set_time_zone(int value);
-		// ÈËÎªµ÷ÕûÊ±¼ä
-		void set_time_adjust(int value);
+	public:
+		explicit crtsp_server();
+		virtual ~crtsp_server();
 
-		time_t get_gmt();
+	public:
+	public:
+		bool init();
 
-		void time_t_to_tm(time_t time, tm& out);
-		tm time_t_to_tm(time_t time);
+		void destroy();
+	public:
+		bool startup();
+	public:
+		void update(uint32 uDeltaTime);
+		void shutdown();
+	public:
+		//void on_connect(uint64_t session_id, const char* buf);
+		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
+		//void on_disconnect(uint64_t session_id);
+	public:
+		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
+	public:
+	protected:
+	private:
+	};
+}
 
-		void get_tm(tm& out);
-		tm get_tm();
-
-		// yyyy-MM-dd HH:mm:ss
-		int time64_datetime_format(const tm& now_tm, char* out, char date_conn, char datetime_conn, char time_conn);
-		//chen::ctime_base_api::time64_datetime_format(::time(NULL), buf, '-', ' ', ':');
-		int time64_datetime_format(time_t time, char* out, char date_conn, char datetime_conn, char time_conn);
-	
-		long long get_time_ms();
-		//int time64_today();
-		time_t get_today_stamp_time64(int hour);
-	}  // namespace ctime_base_api
-
-
-	namespace ctime_base {
-
-	} // namespace ctime_base
-
-	namespace crtsp_api
-	{
-		char const * date_header();
-	}
-
-
-
-}  // namespace chen 
-
-#endif //!#define _C_TIME_API_H
+#endif // _C_RTSP_SERVER_H_
