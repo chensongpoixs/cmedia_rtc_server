@@ -199,6 +199,9 @@
     <Filter Include="rtc_stream">
       <UniqueIdentifier>{708370d5-310b-4976-90b7-628f3ea5b106}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rtsp">
+      <UniqueIdentifier>{a5ce983a-6cea-4c44-9bc8-4b3c2b98414d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -852,6 +855,12 @@
     </ClCompile>
     <ClCompile Include="csctp_association_mgr.cpp">
       <Filter>sctp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtsp_session.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtsp_server.cpp">
+      <Filter>rtsp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1622,6 +1631,15 @@
     </ClInclude>
     <ClInclude Include="csctp_association_mgr.h">
       <Filter>sctp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp_session.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp_define.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp_server.h">
+      <Filter>rtsp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

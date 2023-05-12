@@ -27,10 +27,11 @@ purpose:		_C_DTLS_ _H_
 #include "ctime_api.h"
 #include "crtsp_define.h"
 namespace chen {
-	crtsp_session::crtsp_session()
+	 
+	crtsp_session::~crtsp_session()
 	{
 	}
-	crtsp_session::~crtsp_session()
+	void crtsp_session::set_cseq(uint32 cseq)
 	{
 	}
 	void crtsp_session::handler_options()
@@ -41,5 +42,38 @@ namespace chen {
 		cmd << "CSeq: " << kCRLF;
 		cmd << crtsp_api::date_header();
 		cmd << "Public: %s" << RTSP_ALLOWED_COMMAND <<  kCRLF << kCRLF;
+	}
+
+	void crtsp_session::handler_describe()
+	{
+	}
+
+	void crtsp_session::handler_register()
+	{
+	}
+
+	void crtsp_session::handler_setup()
+	{
+	}
+
+	void crtsp_session::handler_teardown()
+	{
+	}
+
+	void crtsp_session::handler_play()
+	{
+	}
+
+	void crtsp_session::handler_pause()
+	{
+	}
+
+
+
+	void crtsp_session::handler_get_parameter()
+	{
+	}
+	void crtsp_session::handler_set_parameter()
+	{
 	}
 }

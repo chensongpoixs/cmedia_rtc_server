@@ -38,16 +38,17 @@ namespace chen {
 	class crtsp_session
 	{
 	public:
-		explicit crtsp_session();
+		explicit crtsp_session()
+			: m_cseq(0){}
 		virtual ~crtsp_session();
 
-
+	public:
+		void set_cseq(uint32 cseq);
 	public:
 
 		// cmd --> OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER
 		void handler_options();
-		void handler_get_parameter();
-		void handler_set_parameter();
+		
 		void handler_describe();
 		void handler_register();
 		void handler_setup();
@@ -55,12 +56,13 @@ namespace chen {
 		void handler_play();
 		void handler_pause();
 		
-
+		void handler_get_parameter();
+		void handler_set_parameter();
 
 
 	protected:
 	private:
-
+		uint32			m_cseq;
 	};
 }
 #endif // _C_RTSP_SESSION_H_
