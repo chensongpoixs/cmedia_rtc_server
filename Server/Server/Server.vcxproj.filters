@@ -580,9 +580,6 @@
     <ClCompile Include="cguard_reply.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="cudp_socket.cpp">
-      <Filter>rtc_net</Filter>
-    </ClCompile>
     <ClCompile Include="PortManager.cpp">
       <Filter>rtc_net</Filter>
     </ClCompile>
@@ -861,6 +858,24 @@
     </ClCompile>
     <ClCompile Include="crtsp_server.cpp">
       <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="cnet_rtsp_server.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="ctcp_connection_handler.cpp">
+      <Filter>uv_util</Filter>
+    </ClCompile>
+    <ClCompile Include="ctcp_server_handler.cpp">
+      <Filter>uv_util</Filter>
+    </ClCompile>
+    <ClCompile Include="cudp_socket.cpp">
+      <Filter>uv_util</Filter>
+    </ClCompile>
+    <ClCompile Include="ctcp_server.cpp">
+      <Filter>uv_util</Filter>
+    </ClCompile>
+    <ClCompile Include="ctcp_conection.cpp">
+      <Filter>uv_util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1302,9 +1317,6 @@
     <ClInclude Include="cguard_reply.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="cudp_socket.h">
-      <Filter>rtc_net</Filter>
-    </ClInclude>
     <ClInclude Include="PortManager.hpp">
       <Filter>rtc_net</Filter>
     </ClInclude>
@@ -1640,6 +1652,24 @@
     </ClInclude>
     <ClInclude Include="crtsp_server.h">
       <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_rtsp_server.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="ctcp_connection_handler.h">
+      <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="ctcp_server_handler.h">
+      <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="cudp_socket.h">
+      <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="ctcp_server.h">
+      <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="ctcp_conection.h">
+      <Filter>uv_util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

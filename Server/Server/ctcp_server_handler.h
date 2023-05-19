@@ -1,9 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2023-05-11
+created: 		2022-08-12
 
 author:			chensong
 
-purpose:		_C_DTLS_ _H_
+purpose:		cudp_socket_handler
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -19,70 +19,91 @@ purpose:		_C_DTLS_ _H_
 我叫他本心猎手。他可能是和宇宙同在的级别 但是我并不害怕，我仔细回忆自己平淡的一生 寻找本心猎手的痕迹。
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
-
 ************************************************************************************************/
 
 
-#include "crtsp_server.h"
-#include "clog.h"
-#include "ccfg.h"
-#include "ctcp_server.h"
+#ifndef _C_RCP_SERVER_HANDLER_H_
+#define _C_RCP_SERVER_HANDLER_H_
+
+#include "cnet_type.h"
+
+#include <uv.h>
+#include <functional>
+#include <cstring>
+#include <ws2def.h>
+#include <string>
+#include "ctcp_connection_handler.h"
+#include <unordered_set>
+
 namespace chen {
-	crtsp_server g_rtsp_server;
-	/*crtsp_server::crtsp_server()
-	{
-	}*/
-	crtsp_server::~crtsp_server()
-	{
-	}
-	bool crtsp_server::init()
-	{
 
-		m_stoped = false;
-		std::string rtsp_ip = g_cfg.get_string(ECI_RtspWanIp);
-		m_tcp_server_ptr = new ctcp_server(this, this, rtsp_ip, g_cfg.get_uint32(ECI_RtspWanPort));
-		if (!m_tcp_server_ptr)
-		{
-			WARNING_EX_LOG(" rtsp server init port = %u, init failed !!!", g_cfg.get_int32(ECI_RtspWanPort));
-			return false;
-		}
-		SYSTEM_LOG(" rtsp server init port = %u, init OK !!!", g_cfg.get_int32(ECI_RtspWanPort));
-		return true;
-	}
-	void crtsp_server::destroy()
+	class ctcp_server_handler : public ctcp_connection_handler::Listener
 	{
+	public:
+		/**
+		 * uvHandle must be an already initialized and binded uv_tcp_t pointer.
+		 */
+		ctcp_server_handler(uv_tcp_t* uvHandle, int backlog);
+		virtual ~ctcp_server_handler() override;
 
-		m_stoped = true;
-		if (m_tcp_server_ptr)
+	public:
+		void Close();
+		virtual void Dump() const;
+		const struct sockaddr* GetLocalAddress() const
 		{
-			delete m_tcp_server_ptr;
-			m_tcp_server_ptr = NULL;
+			return reinterpret_cast<const struct sockaddr*>(&this->localAddr);
 		}
-	}
-	bool crtsp_server::startup()
-	{
-		return true;
-	}
-	void crtsp_server::update(uint32 uDeltaTime)
-	{
-	}
-	void crtsp_server::shutdown()
-	{
-	}
-	void crtsp_server::OnTcpConnectionPacketReceived(ctcp_connection * connection, const uint8_t * data, size_t len)
-	{
-		int family;
-		std::string ip;
-		uint16_t port;
-		 uv_ip ::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
-		 NORMAL_EX_LOG("[ip = %s][port = %u][len = %u][data = %s]", ip.c_str(), port, len, data);
-	}
-	void crtsp_server::OnRtcTcpConnectionClosed(ctcp_server * tcpServer, ctcp_connection * connection)
-	{
-		int family;
-		std::string ip;
-		uint16_t port;
-		uv_ip::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
-		NORMAL_EX_LOG("[ip = %s][port = %u]", ip.c_str(), port);
-	}
+		int GetLocalFamily() const
+		{
+			return reinterpret_cast<const struct sockaddr*>(&this->localAddr)->sa_family;
+		}
+		const std::string& GetLocalIp() const
+		{
+			return this->localIp;
+		}
+		uint16_t GetLocalPort() const
+		{
+			return this->localPort;
+		}
+		size_t GetNumConnections() const
+		{
+			return this->connections.size();
+		}
+
+	protected:
+		void AcceptTcpConnection(ctcp_connection_handler* connection);
+
+	private:
+		bool SetLocalAddress();
+
+		/* Pure virtual methods that must be implemented by the subclass. */
+	protected:
+		virtual void UserOnTcpConnectionAlloc() = 0;
+		virtual void UserOnTcpConnectionClosed(ctcp_connection_handler* connection) = 0;
+
+		/* Callbacks fired by UV events. */
+	public:
+		void OnUvConnection(int status);
+
+		/* Methods inherited from TcpConnectionHandler::Listener. */
+	public:
+		void OnTcpConnectionClosed(ctcp_connection_handler* connection) override;
+
+	protected:
+		struct sockaddr_storage localAddr;
+		std::string localIp;
+		uint16_t localPort{ 0u };
+
+	private:
+		// Allocated by this (may be passed by argument).
+		uv_tcp_t* uvHandle{ nullptr };
+		// Others.
+		std::unordered_set<ctcp_connection_handler*> connections;
+		bool closed{ false };
+	public:
+	protected:
+	private:
+	};
+	
 }
+#endif // 

@@ -40,6 +40,7 @@ purpose:		cmedia_server
 #include "crtc_transport.h"
 #include "ctransport_mgr.h"
 #include "cglobal_rtc_port.h"
+#include "crtsp_server.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -139,6 +140,14 @@ namespace chen {
 		{
 			return false;
 		}
+
+
+		SYSTEM_LOG("rtsp init ...");
+		g_rtsp_server.init();
+
+		g_rtsp_server.startup();
+		SYSTEM_LOG("rtsp start OK !!!");
+
 		SYSTEM_LOG("timer init ...");
 		/*if (!ctimer::init())
 		{
@@ -206,6 +215,13 @@ namespace chen {
 		g_wan_server.shutdown();
 		g_wan_server.destroy();
 		SYSTEM_LOG("g_wan_server Destroy OK!!!");
+
+
+		SYSTEM_LOG("rtsp server Destroy ....");
+		g_rtsp_server.shutdown();
+		g_rtsp_server.destroy();
+		SYSTEM_LOG("rtsp server Destroy OK !!!");
+
 
 		uv_util::destroy();
 		SYSTEM_LOG("uv destroy OK !!!");

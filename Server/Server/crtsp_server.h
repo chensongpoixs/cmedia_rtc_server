@@ -32,21 +32,26 @@ purpose:		_C_DTLS_ _H_
 #include "crtc_sdp.h"
 #include "cmedia_desc.h"
 #include "cdtls_session.h"
+#include "ctcp_server.h"
+#include "ctcp_conection.h"
 namespace chen {
 
 
 
-	class crtsp_server
+	class crtsp_server : public ctcp_server::Listener , public ctcp_connection::Listener
 	{
 	public:
-		explicit crtsp_server();
-		virtual ~crtsp_server();
+		explicit crtsp_server() 
+			: m_tcp_server_ptr(NULL)
+			, m_stoped(false){}
+		virtual ~crtsp_server() override;
 
 	public:
 	public:
 		bool init();
 
 		void destroy();
+		
 	public:
 		bool startup();
 	public:
@@ -56,12 +61,22 @@ namespace chen {
 		//void on_connect(uint64_t session_id, const char* buf);
 		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
 		//void on_disconnect(uint64_t session_id);
+
+		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
+		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
 	public:
 		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
 	public:
 	protected:
 	private:
+
+
+		ctcp_server	*					m_tcp_server_ptr;
+		bool							m_stoped;
 	};
+
+
+	extern crtsp_server g_rtsp_server;
 }
 
 #endif // _C_RTSP_SERVER_H_

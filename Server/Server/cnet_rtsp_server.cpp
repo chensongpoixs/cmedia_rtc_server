@@ -21,68 +21,9 @@ purpose:		_C_DTLS_ _H_
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 
 ************************************************************************************************/
+#include "cnet_rtsp_server.h"
 
 
-#include "crtsp_server.h"
-#include "clog.h"
-#include "ccfg.h"
-#include "ctcp_server.h"
 namespace chen {
-	crtsp_server g_rtsp_server;
-	/*crtsp_server::crtsp_server()
-	{
-	}*/
-	crtsp_server::~crtsp_server()
-	{
-	}
-	bool crtsp_server::init()
-	{
 
-		m_stoped = false;
-		std::string rtsp_ip = g_cfg.get_string(ECI_RtspWanIp);
-		m_tcp_server_ptr = new ctcp_server(this, this, rtsp_ip, g_cfg.get_uint32(ECI_RtspWanPort));
-		if (!m_tcp_server_ptr)
-		{
-			WARNING_EX_LOG(" rtsp server init port = %u, init failed !!!", g_cfg.get_int32(ECI_RtspWanPort));
-			return false;
-		}
-		SYSTEM_LOG(" rtsp server init port = %u, init OK !!!", g_cfg.get_int32(ECI_RtspWanPort));
-		return true;
-	}
-	void crtsp_server::destroy()
-	{
-
-		m_stoped = true;
-		if (m_tcp_server_ptr)
-		{
-			delete m_tcp_server_ptr;
-			m_tcp_server_ptr = NULL;
-		}
-	}
-	bool crtsp_server::startup()
-	{
-		return true;
-	}
-	void crtsp_server::update(uint32 uDeltaTime)
-	{
-	}
-	void crtsp_server::shutdown()
-	{
-	}
-	void crtsp_server::OnTcpConnectionPacketReceived(ctcp_connection * connection, const uint8_t * data, size_t len)
-	{
-		int family;
-		std::string ip;
-		uint16_t port;
-		 uv_ip ::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
-		 NORMAL_EX_LOG("[ip = %s][port = %u][len = %u][data = %s]", ip.c_str(), port, len, data);
-	}
-	void crtsp_server::OnRtcTcpConnectionClosed(ctcp_server * tcpServer, ctcp_connection * connection)
-	{
-		int family;
-		std::string ip;
-		uint16_t port;
-		uv_ip::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
-		NORMAL_EX_LOG("[ip = %s][port = %u]", ip.c_str(), port);
-	}
 }

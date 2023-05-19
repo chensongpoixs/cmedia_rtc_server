@@ -185,6 +185,7 @@
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnetwork.cpp" />
     <ClCompile Include="cnet_adapter_test.cpp" />
+    <ClCompile Include="cnet_rtsp_server.cpp" />
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
     <ClCompile Include="cproducer.cpp" />
@@ -241,6 +242,10 @@
     <ClCompile Include="csrtp_session_test.cpp" />
     <ClCompile Include="csrtp_util.cpp" />
     <ClCompile Include="cstr2digit.cpp" />
+    <ClCompile Include="ctcp_conection.cpp" />
+    <ClCompile Include="ctcp_connection_handler.cpp" />
+    <ClCompile Include="ctcp_server.cpp" />
+    <ClCompile Include="ctcp_server_handler.cpp" />
     <ClCompile Include="ctime_util.cpp" />
     <ClCompile Include="ctransport_feedback.cc" />
     <ClCompile Include="ctransport_mgr.cpp" />
@@ -420,6 +425,7 @@
     <ClInclude Include="cnetwork.h" />
     <ClInclude Include="cnet_adapter_test.h" />
     <ClInclude Include="cnet_define.h" />
+    <ClInclude Include="cnet_rtsp_server.h" />
     <ClInclude Include="cntp_time.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
@@ -485,6 +491,10 @@
     <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="csrtp_util.h" />
     <ClInclude Include="cstr2digit.h" />
+    <ClInclude Include="ctcp_conection.h" />
+    <ClInclude Include="ctcp_connection_handler.h" />
+    <ClInclude Include="ctcp_server.h" />
+    <ClInclude Include="ctcp_server_handler.h" />
     <ClInclude Include="ctime_util.h" />
     <ClInclude Include="ctransport_feedback.h" />
     <ClInclude Include="ctransport_mgr.h" />
