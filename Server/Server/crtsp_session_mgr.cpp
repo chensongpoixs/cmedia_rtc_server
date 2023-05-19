@@ -1,9 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2022-08-12
+created: 		2023-05-11
 
 author:			chensong
 
-purpose:		cudp_socket_handler
+purpose:		_C_DTLS_ _H_
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -19,92 +19,41 @@ purpose:		cudp_socket_handler
 我叫他本心猎手。他可能是和宇宙同在的级别 但是我并不害怕，我仔细回忆自己平淡的一生 寻找本心猎手的痕迹。
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
+
 ************************************************************************************************/
+#include "crtsp_session_mgr.h"
 
-
-#ifndef _C_RCP_SERVER_HANDLER_H_
-#define _C_RCP_SERVER_HANDLER_H_
-
-#include "cnet_type.h"
-
-#include <uv.h>
-#include <functional>
-#include <cstring>
-#include <ws2def.h>
-#include <string>
-#include "ctcp_connection_handler.h"
-#include <unordered_set>
 
 namespace chen {
-
-	class ctcp_server_handler : public ctcp_connection_handler::Listener
+	/*crtsp_session_mgr::crtsp_session_mgr()
 	{
-	public:
-		/**
-		 * uvHandle must be an already initialized and binded uv_tcp_t pointer.
-		 */
-		ctcp_server_handler(uv_tcp_t* uvHandle, int backlog);
-		virtual ~ctcp_server_handler() override;
-
-	public:
-		void Close();
-		virtual void Dump() const;
-		const struct sockaddr* GetLocalAddress() const
+	}*/
+	crtsp_session_mgr g_rtsp_session_mgr;
+	crtsp_session_mgr::~crtsp_session_mgr()
+	{
+	}
+	crtsp_session * crtsp_session_mgr::find(ctcp_connection * connection_ptr)
+	{
+		std::unordered_map<ctcp_connection*, crtsp_session>::iterator iter =  m_rtsp_session_map.find(connection_ptr);
+		if (iter != m_rtsp_session_map.end())
 		{
-			return reinterpret_cast<const struct sockaddr*>(&this->localAddr);
+			return &iter->second;
 		}
-		int GetLocalFamily() const
+		WARNING_EX_LOG("not find --------  >>>>>>");
+		crtsp_session session;
+		//std::pair<iterator, bool>
+		std::pair<std::unordered_map<ctcp_connection*, crtsp_session>::iterator, bool> p =  m_rtsp_session_map.insert(std::make_pair(connection_ptr, session));
+		if (!p.second)
 		{
-			return reinterpret_cast<const struct sockaddr*>(&this->localAddr)->sa_family;
+			WARNING_EX_LOG("insert rtsp session map failed !!!");
+			return NULL;
 		}
-		const std::string& GetLocalIp() const
-		{
-			return this->localIp;
-		}
-		uint16_t GetLocalPort() const
-		{
-			return this->localPort;
-		}
-		size_t GetNumConnections() const
-		{
-			return this->connections.size();
-		}
-
-	protected:
-		void AcceptTcpConnection(ctcp_connection_handler* connection);
-
-	private:
-		bool SetLocalAddress();
-
-		/* Pure virtual methods that must be implemented by the subclass. */
-	protected:
-		virtual void UserOnTcpConnectionNew(ctcp_connection_handler* connection) = 0;
-		virtual void UserOnTcpConnectionAlloc() = 0;
-		virtual void UserOnTcpConnectionClosed(ctcp_connection_handler* connection) = 0;
-
-		/* Callbacks fired by UV events. */
-	public:
-		void OnUvConnection(int status);
-
-		/* Methods inherited from TcpConnectionHandler::Listener. */
-	public:
-		void OnTcpConnectionClosed(ctcp_connection_handler* connection) override;
-
-	protected:
-		struct sockaddr_storage localAddr;
-		std::string localIp;
-		uint16_t localPort{ 0u };
-
-	private:
-		// Allocated by this (may be passed by argument).
-		uv_tcp_t* uvHandle{ nullptr };
-		// Others.
-		std::unordered_set<ctcp_connection_handler*> connections;
-		bool closed{ false };
-	public:
-	protected:
-	private:
-	};
-	
+		NORMAL_EX_LOG("insert rtsp session map OK !!!");
+		//m_rtsp_session_map.erase();
+		return &p.first->second;
+	}
+	void crtsp_session_mgr::erase(ctcp_connection * connection_ptr)
+	{
+		/*std::size_type size =*/ m_rtsp_session_map.erase(connection_ptr);
+	}
 }
-#endif // 

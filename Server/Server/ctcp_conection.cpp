@@ -79,31 +79,32 @@ namespace chen {
 			// our listeners anymore.
 			if (IsClosed())
 				return;
-
+			
 			size_t dataLen = this->bufferDataLen - this->frameStart;
-			size_t packetLen;
+			NORMAL_EX_LOG("[buffer = %s][datalen  = %u]", buffer, dataLen);
+			//size_t packetLen;
 
-			if (dataLen >= 2)
-				packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
+			//if (dataLen >= 2)
+			//	packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
 
 			// We have packetLen bytes.
-			if (dataLen >= 2 && dataLen >= 2 + packetLen)
+			if ( dataLen >= 0  )
 			{
-				const uint8_t* packet = this->buffer + this->frameStart + 2;
+				const uint8_t* packet = this->buffer + this->frameStart;/* +2 */ ;
 
 				// Update received bytes and notify the listener.
-				if (packetLen != 0)
+				if (dataLen != 0)
 				{
 					// Copy the received packet into the static buffer so it can be expanded
 					// later.
-					std::memcpy(ReadBuffer, packet, packetLen);
+					std::memcpy(ReadBuffer, packet, dataLen);
 
-					this->listener->OnTcpConnectionPacketReceived(this, ReadBuffer, packetLen);
+					this->listener->OnTcpConnectionPacketReceived(this, ReadBuffer, dataLen);
 				}
 
 				// If there is no more space available in the buffer and that is because
 				// the latest parsed frame filled it, then empty the full buffer.
-				if ((this->frameStart + 2 + packetLen) == this->bufferSize)
+				if ((this->frameStart /*+ 2*/ + dataLen) == this->bufferSize)
 				{
 					NORMAL_EX_LOG("no more space in the buffer, emptying the buffer data");
 
@@ -114,7 +115,7 @@ namespace chen {
 				// frame to the next position after the parsed frame.
 				else
 				{
-					this->frameStart += 2 + packetLen;
+					this->frameStart +=/* 2 +*/ dataLen;
 				}
 
 				// If there is more data in the buffer after the parsed frame then
@@ -180,6 +181,6 @@ namespace chen {
 
 		uint8_t frameLen[2];
 		rtc_byte::set2bytes(frameLen, 0, len);
-		ctcp_connection_handler::Write(frameLen, 2, data, len, cb);
+		ctcp_connection_handler::Write(frameLen, 0, data, len, cb);
 	}
 }

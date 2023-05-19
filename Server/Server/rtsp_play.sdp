@@ -36,6 +36,7 @@ b=AS:500
 a=rtpmap:96 H264/90000
 a=fmtp:96 packetization-mode=1;profile-level-id=42C01F;sprop-parameter-sets=Z0LAH4yNQGQJvy/+AAgABgPCIRqA,aM48gA==
 a=control:track1
+
 SETUP rtsp://127.0.0.1/input.264/track1 RTSP/1.0
 Transport: RTP/AVP/UDP;unicast;client_port=33032-33033
 CSeq: 3

@@ -60,6 +60,11 @@ namespace chen {
 		}
 	}
 
+	void ctcp_server::UserOnTcpConnectionNew(ctcp_connection_handler * connection)
+	{
+		this->listener->OnRtcTcpConnectionNew(this, static_cast<ctcp_connection*>(connection));
+	}
+
 	void ctcp_server::UserOnTcpConnectionAlloc()
 	{
 		//MS_TRACE();

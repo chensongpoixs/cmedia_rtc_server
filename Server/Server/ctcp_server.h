@@ -41,8 +41,8 @@ namespace chen {
 			virtual ~Listener() = default;
 
 		public:
-			virtual void OnRtcTcpConnectionClosed(
-				ctcp_server* tcpServer, ctcp_connection* connection) = 0;
+			virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection) = 0;
+			virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection) = 0;
 		};
 
 	public:
@@ -52,6 +52,7 @@ namespace chen {
 
 		/* Pure virtual methods inherited from ::TcpServerHandler. */
 	public:
+		void UserOnTcpConnectionNew(ctcp_connection_handler* connection) override;
 		void UserOnTcpConnectionAlloc() override;
 		void UserOnTcpConnectionClosed( ctcp_connection_handler* connection) override;
 

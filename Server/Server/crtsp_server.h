@@ -61,7 +61,7 @@ namespace chen {
 		//void on_connect(uint64_t session_id, const char* buf);
 		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
 		//void on_disconnect(uint64_t session_id);
-
+		virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
 		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
 		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
 	public:

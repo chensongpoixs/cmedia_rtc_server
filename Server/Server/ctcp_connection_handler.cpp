@@ -314,7 +314,7 @@ namespace chen {
 			return;
 		}
 
-		if (len1 == 0 && len2 == 0)
+		if (/*len1 == 0 &&*/ len2 == 0)
 		{
 			if (cb)
 			{
@@ -333,9 +333,9 @@ namespace chen {
 		// First try uv_try_write(). In case it can not directly write all the given
 		// data then build a uv_req_t and use uv_write().
 
-		buffers[0] = uv_buf_init(reinterpret_cast<char*>(const_cast<uint8_t*>(data1)), len1);
-		buffers[1] = uv_buf_init(reinterpret_cast<char*>(const_cast<uint8_t*>(data2)), len2);
-		written = uv_try_write(reinterpret_cast<uv_stream_t*>(this->uvHandle), buffers, 2);
+		//buffers[0] = uv_buf_init(reinterpret_cast<char*>(const_cast<uint8_t*>(data1)), len1);
+		buffers[0] = uv_buf_init(reinterpret_cast<char*>(const_cast<uint8_t*>(data2)), len2);
+		written = uv_try_write(reinterpret_cast<uv_stream_t*>(this->uvHandle), buffers, 1);
 
 		// All the data was written. Done.
 		if (written == static_cast<int>(totalLen))

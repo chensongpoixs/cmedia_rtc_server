@@ -48,6 +48,7 @@ namespace chen {
 			virtual ~Listener() = default;
 
 		public:
+			//virtual void OnTcpConnectionNew(ctcp_connection_handler* connection) = 0;
 			virtual void OnTcpConnectionClosed(ctcp_connection_handler* connection) = 0;
 		};
 

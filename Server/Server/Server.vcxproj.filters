@@ -877,6 +877,9 @@
     <ClCompile Include="ctcp_conection.cpp">
       <Filter>uv_util</Filter>
     </ClCompile>
+    <ClCompile Include="crtsp_session_mgr.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1670,6 +1673,9 @@
     </ClInclude>
     <ClInclude Include="ctcp_conection.h">
       <Filter>uv_util</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp_session_mgr.h">
+      <Filter>rtsp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

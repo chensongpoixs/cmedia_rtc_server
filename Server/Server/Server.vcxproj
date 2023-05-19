@@ -229,6 +229,7 @@
     <ClCompile Include="crtp_stream_send.cpp" />
     <ClCompile Include="crtsp_server.cpp" />
     <ClCompile Include="crtsp_session.cpp" />
+    <ClCompile Include="crtsp_session_mgr.cpp" />
     <ClCompile Include="crtx_paylod_des.cpp" />
     <ClCompile Include="crtx_stream.cpp" />
     <ClCompile Include="csctp_association.cpp" />
@@ -476,6 +477,7 @@
     <ClInclude Include="crtsp_define.h" />
     <ClInclude Include="crtsp_server.h" />
     <ClInclude Include="crtsp_session.h" />
+    <ClInclude Include="crtsp_session_mgr.h" />
     <ClInclude Include="crtx_paylod_des.h" />
     <ClInclude Include="crtx_stream.h" />
     <ClInclude Include="csctp_association.h" />

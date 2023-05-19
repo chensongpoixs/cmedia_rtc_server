@@ -160,6 +160,8 @@ namespace chen {
 
 		// Store it.
 		this->connections.insert(connection);
+		//listener->OnTcpConnectionAccpet(connection);
+		UserOnTcpConnectionNew(connection);
 	}
 
 	bool ctcp_server_handler::SetLocalAddress()

@@ -27,6 +27,7 @@ purpose:		_C_DTLS_ _H_
 #include "clog.h"
 #include "ccfg.h"
 #include "ctcp_server.h"
+#include "crtsp_session_mgr.h"
 namespace chen {
 	crtsp_server g_rtsp_server;
 	/*crtsp_server::crtsp_server()
@@ -69,13 +70,24 @@ namespace chen {
 	void crtsp_server::shutdown()
 	{
 	}
+	void crtsp_server::OnRtcTcpConnectionNew(ctcp_server * tcpServer, ctcp_connection * connection)
+	{
+		int32 family;
+		std::string ip;
+		uint16_t port;
+		uv_ip::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
+		NORMAL_EX_LOG("New --> connect [ip = %s][port = %u] ", ip.c_str(), port );
+		crtsp_session*  session =  g_rtsp_session_mgr.find(connection);
+
+	}
 	void crtsp_server::OnTcpConnectionPacketReceived(ctcp_connection * connection, const uint8_t * data, size_t len)
 	{
-		int family;
+		int32 family;
 		std::string ip;
 		uint16_t port;
 		 uv_ip ::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
 		 NORMAL_EX_LOG("[ip = %s][port = %u][len = %u][data = %s]", ip.c_str(), port, len, data);
+		 crtsp_session*  session = g_rtsp_session_mgr.find(connection);
 	}
 	void crtsp_server::OnRtcTcpConnectionClosed(ctcp_server * tcpServer, ctcp_connection * connection)
 	{
@@ -83,6 +95,7 @@ namespace chen {
 		std::string ip;
 		uint16_t port;
 		uv_ip::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
-		NORMAL_EX_LOG("[ip = %s][port = %u]", ip.c_str(), port);
+		NORMAL_EX_LOG("desconnect[ip = %s][port = %u]", ip.c_str(), port);
+		  g_rtsp_session_mgr.erase(connection);
 	}
 }
