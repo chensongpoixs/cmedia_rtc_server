@@ -36,6 +36,9 @@ b=AS:500
 a=rtpmap:96 H264/90000
 a=fmtp:96 packetization-mode=1;profile-level-id=42C01F;sprop-parameter-sets=Z0LAH4yNQGQJvy/+AAgABgPCIRqA,aM48gA==
 a=control:track1
+
+
+
 SETUP rtsp://127.0.0.1/input.264/track1 RTSP/1.0
 Transport: RTP/AVP/UDP;unicast;client_port=33032-33033
 CSeq: 3
@@ -60,3 +63,32 @@ Range: npt=0.000-
 Session: 037B39CD
 RTP-Info: url=rtsp://127.0.0.1/input.264/track1;seq=64993;rtptime=1206173188
 
+
+
+
+##############################
+
+
+RTSP（Real Time Streaming Protocol）是一个基于客户端/服务器模型的应用层协议，用于控制实时流媒体的传输。它定义了一系列指令，包括：
+
+OPTIONS：查询服务器支持哪些请求方法和扩展。
+
+DESCRIBE：获取媒体资源的描述信息，包括编码格式、媒体类型、时长等。
+
+SETUP：初始化媒体流的传输参数，包括传输方式（UDP或TCP）、目标端口等。
+
+PLAY：开始播放媒体数据流。
+
+PAUSE：暂停播放媒体数据流。
+
+TEARDOWN：结束媒体流的传输。
+
+GET_PARAMETER：获取流媒体服务器的参数值。
+
+SET_PARAMETER：设置流媒体服务器的参数值。
+
+REDIRECT：重定向客户端到另一个流媒体服务器上。
+
+ANNOUNCE：发布流媒体内容的描述信息。
+
+RECORD：开始录制媒体数据流。
