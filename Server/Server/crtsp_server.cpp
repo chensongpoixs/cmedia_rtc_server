@@ -28,6 +28,8 @@ purpose:		_C_DTLS_ _H_
 #include "ccfg.h"
 #include "ctcp_server.h"
 #include "crtsp_session_mgr.h"
+#include "cparse_rtsp_request.h"
+#include "crtsp_cmd_dispatch.h"
 namespace chen {
 	crtsp_server g_rtsp_server;
 	/*crtsp_server::crtsp_server()
@@ -40,6 +42,13 @@ namespace chen {
 	{
 
 		m_stoped = false;
+		SYSTEM_LOG("rtsp cmd dis_patch init ...");
+		if (!g_rtsp_cmd_dispatch.init())
+		{
+			return false;
+		}
+
+
 		std::string rtsp_ip = g_cfg.get_string(ECI_RtspWanIp);
 		m_tcp_server_ptr = new ctcp_server(this, this, rtsp_ip, g_cfg.get_uint32(ECI_RtspWanPort));
 		if (!m_tcp_server_ptr)
@@ -59,6 +68,7 @@ namespace chen {
 			delete m_tcp_server_ptr;
 			m_tcp_server_ptr = NULL;
 		}
+		g_rtsp_cmd_dispatch.destroy();
 	}
 	bool crtsp_server::startup()
 	{
@@ -78,6 +88,7 @@ namespace chen {
 		uv_ip::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
 		NORMAL_EX_LOG("New --> connect [ip = %s][port = %u] ", ip.c_str(), port );
 		crtsp_session*  session =  g_rtsp_session_mgr.find(connection);
+		session->set_session(connection);
 
 	}
 	void crtsp_server::OnTcpConnectionPacketReceived(ctcp_connection * connection, const uint8_t * data, size_t len)
@@ -88,6 +99,23 @@ namespace chen {
 		 uv_ip ::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
 		 NORMAL_EX_LOG("[ip = %s][port = %u][len = %u][data = %s]", ip.c_str(), port, len, data);
 		 crtsp_session*  session = g_rtsp_session_mgr.find(connection);
+		 session->set_session(connection);
+		 crtsp_request  request;
+		 if (!request.parse((const char *)data, len))
+		 {
+			 WARNING_EX_LOG("rtsp parse request failed  data = %s", data);
+			 return;
+		 }
+		 crtsp_cmd_handler * cmd_handler =  g_rtsp_cmd_dispatch.get_msg_handler(request.get_cmd_name());
+		 if (!cmd_handler)
+		 {
+			 WARNING_EX_LOG("not find rtsp [cmd name = %s] failed !!!", request.get_cmd_name().c_str());
+			 return;
+		 }
+		 ++cmd_handler->handle_count;
+		 (session->*(cmd_handler->handler))(&request);
+
+
 	}
 	void crtsp_server::OnRtcTcpConnectionClosed(ctcp_server * tcpServer, ctcp_connection * connection)
 	{

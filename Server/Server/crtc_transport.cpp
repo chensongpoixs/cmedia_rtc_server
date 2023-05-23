@@ -1084,6 +1084,7 @@ namespace chen {
 				DEBUG_EX_LOG(" find cur dup socket Ok !!");
 			}
 		}*/
+		// TODO@chensong 2023-05-23 单线程 没有问题 多线程是有问题哈 ^_^
 		m_current_socket_ptr  = socket;
 		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
 		if (m_rtc_net_state == ERtcNetworkStateEstablished)

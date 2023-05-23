@@ -880,6 +880,12 @@
     <ClCompile Include="crtsp_session_mgr.cpp">
       <Filter>rtsp</Filter>
     </ClCompile>
+    <ClCompile Include="cparse_rtsp_request.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtsp_cmd_dispatch.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1675,6 +1681,12 @@
       <Filter>uv_util</Filter>
     </ClInclude>
     <ClInclude Include="crtsp_session_mgr.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="cparse_rtsp_request.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp_cmd_dispatch.h">
       <Filter>rtsp</Filter>
     </ClInclude>
   </ItemGroup>

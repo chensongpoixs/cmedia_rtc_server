@@ -26,6 +26,7 @@ purpose:		_C_DTLS_ _H_
 #include <sstream>
 #include "ctime_api.h"
 #include "crtsp_define.h"
+#include "ccfg.h"
 namespace chen {
 	 
 	crtsp_session::~crtsp_session()
@@ -34,46 +35,122 @@ namespace chen {
 	void crtsp_session::set_cseq(uint32 cseq)
 	{
 	}
-	void crtsp_session::handler_options()
+
+	void crtsp_session::set_session(ctcp_connection * session)
 	{
+		 // TODO@chensong 2023-05-23 单线程 没有问题 多线程是有问题哈 ^_^
+		//memcpy(m_session_ptr, session, sizeof(ctcp_connection));
+		m_session_ptr = session;
+	}
+
+	void crtsp_session::handler_options(crtsp_request* request)
+	{
+		NORMAL_EX_LOG("");
 		std::stringstream cmd;
 
 		cmd << "RTSP/1.0 200 OK" << kCRLF;
-		cmd << "CSeq: " << kCRLF;
+		cmd << "CSeq: " << request->get_cseq() << kCRLF;
 		cmd << crtsp_api::date_header();
 		cmd << "Public: %s" << RTSP_ALLOWED_COMMAND <<  kCRLF << kCRLF;
+		
+		_send_msg((const uint8*)cmd.str().c_str(), cmd.str().length());
 	}
 
-	void crtsp_session::handler_describe()
+	void crtsp_session::handler_describe(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
+		std::stringstream cmd;
+		cmd << "RTSP/1.0 200 OK" << kCRLF;
+		cmd << "CSeq: " << request->get_cseq() << kCRLF;
+		cmd << crtsp_api::date_header();
+
+		/*
+		Content-Base: rtsp://127.0.0.1/input.264/
+		Content-Type: application/sdp
+		Content-Length: 515
+		*/
+		cmd << "Content-Base: " << request->get_rtsp_url() << "/" << kCRLF;
+		cmd << "Content-Type: application/sdp" << kCRLF;
+		cmd << "Content-Length: " << kCRLF;
+
+
+		std::stringstream sdp_session;
+
+		sdp_session << "v=0" << kCRLF;
+		sdp_session << "o=- " << (this) << this << " 1 IN IP4 " << g_cfg.get_string(ECI_RtspWanIp) << kCRLF;
+		sdp_session << "s=H.264 Video, Media RTSP Server v1.0" << kCRLF;
+		sdp_session << "i=" << kCRLF;
+		sdp_session << "t=0 0" << kCRLF;
+		sdp_session << "a=tool: Media RTSP Server v1.0" << kCRLF;
+		sdp_session << "a=type:broadcast" << kCRLF;
+		sdp_session << "a=control:*" << kCRLF;
+		/*
+		 "v=0\r\n"
+		  "o=- %ld%06ld %d IN IP4 %s\r\n"
+		  "s=%s\r\n"
+		  "i=%s\r\n"
+		  "t=0 0\r\n"
+		  "a=tool: Media RTSP Server v1.0\r\n"
+		  "a=type:broadcast\r\n"
+		  "a=control:*\r\n"
+		  "%s"
+		  "%s"
+		  "a=x-qt-text-nam:%s\r\n"
+		  "a=x-qt-text-inf:%s\r\n"
+		  "%s";
+		
+		*/
+
+
+		_send_msg((const uint8*)cmd.str().c_str(), cmd.str().length());
 	}
 
-	void crtsp_session::handler_register()
+	void crtsp_session::handler_register(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
 	}
 
-	void crtsp_session::handler_setup()
+	void crtsp_session::handler_setup(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
 	}
 
-	void crtsp_session::handler_teardown()
+	void crtsp_session::handler_teardown(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
 	}
 
-	void crtsp_session::handler_play()
+	void crtsp_session::handler_play(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
 	}
 
-	void crtsp_session::handler_pause()
+	void crtsp_session::handler_pause(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
 	}
 
 
 
-	void crtsp_session::handler_get_parameter()
+	void crtsp_session::handler_get_parameter(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
 	}
-	void crtsp_session::handler_set_parameter()
+	void crtsp_session::handler_set_parameter(crtsp_request* request)
 	{
+		NORMAL_EX_LOG("");
 	}
+
+	bool crtsp_session::_send_msg(const uint8 * data, size_t len)
+	{
+		if (!m_session_ptr)
+		{
+			WARNING_EX_LOG(" session_ptr == NULL !!!");
+			return false;
+		}
+		NORMAL_EX_LOG("[data = %s]", data);
+		  m_session_ptr->Send(data, len, NULL);
+		  return true;
+	}
+
 }

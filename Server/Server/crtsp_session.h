@@ -32,6 +32,8 @@ purpose:		_C_DTLS_ _H_
 #include "crtc_sdp.h"
 #include "cmedia_desc.h"
 #include "cdtls_session.h"
+#include "cparse_rtsp_request.h"
+#include <ctcp_conection.h>
 namespace chen {
 	
 
@@ -39,30 +41,37 @@ namespace chen {
 	{
 	public:
 		explicit crtsp_session()
-			: m_cseq(0){}
+			: m_cseq(0)
+			, m_session_ptr(NULL){}
 		virtual ~crtsp_session();
 
 	public:
 		void set_cseq(uint32 cseq);
+
+		void set_session(ctcp_connection * session);
 	public:
 
 		// cmd --> OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER
-		void handler_options();
+		void handler_options(crtsp_request* request );
 		
-		void handler_describe();
-		void handler_register();
-		void handler_setup();
-		void handler_teardown();
-		void handler_play();
-		void handler_pause();
+		void handler_describe(crtsp_request* request);
 		
-		void handler_get_parameter();
-		void handler_set_parameter();
+		void handler_setup(crtsp_request* request);
+		void handler_register(crtsp_request* request);
+		void handler_teardown(crtsp_request* request);
+		void handler_play(crtsp_request* request);
+		void handler_pause(crtsp_request* request);
+		
+		void handler_get_parameter(crtsp_request* request);
+		void handler_set_parameter(crtsp_request* request);
 
 
 	protected:
 	private:
-		uint32			m_cseq;
+		bool _send_msg(const  uint8 * data, size_t len);
+	private:
+		uint32					m_cseq;
+		ctcp_connection *		m_session_ptr;
 	};
 }
 #endif // _C_RTSP_SESSION_H_

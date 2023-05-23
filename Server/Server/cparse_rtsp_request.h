@@ -25,6 +25,7 @@ purpose:		_C_DTLS_ _H_
 #ifndef _C_PARSE_RTSP_REQUEST_H_
 #define _C_PARSE_RTSP_REQUEST_H_
 #include "cnet_type.h"
+#include <vector>
 //#include ""
 namespace chen {
 
@@ -42,12 +43,15 @@ namespace chen {
 			: m_cmd_name("")
 			, m_rtsp_url("")
 			, m_cseq(0)
-			, m_user_agent(0)
+			, m_user_agent("")
 			, m_range(0)
 			, m_session_name("")
 		, m_transport_vec(){}
 		~crtsp_request();
 		bool parse(const char * req, uint32 req_size);
+		const std::string & get_cmd_name() const { return m_cmd_name; }
+		const std::string & get_rtsp_url() const { return m_rtsp_url; }
+		uint32 get_cseq() const { return m_cseq; }
 	protected:
 	private:
 

@@ -188,6 +188,7 @@
     <ClCompile Include="cnet_rtsp_server.cpp" />
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
+    <ClCompile Include="cparse_rtsp_request.cpp" />
     <ClCompile Include="cproducer.cpp" />
     <ClCompile Include="cremote_estimator_proxy.cpp" />
     <ClCompile Include="creport_block.cpp" />
@@ -227,6 +228,7 @@
     <ClCompile Include="crtp_stream.cpp" />
     <ClCompile Include="crtp_stream_recv.cpp" />
     <ClCompile Include="crtp_stream_send.cpp" />
+    <ClCompile Include="crtsp_cmd_dispatch.cpp" />
     <ClCompile Include="crtsp_server.cpp" />
     <ClCompile Include="crtsp_session.cpp" />
     <ClCompile Include="crtsp_session_mgr.cpp" />
@@ -431,6 +433,7 @@
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
     <ClInclude Include="cortc.h" />
+    <ClInclude Include="cparse_rtsp_request.h" />
     <ClInclude Include="cproducer.h" />
     <ClInclude Include="cremote_estimator_proxy.h" />
     <ClInclude Include="creport_block.h" />
@@ -474,6 +477,7 @@
     <ClInclude Include="crtp_stream_define.h" />
     <ClInclude Include="crtp_stream_recv.h" />
     <ClInclude Include="crtp_stream_send.h" />
+    <ClInclude Include="crtsp_cmd_dispatch.h" />
     <ClInclude Include="crtsp_define.h" />
     <ClInclude Include="crtsp_server.h" />
     <ClInclude Include="crtsp_session.h" />

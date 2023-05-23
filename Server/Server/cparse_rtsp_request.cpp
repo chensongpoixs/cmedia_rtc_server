@@ -73,7 +73,7 @@ namespace chen {
 
 	crtsp_request::~crtsp_request()
 	{
-
+		m_transport_vec.clear();
 	}
 
 	bool crtsp_request::parse(const char * req, uint32 req_size)
@@ -148,6 +148,7 @@ namespace chen {
 			{
 				WARNING_EX_LOG("key --> value [line = %s]", line.c_str());
 			}
+			return true;
 		}
 	}
 
