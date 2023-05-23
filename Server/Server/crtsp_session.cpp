@@ -51,7 +51,7 @@ namespace chen {
 		cmd << "RTSP/1.0 200 OK" << kCRLF;
 		cmd << "CSeq: " << request->get_cseq() << kCRLF;
 		cmd << crtsp_api::date_header();
-		cmd << "Public: %s" << RTSP_ALLOWED_COMMAND <<  kCRLF << kCRLF;
+		cmd << "Public: " << RTSP_ALLOWED_COMMAND <<  kCRLF << kCRLF;
 		
 		_send_msg((const uint8*)cmd.str().c_str(), cmd.str().length());
 	}
@@ -84,6 +84,7 @@ namespace chen {
 		sdp_session << "a=tool: Media RTSP Server v1.0" << kCRLF;
 		sdp_session << "a=type:broadcast" << kCRLF;
 		sdp_session << "a=control:*" << kCRLF;
+		NORMAL_EX_LOG(" sdp_session = %s", sdp_session.str().c_str());
 		/*
 		 "v=0\r\n"
 		  "o=- %ld%06ld %d IN IP4 %s\r\n"
