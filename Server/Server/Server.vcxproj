@@ -154,6 +154,7 @@
     <ClCompile Include="capi_rtc_publish.cpp" />
     <ClCompile Include="casync_log.cpp" />
     <ClCompile Include="caudio_payload.cpp" />
+    <ClCompile Include="cav1.cpp" />
     <ClCompile Include="cbuffer.cpp" />
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cclient_msg_dispatch.cpp" />
@@ -388,6 +389,7 @@
     <ClInclude Include="carray_view.h" />
     <ClInclude Include="casync_log.h" />
     <ClInclude Include="caudio_payload.h" />
+    <ClInclude Include="cav1.h" />
     <ClInclude Include="cbuffer.h" />
     <ClInclude Include="cbyte_io.h" />
     <ClInclude Include="cbyte_order.h" />

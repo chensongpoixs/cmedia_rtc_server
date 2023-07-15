@@ -886,6 +886,9 @@
     <ClCompile Include="crtsp_cmd_dispatch.cpp">
       <Filter>rtsp</Filter>
     </ClCompile>
+    <ClCompile Include="cav1.cpp">
+      <Filter>codec</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1688,6 +1691,9 @@
     </ClInclude>
     <ClInclude Include="crtsp_cmd_dispatch.h">
       <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="cav1.h">
+      <Filter>codec</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
