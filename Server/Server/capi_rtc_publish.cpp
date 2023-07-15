@@ -349,44 +349,197 @@ namespace chen {
 					break;
 				}
 			}
-			//else if (remote_media_desc.is_video() && ruc->codec_ == "av1") {
-			//	std::vector<SrsMediaPayloadType> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
-			//	if (payloads.empty()) {
-			//		// Be compatible with the Chrome M96, still check the AV1X encoding name
-			//		// @see https://bugs.chromium.org/p/webrtc/issues/detail?id=13166
-			//		payloads = remote_media_desc.find_media_with_encoding_name("AV1X");
-			//	}
-			//	if (payloads.empty()) {
-			//		return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid AV1 payload type");
-			//	}
+			else if (remote_media_desc.is_video() && /*ruc->codec_*/ "av1" == "av1") 
+			{
+				if (true)
+				{
+					for (std::map<int32, std::string>::iterator iter = extmaps.begin(); iter != extmaps.end(); ++iter)
+					{
+						if (iter->second == RtpExtension_kTimestampOffsetUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first /*get_rtp_header_extension_uri_type(RtpExtension_kTimestampOffsetUri)*/, RtpExtension_kTimestampOffsetUri);
 
-			//	for (int j = 0; j < (int)payloads.size(); j++) {
-			//		const SrsMediaPayloadType& payload = payloads.at(j);
+						}
+						else if (iter->second == RtpExtension_kVideoRotationUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kVideoRotationUri);
 
-			//		// Generate video payload for av1.
-			//		SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
+						}
+						else if (iter->second == RtpExtension_kRidUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kRidUri);
 
-			//		// TODO: FIXME: Only support some transport algorithms.
-			//		for (int k = 0; k < (int)payload.rtcp_fb_.size(); ++k) {
-			//			const string& rtcp_fb = payload.rtcp_fb_.at(k);
+						}
+						else if (iter->second == RtpExtension_kRepairedRidUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
 
-			//			if (nack_enabled) {
-			//				if (rtcp_fb == "nack" || rtcp_fb == "nack pli") {
-			//					video_payload->rtcp_fbs_.push_back(rtcp_fb);
-			//				}
-			//			}
-			//			if (twcc_enabled && remote_twcc_id) {
-			//				if (rtcp_fb == "transport-cc") {
-			//					video_payload->rtcp_fbs_.push_back(rtcp_fb);
-			//				}
-			//			}
-			//		}
+						}
+						/*else if (iter->second == RtpExtension_kFrameMarkingUri)
+						{
+							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kFrameMarkingUri);
+						}*/
+						/*else if (iter->second == RtpExtension_kRepairedRidUri)
+						{
+							track_desc.add_rtp_extension_desc(get_rtp_header_extension_uri_type(RtpExtension_kRepairedRidUri), RtpExtension_kRepairedRidUri);
 
-			//		track_desc->type_ = "video";
-			//		track_desc->set_codec_payload((SrsCodecPayload*)video_payload);
-			//		break;
-			//	}
-			//}
+						}*/
+					}
+
+
+
+				}
+				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
+				if (payloads.empty())
+				{
+					WARNING_EX_LOG("no found valid AV1 payload type");
+					//return false;
+					//return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid H.264 payload type");
+							//	// Be compatible with the Chrome M96, still check the AV1X encoding name
+					//	// @see https://bugs.chromium.org/p/webrtc/issues/detail?id=13166
+					payloads = remote_media_desc.find_media_with_encoding_name("AV1X");
+				}
+				if (payloads.empty())
+				{
+					WARNING_EX_LOG("no found valid [AV1 and AV1X] payload type");
+				}
+				 
+
+				std::vector<cmedia_payload_type> rtx_payloads = remote_media_desc.find_media_with_encoding_name("rtx");
+				std::vector<cmedia_payload_type> ulpfec_payloads = remote_media_desc.find_media_with_encoding_name("ulpfec");
+				int32 video_payload_type = 0;
+				std::deque<cmedia_payload_type> backup_payloads;
+				for (int32 j = 0; j < (int32)payloads.size(); j++)
+				{
+					const cmedia_payload_type& payload = payloads.at(j);
+
+					cvideo_payload * video_payload = new cvideo_payload(/*kVideoPayloadType*/payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate);
+
+					// TODO: FIXME: Only support some transport algorithms.
+					for (int32 k = 0; k < (int32)payload.m_rtcp_fb.size(); ++k)
+					{
+						const std::string& rtcp_fb = payload.m_rtcp_fb.at(k);
+
+						if (nack_enabled)
+						{
+							if (rtcp_fb == "nack" || rtcp_fb == "nack pli")
+							{
+								video_payload->m_rtcp_fbs.push_back(rtcp_fb);
+							}
+						}
+						if (twcc_enabled && remote_twcc_id)
+						{
+							if (rtcp_fb == "transport-cc")
+							{
+								video_payload->m_rtcp_fbs.push_back(rtcp_fb);
+							}
+						}
+					}
+					video_payload_type = video_payload->m_pt;
+					track_desc.m_type = "video";
+					track_desc.set_codec_payload(video_payload);
+					//crtx_payload_des * rtx_video_payload = new crtx_payload_des( kRtxVideoPayloadType, kVideoPayloadType);
+
+					//track_desc.m_rtx_ptr = (rtx_video_payload);
+					for (size_t rtx_i = 0; rtx_i < rtx_payloads.size(); ++rtx_i)
+					{
+						if (rtx_payloads[rtx_i].m_payload_type == payload.m_rtx)
+						{
+							crtx_payload_des * rtx_video_payload = new crtx_payload_des(rtx_payloads[rtx_i].m_payload_type, payload.m_payload_type);
+							//SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
+							//video_payload->set_h264_param_desc(payload.m_format_specific_param);
+
+							track_desc.m_rtx_ptr = (rtx_video_payload);
+							break;
+						}
+					}
+					/*if (!ulpfec_payloads.empty())
+					{
+						track_desc.m_ulpfec_ptr = new ccodec_payload(ulpfec_payloads[0].m_payload_type, "ulpfec", ulpfec_payloads[0].m_clock_rate );
+					}*/
+					// Only choose first match H.264 payload type.
+					 
+
+					 
+
+					backup_payloads.push_back(payload);
+					break;
+				}
+
+				// Try my best to pick at least one media payload type.
+				if (!track_desc.m_media_ptr && !backup_payloads.empty())
+				{
+					const cmedia_payload_type& payload = backup_payloads.front();
+
+					// if the playload is opus, and the encoding_param_ is channel
+					cvideo_payload *  video_payload = new cvideo_payload(payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate);
+
+					//SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
+
+					// TODO: FIXME: Only support some transport algorithms.
+					for (int k = 0; k < (int)payload.m_rtcp_fb.size(); ++k)
+					{
+						const std::string& rtcp_fb = payload.m_rtcp_fb.at(k);
+
+						if (nack_enabled)
+						{
+							if (rtcp_fb == "nack" || rtcp_fb == "nack pli")
+							{
+								video_payload->m_rtcp_fbs.push_back(rtcp_fb);
+							}
+						}
+
+						if (twcc_enabled && remote_twcc_id)
+						{
+							if (rtcp_fb == "transport-cc")
+							{
+								video_payload->m_rtcp_fbs.push_back(rtcp_fb);
+							}
+						}
+					}
+
+					track_desc.m_type = "video";
+					track_desc.set_codec_payload(video_payload);
+					NORMAL_EX_LOG("choose backup AV1 payload type=%d", payload.m_payload_type);
+				}
+				//std::vector<SrsMediaPayloadType> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
+				//if (payloads.empty())
+				//{
+				//	// Be compatible with the Chrome M96, still check the AV1X encoding name
+				//	// @see https://bugs.chromium.org/p/webrtc/issues/detail?id=13166
+				//	payloads = remote_media_desc.find_media_with_encoding_name("AV1X");
+				//}
+				//if (payloads.empty()) {
+				//	return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid AV1 payload type");
+				//}
+
+				//for (int j = 0; j < (int)payloads.size(); j++) {
+				//	const SrsMediaPayloadType& payload = payloads.at(j);
+
+				//	// Generate video payload for av1.
+				//	SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
+
+				//	// TODO: FIXME: Only support some transport algorithms.
+				//	for (int k = 0; k < (int)payload.rtcp_fb_.size(); ++k) {
+				//		const string& rtcp_fb = payload.rtcp_fb_.at(k);
+
+				//		if (nack_enabled) {
+				//			if (rtcp_fb == "nack" || rtcp_fb == "nack pli") {
+				//				video_payload->rtcp_fbs_.push_back(rtcp_fb);
+				//			}
+				//		}
+				//		if (twcc_enabled && remote_twcc_id) {
+				//			if (rtcp_fb == "transport-cc") {
+				//				video_payload->rtcp_fbs_.push_back(rtcp_fb);
+				//			}
+				//		}
+				//	}
+
+				//	track_desc->type_ = "video";
+				//	track_desc->set_codec_payload((SrsCodecPayload*)video_payload);
+				//	break;
+				//}
+			}
 			else if (remote_media_desc.is_video())
 			{
 				if (true)
