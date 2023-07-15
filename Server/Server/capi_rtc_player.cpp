@@ -104,11 +104,11 @@ namespace chen {
 			video_track_desc->m_ssrc = video_ssrc;
 			video_track_desc->m_direction = "sendonly";
 
-			cvideo_payload* video_payload = new cvideo_payload(kVideoPayloadType, "H264", kVideoSamplerate);
+			cvideo_payload* video_payload = new cvideo_payload(kVideoPayloadType, "AV1", kVideoSamplerate);
 			video_track_desc->m_media_ptr = video_payload;
 
-			video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
-			video_payload->set_bitrate_param_desc("x-google-max-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMaxBitrate))+";x-google-min-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMinBitrate))+";x-google-start-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcStartBitrate)));
+			//video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
+			//video_payload->set_bitrate_param_desc("x-google-max-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMaxBitrate))+";x-google-min-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMinBitrate))+";x-google-start-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcStartBitrate)));
 			crtx_payload_des *rtx_video_payload = new crtx_payload_des(kRtxVideoPayloadType, kVideoPayloadType);
 			video_track_desc->m_rtx_ptr = rtx_video_payload;
 			video_track_desc->m_rtx_ssrc = rtc_ssrc_info_ptr->m_rtx_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
@@ -410,25 +410,31 @@ namespace chen {
 				//	track_descs.push_back(track_desc.copy());
 				//}
 			}
-			//else if (remote_media_desc.is_video() && ruc->codec_ == "av1") {
-			//	std::vector<SrsMediaPayloadType> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
-			//	if (payloads.empty()) {
-			//		// Be compatible with the Chrome M96, still check the AV1X encoding name
-			//		// @see https://bugs.chromium.org/p/webrtc/issues/detail?id=13166
-			//		payloads = remote_media_desc.find_media_with_encoding_name("AV1X");
-			//	}
-			//	if (payloads.empty()) {
-			//		return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid AV1 payload type");
-			//	}
+			else if (remote_media_desc.is_video() && "av1" == "av1") {
+				//std::vector<SrsMediaPayloadType> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
+				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
 
-			//	remote_payload = payloads.at(0);
-			//	track_descs = source->get_track_desc("video", "AV1");
-			//	if (track_descs.empty()) {
-			//		// Be compatible with the Chrome M96, still check the AV1X encoding name
-			//		// @see https://bugs.chromium.org/p/webrtc/issues/detail?id=13166
-			//		track_descs = source->get_track_desc("video", "AV1X");
-			//	}
-			//}
+				if (payloads.empty()) {
+					// Be compatible with the Chrome M96, still check the AV1X encoding name
+					// @see https://bugs.chromium.org/p/webrtc/issues/detail?id=13166
+					payloads = remote_media_desc.find_media_with_encoding_name("AV1X");
+				}
+				if (payloads.empty())
+				{
+					WARNING_EX_LOG("no valid found AV1 and AV1X payload type");
+					return false;
+					//return srs_error_new(ERROR_RTC_SDP_EXCHANGE, "no found valid AV1 payload type");
+				}
+
+				remote_payload = payloads.at(0);
+				track_descs = _get_track_desc(stream_desc, "video", "AV1");
+				//track_descs = source->get_track_desc("video", "AV1");
+				//if (track_descs.empty()) {
+				//	// Be compatible with the Chrome M96, still check the AV1X encoding name
+				//	// @see https://bugs.chromium.org/p/webrtc/issues/detail?id=13166
+				//	track_descs = source->get_track_desc("video", "AV1X");
+				//}
+			}
 			else if (remote_media_desc.is_video()) {
 				// TODO: check opus format specific param
 				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("H264");

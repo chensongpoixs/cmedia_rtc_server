@@ -29,6 +29,7 @@ Copyright boost
 #include "crtp_stream_define.h"
 #include "crtp_stream.h"
 #include "cbuffer.h"
+#include "cav1.h"
 #include "H264.hpp"
 #include "FeedbackRtpNack.hpp"
  #include "crtc_producer.h"
@@ -110,7 +111,8 @@ namespace chen {
 		}
 		if (m_params.type == "video")
 		{
-			RTC::Codecs::H264::ProcessRtpPacket(packet);
+			cav1::ProcessRtpPacket(packet);
+			//RTC::Codecs::H264::ProcessRtpPacket(packet);
 		}
 		// Process the packet at codec level.
 		//if (packet->GetPayloadType() == GetPayloadType())
@@ -227,7 +229,8 @@ namespace chen {
 		// Process the packet at codec level.
 		if (m_params.type == "video")
 		{
-			RTC::Codecs::H264::ProcessRtpPacket(packet);
+			//RTC::Codecs::H264::ProcessRtpPacket(packet);
+			cav1::ProcessRtpPacket(packet);
 		}
 
 		// Mark the packet as retransmitted.
