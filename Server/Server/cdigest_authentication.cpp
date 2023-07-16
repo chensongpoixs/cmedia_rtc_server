@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************
-created: 		2023-05-11
+created: 		2023-07-16
 
 author:			chensong
 
@@ -21,77 +21,24 @@ purpose:		_C_DTLS_ _H_
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 
 ************************************************************************************************/
-
-#ifndef _C_RTSP_SERVER_H_
-#define _C_RTSP_SERVER_H_
-#include "cnet_type.h"
-#include <sstream>
-#include <iostream>
-#include <vector>
-#include <map>
-#include "crtc_sdp.h"
-#include "cmedia_desc.h"
-#include "cdtls_session.h"
-#include "ctcp_server.h"
-#include "ctcp_conection.h"
-#include "cmedia_session.h"
-#include "crtsp.h"
+#include "cdigest_authentication.h"
+#include "cmd5.h"
 namespace chen {
 
 
 
-	class crtsp_server : public crtsp,  public ctcp_server::Listener , public ctcp_connection::Listener
+
+	std::string cdigest_authentication::GetNonce()
 	{
-	public:
-		explicit crtsp_server() 
-			: crtsp()
-			, m_tcp_server_ptr(NULL)
-			, m_stoped(false){}
-		virtual ~crtsp_server() override;
+		return md5::generate_nonce();
+	}
 
-	public:
-	public:
-		bool init();
+	std::string cdigest_authentication::GetResponse(std::string nonce, std::string cmd, std::string url)
+	{
+		std::string hex1 = md5::md5_hash_hex(username_ + ":" + realm_ + ":" + password_);
+		std::string hex2 = md5::md5_hash_hex(cmd + ":" + url);
+		std::string response = md5::md5_hash_hex(hex1 + ":" + nonce + ":" + hex2);
+		return response;
+	}
 
-		void destroy();
-		
-	public:
-		bool startup();
-	public:
-		void update(uint32 uDeltaTime);
-		void shutdown();
-	public:
-		//void on_connect(uint64_t session_id, const char* buf);
-		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
-		//void on_disconnect(uint64_t session_id);
-		virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
-		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
-		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
-	public:
-
-	public:
-
-		uint32 add_session(cmedia_session*session);
-		void remove_session(uint32 session_id);
-		bool push_frame(uint32 session_id, MediaChannelId channel_id, AVFrame frame);
-		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
-	public:
-		virtual cmedia_session* find_media_session(const std::string & suffix); //{ return NULL; }
-		virtual cmedia_session* find_media_session(uint32 session_id);// { return NULL; }
-	public:
-	protected:
-	private:
-
-
-		ctcp_server	*					m_tcp_server_ptr;
-		bool							m_stoped;
-
-		std::unordered_map<uint32, cmedia_session*>   m_media_sessions;
-		std::unordered_map<std::string, uint32>     m_rtsp_suffix_map;
-	};
-
-
-	extern crtsp_server g_rtsp_server;
 }
-
-#endif // _C_RTSP_SERVER_H_

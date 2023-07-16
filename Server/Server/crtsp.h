@@ -22,76 +22,101 @@ purpose:		_C_DTLS_ _H_
 
 ************************************************************************************************/
 
-#ifndef _C_RTSP_SERVER_H_
-#define _C_RTSP_SERVER_H_
+#ifndef _C_RTSP_H_
+#define _C_RTSP_H_
 #include "cnet_type.h"
-#include <sstream>
-#include <iostream>
 #include <vector>
-#include <map>
-#include "crtc_sdp.h"
-#include "cmedia_desc.h"
-#include "cdtls_session.h"
-#include "ctcp_server.h"
-#include "ctcp_conection.h"
+#include "cmedia_type.h"
+#include "crtp.h"
 #include "cmedia_session.h"
-#include "crtsp.h"
+#include <random>
+//#include ""
 namespace chen {
-
-
-
-	class crtsp_server : public crtsp,  public ctcp_server::Listener , public ctcp_connection::Listener
+	struct RtspUrlInfo
 	{
-	public:
-		explicit crtsp_server() 
-			: crtsp()
-			, m_tcp_server_ptr(NULL)
-			, m_stoped(false){}
-		virtual ~crtsp_server() override;
-
-	public:
-	public:
-		bool init();
-
-		void destroy();
-		
-	public:
-		bool startup();
-	public:
-		void update(uint32 uDeltaTime);
-		void shutdown();
-	public:
-		//void on_connect(uint64_t session_id, const char* buf);
-		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
-		//void on_disconnect(uint64_t session_id);
-		virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
-		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
-		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
-	public:
-
-	public:
-
-		uint32 add_session(cmedia_session*session);
-		void remove_session(uint32 session_id);
-		bool push_frame(uint32 session_id, MediaChannelId channel_id, AVFrame frame);
-		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
-	public:
-		virtual cmedia_session* find_media_session(const std::string & suffix); //{ return NULL; }
-		virtual cmedia_session* find_media_session(uint32 session_id);// { return NULL; }
-	public:
-	protected:
-	private:
-
-
-		ctcp_server	*					m_tcp_server_ptr;
-		bool							m_stoped;
-
-		std::unordered_map<uint32, cmedia_session*>   m_media_sessions;
-		std::unordered_map<std::string, uint32>     m_rtsp_suffix_map;
+		std::string url;
+		std::string ip;
+		uint16_t port;
+		std::string suffix;
 	};
 
+	class crtsp
+	{
+	public:
+		crtsp() : has_auth_info_(false) {}
+		virtual ~crtsp() {}
 
-	extern crtsp_server g_rtsp_server;
+		virtual void SetAuthConfig(std::string realm, std::string username, std::string password)
+		{
+			realm_ = realm;
+			username_ = username;
+			password_ = password;
+			has_auth_info_ = true;
+
+			if (realm_ == "" || username == "") {
+				has_auth_info_ = false;
+			}
+		}
+
+		virtual void SetVersion(std::string version) // SDP Session Name
+		{
+			version_ = std::move(version);
+		}
+
+		virtual std::string GetVersion()
+		{
+			return version_;
+		}
+
+		virtual std::string GetRtspUrl()
+		{
+			return rtsp_url_info_.url;
+		}
+
+		bool ParseRtspUrl(std::string url)
+		{
+			char ip[100] = { 0 };
+			char suffix[100] = { 0 };
+			uint16_t port = 0;
+#if defined(__linux) || defined(__linux__)
+			if (sscanf(url.c_str() + 7, "%[^:]:%hu/%s", ip, &port, suffix) == 3)
+#elif defined(WIN32) || defined(_WIN32)
+			if (sscanf_s(url.c_str() + 7, "%[^:]:%hu/%s", ip, 100, &port, suffix, 100) == 3)
+#endif
+			{
+				rtsp_url_info_.port = port;
+			}
+#if defined(__linux) || defined(__linux__)
+			else if (sscanf(url.c_str() + 7, "%[^/]/%s", ip, suffix) == 2)
+#elif defined(WIN32) || defined(_WIN32)
+			else if (sscanf_s(url.c_str() + 7, "%[^/]/%s", ip, 100, suffix, 100) == 2)
+#endif
+			{
+				rtsp_url_info_.port = 554;
+			}
+			else
+			{
+				//LOG("%s was illegal.\n", url.c_str());
+				return false;
+			}
+
+			rtsp_url_info_.ip = ip;
+			rtsp_url_info_.suffix = suffix;
+			rtsp_url_info_.url = url;
+			return true;
+		}
+	public:
+		virtual cmedia_session* find_media_session(const std::string & suffix) { return NULL; }
+		virtual cmedia_session* find_media_session(uint32 session_id) { return NULL; }
+	protected:
+		bool has_auth_info_ = false;
+		std::string realm_;
+		std::string username_;
+		std::string password_;
+		std::string version_;
+		struct RtspUrlInfo rtsp_url_info_;
+	private:
+	};
 }
 
-#endif // _C_RTSP_SERVER_H_
+#endif //_C_RTSP_H_

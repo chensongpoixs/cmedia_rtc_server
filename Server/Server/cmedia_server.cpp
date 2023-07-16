@@ -41,6 +41,7 @@ purpose:		cmedia_server
 #include "ctransport_mgr.h"
 #include "cglobal_rtc_port.h"
 #include "crtsp_server.h"
+#include "cglobal_rtsp.h"
 namespace chen {
 	cmedia_server g_media_server;
 
@@ -144,7 +145,10 @@ namespace chen {
 
 		SYSTEM_LOG("rtsp init ...");
 		g_rtsp_server.init();
-
+#ifdef AUTH_CONFIG
+		g_rtsp_server.SetAuthConfig("-_-", "admin", "12345");
+#endif
+		init_rtsp_global();
 		g_rtsp_server.startup();
 		SYSTEM_LOG("rtsp start OK !!!");
 

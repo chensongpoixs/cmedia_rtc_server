@@ -156,6 +156,7 @@
     <ClCompile Include="caudio_payload.cpp" />
     <ClCompile Include="cav1.cpp" />
     <ClCompile Include="cbuffer.cpp" />
+    <ClCompile Include="cbuffer_reader.cpp" />
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cclient_msg_dispatch.cpp" />
     <ClCompile Include="ccodec_payload.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="cconsumer.cpp" />
     <ClCompile Include="ccrc32.cpp" />
     <ClCompile Include="ccrypto_random.cpp" />
+    <ClCompile Include="cdigest_authentication.cpp" />
     <ClCompile Include="cdigit2str.cpp" />
     <ClCompile Include="cdtls.cpp" />
     <ClCompile Include="cdtls_certificate.cpp" />
@@ -174,7 +176,10 @@
     <ClCompile Include="cglobal_rtc.cpp" />
     <ClCompile Include="cglobal_rtc_config.cpp" />
     <ClCompile Include="cglobal_rtc_port.cpp" />
+    <ClCompile Include="cglobal_rtsp.cpp" />
     <ClCompile Include="cguard_reply.cpp" />
+    <ClCompile Include="ch264_file.cpp" />
+    <ClCompile Include="ch264_source.cpp" />
     <ClCompile Include="cice_server.cpp" />
     <ClCompile Include="cifaddrs_android.cc" />
     <ClCompile Include="cifaddrs_converter.cc" />
@@ -183,6 +188,8 @@
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
+    <ClCompile Include="cmedia_session.cpp" />
+    <ClCompile Include="cmedia_source.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnetwork.cpp" />
     <ClCompile Include="cnet_adapter_test.cpp" />
@@ -218,6 +225,7 @@
     <ClCompile Include="crtc_track_description.cpp" />
     <ClCompile Include="crtc_transport.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
+    <ClCompile Include="crtp_connection.cpp" />
     <ClCompile Include="crtp_fb.cpp" />
     <ClCompile Include="crtp_headers.cpp" />
     <ClCompile Include="crtp_header_extensions.cpp" />
@@ -229,7 +237,10 @@
     <ClCompile Include="crtp_stream.cpp" />
     <ClCompile Include="crtp_stream_recv.cpp" />
     <ClCompile Include="crtp_stream_send.cpp" />
+    <ClCompile Include="crtsp.cpp" />
     <ClCompile Include="crtsp_cmd_dispatch.cpp" />
+    <ClCompile Include="crtsp_request.cpp" />
+    <ClCompile Include="crtsp_response.cpp" />
     <ClCompile Include="crtsp_server.cpp" />
     <ClCompile Include="crtsp_session.cpp" />
     <ClCompile Include="crtsp_session_mgr.cpp" />
@@ -391,6 +402,7 @@
     <ClInclude Include="caudio_payload.h" />
     <ClInclude Include="cav1.h" />
     <ClInclude Include="cbuffer.h" />
+    <ClInclude Include="cbuffer_reader.h" />
     <ClInclude Include="cbyte_io.h" />
     <ClInclude Include="cbyte_order.h" />
     <ClInclude Include="ccfg.h" />
@@ -402,6 +414,7 @@
     <ClInclude Include="cconsumer.h" />
     <ClInclude Include="ccrc32.h" />
     <ClInclude Include="ccrypto_random.h" />
+    <ClInclude Include="cdigest_authentication.h" />
     <ClInclude Include="cdigit2str.h" />
     <ClInclude Include="cdtls.h" />
     <ClInclude Include="cdtls_certificate.h" />
@@ -414,7 +427,10 @@
     <ClInclude Include="cglobal_rtc.h" />
     <ClInclude Include="cglobal_rtc_config.h" />
     <ClInclude Include="cglobal_rtc_port.h" />
+    <ClInclude Include="cglobal_rtsp.h" />
     <ClInclude Include="cguard_reply.h" />
+    <ClInclude Include="ch264_file.h" />
+    <ClInclude Include="ch264_source.h" />
     <ClInclude Include="cice_server.h" />
     <ClInclude Include="cifaddrs_android.h" />
     <ClInclude Include="cifaddrs_converter.h" />
@@ -422,9 +438,13 @@
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
+    <ClInclude Include="cmd5.h" />
     <ClInclude Include="cmedia_desc.h" />
     <ClInclude Include="cmedia_error.h" />
     <ClInclude Include="cmedia_server.h" />
+    <ClInclude Include="cmedia_session.h" />
+    <ClInclude Include="cmedia_source.h" />
+    <ClInclude Include="cmedia_type.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnetwork.h" />
@@ -439,6 +459,7 @@
     <ClInclude Include="cproducer.h" />
     <ClInclude Include="cremote_estimator_proxy.h" />
     <ClInclude Include="creport_block.h" />
+    <ClInclude Include="cring_buffer.h" />
     <ClInclude Include="crtcp_packet.h" />
     <ClInclude Include="crtcp_receiver.h" />
     <ClInclude Include="crtc_producer.h" />
@@ -466,6 +487,8 @@
     <ClInclude Include="crtc_transport.h" />
     <ClInclude Include="crtc_transport_define.h" />
     <ClInclude Include="crtc_user_config.h" />
+    <ClInclude Include="crtp.h" />
+    <ClInclude Include="crtp_connection.h" />
     <ClInclude Include="crtp_fb.h" />
     <ClInclude Include="crtp_headers.h" />
     <ClInclude Include="crtp_header_extensions.h" />
@@ -479,8 +502,11 @@
     <ClInclude Include="crtp_stream_define.h" />
     <ClInclude Include="crtp_stream_recv.h" />
     <ClInclude Include="crtp_stream_send.h" />
+    <ClInclude Include="crtsp.h" />
     <ClInclude Include="crtsp_cmd_dispatch.h" />
     <ClInclude Include="crtsp_define.h" />
+    <ClInclude Include="crtsp_request.h" />
+    <ClInclude Include="crtsp_response.h" />
     <ClInclude Include="crtsp_server.h" />
     <ClInclude Include="crtsp_session.h" />
     <ClInclude Include="crtsp_session_mgr.h" />

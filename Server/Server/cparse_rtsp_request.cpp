@@ -28,6 +28,7 @@ purpose:		_C_DTLS_ _H_
 #include <string>
 #include <vector>
 #include "crtc_sdp_util.h"
+#include "crtsp_request.h"
 //#include ""
 namespace chen {
 
@@ -75,6 +76,8 @@ namespace chen {
 	{
 		m_transport_vec.clear();
 	}
+
+	
 
 	bool crtsp_request::parse(const char * req, uint32 req_size)
 	{

@@ -1,9 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2023-05-11
+created: 		2023-01-15
 
 author:			chensong
 
-purpose:		_C_DTLS_ _H_
+purpose:		_C_CODEC_PAYLOAD_H_
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -22,8 +22,8 @@ purpose:		_C_DTLS_ _H_
 
 ************************************************************************************************/
 
-#ifndef _C_RTSP_SERVER_H_
-#define _C_RTSP_SERVER_H_
+#ifndef _C_MEDIA_TYPE_H_
+#define _C_MEDIA_TYPE_H_
 #include "cnet_type.h"
 #include <sstream>
 #include <iostream>
@@ -31,67 +31,51 @@ purpose:		_C_DTLS_ _H_
 #include <map>
 #include "crtc_sdp.h"
 #include "cmedia_desc.h"
-#include "cdtls_session.h"
-#include "ctcp_server.h"
-#include "ctcp_conection.h"
-#include "cmedia_session.h"
-#include "crtsp.h"
 namespace chen {
-
-
-
-	class crtsp_server : public crtsp,  public ctcp_server::Listener , public ctcp_connection::Listener
+#define  RTSP_DEBUG (1)
+	/* RTSP服务支持的媒体类型 */
+	enum EMediaType
 	{
-	public:
-		explicit crtsp_server() 
-			: crtsp()
-			, m_tcp_server_ptr(NULL)
-			, m_stoped(false){}
-		virtual ~crtsp_server() override;
-
-	public:
-	public:
-		bool init();
-
-		void destroy();
-		
-	public:
-		bool startup();
-	public:
-		void update(uint32 uDeltaTime);
-		void shutdown();
-	public:
-		//void on_connect(uint64_t session_id, const char* buf);
-		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
-		//void on_disconnect(uint64_t session_id);
-		virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
-		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
-		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
-	public:
-
-	public:
-
-		uint32 add_session(cmedia_session*session);
-		void remove_session(uint32 session_id);
-		bool push_frame(uint32 session_id, MediaChannelId channel_id, AVFrame frame);
-		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
-	public:
-		virtual cmedia_session* find_media_session(const std::string & suffix); //{ return NULL; }
-		virtual cmedia_session* find_media_session(uint32 session_id);// { return NULL; }
-	public:
-	protected:
-	private:
-
-
-		ctcp_server	*					m_tcp_server_ptr;
-		bool							m_stoped;
-
-		std::unordered_map<uint32, cmedia_session*>   m_media_sessions;
-		std::unordered_map<std::string, uint32>     m_rtsp_suffix_map;
+		//PCMU = 0,	 
+		PCMA = 8,
+		H264 = 96,
+		AAC = 37,
+		H265 = 265,
+		NONE
 	};
 
+	enum FrameType
+	{
+		VIDEO_FRAME_I = 0x01,
+		VIDEO_FRAME_P = 0x02,
+		VIDEO_FRAME_B = 0x03,
+		AUDIO_FRAME = 0x11,
+	};
 
-	extern crtsp_server g_rtsp_server;
+	struct AVFrame
+	{
+		AVFrame(uint32_t size = 0)
+			:buffer(new uint8_t[size + 1], std::default_delete< uint8_t[]>())
+		{
+			this->size = size;
+			type = 0;
+			timestamp = 0;
+		}
+
+		std::shared_ptr<uint8_t> buffer; /* 帧数据 */
+		uint32_t size;				     /* 帧大小 */
+		uint8_t  type;				     /* 帧类型 */
+		uint32_t timestamp;		  	     /* 时间戳 */
+	};
+
+	static const int MAX_MEDIA_CHANNEL = 2;
+
+	enum MediaChannelId
+	{
+		channel_0,
+		channel_1
+	};
+
 }
 
-#endif // _C_RTSP_SERVER_H_
+#endif //

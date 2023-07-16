@@ -97,10 +97,16 @@ namespace chen {
 		std::string ip;
 		uint16_t port;
 		 uv_ip ::GetAddressInfo(connection->GetPeerAddress(), family, ip, port);
-		 NORMAL_EX_LOG("[ip = %s][port = %u][len = %u][data = %s]", ip.c_str(), port, len, data);
+		 NORMAL_EX_LOG("[ip = %s][port = %u][len = %u] ", ip.c_str(), port, len);
 		 crtsp_session*  session = g_rtsp_session_mgr.find(connection);
+		 if (!session)
+		 {
+			 WARNING_EX_LOG("[ip = %s][port = %u][len = %u]", ip.c_str(), port, len);
+			 return;
+		}
 		 session->set_session(connection);
-		 crtsp_request  request;
+		 session->on_received((uint8*)data, len);
+		 /*crtsp_request  request;
 		 if (!request.parse((const char *)data, len))
 		 {
 			 WARNING_EX_LOG("rtsp parse request failed  data = %s", data);
@@ -113,7 +119,7 @@ namespace chen {
 			 return;
 		 }
 		 ++cmd_handler->handle_count;
-		 (session->*(cmd_handler->handler))(&request);
+		 (session->*(cmd_handler->handler))(&request);*/
 
 
 	}
@@ -126,4 +132,75 @@ namespace chen {
 		NORMAL_EX_LOG("desconnect[ip = %s][port = %u]", ip.c_str(), port);
 		  g_rtsp_session_mgr.erase(connection);
 	}
+
+	uint32 crtsp_server::add_session(cmedia_session*session)
+	{
+		if (m_rtsp_suffix_map.find(session->get_rtsp_url_suffix()) != m_rtsp_suffix_map.end()) {
+			return 0;
+		}
+
+		//std::shared_ptr<MediaSession> media_session(session);
+		uint32 sessionId = session->get_media_session_id();
+		m_rtsp_suffix_map.emplace(std::move(session->get_rtsp_url_suffix()), sessionId);
+		m_media_sessions.emplace(sessionId, std::move(session));
+
+		return sessionId;
+	}
+
+	void crtsp_server::remove_session(uint32 session_id)
+	{
+		auto iter = m_media_sessions.find(session_id);
+		if (iter != m_media_sessions.end()) 
+		{
+			m_rtsp_suffix_map.erase(iter->second->get_rtsp_url_suffix());
+			m_media_sessions.erase(session_id);
+		}
+	}
+
+	bool crtsp_server::push_frame(uint32 session_id, MediaChannelId channel_id, AVFrame frame)
+	{
+		//std::shared_ptr<MediaSession> sessionPtr = nullptr;
+		cmedia_session * session_ptr = NULL;
+		{
+			//std::lock_guard<std::mutex> locker(mutex_);
+			auto iter = m_media_sessions.find(session_id);
+			if (iter != m_media_sessions.end()) {
+				session_ptr = iter->second;
+			}
+			else {
+				return false;
+			}
+		}
+
+		if (session_ptr != nullptr && session_ptr->get_num_client() != 0) {
+			return session_ptr->handler_frame(channel_id, frame);
+		}
+
+		return false;
+	}
+
+	cmedia_session* crtsp_server::find_media_session(const std::string & suffix)
+	{
+
+		auto iter = m_rtsp_suffix_map.find(suffix);
+		if (iter != m_rtsp_suffix_map.end()) 
+		{
+			return find_media_session(iter->second);
+			//MediaSessionId id = iter->second;
+			//return media_sessions_[id];
+		}
+		return NULL;
+	}
+
+	cmedia_session* crtsp_server::find_media_session(uint32 session_id)
+	{
+		auto iter = m_media_sessions.find(session_id);
+		if (iter != m_media_sessions.end()) 
+		{
+			return iter->second;
+		}
+
+		return nullptr;
+	}
+
 }

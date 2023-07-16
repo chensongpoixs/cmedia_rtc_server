@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************
-created: 		2023-05-11
+created: 		2023-07-16
 
 author:			chensong
 
@@ -22,76 +22,48 @@ purpose:		_C_DTLS_ _H_
 
 ************************************************************************************************/
 
-#ifndef _C_RTSP_SERVER_H_
-#define _C_RTSP_SERVER_H_
+#ifndef _C_H264_SOURCE_H_
+#define _C_H264_SOURCE_H_
 #include "cnet_type.h"
 #include <sstream>
 #include <iostream>
-#include <vector>
-#include <map>
-#include "crtc_sdp.h"
-#include "cmedia_desc.h"
-#include "cdtls_session.h"
-#include "ctcp_server.h"
-#include "ctcp_conection.h"
-#include "cmedia_session.h"
-#include "crtsp.h"
+#include "cmedia_source.h"
 namespace chen {
 
-
-
-	class crtsp_server : public crtsp,  public ctcp_server::Listener , public ctcp_connection::Listener
+	class ch264_source : public cmedia_source
 	{
 	public:
-		explicit crtsp_server() 
-			: crtsp()
-			, m_tcp_server_ptr(NULL)
-			, m_stoped(false){}
-		virtual ~crtsp_server() override;
+		explicit ch264_source()
+			:m_frame_rate(25)
+		{
+			m_payload = 96;
+			m_media_type = H264;
+			m_clock_rate = 90000;
+		}
+		virtual ~ch264_source() {}
 
 	public:
-	public:
-		bool init();
 
+		static ch264_source* construct();
+		static void          destroy(ch264_source * source);
+	public:
+		bool init(uint32 frame_rate);
 		void destroy();
-		
-	public:
-		bool startup();
-	public:
-		void update(uint32 uDeltaTime);
-		void shutdown();
-	public:
-		//void on_connect(uint64_t session_id, const char* buf);
-		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
-		//void on_disconnect(uint64_t session_id);
-		virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
-		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
-		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
-	public:
 
 	public:
+		void set_frame_rate(uint32 frame_rate) { m_frame_rate = frame_rate; }
+		uint32 get_frame_rate() const { return m_frame_rate; }
+		virtual std::string get_media_description(uint16 port);
+		virtual std::string get_attribute();
+		virtual bool handler_frame(MediaChannelId channel_id, AVFrame frame);
 
-		uint32 add_session(cmedia_session*session);
-		void remove_session(uint32 session_id);
-		bool push_frame(uint32 session_id, MediaChannelId channel_id, AVFrame frame);
-		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
-	public:
-		virtual cmedia_session* find_media_session(const std::string & suffix); //{ return NULL; }
-		virtual cmedia_session* find_media_session(uint32 session_id);// { return NULL; }
-	public:
+
+		static uint32 get_timestamp();
 	protected:
 	private:
-
-
-		ctcp_server	*					m_tcp_server_ptr;
-		bool							m_stoped;
-
-		std::unordered_map<uint32, cmedia_session*>   m_media_sessions;
-		std::unordered_map<std::string, uint32>     m_rtsp_suffix_map;
+		uint32				m_frame_rate;
 	};
 
 
-	extern crtsp_server g_rtsp_server;
 }
-
-#endif // _C_RTSP_SERVER_H_
+#endif //_C_H264_SOURCE_H_

@@ -81,7 +81,7 @@ namespace chen {
 				return;
 			
 			size_t dataLen = this->bufferDataLen - this->frameStart;
-			NORMAL_EX_LOG("[buffer = %s][datalen  = %u]", buffer, dataLen);
+			//NORMAL_EX_LOG("[buffer = %s][datalen  = %u]", buffer, dataLen);
 			//size_t packetLen;
 
 			//if (dataLen >= 2)

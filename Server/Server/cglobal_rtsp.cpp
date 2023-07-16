@@ -21,77 +21,63 @@ purpose:		_C_DTLS_ _H_
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 
 ************************************************************************************************/
+#include "cglobal_rtsp.h"
+#include "ch264_source.h"
+#include "ch264_file.h"
+#include "clog.h"
+#include "crtsp_server.h"
+#include "ccfg.h"
+namespace chen 
+{
 
-#ifndef _C_RTSP_SERVER_H_
-#define _C_RTSP_SERVER_H_
-#include "cnet_type.h"
-#include <sstream>
-#include <iostream>
-#include <vector>
-#include <map>
-#include "crtc_sdp.h"
-#include "cmedia_desc.h"
-#include "cdtls_session.h"
-#include "ctcp_server.h"
-#include "ctcp_conection.h"
-#include "cmedia_session.h"
-#include "crtsp.h"
-namespace chen {
-
-
-
-	class crtsp_server : public crtsp,  public ctcp_server::Listener , public ctcp_connection::Listener
+	void SendFrameThread( uint32 session_id, ch264_file* h264_file)
 	{
-	public:
-		explicit crtsp_server() 
-			: crtsp()
-			, m_tcp_server_ptr(NULL)
-			, m_stoped(false){}
-		virtual ~crtsp_server() override;
+		int buf_size = 2000000;
+		std::unique_ptr<uint8_t> frame_buf(new uint8_t[buf_size]);
 
-	public:
-	public:
-		bool init();
+		while (1) {
+			bool end_of_frame = false;
+			int frame_size = h264_file->ReadFrame((char*)frame_buf.get(), buf_size, &end_of_frame);
+			if (frame_size > 0) {
+				AVFrame videoFrame = { 0 };
+				videoFrame.type = 0;
+				videoFrame.size = frame_size;
+				videoFrame.timestamp = ch264_source::get_timestamp();
+				videoFrame.buffer.reset(new uint8_t[videoFrame.size]);
+				memcpy(videoFrame.buffer.get(), frame_buf.get(), videoFrame.size);
+				g_rtsp_server.push_frame(session_id, channel_0, videoFrame);
+			}
+			else {
+				break;
+			}
 
-		void destroy();
-		
-	public:
-		bool startup();
-	public:
-		void update(uint32 uDeltaTime);
-		void shutdown();
-	public:
-		//void on_connect(uint64_t session_id, const char* buf);
-		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
-		//void on_disconnect(uint64_t session_id);
-		virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
-		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
-		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
-	public:
-
-	public:
-
-		uint32 add_session(cmedia_session*session);
-		void remove_session(uint32 session_id);
-		bool push_frame(uint32 session_id, MediaChannelId channel_id, AVFrame frame);
-		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
-	public:
-		virtual cmedia_session* find_media_session(const std::string & suffix); //{ return NULL; }
-		virtual cmedia_session* find_media_session(uint32 session_id);// { return NULL; }
-	public:
-	protected:
-	private:
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		};
+	}
+	bool init_rtsp_global()
+	{
 
 
-		ctcp_server	*					m_tcp_server_ptr;
-		bool							m_stoped;
+		ch264_file* h264_file = new ch264_file();
+		if (!h264_file->Open(g_cfg.get_string(ECI_RtspTestH264File).c_str())) 
+		{
+			ERROR_EX_LOG("Open %s failed.\n", "test.h264");
+			return 0;
+		}
 
-		std::unordered_map<uint32, cmedia_session*>   m_media_sessions;
-		std::unordered_map<std::string, uint32>     m_rtsp_suffix_map;
-	};
+		cmedia_session* session_ptr = cmedia_session::construct();
+		session_ptr->init("live");
+		ch264_source* h264_source_ptr = ch264_source::construct();
+		h264_source_ptr->init(25);
+		session_ptr->add_source(channel_0, h264_source_ptr);
+		uint32 session_id = g_rtsp_server.add_session(session_ptr);
 
+		std::thread t1(SendFrameThread, session_id, h264_file);
+		t1.detach();
 
-	extern crtsp_server g_rtsp_server;
+		return true;
+	}
+	void destroy_rtsp_global()
+	{
+	}
 }
-
-#endif // _C_RTSP_SERVER_H_

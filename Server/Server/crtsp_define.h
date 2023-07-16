@@ -30,7 +30,12 @@ namespace chen {
 
 	static char const * RTSP_ALLOWED_COMMAND = "OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER";
 
-
+	/*enum TransportMode
+	{
+		RTP_OVER_TCP = 1,
+		RTP_OVER_UDP = 2,
+		RTP_OVER_MULTICAST = 3,
+	};*/
 
 }
 

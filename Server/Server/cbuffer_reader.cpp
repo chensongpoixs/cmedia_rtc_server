@@ -1,9 +1,11 @@
 ﻿/***********************************************************************************************
-created: 		2023-05-11
+created: 		2023-02-02
 
 author:			chensong
 
-purpose:		_C_DTLS_ _H_
+purpose:		 buffer
+
+
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -19,79 +21,111 @@ purpose:		_C_DTLS_ _H_
 我叫他本心猎手。他可能是和宇宙同在的级别 但是我并不害怕，我仔细回忆自己平淡的一生 寻找本心猎手的痕迹。
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
-
 ************************************************************************************************/
+#include "cbuffer_reader.h"
 
-#ifndef _C_RTSP_SERVER_H_
-#define _C_RTSP_SERVER_H_
-#include "cnet_type.h"
-#include <sstream>
-#include <iostream>
-#include <vector>
-#include <map>
-#include "crtc_sdp.h"
-#include "cmedia_desc.h"
-#include "cdtls_session.h"
-#include "ctcp_server.h"
-#include "ctcp_conection.h"
-#include "cmedia_session.h"
-#include "crtsp.h"
 namespace chen {
 
-
-
-	class crtsp_server : public crtsp,  public ctcp_server::Listener , public ctcp_connection::Listener
+	uint32_t ReadUint32BE(char* data)
 	{
-	public:
-		explicit crtsp_server() 
-			: crtsp()
-			, m_tcp_server_ptr(NULL)
-			, m_stoped(false){}
-		virtual ~crtsp_server() override;
+		uint8_t* p = (uint8_t*)data;
+		uint32_t value = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
+		return value;
+	}
 
-	public:
-	public:
-		bool init();
+	uint32_t  ReadUint32LE(char* data)
+	{
+		uint8_t* p = (uint8_t*)data;
+		uint32_t value = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
+		return value;
+	}
 
-		void destroy();
-		
-	public:
-		bool startup();
-	public:
-		void update(uint32 uDeltaTime);
-		void shutdown();
-	public:
-		//void on_connect(uint64_t session_id, const char* buf);
-		//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
-		//void on_disconnect(uint64_t session_id);
-		virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
-		virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
-		virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
-	public:
+	uint32_t  ReadUint24BE(char* data)
+	{
+		uint8_t* p = (uint8_t*)data;
+		uint32_t value = (p[0] << 16) | (p[1] << 8) | p[2];
+		return value;
+	}
 
-	public:
+	uint32_t  ReadUint24LE(char* data)
+	{
+		uint8_t* p = (uint8_t*)data;
+		uint32_t value = (p[2] << 16) | (p[1] << 8) | p[0];
+		return value;
+	}
 
-		uint32 add_session(cmedia_session*session);
-		void remove_session(uint32 session_id);
-		bool push_frame(uint32 session_id, MediaChannelId channel_id, AVFrame frame);
-		//void send_msg(uint32 session_id, uint16 msg_id, const void *p, uint32 size);
-	public:
-		virtual cmedia_session* find_media_session(const std::string & suffix); //{ return NULL; }
-		virtual cmedia_session* find_media_session(uint32 session_id);// { return NULL; }
-	public:
-	protected:
-	private:
+	uint16_t  ReadUint16BE(char* data)
+	{
+		uint8_t* p = (uint8_t*)data;
+		uint16_t value = (p[0] << 8) | p[1];
+		return value;
+	}
 
-
-		ctcp_server	*					m_tcp_server_ptr;
-		bool							m_stoped;
-
-		std::unordered_map<uint32, cmedia_session*>   m_media_sessions;
-		std::unordered_map<std::string, uint32>     m_rtsp_suffix_map;
-	};
+	uint16_t  ReadUint16LE(char* data)
+	{
+		uint8_t* p = (uint8_t*)data;
+		uint16_t value = (p[1] << 8) | p[0];
+		return value;
+	}
 
 
-	extern crtsp_server g_rtsp_server;
+	const char cbuffer_reader::kCRLF[] = "\r\n";
+	cbuffer_reader::cbuffer_reader(uint32_t initial_size)
+	{
+		buffer_.resize(initial_size);
+	}
+
+	cbuffer_reader::~cbuffer_reader()
+	{
+		buffer_.clear();
+	}
+
+	int cbuffer_reader::Read(uint8 * data, size_t len)
+	{
+		uint32_t size = WritableBytes();
+		if (size < MAX_BYTES_PER_READ) {
+			uint32_t bufferReaderSize = (uint32_t)buffer_.size();
+			if (bufferReaderSize > MAX_BUFFER_SIZE) {
+				return 0;
+			}
+
+			buffer_.resize(bufferReaderSize + MAX_BYTES_PER_READ);
+		}
+		memcpy(beginWrite(), data, len);
+		/*int bytes_read = ::recv(sockfd, beginWrite(), MAX_BYTES_PER_READ, 0);
+		if (bytes_read > 0)
+		{
+			writer_index_ += bytes_read;
+		}*/
+		writer_index_ += len;
+		return len;
+	}
+
+	uint32_t cbuffer_reader::ReadAll(std::string & data)
+	{
+		uint32_t size = ReadableBytes();
+		if (size > 0) 
+		{
+			data.assign(Peek(), size);
+			writer_index_ = 0;
+			reader_index_ = 0;
+		}
+
+		return size;
+	}
+
+	uint32_t cbuffer_reader::ReadUntilCrlf(std::string & data)
+	{
+		const char* crlf = FindLastCrlf();
+		if (crlf == nullptr) 
+		{
+			return 0;
+		}
+
+		uint32_t size = (uint32_t)(crlf - Peek() + 2);
+		data.assign(Peek(), size);
+		Retrieve(size);
+		return size;
+	}
+
 }
-
-#endif // _C_RTSP_SERVER_H_

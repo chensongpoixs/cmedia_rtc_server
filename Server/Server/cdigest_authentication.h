@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************
-created: 		2023-05-11
+created: 		2023-07-16
 
 author:			chensong
 
@@ -22,8 +22,8 @@ purpose:		_C_DTLS_ _H_
 
 ************************************************************************************************/
 
-#ifndef _C_RTSP_SESSION_H_
-#define _C_RTSP_SESSION_H_
+#ifndef _C_DIGEST_AUTHENTICATION_H_
+#define _C_DIGEST_AUTHENTICATION_H_
 #include "cnet_type.h"
 #include <sstream>
 #include <iostream>
@@ -37,101 +37,45 @@ purpose:		_C_DTLS_ _H_
 #include "cbuffer_reader.h"
 #include "crtsp_request.h"
 #include "crtsp_response.h"
-#include "cdigest_authentication.h"
-#include "crtp_connection.h"
-namespace chen {
-	
 
-	class crtsp_session
+
+namespace chen {
+
+	class cdigest_authentication
 	{
 	public:
-		enum ConnectionMode
+		explicit cdigest_authentication(std::string realm, std::string username, std::string password)
+			: realm_(realm)
+			, username_(username)
+			, password_(password) {}
+		virtual ~cdigest_authentication(){}
+	public:
+		std::string GetRealm() const
 		{
-			RTSP_SERVER,
-			RTSP_PUSHER,
-			//RTSP_CLIENT,
-		};
+			return realm_;
+		}
 
-		enum ConnectionState
+		std::string GetUsername() const
 		{
-			START_CONNECT,
-			START_PLAY,
-			START_PUSH
-		};
-	public:
-		explicit crtsp_session()
-			: m_cseq(0)
-			, m_conn_mode(RTSP_SERVER)
-			, m_conn_state(START_CONNECT)
-			, m_session_id(0)
-			, m_session_ptr(NULL)
-			, m_has_auth(true)
-			, m_nonce("")
-			, m_auth_info("", "", "")
-			, m_rtsp_request()
-			, m_rtsp_response()
-			, m_rtp_connection()
-		{}
-		virtual ~crtsp_session();
+			return username_;
+		}
 
-	public:
-		void set_cseq(uint32 cseq);
+		std::string GetPassword() const
+		{
+			return password_;
+		}
 
-		void set_session(ctcp_connection * session);
-
-
-		bool on_received(uint8* data, size_t size);
-	public:
-
-		bool HandleRtspRequest(cbuffer_reader& buffer);
-
-
-		//////////////////////////////
-
-		
-		void HandleRtcp(cbuffer_reader& buffer);
-
-		void HandleCmdOption();
-		void HandleCmdDescribe();
-		void HandleCmdSetup();
-		void HandleCmdPlay();
-		void HandleCmdTeardown();
-		void HandleCmdGetParamter();
-		bool HandleAuthentication();
-	public:
-
-		// cmd --> OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER
-		void handler_options(crtsp_request* request );
-		
-		void handler_describe(crtsp_request* request);
-		
-		void handler_setup(crtsp_request* request);
-		void handler_register(crtsp_request* request);
-		void handler_teardown(crtsp_request* request);
-		void handler_play(crtsp_request* request);
-		void handler_pause(crtsp_request* request);
-		
-		void handler_get_parameter(crtsp_request* request);
-		void handler_set_parameter(crtsp_request* request);
-
-
-	//protected:
-		void SendRtspMessage(std::shared_ptr<char> buf, uint32_t size);
-
+		std::string GetNonce();
+		std::string GetResponse(std::string nonce, std::string cmd, std::string url);
+	protected:
 	private:
-		bool _send_msg(const  uint8 * data, size_t len);
-	private:
-		uint32					m_cseq;
-		ConnectionMode			m_conn_mode = RTSP_SERVER;
-		ConnectionState			m_conn_state = START_CONNECT;
-		uint32					m_session_id = 0;
-		ctcp_connection *		m_session_ptr;
-		bool					m_has_auth ;
-		std::string				m_nonce;
-		cdigest_authentication  m_auth_info;
-		crtsp_request2			m_rtsp_request;
-		crtsp_response2			m_rtsp_response;
-		crtp_connection			m_rtp_connection;
+
+
+		std::string realm_;
+		std::string username_;
+		std::string password_;
 	};
 }
-#endif // _C_RTSP_SESSION_H_
+
+
+#endif // _C_DIGEST_AUTHENTICATION_H_

@@ -160,9 +160,6 @@
     <Filter Include="net">
       <UniqueIdentifier>{af7692e2-78a3-43ca-b184-1b6aa1d0a101}</UniqueIdentifier>
     </Filter>
-    <Filter Include="media_source">
-      <UniqueIdentifier>{6a43ae28-1e60-4e32-acbd-d3dd5d2c8e2e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="api_rtc">
       <UniqueIdentifier>{c005d72d-ddc2-41ba-b36b-21907191c840}</UniqueIdentifier>
     </Filter>
@@ -201,6 +198,12 @@
     </Filter>
     <Filter Include="rtsp">
       <UniqueIdentifier>{a5ce983a-6cea-4c44-9bc8-4b3c2b98414d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="auth">
+      <UniqueIdentifier>{deede085-027b-4981-b46e-0001f30b6b3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="media">
+      <UniqueIdentifier>{6a43ae28-1e60-4e32-acbd-d3dd5d2c8e2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -626,40 +629,40 @@
       <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="crtc_source.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="crtc_track_description.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="ccodec_payload.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="cvideo_payload.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="caudio_payload.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="cred_payload.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="crtx_paylod_des.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="crtc_source_description.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="crtc_consumer.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="crtc_ssrc_generator.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="crtc_constants.cpp">
       <Filter>rtc_constants</Filter>
     </ClCompile>
     <ClCompile Include="crtc_source_mgr.cpp">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="cifaddrs_converter.cc">
       <Filter>net</Filter>
@@ -888,6 +891,39 @@
     </ClCompile>
     <ClCompile Include="cav1.cpp">
       <Filter>codec</Filter>
+    </ClCompile>
+    <ClCompile Include="crtsp_request.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtsp_response.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="cbuffer_reader.cpp">
+      <Filter>buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="cdigest_authentication.cpp">
+      <Filter>auth</Filter>
+    </ClCompile>
+    <ClCompile Include="cmedia_session.cpp">
+      <Filter>media</Filter>
+    </ClCompile>
+    <ClCompile Include="cmedia_source.cpp">
+      <Filter>media</Filter>
+    </ClCompile>
+    <ClCompile Include="ch264_source.cpp">
+      <Filter>codec</Filter>
+    </ClCompile>
+    <ClCompile Include="cglobal_rtsp.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="ch264_file.cpp">
+      <Filter>codec</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_connection.cpp">
+      <Filter>rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="crtsp.cpp">
+      <Filter>rtsp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1390,40 +1426,40 @@
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="crtc_source.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="crtc_track_description.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="ccodec_payload.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="cvideo_payload.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="caudio_payload.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="cred_payload.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="crtx_paylod_des.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="crtc_source_description.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="crtc_consumer.h">
       <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="crtc_ssrc_generator.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="crtc_constants.h">
       <Filter>rtc_constants</Filter>
     </ClInclude>
     <ClInclude Include="crtc_source_mgr.h">
-      <Filter>media_source</Filter>
+      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="cifaddrs_converter.h">
       <Filter>net</Filter>
@@ -1694,6 +1730,51 @@
     </ClInclude>
     <ClInclude Include="cav1.h">
       <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp_request.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp_response.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="cbuffer_reader.h">
+      <Filter>buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="cdigest_authentication.h">
+      <Filter>auth</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd5.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_type.h">
+      <Filter>media</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_session.h">
+      <Filter>media</Filter>
+    </ClInclude>
+    <ClInclude Include="cmedia_source.h">
+      <Filter>media</Filter>
+    </ClInclude>
+    <ClInclude Include="cring_buffer.h">
+      <Filter>buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="ch264_source.h">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp.h">
+      <Filter>rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="cglobal_rtsp.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="ch264_file.h">
+      <Filter>codec</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_connection.h">
+      <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="crtsp.h">
+      <Filter>rtsp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
