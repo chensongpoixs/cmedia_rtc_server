@@ -63,6 +63,7 @@ namespace chen {
 		ECI_RtspWanPort,
 
 		ECI_RtspTestH264File,
+		ECI_RtspTestH264Frame,
 
 		ECI_Max,
 	};

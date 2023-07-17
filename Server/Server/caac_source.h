@@ -1,5 +1,5 @@
 ﻿/***********************************************************************************************
-created: 		2023-05-11
+created: 		2023-07-16
 
 author:			chensong
 
@@ -21,64 +21,56 @@ purpose:		_C_DTLS_ _H_
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 
 ************************************************************************************************/
-#include "cglobal_rtsp.h"
-#include "ch264_source.h"
-#include "ch264_file.h"
-#include "clog.h"
-#include "crtsp_server.h"
-#include "ccfg.h"
-namespace chen 
-{
 
-	void SendFrameThread( uint32 session_id, ch264_file* h264_file)
+#ifndef _C_AAC_SOURCE_H_
+#define _C_AAC_SOURCE_H_
+#include "cnet_type.h"
+#include <sstream>
+#include <iostream>
+#include "cmedia_source.h"
+namespace chen {
+	class caac_source : public cmedia_source
 	{
-		int buf_size = 2000000;
-		std::unique_ptr<uint8_t> frame_buf(new uint8_t[buf_size]);
+	public:
+		explicit caac_source() : cmedia_source(){}
+		virtual ~caac_source(){}
 
-		while (1) {
-			bool end_of_frame = false;
-			int frame_size = h264_file->ReadFrame((char*)frame_buf.get(), buf_size, &end_of_frame);
-			if (frame_size > 0) {
-				AVFrame videoFrame = { 0 };
-				videoFrame.type = 0;
-				videoFrame.size = frame_size;
-				videoFrame.timestamp = ch264_source::get_timestamp();
-				videoFrame.buffer.reset(new uint8_t[videoFrame.size]);
-				memcpy(videoFrame.buffer.get(), frame_buf.get(), videoFrame.size);
-				g_rtsp_server.push_frame(session_id, channel_0, videoFrame);
-			}
-			else {
-				break;
-			}
+	public:
+		static caac_source* construct();
+		static void          destroy(caac_source * source);
+	public:
+		bool init(uint32 samplerate, uint32 channels, bool has_adts);
+		void destroy();
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000/g_cfg.get_uint32(ECI_RtspTestH264Frame)));
-		};
-		WARNING_EX_LOG("read h264 file [%s] thread exit !!!", g_cfg.get_string(ECI_RtspTestH264File).c_str());
-	}
-	bool init_rtsp_global()
-	{
-
-
-		ch264_file* h264_file = new ch264_file();
-		if (!h264_file->Open(g_cfg.get_string(ECI_RtspTestH264File).c_str())) 
+	public:
+		uint32 get_samplerate() const
 		{
-			ERROR_EX_LOG("Open %s failed.\n", "test.h264");
-			return 0;
+			return m_samplerate;
 		}
 
-		cmedia_session* session_ptr = cmedia_session::construct();
-		session_ptr->init("VisDrone");
-		ch264_source* h264_source_ptr = ch264_source::construct();
-		h264_source_ptr->init(25);
-		session_ptr->add_source(channel_0, h264_source_ptr);
-		uint32 session_id = g_rtsp_server.add_session(session_ptr);
+		uint32 get_channels() const
+		{
+			return m_channels;
+		}
 
-		std::thread t1(SendFrameThread, session_id, h264_file);
-		t1.detach();
+		virtual std::string get_media_description(uint16_t port = 0);
 
-		return true;
-	}
-	void destroy_rtsp_global()
-	{
-	}
+		virtual std::string get_attribute();
+
+		virtual bool handler_frame(MediaChannelId channel_id, AVFrame frame);
+
+		static uint32_t get_timestamp(uint32_t samplerate = 44100);
+	public:
+
+	protected:
+	private:
+		uint32		m_samplerate = 44100;
+		uint32		m_channels = 2;
+		bool		m_has_adts = true;
+
+		static const int ADTS_SIZE = 7;
+		static const int AU_SIZE = 4;
+	};
+
 }
+#endif //_C_AAC_SOURCE_H_
