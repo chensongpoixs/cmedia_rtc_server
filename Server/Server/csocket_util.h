@@ -28,6 +28,49 @@ purpose:		socket_util
 #include "cip_address.h"
 #include "cnetwork_constants.h"
 #include <set>
+
+
+#if defined(__linux) || defined(__linux__) 
+#include <sys/types.h>         
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h> 
+#include <netinet/ether.h>   
+#include <netinet/ip.h>  
+#include <netpacket/packet.h>   
+#include <arpa/inet.h>
+#include <net/ethernet.h>   
+#include <net/route.h>  
+#include <netdb.h>
+#include <net/if.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/select.h>
+#define SOCKET int
+#define INVALID_SOCKET  (-1)
+#define SOCKET_ERROR    (-1) 
+
+#elif defined(WIN32) || defined(_WIN32) 
+#define FD_SETSIZE      1024
+#define WIN32_LEAN_AND_MEAN
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include <WinSock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
+#include <iphlpapi.h>
+#define SHUT_RD 0
+#define SHUT_WR 1 
+#define SHUT_RDWR 2
+
+#else
+
+#endif
+
+#include <cstdint>
+#include <cstring>
+
+
 namespace chen {
 
 
@@ -65,6 +108,29 @@ namespace chen {
 
 	  // The dns resolve utility, return the resolved ip address.
 	 std::string  dns_resolve(std::string host, int32& family);
+
+	 class socket_util
+	 {
+	 public:
+		 static bool bind(SOCKET sockfd, std::string ip, uint16_t port);
+		 static void setnonblock(SOCKET fd);
+		 static void setblock(SOCKET fd, int write_timeout = 0);
+		 static void setreuseaddr(SOCKET fd);
+		 static void setreuseport(SOCKET sockfd);
+		 static void setnodelay(SOCKET sockfd);
+		 static void setkeepalive(SOCKET sockfd);
+		 static void setnosigpipe(SOCKET sockfd);
+		 static void setsendbufsize(SOCKET sockfd, int size);
+		 static void setrecvbufsize(SOCKET sockfd, int size);
+		 static std::string getpeerip(SOCKET sockfd);
+		 static std::string getsocketip(SOCKET sockfd);
+		 static int getsocketaddr(SOCKET sockfd, struct sockaddr_in* addr);
+		 static uint16_t getpeerport(SOCKET sockfd);
+		 static int getpeeraddr(SOCKET sockfd, struct sockaddr_in *addr);
+		 static void close(SOCKET sockfd);
+		 static bool connect(SOCKET sockfd, std::string ip, uint16_t port, int timeout = 0);
+	 };
+
 }
 
 #endif // _C_SOCKET_UTIL_H_

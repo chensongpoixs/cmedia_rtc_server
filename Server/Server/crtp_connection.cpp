@@ -24,7 +24,7 @@ purpose:		_C_DTLS_ _H_
 
 
 #include "crtp_connection.h"
-
+#include "csocket_util.h"
 namespace chen {
 
  
@@ -44,7 +44,7 @@ namespace chen {
 
 		return true;
 	}
-	bool crtp_connection::SetupRtpOverUdp(MediaChannelId channel_id, uint16_t rtp_port, uint16_t rtcp_port)
+	bool crtp_connection::SetupRtpOverUdp(MediaChannelId channel_id,const  struct sockaddr_in *addr, uint16_t rtp_port, uint16_t rtcp_port)
 	{
 		//auto conn = rtsp_connection_.lock();
 		//if (!conn) {
@@ -54,7 +54,10 @@ namespace chen {
 		//if (SocketUtil::GetPeerAddr(conn->GetSocket(), &peer_addr_) < 0) {
 		//	return false;
 		//}
-
+		if (addr)
+		{
+			memcpy(&peer_addr_, addr, sizeof(*addr));
+		}
 		media_channel_info_[channel_id].rtp_port = rtp_port;
 		media_channel_info_[channel_id].rtcp_port = rtcp_port;
 
@@ -68,22 +71,24 @@ namespace chen {
 			local_rtcp_port_[channel_id] = local_rtp_port_[channel_id] + 1;
 
 			rtpfd_[channel_id] = ::socket(AF_INET, SOCK_DGRAM, 0);
-			//if (!SocketUtil::Bind(rtpfd_[channel_id], "0.0.0.0", local_rtp_port_[channel_id])) {
-			//	SocketUtil::Close(rtpfd_[channel_id]);
-			//	continue;
-			//}
+			if (!socket_util::bind(rtpfd_[channel_id], "0.0.0.0", local_rtp_port_[channel_id]))
+			{
+				socket_util::close(rtpfd_[channel_id]);
+				continue;
+			}
 
 			rtcpfd_[channel_id] = ::socket(AF_INET, SOCK_DGRAM, 0);
-			//if (!SocketUtil::Bind(rtcpfd_[channel_id], "0.0.0.0", local_rtcp_port_[channel_id])) {
-			//	SocketUtil::Close(rtpfd_[channel_id]);
-			//	SocketUtil::Close(rtcpfd_[channel_id]);
-			//	continue;
-			//}
+			if (!socket_util::bind(rtcpfd_[channel_id], "0.0.0.0", local_rtcp_port_[channel_id])) 
+			{
+				socket_util::close(rtpfd_[channel_id]);
+				socket_util::close(rtcpfd_[channel_id]);
+				continue;
+			}
 
 			break;
 		}
 
-	//	SocketUtil::SetSendBufSize(rtpfd_[channel_id], 50 * 1024);
+		socket_util::setsendbufsize(rtpfd_[channel_id], 50 * 1024);
 
 		peer_rtp_addr_[channel_id].sin_family = AF_INET;
 		peer_rtp_addr_[channel_id].sin_addr.s_addr = peer_addr_.sin_addr.s_addr;
@@ -109,10 +114,11 @@ namespace chen {
 
 			local_rtp_port_[channel_id] = rd() & 0xfffe;
 			rtpfd_[channel_id] = ::socket(AF_INET, SOCK_DGRAM, 0);
-			//if (!SocketUtil::Bind(rtpfd_[channel_id], "0.0.0.0", local_rtp_port_[channel_id])) {
-			//	SocketUtil::Close(rtpfd_[channel_id]);
-			//	continue;
-			//}
+			if (!socket_util::bind(rtpfd_[channel_id], "0.0.0.0", local_rtp_port_[channel_id])) 
+			{
+				socket_util::close(rtpfd_[channel_id]);
+				continue;
+			}
 
 			break;
 		}
@@ -210,8 +216,8 @@ namespace chen {
 					SendRtpOverUdp(channel_id, pkt);
 				}
 
-				//media_channel_info_[channel_id].octetCount  += pkt.size;
-				//media_channel_info_[channel_id].packetCount += 1;
+				media_channel_info_[channel_id].octet_count  += pkt.size;
+				media_channel_info_[channel_id].packet_count += 1;
 			}
 		}
 		//);

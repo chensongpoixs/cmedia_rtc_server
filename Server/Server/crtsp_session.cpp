@@ -189,8 +189,20 @@ namespace chen {
 					m_rtp_connection.SetPayloadType((MediaChannelId)chn, source->GetPayloadType());
 				}
 			}
-
-			std::string sdp = media_session_ptr->get_sdp_message("127.0.0.1"/*SocketUtil::GetSocketIp(this->GetSocket())*/, g_rtsp_server.GetVersion());
+			int32 family;
+			std::string ip ;
+			uint16_t port;
+			if (m_session_ptr)
+			{
+				uv_ip::GetAddressInfo(m_session_ptr->GetPeerAddress(), family, ip, port);
+			}
+			else
+			{
+				ip = "127.0.0.1";
+				WARNING_EX_LOG("session_ptr = NULL !!!");
+			}
+			//NORMAL_EX_LOG("New --> connect [ip = %s][port = %u] ", ip.c_str(), port);
+			std::string sdp = media_session_ptr->get_sdp_message(ip/*SocketUtil::GetSocketIp(this->GetSocket())*/, g_rtsp_server.GetVersion());
 			if (sdp == "") {
 				size = m_rtsp_request.BuildServerErrorRes(res.get(), 4096);
 			}
@@ -257,7 +269,8 @@ namespace chen {
 				uint16_t peer_rtcp_port = m_rtsp_request.GetRtcpPort();
 				uint16_t session_id = m_rtp_connection.GetRtpSessionId();
 
-				if (m_rtp_connection.SetupRtpOverUdp(channel_id, peer_rtp_port, peer_rtcp_port)) {
+				if (m_rtp_connection.SetupRtpOverUdp(channel_id, (const struct sockaddr_in*)m_session_ptr->GetPeerAddress(),  peer_rtp_port, peer_rtcp_port))
+				{
 					//SOCKET rtcp_fd = m_rtp_connection.GetRtcpSocket(channel_id);
 					//rtcp_channels_[channel_id].reset(new Channel(rtcp_fd));
 					//rtcp_channels_[channel_id]->SetReadCallback([rtcp_fd, this]() { this->HandleRtcp(rtcp_fd); });
@@ -485,7 +498,7 @@ namespace chen {
 			WARNING_EX_LOG(" session_ptr == NULL !!!");
 			return false;
 		}
-		NORMAL_EX_LOG("[data = %s]", data);
+		//NORMAL_EX_LOG("[data = %s]", data);
 		  m_session_ptr->Send(data, len, NULL);
 		  return true;
 	}

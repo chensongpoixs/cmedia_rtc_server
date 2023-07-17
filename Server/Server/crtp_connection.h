@@ -78,7 +78,7 @@ namespace chen {
 		}
 
 		bool SetupRtpOverTcp(MediaChannelId channel_id, uint16_t rtp_channel, uint16_t rtcp_channel);
-		bool SetupRtpOverUdp(MediaChannelId channel_id, uint16_t rtp_port, uint16_t rtcp_port);
+		bool SetupRtpOverUdp(MediaChannelId channel_id, const struct sockaddr_in *addr, uint16_t rtp_port, uint16_t rtcp_port);
 		bool SetupRtpOverMulticast(MediaChannelId channel_id, std::string ip, uint16_t port);
 
 		uint32_t GetRtpSessionId() const
