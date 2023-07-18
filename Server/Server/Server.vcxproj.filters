@@ -925,6 +925,9 @@
     <ClCompile Include="crtsp.cpp">
       <Filter>rtsp</Filter>
     </ClCompile>
+    <ClCompile Include="caac_source.cpp">
+      <Filter>codec</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1775,6 +1778,9 @@
     </ClInclude>
     <ClInclude Include="crtsp.h">
       <Filter>rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="caac_source.h">
+      <Filter>codec</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

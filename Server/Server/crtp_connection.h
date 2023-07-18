@@ -29,6 +29,7 @@ purpose:		_C_DTLS_ _H_
 #include "cmedia_type.h"
 #include "crtp.h"
 #include <random>
+#include "ctcp_conection.h"
 //#include ""
 namespace chen {
 	class crtp_connection
@@ -76,6 +77,7 @@ namespace chen {
 		{
 			media_channel_info_[channel_id].rtp_header.payload = payload;
 		}
+		void set_rtsp_connect(ctcp_connection *  conn) { m_rtc_connection_ptr = conn; }
 
 		bool SetupRtpOverTcp(MediaChannelId channel_id, uint16_t rtp_channel, uint16_t rtcp_channel);
 		bool SetupRtpOverUdp(MediaChannelId channel_id, const struct sockaddr_in *addr, uint16_t rtp_port, uint16_t rtcp_port);
@@ -172,6 +174,7 @@ namespace chen {
 		struct sockaddr_in peer_rtp_addr_[MAX_MEDIA_CHANNEL];
 		struct sockaddr_in peer_rtcp_sddr_[MAX_MEDIA_CHANNEL];
 		MediaChannelInfo media_channel_info_[MAX_MEDIA_CHANNEL];
+		ctcp_connection *					m_rtc_connection_ptr= NULL;
 	};
 }
 

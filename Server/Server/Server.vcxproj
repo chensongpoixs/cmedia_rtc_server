@@ -150,6 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="caac_source.cpp" />
     <ClCompile Include="capi_rtc_player.cpp" />
     <ClCompile Include="capi_rtc_publish.cpp" />
     <ClCompile Include="casync_log.cpp" />
@@ -394,6 +395,7 @@
   <ItemGroup>
     <ClInclude Include="buffer.h" />
     <ClInclude Include="BweType.hpp" />
+    <ClInclude Include="caac_source.h" />
     <ClInclude Include="capi_rtc_player.h" />
     <ClInclude Include="capi_rtc_publish.h" />
     <ClInclude Include="carraysize.h" />

@@ -44,6 +44,7 @@ namespace chen {
 		 // TODO@chensong 2023-05-23 单线程 没有问题 多线程是有问题哈 ^_^
 		//memcpy(m_session_ptr, session, sizeof(ctcp_connection));
 		m_session_ptr = session;
+		m_rtp_connection.set_rtsp_connect(m_session_ptr);
 	}
 
 	bool crtsp_session::on_received(uint8 * data, size_t size)

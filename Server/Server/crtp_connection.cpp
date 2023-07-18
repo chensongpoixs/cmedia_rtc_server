@@ -37,8 +37,14 @@ namespace chen {
 
 		media_channel_info_[channel_id].rtp_channel = rtp_channel;
 		media_channel_info_[channel_id].rtcp_channel = rtcp_channel;
-		//rtpfd_[channel_id] = conn->GetSocket();
-		//rtcpfd_[channel_id] = conn->GetSocket();
+		if (m_rtc_connection_ptr)
+		{
+			memcpy(&rtpfd_[channel_id], m_rtc_connection_ptr->GetPeerAddress(), sizeof(*m_rtc_connection_ptr->GetPeerAddress()));
+			memcpy(&rtcpfd_[channel_id], m_rtc_connection_ptr->GetPeerAddress(), sizeof(*m_rtc_connection_ptr->GetPeerAddress()));
+
+			//rtcpfd_[channel_id] = m_rtc_connection_ptr->GetPeerAddress();; // conn->GetSocket();
+		}
+		
 		media_channel_info_[channel_id].is_setup = true;
 		transport_mode_ = RTP_OVER_TCP;
 
@@ -261,7 +267,10 @@ namespace chen {
 		rtpPktPtr[1] = (char)media_channel_info_[channel_id].rtp_channel;
 		rtpPktPtr[2] = (char)(((pkt.size - 4) & 0xFF00) >> 8);
 		rtpPktPtr[3] = (char)((pkt.size - 4) & 0xFF);
-
+		if (m_rtc_connection_ptr)
+		{
+			m_rtc_connection_ptr->Send((const uint8_t*)rtpPktPtr, pkt.size, NULL);
+		}
 		//conn->Send((char*)rtpPktPtr, pkt.size);
 		return pkt.size;
 	}
