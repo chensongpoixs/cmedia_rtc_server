@@ -22,46 +22,44 @@ purpose:		api_rtc_publish
 
 ************************************************************************************************/
 
-#ifndef _C_API_RTC_PUBLISH_H_
-#define _C_API_RTC_PUBLISH_H_
+#ifndef _C_API_RTC_TYPE_H_
+#define _C_API_RTC_TYPE_H_
 #include "cnet_type.h"
 #include <sstream>
 #include <iostream>
 #include <vector>
 #include <map>
+#include <string>
 #include "crtc_sdp.h"
 #include "crtc_source_description.h"
-#include "capi_rtc_type.h"
 namespace chen {
-
-	class crtc_user_config;
-	class capi_rtc_publish
+	//const std::string & remote_sdp, const std::string & roomname,
+	//const std::string & peerid, const std::string & video_peerid, std::string & local_sdp
+	struct cclient_message_base
 	{
-	public:
-		capi_rtc_publish() {}
-		~capi_rtc_publish();
+		std::string  m_remote_sdp;
+		std::string  m_room_name;
+		std::string  m_peer_id;
+		std::string  m_codec;
+		cclient_message_base()
+		: m_remote_sdp("")
+		, m_room_name("")
+		, m_peer_id("")
+		, m_codec("H264"){}
+	};
 
-
-	public:
-
-
-
-		bool do_serve_client(const cclient_publish_message & publish_message/*const std::string &remote_sdp, const std::string & roomname, const std::string & peerid*/,   std::string & local_sdp);
-	public:
-		// publish -> remote sdp 
-		bool _negotiate_publish_capability(const cclient_publish_message & publish_message, crtc_sdp& remote_sdp, crtc_source_description * stream_desc);
-		bool _generate_publish_local_sdp(const std::string & media_stream_url, crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan, bool audio_before_video);
-
-		bool _generate_publish_local_sdp_for_audio(crtc_sdp& local_sdp, crtc_source_description* stream_desc);
-		bool _generate_publish_local_sdp_for_video(crtc_sdp& local_sdp, crtc_source_description* stream_desc, bool unified_plan);
-
-	protected:
-	private:
-
-		int32 _serve_client(crtc_user_config * ruc);
-
-		int32 _check_remote_sdp(const crtc_sdp & remote_sdp);
+	struct cclient_publish_message : public cclient_message_base
+	{
+		cclient_publish_message()
+			: cclient_message_base() {}
+	};
+	struct cclient_player_message : public cclient_message_base
+	{
+		std::string m_video_peer_id;
+		cclient_player_message()
+			: cclient_message_base()
+			, m_video_peer_id(""){}
 	};
 }
 
-#endif // _C_API_RTC_PUBLISH_H_
+#endif // _C_API_RTC_TYPE_H_

@@ -1782,6 +1782,9 @@
     <ClInclude Include="caac_source.h">
       <Filter>codec</Filter>
     </ClInclude>
+    <ClInclude Include="capi_rtc_type.h">
+      <Filter>api_rtc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

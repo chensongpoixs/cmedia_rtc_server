@@ -45,8 +45,8 @@ namespace chen {
 	capi_rtc_player::~capi_rtc_player()
 	{
 	}
-	bool capi_rtc_player::do_serve_client(const std::string & remote_sdp, const std::string & roomname,
-		const std::string & peerid, const std::string & video_peerid, std::string & local_sdp)
+	bool capi_rtc_player::do_serve_client(const cclient_player_message & player_message/*const std::string & remote_sdp, const std::string & roomname,
+		const std::string & peerid, const std::string & video_peerid*/, std::string & local_sdp)
 	{
 		crtc_source_description stream_desc;
 		crtc_sdp rtc_remote_sdp;
@@ -63,16 +63,16 @@ namespace chen {
 		由客户端先发起client hello*/
 		rtc_local_sdp.m_session_config.m_dtls_role = "passive";
 		rtc_local_sdp.m_session_config.m_dtls_version = "auto";
-		std::string planname = roomname + "/" +peerid;
-
-		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(roomname + "/" + video_peerid);
+		std::string planname = player_message.m_room_name + "/" + player_message.m_peer_id;// roomname + "/" + peerid;
+		std::string media_stream_url = player_message.m_room_name + "/" + player_message.m_video_peer_id;
+		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(media_stream_url/*roomname + "/" + video_peerid*/);
 		if (!rtc_ssrc_info_ptr)
 		{
-			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), video_peerid.c_str());
+			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s ]", media_stream_url.c_str());
 
 			return false;
 		}
-		rtc_remote_sdp.parse(remote_sdp);
+		rtc_remote_sdp.parse(player_message.m_remote_sdp);
 		std::map<uint32_t, crtc_track_description*> play_sub_relations;
 		// audio track description
 		if (true) {
@@ -104,11 +104,20 @@ namespace chen {
 			video_track_desc->m_ssrc = video_ssrc;
 			video_track_desc->m_direction = "sendonly";
 
-			cvideo_payload* video_payload = new cvideo_payload(kVideoPayloadType, "AV1", kVideoSamplerate);
-			video_track_desc->m_media_ptr = video_payload;
+			if (player_message.m_codec == "AV1")
+			{
+				cvideo_payload* video_payload = new cvideo_payload(kVideoPayloadType, "AV1", kVideoSamplerate);
+				video_track_desc->m_media_ptr = video_payload;
+			}
+			else
+			{
+				cvideo_payload* video_payload = new cvideo_payload(kVideoPayloadType, "H264", kVideoSamplerate);
+				video_track_desc->m_media_ptr = video_payload;
 
-			//video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
-			//video_payload->set_bitrate_param_desc("x-google-max-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMaxBitrate))+";x-google-min-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcMinBitrate))+";x-google-start-bitrate="+std::to_string(g_cfg.get_uint32(ECI_RtcStartBitrate)));
+				video_payload->set_h264_param_desc("level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f");
+				video_payload->set_bitrate_param_desc("x-google-max-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcMaxBitrate)) + ";x-google-min-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcMinBitrate)) + ";x-google-start-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcStartBitrate)));
+
+			}
 			crtx_payload_des *rtx_video_payload = new crtx_payload_des(kRtxVideoPayloadType, kVideoPayloadType);
 			video_track_desc->m_rtx_ptr = rtx_video_payload;
 			video_track_desc->m_rtx_ssrc = rtc_ssrc_info_ptr->m_rtx_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
@@ -116,7 +125,7 @@ namespace chen {
 		///////////////////////////////////////////
 
 
-		_negotiate_play_capability(rtc_remote_sdp, &stream_desc, play_sub_relations);
+		_negotiate_play_capability(player_message, rtc_remote_sdp, &stream_desc, play_sub_relations);
 		if (!play_sub_relations.size())
 		{
 			WARNING_EX_LOG("no play relations");
@@ -152,7 +161,7 @@ namespace chen {
 			++it;
 		}
 
-		_generate_play_local_sdp(roomname, peerid, rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
+		_generate_play_local_sdp(media_stream_url, rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
 
 		// datachannel -->
 		const cmedia_desc & application_media =  rtc_remote_sdp.m_media_descs.back();
@@ -257,8 +266,8 @@ namespace chen {
 		//session->set_local_sdp(local_sdp);
 	//	session->set_state_as_waiting_stun();
 		crtc_room_master master;
-		master.m_room_name = roomname;
-		master.m_user_name = video_peerid;
+		master.m_room_name = player_message.m_room_name;
+		master.m_user_name = player_message.m_video_peer_id;
 		crtc_transport * transport_ptr = new crtc_transport(master);
 		transport_ptr->create_players(play_sub_relations);
 		transport_ptr->init( ERtcClientPlayer, rtc_remote_sdp, rtc_local_sdp, stream_desc);
@@ -273,7 +282,7 @@ namespace chen {
 		//_srs_rtc_manager->add_with_name(username, session);
 		g_transport_mgr.insert_username(username, transport_ptr);
 		//g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
-		g_transport_mgr.m_all_consumer_map[roomname + "/" + video_peerid].insert(transport_ptr);
+		g_transport_mgr.m_all_consumer_map[media_stream_url].insert(transport_ptr);
 
 
 		std::ostringstream    sdp;
@@ -287,7 +296,7 @@ namespace chen {
 		//NORMAL_EX_LOG("sdp info = %s", sdp.str().c_str());
 		return true;
 	}
-	bool capi_rtc_player::_negotiate_play_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc, std::map<uint32_t, crtc_track_description*>& sub_relations)
+	bool capi_rtc_player::_negotiate_play_capability(const cclient_player_message & player_message, crtc_sdp& remote_sdp, crtc_source_description * stream_desc, std::map<uint32_t, crtc_track_description*>& sub_relations)
 	{
 		if (!stream_desc)
 		{
@@ -410,7 +419,8 @@ namespace chen {
 				//	track_descs.push_back(track_desc.copy());
 				//}
 			}
-			else if (remote_media_desc.is_video() && "av1" == "av1") {
+			else if (!remote_media_desc.is_video() && player_message.m_codec == "AV1")
+			{
 				//std::vector<SrsMediaPayloadType> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
 				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
 
@@ -436,7 +446,8 @@ namespace chen {
 				//	track_descs = source->get_track_desc("video", "AV1X");
 				//}
 			}
-			else if (remote_media_desc.is_video()) {
+			else if (remote_media_desc.is_video()) 
+			{
 				// TODO: check opus format specific param
 				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("H264");
 				
@@ -913,7 +924,7 @@ namespace chen {
 		//}
 		return true;
 	}
-	bool capi_rtc_player::_generate_play_local_sdp(const std::string & roomname, const std::string & peerid, crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan, bool audio_before_video)
+	bool capi_rtc_player::_generate_play_local_sdp(const std::string & media_stream_url, crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan, bool audio_before_video)
 	{
 		int32 err = 0;
 		if (!stream_desc)
@@ -938,9 +949,9 @@ namespace chen {
 
 		// TODO@chensong 2023-03-08   default -> video stream address url  
 		// url [roomname + username]
-		std::string stream_id = roomname + "/" + peerid; //"test";;// req->app + "/" + req->stream;
+		//std::string stream_id = roomname + "/" + peerid; //"test";;// req->app + "/" + req->stream;
 
-		local_sdp.m_msids.push_back(stream_id);
+		local_sdp.m_msids.push_back(media_stream_url);
 
 		local_sdp.m_group_policy = "BUNDLE";
 

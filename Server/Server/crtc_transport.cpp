@@ -150,7 +150,8 @@ namespace chen {
 				params.params.payload_type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_pt;
 				params.params.ssrc = stream_desc.m_audio_track_desc_ptr->m_ssrc;
 				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
-
+				params.params.subtype = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_name;
+				//if (stream_desc.m_audio_track_desc_ptr-)
 				/*if (rtc_ssrc_info_ptr)
 				{
 					if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc)).second)
@@ -176,6 +177,7 @@ namespace chen {
 					crtc_producer::crtp_params params;
 					params.mid = rtc_track->m_mid;
 					params.params.payload_type = rtc_track->m_media_ptr->m_pt;
+					params.params.subtype = rtc_track->m_media_ptr->m_name;
 					params.params.ssrc = rtc_track->m_ssrc;
 					params.params.type = rtc_track->m_type;
 					params.params.use_nack = true;
@@ -280,7 +282,7 @@ namespace chen {
 				params.params.payload_type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_pt;
 				params.params.ssrc = stream_desc.m_audio_track_desc_ptr->m_ssrc;
 				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
-				
+				params.params.subtype = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_name;
 				if (rtc_ssrc_info_ptr)
 				{
 					if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc)).second)
@@ -305,6 +307,7 @@ namespace chen {
 					params.params.payload_type = rtc_track->m_media_ptr->m_pt;
 					params.params.ssrc = rtc_track->m_ssrc;
 					params.params.type = rtc_track->m_type;
+					params.params.subtype = rtc_track->m_media_ptr->m_name;
 					params.params.use_nack = true;
 					params.params.use_fir = true;
 					params.params.use_pli = true;

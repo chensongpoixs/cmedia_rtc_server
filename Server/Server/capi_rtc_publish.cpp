@@ -43,8 +43,8 @@ namespace chen {
 	capi_rtc_publish::~capi_rtc_publish()
 	{
 	}
-	bool capi_rtc_publish::do_serve_client(const std::string & remote_sdp,  const std::string & roomname, 
-		const std::string & peerid,  std::string & local_sdp)
+	bool capi_rtc_publish::do_serve_client(const cclient_publish_message & publish_message/*const std::string & remote_sdp,  const std::string & roomname,
+		const std::string & peerid*/, std::string & local_sdp)
 	{
 		//NORMAL_EX_LOG("[%s]", remote_sdp.c_str());
 		crtc_source_description stream_desc;
@@ -62,19 +62,20 @@ namespace chen {
 		由客户端先发起client hello*/
 		rtc_local_sdp.m_session_config.m_dtls_role = "passive";
 		rtc_local_sdp.m_session_config.m_dtls_version = "auto";
+		std::string media_stream_url = publish_message.m_room_name + "/" + publish_message.m_peer_id;
 
 		
-		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(roomname + "/" + peerid);
+		crtc_ssrc_info * rtc_ssrc_info_ptr = g_global_rtc_config.get_stream_uri(media_stream_url/*roomname + "/" + peerid*/);
 		if (!rtc_ssrc_info_ptr)
 		{
-			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), peerid.c_str());
+			WARNING_EX_LOG("create media ssrc failed !!![ media name = %s]", media_stream_url.c_str());
 
 			return false;
 		}
-		rtc_remote_sdp.parse(remote_sdp);
-		_negotiate_publish_capability(rtc_remote_sdp, &stream_desc);
+		rtc_remote_sdp.parse(publish_message.m_remote_sdp);
+		_negotiate_publish_capability(publish_message, rtc_remote_sdp, &stream_desc);
 
-		_generate_publish_local_sdp(roomname, peerid, rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
+		_generate_publish_local_sdp(media_stream_url, rtc_local_sdp, &stream_desc, rtc_remote_sdp.is_unified(), true);
 
 		// All tracks default as inactive, so we must enable them.
 	//	session->set_all_tracks_status(req->get_stream_url(), ruc->publish_, true);
@@ -178,8 +179,8 @@ namespace chen {
 		//session->set_local_sdp(local_sdp);
 	//	session->set_state_as_waiting_stun();
 		crtc_room_master master;
-		master.m_room_name = roomname;
-		master.m_user_name = peerid;
+		master.m_room_name = publish_message.m_room_name; //roomname;
+		master.m_user_name = publish_message.m_peer_id; //peerid;
 		crtc_transport * transport_ptr = new crtc_transport(master);
 
 		transport_ptr->init(ERtcClientPublisher , rtc_remote_sdp, rtc_local_sdp, stream_desc);
@@ -195,12 +196,12 @@ namespace chen {
 		g_transport_mgr.insert_username(username, transport_ptr);
 		//g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
 
-		if (!g_transport_mgr.m_all_stream_url_map.insert(std::make_pair(roomname + "/" + peerid, transport_ptr)).second)
+		if (!g_transport_mgr.m_all_stream_url_map.insert(std::make_pair(media_stream_url/*roomname + "/" + peerid*/, transport_ptr)).second)
 		{
-			g_transport_mgr.m_all_stream_url_map[roomname + "/" + peerid]->destroy();
-			delete g_transport_mgr.m_all_stream_url_map[roomname + "/" + peerid];
-			g_transport_mgr.m_all_stream_url_map[roomname + "/" + peerid] = transport_ptr;
-			WARNING_EX_LOG("insert failed url = %s failed !!!", std::string(roomname + "/" + peerid).c_str());
+			g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/]->destroy();
+			delete g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/];
+			g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/] = transport_ptr;
+			WARNING_EX_LOG("insert failed url = %s failed !!!", media_stream_url.c_str());
 		}
 
 		std::ostringstream    sdp;
@@ -225,7 +226,7 @@ namespace chen {
 
 		return true;
 	}
-	bool capi_rtc_publish::_negotiate_publish_capability(crtc_sdp& remote_sdp, crtc_source_description * stream_desc)
+	bool capi_rtc_publish::_negotiate_publish_capability(const cclient_publish_message & publish_message, crtc_sdp& remote_sdp, crtc_source_description * stream_desc)
 	{
 		if (!stream_desc)
 		{
@@ -349,7 +350,7 @@ namespace chen {
 					break;
 				}
 			}
-			else if (remote_media_desc.is_video() && /*ruc->codec_*/ "av1" == "av1") 
+			else if (remote_media_desc.is_video() && publish_message.m_codec == "AV1")
 			{
 				if (true)
 				{
@@ -375,6 +376,7 @@ namespace chen {
 							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kRepairedRidUri);
 
 						}
+						// TODO@chensong 2023-07-19 M85版本中已经剔除该rtcp的扩展协议该协议是针对H264和H265的rtp的包的封装
 						/*else if (iter->second == RtpExtension_kFrameMarkingUri)
 						{
 							track_desc.add_rtp_extension_desc(iter->first, RtpExtension_kFrameMarkingUri);
@@ -789,7 +791,7 @@ namespace chen {
 
 		return true;
 	}
-	bool capi_rtc_publish::_generate_publish_local_sdp(const std::string & roomname, const std::string & peerid, crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan, bool audio_before_video)
+	bool capi_rtc_publish::_generate_publish_local_sdp(const std::string & media_stream_url, crtc_sdp & local_sdp, crtc_source_description * stream_desc, bool unified_plan, bool audio_before_video)
 	{
 		int32 err = 0;
 		if (!stream_desc)
@@ -813,9 +815,9 @@ namespace chen {
 		local_sdp.m_msid_semantic = "WMS";
 		// TODO@chensong 2023-03-08   default -> video stream address url  
 		// url [roomname + username]
-		std::string stream_id = roomname + "/" + peerid; //"test";;// req->app + "/" + req->stream;
+		//std::string stream_id = roomname + "/" + peerid; //"test";;// req->app + "/" + req->stream;
 
-		local_sdp.m_msids.push_back(stream_id);
+		local_sdp.m_msids.push_back(media_stream_url);
 
 		local_sdp.m_group_policy = "BUNDLE";
 

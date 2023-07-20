@@ -301,27 +301,32 @@ namespace chen {
 		{
 			capi_rtc_publish publisher;
 
-
-			std::string sdp = value["data"]["offer"].asCString();
-			std::string roomname = value["data"]["roomname"].asCString();
-			std::string peerid = value["data"]["peerid"].asCString();
-			if (!g_global_rtc_config.get_stream_uri(roomname + "/" + peerid))
+			cclient_publish_message publish_message;
+			publish_message.m_remote_sdp = value["data"]["offer"].asCString();
+			publish_message.m_room_name = value["data"]["roomname"].asCString();
+			publish_message.m_peer_id = value["data"]["peerid"].asCString();
+			if (value["data"].isMember("codec") && value["data"]["codec"].isString())
 			{
-				WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), peerid.c_str());
+				publish_message.m_codec = value["data"]["codec"].asCString();
+			}
+			std::string media_stream_url = publish_message.m_room_name + "/" + publish_message.m_peer_id;
+			if (!g_global_rtc_config.get_stream_uri(media_stream_url /*roomname + "/" + peerid*/))
+			{
+				WARNING_EX_LOG("create media ssrc failed !!![ media name = %s ]", media_stream_url.c_str());
 				send_msg(S2C_rtc_publisher, EShareRtcCreateMediaSsrcInfo, reply);
 				return true;
 			}
 			std::string local_sdp;
-			auto iter = g_transport_mgr.m_all_stream_url_map.find(roomname + "/" + peerid);
+			auto iter = g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
 			if (iter == g_transport_mgr.m_all_stream_url_map.end())
 			{
-				publisher.do_serve_client(sdp, roomname, peerid, local_sdp);
+				publisher.do_serve_client(publish_message/*sdp, roomname, peerid*/, local_sdp);
 				reply["sdp"] = local_sdp;
 				reply["type"] = "answer";
 				//if (m_master)
 				{
-					m_room_name = roomname;
-					m_user_name = peerid;
+					m_room_name = publish_message.m_room_name; //roomname;
+					m_user_name = publish_message.m_peer_id;// //peerid;
 					m_master = true;
 					g_room_mgr.m_master[m_room_name] = m_session_id;
 				}
@@ -376,25 +381,30 @@ namespace chen {
 		{
 			capi_rtc_player player;
 
-
-			std::string sdp = value["data"]["offer"].asCString();
-			std::string roomname = value["data"]["roomname"].asCString();
-			std::string video_peerid = value["data"]["video_peerid"].asCString();
-			std::string peerid = value["data"]["peerid"].asCString();
-			if (!g_global_rtc_config.get_stream_uri(roomname + "/" + video_peerid))
+			cclient_player_message  player_message;
+			player_message.m_remote_sdp = value["data"]["offer"].asCString();
+			player_message.m_room_name = value["data"]["roomname"].asCString();
+			player_message.m_video_peer_id = value["data"]["video_peerid"].asCString();
+			player_message.m_peer_id = value["data"]["peerid"].asCString();
+			//std::string codec = "H264"; // default H264 编码
+			if (value["data"].isMember("codec") && value["data"]["codec"].isString())
+			{
+				player_message.m_codec = value["data"]["codec"].asCString();
+			}
+			if (!g_global_rtc_config.get_stream_uri(player_message.m_room_name + "/" + player_message.m_video_peer_id))
 			{
 				//EShareRtcCreateMediaSsrcInfo
-				WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", roomname.c_str(), video_peerid.c_str());
+				WARNING_EX_LOG("create media ssrc failed !!![ media name = %s/%s]", player_message.m_room_name.c_str(), player_message.m_video_peer_id.c_str());
 				send_msg(S2C_rtc_player, EShareRtcCreateMediaSsrcInfo, reply);
 				return true;
 			}
 			std::string local_sdp;
 
-			player.do_serve_client(sdp, roomname,  peerid, video_peerid,  local_sdp);
+			player.do_serve_client(player_message,  local_sdp);
 			reply["sdp"] = local_sdp;
 			reply["type"] = "answer";
-			m_room_name = roomname;
-			m_user_name = peerid;
+			m_room_name = player_message.m_room_name;
+			m_user_name = player_message.m_peer_id;
 			send_msg(S2C_rtc_player, EShareProtoOk, reply);
 			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
 		}

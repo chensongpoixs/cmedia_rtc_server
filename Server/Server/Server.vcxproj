@@ -398,6 +398,7 @@
     <ClInclude Include="caac_source.h" />
     <ClInclude Include="capi_rtc_player.h" />
     <ClInclude Include="capi_rtc_publish.h" />
+    <ClInclude Include="capi_rtc_type.h" />
     <ClInclude Include="carraysize.h" />
     <ClInclude Include="carray_view.h" />
     <ClInclude Include="casync_log.h" />

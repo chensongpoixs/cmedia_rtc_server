@@ -111,8 +111,14 @@ namespace chen {
 		}
 		if (m_params.type == "video")
 		{
-			cav1::ProcessRtpPacket(packet);
-			//RTC::Codecs::H264::ProcessRtpPacket(packet);
+			if (m_params.subtype == "AV1")
+			{
+				cav1::ProcessRtpPacket(packet);
+			}
+			else
+			{ 
+				RTC::Codecs::H264::ProcessRtpPacket(packet);
+			}
 		}
 		// Process the packet at codec level.
 		//if (packet->GetPayloadType() == GetPayloadType())
@@ -230,7 +236,15 @@ namespace chen {
 		if (m_params.type == "video")
 		{
 			//RTC::Codecs::H264::ProcessRtpPacket(packet);
-			cav1::ProcessRtpPacket(packet);
+			//cav1::ProcessRtpPacket(packet);
+			if (m_params.subtype == "AV1")
+			{
+				cav1::ProcessRtpPacket(packet);
+			}
+			else
+			{
+				RTC::Codecs::H264::ProcessRtpPacket(packet);
+			}
 		}
 
 		// Mark the packet as retransmitted.
