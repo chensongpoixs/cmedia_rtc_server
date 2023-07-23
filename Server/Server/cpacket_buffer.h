@@ -87,6 +87,8 @@ namespace chen {
 
 
 		bool  _get_bitstream(uint16 first_seq_num, uint16 last_seq_num, uint32 timestamp, cvcm_encoded_frame & vcm_frame);
+	
+		void  _return_frame(uint16 first_seq_num, uint16 last_seq_num, uint32 timestamp);
 	protected:
 	private:
 

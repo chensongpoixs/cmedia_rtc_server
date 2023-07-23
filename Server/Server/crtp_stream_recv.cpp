@@ -116,7 +116,7 @@ namespace chen {
 			if (m_params.subtype == "AV1")
 			{
 				cav1::ProcessRtpPacket(packet);
-#if 0
+#if 1
 
 				if (packet->GetPayloadLength() > 0)
 				{

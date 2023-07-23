@@ -93,7 +93,7 @@ namespace chen {
 		m_sequence_buffer[index].frame_created = false;
 		m_sequence_buffer[index].used = true;
 		m_data_buffer[index] = *packet;
-		packet->m_data_ptr = nullptr;
+		//packet->m_data_ptr = nullptr;
 
 		//UpdateMissingPackets(packet->seqNum);
 
@@ -106,7 +106,7 @@ namespace chen {
 		std::vector<cvcm_encoded_frame> fonds_frames = _find_frames(seq_num);
 		for ( cvcm_encoded_frame& frame_data : fonds_frames)
 		{
-#if 0
+#if 1
 			static FILE * out_file_ptr = ::fopen("test_webrtc.mp4", "wb+");
 			if (out_file_ptr)
 			{
@@ -300,9 +300,10 @@ namespace chen {
 				}
 				else
 				{
-					if (!_get_bitstream(start_seq_num, seq_num, 0, vcm_frame))
+					if (_get_bitstream(start_seq_num, seq_num, frame_timestamp, vcm_frame))
 					{
 						found_frames.push_back(vcm_frame);
+						_return_frame(start_seq_num, seq_num, frame_timestamp);
 					}
 				}
 				//found_frames.emplace_back(
@@ -400,6 +401,27 @@ namespace chen {
 		} while (index != end);
 
 		return true;
+	}
+
+	void cpacket_buffer::_return_frame(uint16 first_seq_num, uint16 last_seq_num, uint32 timestamp_)
+	{
+		size_t index = first_seq_num % m_size; // frame->first_seq_num() % size_;
+		size_t end = (last_seq_num + 1) % m_size; //(frame->last_seq_num() + 1) % size_;
+		uint16_t seq_num = first_seq_num; // frame->first_seq_num();
+		uint32_t timestamp = timestamp_;// frame->Timestamp();
+		while (index != end) {
+			// Check both seq_num and timestamp to handle the case when seq_num wraps
+			// around too quickly for high packet rates.
+			if (m_sequence_buffer[index].seq_num == seq_num &&
+				m_data_buffer[index].m_timestamp == timestamp) {
+				delete[] m_data_buffer[index].m_data_ptr;
+				m_data_buffer[index].m_data_ptr = nullptr;
+				m_sequence_buffer[index].used = false;
+			}
+
+			index = (index + 1) % m_size;
+			++seq_num;
+		}
 	}
 
 //	for (std::unique_ptr<RtpFrameObject>& frame : found_frames)
