@@ -38,6 +38,7 @@ Copyright boost
 #include "ctimer.h"
 #include "NackGenerator.hpp"
 #include "XrDelaySinceLastRr.hpp"
+#include "cpacket_buffer.h"
 //#include "crtc_producer.h"
 //#include "SeqManager.hpp"
 //#include "crtp_stream_define.h"
@@ -134,7 +135,7 @@ namespace chen {
 		float			m_rtt;
 		bool			m_has_rtt;
 
-
+		cpacket_buffer		m_packet_buffer;
 		 
 	};
 }

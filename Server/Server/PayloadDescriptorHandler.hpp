@@ -116,6 +116,14 @@ namespace RTC
 			virtual uint8_t GetSpatialLayer() const                                                  = 0;
 			virtual uint8_t GetTemporalLayer() const                                                 = 0;
 			virtual bool IsKeyFrame() const                                                          = 0;
+			virtual bool is_first_packet_in_frame() const
+			{
+				return false;
+			}
+			virtual bool is_last_packet_in_frame() const
+			{
+				return false;
+			}
 		};
 	} // namespace Codecs
 } // namespace RTC

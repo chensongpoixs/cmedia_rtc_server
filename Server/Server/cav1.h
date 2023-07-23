@@ -137,6 +137,14 @@ namespace chen
 			{
 				return this->payloadDescriptor->isKeyFrame;
 			}
+			bool is_first_packet_in_frame() const  override
+			{
+				return payloadDescriptor->z;
+			}
+			bool is_last_packet_in_frame() const  override
+			{
+				return payloadDescriptor->y;
+			}
 
 		private:
 			std::unique_ptr<PayloadDescriptor> payloadDescriptor;

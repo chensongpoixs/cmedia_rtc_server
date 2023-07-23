@@ -191,12 +191,14 @@
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="cmedia_session.cpp" />
     <ClCompile Include="cmedia_source.cpp" />
+    <ClCompile Include="cmod_ops.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnetwork.cpp" />
     <ClCompile Include="cnet_adapter_test.cpp" />
     <ClCompile Include="cnet_rtsp_server.cpp" />
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
+    <ClCompile Include="cpacket_buffer.cpp" />
     <ClCompile Include="cparse_rtsp_request.cpp" />
     <ClCompile Include="cproducer.cpp" />
     <ClCompile Include="cremote_estimator_proxy.cpp" />
@@ -238,6 +240,7 @@
     <ClCompile Include="crtp_stream.cpp" />
     <ClCompile Include="crtp_stream_recv.cpp" />
     <ClCompile Include="crtp_stream_send.cpp" />
+    <ClCompile Include="crtp_video_header.cpp" />
     <ClCompile Include="crtsp.cpp" />
     <ClCompile Include="crtsp_cmd_dispatch.cpp" />
     <ClCompile Include="crtsp_request.cpp" />
@@ -251,6 +254,7 @@
     <ClCompile Include="csctp_association_mgr.cpp" />
     <ClCompile Include="csdp_util.cpp" />
     <ClCompile Include="csender_report.cpp" />
+    <ClCompile Include="csequence_number.cpp" />
     <ClCompile Include="cseq_manager.cpp" />
     <ClCompile Include="csocket_util.cpp" />
     <ClCompile Include="csrtp.cpp" />
@@ -275,6 +279,8 @@
     <ClCompile Include="crtc_util.cpp" />
     <ClCompile Include="ctimer.cpp" />
     <ClCompile Include="ctime_api.cpp" />
+    <ClCompile Include="cvcm_encoded_frame.cpp" />
+    <ClCompile Include="cvcm_packet.cpp" />
     <ClCompile Include="cvideo_bitrate_allocation.cpp" />
     <ClCompile Include="cvideo_payload.cpp" />
     <ClCompile Include="cwan_handler.cpp" />
@@ -448,6 +454,7 @@
     <ClInclude Include="cmedia_session.h" />
     <ClInclude Include="cmedia_source.h" />
     <ClInclude Include="cmedia_type.h" />
+    <ClInclude Include="cmod_ops.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
     <ClInclude Include="cnetwork.h" />
@@ -458,6 +465,7 @@
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
     <ClInclude Include="cortc.h" />
+    <ClInclude Include="cpacket_buffer.h" />
     <ClInclude Include="cparse_rtsp_request.h" />
     <ClInclude Include="cproducer.h" />
     <ClInclude Include="cremote_estimator_proxy.h" />
@@ -505,6 +513,7 @@
     <ClInclude Include="crtp_stream_define.h" />
     <ClInclude Include="crtp_stream_recv.h" />
     <ClInclude Include="crtp_stream_send.h" />
+    <ClInclude Include="crtp_video_header.h" />
     <ClInclude Include="crtsp.h" />
     <ClInclude Include="crtsp_cmd_dispatch.h" />
     <ClInclude Include="crtsp_define.h" />
@@ -519,6 +528,7 @@
     <ClInclude Include="csctp_association_mgr.h" />
     <ClInclude Include="csdp_util.h" />
     <ClInclude Include="csender_report.h" />
+    <ClInclude Include="csequence_number.h" />
     <ClInclude Include="cseq_manager.h" />
     <ClInclude Include="cshare_proto_error.h" />
     <ClInclude Include="csocket_util.h" />
@@ -547,6 +557,8 @@
     <ClInclude Include="ctime_api.h" />
     <ClInclude Include="ctime_const.h" />
     <ClInclude Include="ctime_elapse.h" />
+    <ClInclude Include="cvcm_encoded_frame.h" />
+    <ClInclude Include="cvcm_packet.h" />
     <ClInclude Include="cvideo_bitrate_allocation.h" />
     <ClInclude Include="cvideo_codec_constants.h" />
     <ClInclude Include="cvideo_payload.h" />

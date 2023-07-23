@@ -608,6 +608,20 @@ namespace RTC
 
 			return this->payloadDescriptorHandler->IsKeyFrame();
 		}
+		bool is_first_packet_in_frame() const
+		{
+			if (!this->payloadDescriptorHandler)
+				return false;
+
+			return this->payloadDescriptorHandler->is_first_packet_in_frame();
+		}
+		bool is_last_packet_in_frame() const
+		{
+			if (!this->payloadDescriptorHandler)
+				return false;
+
+			return this->payloadDescriptorHandler->is_last_packet_in_frame();
+		}
 
 		RtpPacket* Clone(const uint8_t* buffer) const;
 

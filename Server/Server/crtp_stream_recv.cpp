@@ -55,7 +55,9 @@ namespace chen {
 		, m_inactive(false)
 		, m_rtt(0)
 		, m_has_rtt(false)
+		, m_packet_buffer()
 	{
+		m_packet_buffer.init(500);
 		if ( params.use_nack)
 		{
 			  nackGenerator.reset(new RTC::NackGenerator(this));
@@ -114,18 +116,36 @@ namespace chen {
 			if (m_params.subtype == "AV1")
 			{
 				cav1::ProcessRtpPacket(packet);
+#if 0
+
+				if (packet->GetPayloadLength() > 0)
+				{
+					cvcm_packet vcm_data;
+					vcm_data.m_data_ptr = new uint8[packet->GetPayloadLength()];
+					memcpy(vcm_data.m_data_ptr, packet->GetPayload(), packet->GetPayloadLength());
+					vcm_data.m_size_bytes = packet->GetPayloadLength();
+					vcm_data.m_seq_num = packet->GetSequenceNumber();
+					vcm_data.m_timestamp = packet->GetTimestamp();
+					vcm_data.m_video_header.is_first_packet_in_frame = packet->is_first_packet_in_frame();
+					vcm_data.m_video_header.is_last_packet_in_frame = packet->is_last_packet_in_frame();
+					m_packet_buffer.insert_packet(&vcm_data);
+				}
+#endif
 			}
 			else
 			{ 
 				RTC::Codecs::H264::ProcessRtpPacket(packet);
 			}
 #if 0
-			static FILE * out_file_ptr = ::fopen("test_chensong_av1.mp4", "wb+");
+			
+			
+			
+			/*static FILE * out_file_ptr = ::fopen("test_chensong_av1.mp4", "wb+");
 			if (out_file_ptr)
 			{
 				::fwrite(packet->GetPayload(), 1, packet->GetPayloadLength(), out_file_ptr);
 				::fflush(out_file_ptr);
-			}
+			}*/
 #endif //
 		}
 		// Process the packet at codec level.

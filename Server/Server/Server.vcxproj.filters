@@ -187,9 +187,6 @@
     <Filter Include="stream">
       <UniqueIdentifier>{35497ce8-f930-41a4-b061-adbacdaf94c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NewFilter1">
-      <UniqueIdentifier>{4a395a90-44dd-4d9f-a57b-fb8561b5d36e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="video_bitrate">
       <UniqueIdentifier>{7da62829-2690-4d8b-b531-ea152e061613}</UniqueIdentifier>
     </Filter>
@@ -204,6 +201,12 @@
     </Filter>
     <Filter Include="media">
       <UniqueIdentifier>{6a43ae28-1e60-4e32-acbd-d3dd5d2c8e2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="video_coding">
+      <UniqueIdentifier>{c3352090-6c92-497d-8ca6-86cedf9deec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rtp_video_header">
+      <UniqueIdentifier>{c1903a29-96fe-4f9f-bb33-b6bbdc7d0dbd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -927,6 +930,24 @@
     </ClCompile>
     <ClCompile Include="caac_source.cpp">
       <Filter>codec</Filter>
+    </ClCompile>
+    <ClCompile Include="cvcm_packet.cpp">
+      <Filter>video_coding</Filter>
+    </ClCompile>
+    <ClCompile Include="crtp_video_header.cpp">
+      <Filter>rtp_video_header</Filter>
+    </ClCompile>
+    <ClCompile Include="cpacket_buffer.cpp">
+      <Filter>video_coding</Filter>
+    </ClCompile>
+    <ClCompile Include="csequence_number.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cmod_ops.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cvcm_encoded_frame.cpp">
+      <Filter>video_coding</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1784,6 +1805,24 @@
     </ClInclude>
     <ClInclude Include="capi_rtc_type.h">
       <Filter>api_rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cvcm_packet.h">
+      <Filter>video_coding</Filter>
+    </ClInclude>
+    <ClInclude Include="crtp_video_header.h">
+      <Filter>rtp_video_header</Filter>
+    </ClInclude>
+    <ClInclude Include="cpacket_buffer.h">
+      <Filter>video_coding</Filter>
+    </ClInclude>
+    <ClInclude Include="csequence_number.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cmod_ops.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cvcm_encoded_frame.h">
+      <Filter>video_coding</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
