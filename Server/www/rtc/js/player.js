@@ -31,6 +31,7 @@ var offer = document.querySelector('textarea#offer');
 	var videopeerid	= getQueryVariable('videopeerid');
 	var rtc_ip = getQueryVariable('rtc_ip');
 var rtc_port = getQueryVariable('rtc_port');
+var Codecs = getQueryVariable('codec');
 // 查看Answer文本窗口
 var answer  = document.querySelector('textarea#answer');
 
@@ -476,7 +477,8 @@ function getOffer(desc)
 								offer : desc.sdp,
 								roomname : room_name.toString(),
 								video_peerid: videopeerid.toString(),
-								peerid : Math.round(Math.random()*10000).toString()
+								peerid : Math.round(Math.random()*10000).toString(),
+								codec: Codecs.toString()
 						   } 
 				}
 			 );
