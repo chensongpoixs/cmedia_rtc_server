@@ -119,6 +119,14 @@ namespace chen {
 			{ 
 				RTC::Codecs::H264::ProcessRtpPacket(packet);
 			}
+#if 0
+			static FILE * out_file_ptr = ::fopen("test_chensong_av1.mp4", "wb+");
+			if (out_file_ptr)
+			{
+				::fwrite(packet->GetPayload(), 1, packet->GetPayloadLength(), out_file_ptr);
+				::fflush(out_file_ptr);
+			}
+#endif //
 		}
 		// Process the packet at codec level.
 		//if (packet->GetPayloadType() == GetPayloadType())

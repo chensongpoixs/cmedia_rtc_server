@@ -419,7 +419,7 @@ namespace chen {
 				//	track_descs.push_back(track_desc.copy());
 				//}
 			}
-			else if (!remote_media_desc.is_video() && player_message.m_codec == "AV1")
+			else if (remote_media_desc.is_video() && player_message.m_codec == "AV1")
 			{
 				//std::vector<SrsMediaPayloadType> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
 				std::vector<cmedia_payload_type> payloads = remote_media_desc.find_media_with_encoding_name("AV1");
