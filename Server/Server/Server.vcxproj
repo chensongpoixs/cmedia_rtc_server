@@ -158,6 +158,7 @@
     <ClCompile Include="cav1.cpp" />
     <ClCompile Include="cbuffer.cpp" />
     <ClCompile Include="cbuffer_reader.cpp" />
+    <ClCompile Include="cbyte_buffer.cpp" />
     <ClCompile Include="ccfg.cpp" />
     <ClCompile Include="cclient_msg_dispatch.cpp" />
     <ClCompile Include="ccodec_payload.cpp" />
@@ -283,6 +284,7 @@
     <ClCompile Include="cvcm_packet.cpp" />
     <ClCompile Include="cvideo_bitrate_allocation.cpp" />
     <ClCompile Include="cvideo_payload.cpp" />
+    <ClCompile Include="cvideo_rtp_depacketizer_av1.cpp" />
     <ClCompile Include="cwan_handler.cpp" />
     <ClCompile Include="cwan_server.cpp" />
     <ClCompile Include="cwan_session.cpp" />
@@ -412,6 +414,7 @@
     <ClInclude Include="cav1.h" />
     <ClInclude Include="cbuffer.h" />
     <ClInclude Include="cbuffer_reader.h" />
+    <ClInclude Include="cbyte_buffer.h" />
     <ClInclude Include="cbyte_io.h" />
     <ClInclude Include="cbyte_order.h" />
     <ClInclude Include="ccfg.h" />
@@ -562,6 +565,7 @@
     <ClInclude Include="cvideo_bitrate_allocation.h" />
     <ClInclude Include="cvideo_codec_constants.h" />
     <ClInclude Include="cvideo_payload.h" />
+    <ClInclude Include="cvideo_rtp_depacketizer_av1.h" />
     <ClInclude Include="cwan_server.h" />
     <ClInclude Include="cwan_session.h" />
     <ClInclude Include="cwebsocket_msg_reserve.h" />

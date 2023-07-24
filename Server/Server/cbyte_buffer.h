@@ -1,9 +1,10 @@
 ﻿/***********************************************************************************************
-created: 		2023-07-23
+created: 		2023-02-02
 
 author:			chensong
 
-purpose:		vmc packet
+purpose:		 buffer
+
 
 输赢不重要，答案对你们有什么意义才重要。
 
@@ -23,92 +24,55 @@ purpose:		vmc packet
 ************************************************************************************************/
 
 
-
-#ifndef _C_PACKET_BUFFER_H_
-#define _C_PACKET_BUFFER_H_
-#include "cnetwork.h"
+#ifndef _C_BYTE_BUFFER_H_
+#define _C_BYTE_BUFFER_H_
 #include "cnet_type.h"
-#include "crtp_video_header.h"
-#include "cvcm_encoded_frame.h"
-#include "cvcm_packet.h"
+#include <vector>
+
+
 namespace chen {
 
-	class cpacket_buffer
+	class cbyte_buffer_reader
 	{
-	private:
-		// Since we want the packet buffer to be as packet type agnostic
-		// as possible we extract only the information needed in order
-		// to determine whether a sequence of packets is continuous or not.
-		struct ContinuityInfo {
-			// The sequence number of the packet.
-			uint16 seq_num = 0;
-
-			// If this is the first packet of the frame.
-			bool frame_begin = false;
-
-			// If this is the last packet of the frame.
-			bool frame_end = false;
-
-			// If this slot is currently used.
-			bool used = false;
-
-			// If all its previous packets have been inserted into the packet buffer.
-			bool continuous = false;
-
-			// If this packet has been used to create a frame already.
-			bool frame_created = false;
-		};
 	public:
-		explicit cpacket_buffer() 
-		: m_size(0)
-		, m_max_size(65535)
-		, m_first_seq_num(0)
-		, m_first_packet_received(false)
-		, m_is_cleared_to_first_seq_num(false)
-		, m_data_buffer()
-		, m_sequence_buffer(){}
-			virtual ~cpacket_buffer();
+		explicit cbyte_buffer_reader(const char* bytes, size_t len)
+		: m_bytes(bytes)
+		, m_size (len)
+		, m_start(0)
+		, m_end(len){}
 
+		virtual ~cbyte_buffer_reader() {}
 	public:
-		bool init(uint32 start_buffer_size, uint32 max_buffer_size  = 65535);
-		void destroy();
+		// Returns start of unprocessed data.
+		const char* Data() const { return m_bytes + m_start; }
+		// Returns number of unprocessed bytes.
+		size_t Length() const { return m_end - m_start; }
 
-	public:
+		// Read a next value from the buffer. Return false if there isn't
+		// enough data left for the specified type.
+		bool ReadUInt8(uint8_t* val);
+		bool ReadUInt16(uint16_t* val);
+		bool ReadUInt24(uint32_t* val);
+		bool ReadUInt32(uint32_t* val);
+		bool ReadUInt64(uint64_t* val);
+		bool ReadUVarint(uint64_t* val);
+		bool ReadBytes(char* val, size_t len);
 
-		std::vector<cvcm_packet> insert_packet(cvcm_packet * packet);
+		// Appends next `len` bytes from the buffer to `val`. Returns false
+		// if there is less than `len` bytes left.
+		bool ReadString(std::string* val, size_t len);
 
-
-	private:
-		bool _expand_buffer_size();
-
-		std::vector<cvcm_packet> _find_frames(uint16 seq_num);
-
-		bool  _potential_new_frame(uint16 seq_num) const;
-
-
-		bool  _get_bitstream(uint16 first_seq_num, uint16 last_seq_num, uint32 timestamp, cvcm_encoded_frame & vcm_frame);
-	
-		void  _return_frame(uint16 first_seq_num, uint16 last_seq_num, uint32 timestamp);
+		// Moves current position `size` bytes forward. Returns false if
+		// there is less than `size` bytes left in the buffer. Consume doesn't
+		// permanently remove data, so remembered read positions are still valid
+		// after this call.
+		bool Consume(size_t size);
 	protected:
+		const char* m_bytes;
+		size_t		m_size;
+		size_t		m_start;
+		size_t		m_end;
 	private:
-
-		uint32		 m_size;
-		uint32       m_max_size; 
-
-		uint16       m_first_seq_num;
-
-		bool         m_first_packet_received;
-
-		bool		 m_is_cleared_to_first_seq_num;
-
-
-		std::vector<cvcm_packet>  m_data_buffer;
-
-		std::vector<ContinuityInfo> m_sequence_buffer;
-
 	};
-
-
 }
-
-#endif // 
+#endif

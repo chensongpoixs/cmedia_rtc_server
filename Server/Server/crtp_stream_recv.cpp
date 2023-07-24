@@ -33,6 +33,7 @@ Copyright boost
 #include "H264.hpp"
 #include "FeedbackRtpNack.hpp"
  #include "crtc_producer.h"
+#include "cvideo_rtp_depacketizer_av1.h"
 namespace chen {
 
 	/* Static. */
@@ -128,7 +129,34 @@ namespace chen {
 					vcm_data.m_timestamp = packet->GetTimestamp();
 					vcm_data.m_video_header.is_first_packet_in_frame = packet->is_first_packet_in_frame();
 					vcm_data.m_video_header.is_last_packet_in_frame = packet->is_last_packet_in_frame();
-					m_packet_buffer.insert_packet(&vcm_data);
+					cvideo_rtp_depacketizer_av1  rtp_depacketizer_av1;
+					std::vector<cvcm_encoded_frame> vcm_encoded_frame =  rtp_depacketizer_av1.AssembleFrame(m_packet_buffer.insert_packet(&vcm_data));
+
+					for (cvcm_encoded_frame& encoded_frame : vcm_encoded_frame)
+					{ 
+#if 0
+						static FILE * out_file_ptr = ::fopen("./av1/test_webrtc.mp4", "wb+");;
+						if (out_file_ptr)
+						{
+							//static bool ret = true;
+							//if (ret)
+							{
+								uint8 p[2] = { 0X12u, 0u };
+								::fwrite(&p[0], 1, 2, out_file_ptr);
+								::fflush(out_file_ptr);
+								//ret = false;
+							}
+							::fwrite(encoded_frame.data(), 1, encoded_frame.data_size(), out_file_ptr);
+							//	NORMAL_EX_LOG("[rtp_packet][rtc_count = %u][packet_size = %u]", rtc_count, frame_data.data_size());
+							::fflush(out_file_ptr);
+
+						}
+#endif
+
+						encoded_frame.free();
+					}
+
+
 				}
 #endif
 			}

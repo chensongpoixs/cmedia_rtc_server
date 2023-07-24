@@ -949,6 +949,12 @@
     <ClCompile Include="cvcm_encoded_frame.cpp">
       <Filter>video_coding</Filter>
     </ClCompile>
+    <ClCompile Include="cvideo_rtp_depacketizer_av1.cpp">
+      <Filter>rtp_rtcp</Filter>
+    </ClCompile>
+    <ClCompile Include="cbyte_buffer.cpp">
+      <Filter>buffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -1823,6 +1829,12 @@
     </ClInclude>
     <ClInclude Include="cvcm_encoded_frame.h">
       <Filter>video_coding</Filter>
+    </ClInclude>
+    <ClInclude Include="cvideo_rtp_depacketizer_av1.h">
+      <Filter>rtp_rtcp</Filter>
+    </ClInclude>
+    <ClInclude Include="cbyte_buffer.h">
+      <Filter>buffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

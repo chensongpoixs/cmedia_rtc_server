@@ -42,9 +42,9 @@ namespace chen {
 		m_data_buffer.clear();
 		m_sequence_buffer.clear();
 	}
-	bool cpacket_buffer::insert_packet(cvcm_packet * packet)
+	std::vector<cvcm_packet> cpacket_buffer::insert_packet(cvcm_packet * packet)
 	{
-
+		std::vector<cvcm_packet> vcm;
 		uint16 seq_num = packet->m_seq_num;
 		uint32 index = seq_num % m_size;
 		if (!m_first_packet_received)
@@ -59,7 +59,7 @@ namespace chen {
 			{
 				delete[] packet->m_data_ptr;
 				packet->m_data_ptr = NULL;
-				return false;
+				return vcm;
 			}
 			m_first_seq_num = seq_num;
 		}
@@ -70,7 +70,7 @@ namespace chen {
 			{
 				delete[] packet->m_data_ptr;
 				packet->m_data_ptr = nullptr;
-				return true;
+				return vcm;
 			}
 
 			// The packet buffer is full, try to expand the buffer.
@@ -82,7 +82,7 @@ namespace chen {
 			if (m_sequence_buffer[index].used) {
 				delete[] packet->m_data_ptr;
 				packet->m_data_ptr = nullptr;
-				return false;
+				return vcm;
 			}
 		}
 
@@ -103,20 +103,28 @@ namespace chen {
 		//	last_received_keyframe_packet_ms_ = now_ms;
 
 		///found_frames = FindFrames(seq_num);
-		std::vector<cvcm_encoded_frame> fonds_frames = _find_frames(seq_num);
-		for ( cvcm_encoded_frame& frame_data : fonds_frames)
+#if 0
+		std::vector<cvcm_packet> fonds_frames = _find_frames(seq_num);
+		for (cvcm_packet& frame_data : fonds_frames)
 		{
-#if 1
-			static FILE * out_file_ptr = ::fopen("test_webrtc.mp4", "wb+");
-			if (out_file_ptr)
+
+			static uint32 rtc_count = 0;
+			static FILE * out_file_ptr = NULL;
+			if (!out_file_ptr)
 			{
-				::fwrite(frame_data.data(), 1, frame_data.data_size(), out_file_ptr);
+				std::string file = "./av1/" + std::to_string(++rtc_count);
+				out_file_ptr = ::fopen(file.c_str(), "wb+");;
+				//::fwrite(frame_data.data(), 1, frame_data.data_size(), out_file_ptr);
+			//	NORMAL_EX_LOG("[rtp_packet][rtc_count = %u][packet_size = %u]", rtc_count, frame_data.data_size());
 				::fflush(out_file_ptr);
+				::fclose(out_file_ptr);
+				out_file_ptr = NULL;
 			}
-#endif
-			frame_data.free();
+
+			//frame_data.free();
 		}
-		return true;
+#endif
+		return  _find_frames(seq_num);;
 	}
 	bool cpacket_buffer::_expand_buffer_size()
 	{
@@ -151,9 +159,9 @@ namespace chen {
 		return true;
 	}
 
-	std::vector<cvcm_encoded_frame> cpacket_buffer::_find_frames(uint16 seq_num)
+	std::vector<cvcm_packet> cpacket_buffer::_find_frames(uint16 seq_num)
 	{
-		std::vector<cvcm_encoded_frame> found_frames;
+		std::vector<cvcm_packet> found_frames;
 		for (size_t i = 0; i < m_size && _potential_new_frame(seq_num); ++i) 
 		{
 			size_t index = seq_num % m_size;
@@ -293,6 +301,10 @@ namespace chen {
 
 				/*missing_packets_.erase(missing_packets_.begin(),
 					missing_packets_.upper_bound(seq_num));*/
+
+
+				/////////////////
+#if 0
 				cvcm_encoded_frame  vcm_frame;
 				if (!vcm_frame.alloc(frame_size))
 				{
@@ -306,6 +318,25 @@ namespace chen {
 						_return_frame(start_seq_num, seq_num, frame_timestamp);
 					}
 				}
+#endif
+	
+				
+					const uint16_t end_seq_num = seq_num + 1;
+					// Use uint16_t type to handle sequence number wrap around case.
+					uint16_t num_packets = end_seq_num - start_seq_num;
+					found_frames.reserve(found_frames.size() + num_packets);
+					for (uint16_t i = start_seq_num; i != end_seq_num; ++i)
+					{
+						//std::unique_ptr<Packet>& packet = buffer_[i % buffer_.size()];
+						//RTC_DCHECK(packet);
+						//RTC_DCHECK_EQ(i, packet->seq_num);
+						// Ensure frame boundary flags are properly set.
+						//packet->video_header.is_first_packet_in_frame = (i == start_seq_num);
+						//packet->video_header.is_last_packet_in_frame = (i == seq_num);
+						found_frames.push_back(/*std::move*/(m_data_buffer[i%m_size]));
+					}
+
+
 				//found_frames.emplace_back(
 				//	new RtpFrameObject(this, start_seq_num, seq_num, frame_size,
 				//		max_nack_count, min_recv_time, max_recv_time));
