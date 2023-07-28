@@ -133,10 +133,10 @@ namespace chen {
 				{
 					rtc_local_sdp.add_candidate("udp", hostname, uport, "host");
 				}
-				/*else if (protocol == "tcp")
+				else if (protocol == "tcp")
 				{
-					m_local_sdp.add_candidate("tcp", hostname, tport, "host");
-				}*/
+					rtc_local_sdp.add_candidate("tcp", hostname, uport, "host");
+				}
 				else
 				{
 					WARNING_EX_LOG("[protocol = %s][hostname = %s][uport = %u]", protocol.c_str(), hostname.c_str(), uport);

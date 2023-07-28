@@ -47,6 +47,7 @@ Copyright boost
 //#include "H264.hpp"
 //#include "FeedbackRtpNack.hpp"
 //#include "crtc_producer.h"
+#include "cdav1d_decoder.h"
 namespace chen {
 	
 	class crtc_producer;
@@ -136,7 +137,7 @@ namespace chen {
 		bool			m_has_rtt;
 
 		cpacket_buffer		m_packet_buffer;
-		 
+		cdav1d_decoder		m_dav1d_decoder;
 	};
 }
 

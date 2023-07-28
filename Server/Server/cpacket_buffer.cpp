@@ -126,6 +126,16 @@ namespace chen {
 #endif
 		return  _find_frames(seq_num);;
 	}
+	void cpacket_buffer::remove_packet(std::vector<cvcm_packet> vcm_packets)
+	{
+		if (vcm_packets.empty())
+		{
+			return;
+		}
+		NORMAL_EX_LOG("[start seq num = %u][end seq num=%u]", vcm_packets[0].m_seq_num, vcm_packets[vcm_packets.size() - 1].m_seq_num);
+
+		_return_frame(vcm_packets[0].m_seq_num %m_size, vcm_packets[vcm_packets.size() - 1].m_seq_num %m_size, vcm_packets[0].m_timestamp);
+	}
 	bool cpacket_buffer::_expand_buffer_size()
 	{
 		if (m_size == m_max_size)
@@ -322,19 +332,49 @@ namespace chen {
 	
 				
 					const uint16_t end_seq_num = seq_num + 1;
+					//uint16_t num_packets = end_seq_num - start_seq_num;
 					// Use uint16_t type to handle sequence number wrap around case.
-					uint16_t num_packets = end_seq_num - start_seq_num;
-					found_frames.reserve(found_frames.size() + num_packets);
-					for (uint16_t i = start_seq_num; i != end_seq_num; ++i)
+					//if (start_seq_num > end_seq_num)
+					//{
+					//	ERROR_EX_LOG("start seq = %u, end seq = %u", start_seq_num, end_seq_num);
+					//	//found_frames.reserve(found_frames.size() + num_packets);
+					//	for (uint16_t i = start_seq_num; i != m_size; ++i)
+					//	{
+					//		//std::unique_ptr<Packet>& packet = buffer_[i % buffer_.size()];
+					//		//RTC_DCHECK(packet);
+					//		//RTC_DCHECK_EQ(i, packet->seq_num);
+					//		// Ensure frame boundary flags are properly set.
+					//		//packet->video_header.is_first_packet_in_frame = (i == start_seq_num);
+					//		//packet->video_header.is_last_packet_in_frame = (i == seq_num);
+					//		found_frames.push_back(/*std::move*/(m_data_buffer[i%m_size]));
+					//	}
+					//	for (uint16_t i = 0; i != end_seq_num; ++i)
+					//	{
+					//		//std::unique_ptr<Packet>& packet = buffer_[i % buffer_.size()];
+					//		//RTC_DCHECK(packet);
+					//		//RTC_DCHECK_EQ(i, packet->seq_num);
+					//		// Ensure frame boundary flags are properly set.
+					//		//packet->video_header.is_first_packet_in_frame = (i == start_seq_num);
+					//		//packet->video_header.is_last_packet_in_frame = (i == seq_num);
+					//		found_frames.push_back(/*std::move*/(m_data_buffer[i%m_size]));
+					//	}
+					//}
+					//else
 					{
-						//std::unique_ptr<Packet>& packet = buffer_[i % buffer_.size()];
-						//RTC_DCHECK(packet);
-						//RTC_DCHECK_EQ(i, packet->seq_num);
-						// Ensure frame boundary flags are properly set.
-						//packet->video_header.is_first_packet_in_frame = (i == start_seq_num);
-						//packet->video_header.is_last_packet_in_frame = (i == seq_num);
-						found_frames.push_back(/*std::move*/(m_data_buffer[i%m_size]));
+						//found_frames.reserve(found_frames.size() + num_packets);
+						for (uint16_t i = start_seq_num; i != end_seq_num; ++i)
+						{
+							//std::unique_ptr<Packet>& packet = buffer_[i % buffer_.size()];
+							//RTC_DCHECK(packet);
+							//RTC_DCHECK_EQ(i, packet->seq_num);
+							// Ensure frame boundary flags are properly set.
+							//packet->video_header.is_first_packet_in_frame = (i == start_seq_num);
+							//packet->video_header.is_last_packet_in_frame = (i == seq_num);
+							found_frames.push_back(/*std::move*/(m_data_buffer[i%m_size]));
+						}
 					}
+					
+					
 
 
 				//found_frames.emplace_back(
@@ -440,14 +480,20 @@ namespace chen {
 		size_t end = (last_seq_num + 1) % m_size; //(frame->last_seq_num() + 1) % size_;
 		uint16_t seq_num = first_seq_num; // frame->first_seq_num();
 		uint32_t timestamp = timestamp_;// frame->Timestamp();
+
 		while (index != end) {
 			// Check both seq_num and timestamp to handle the case when seq_num wraps
 			// around too quickly for high packet rates.
-			if (m_sequence_buffer[index].seq_num == seq_num &&
-				m_data_buffer[index].m_timestamp == timestamp) {
+			if ((m_sequence_buffer[index].seq_num % m_size) == index &&
+				m_data_buffer[index].m_timestamp == timestamp)
+			{
 				delete[] m_data_buffer[index].m_data_ptr;
 				m_data_buffer[index].m_data_ptr = nullptr;
 				m_sequence_buffer[index].used = false;
+			}
+			else
+			{
+				WARNING_EX_LOG("free seq num= [%u][%u], timestamp = [%u][%u]", index, m_sequence_buffer[index].seq_num %m_size, timestamp, m_data_buffer[index].m_timestamp);
 			}
 
 			index = (index + 1) % m_size;

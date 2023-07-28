@@ -24,91 +24,41 @@ purpose:		vmc packet
 
 
 
-#ifndef _C_PACKET_BUFFER_H_
-#define _C_PACKET_BUFFER_H_
+#ifndef _C_DAV1D_DECODER_H_
+#define _C_DAV1D_DECODER_H_
 #include "cnetwork.h"
 #include "cnet_type.h"
 #include "crtp_video_header.h"
 #include "cvcm_encoded_frame.h"
 #include "cvcm_packet.h"
+#include "dav1d/dav1d.h"
+#include "cvcm_encoded_frame.h"
 namespace chen {
 
-	class cpacket_buffer
+
+	class cdav1d_decoder
 	{
-	private:
-		// Since we want the packet buffer to be as packet type agnostic
-		// as possible we extract only the information needed in order
-		// to determine whether a sequence of packets is continuous or not.
-		struct ContinuityInfo {
-			// The sequence number of the packet.
-			uint16 seq_num = 0;
-
-			// If this is the first packet of the frame.
-			bool frame_begin = false;
-
-			// If this is the last packet of the frame.
-			bool frame_end = false;
-
-			// If this slot is currently used.
-			bool used = false;
-
-			// If all its previous packets have been inserted into the packet buffer.
-			bool continuous = false;
-
-			// If this packet has been used to create a frame already.
-			bool frame_created = false;
-		};
 	public:
-		explicit cpacket_buffer() 
-		: m_size(0)
-		, m_max_size(65535)
-		, m_first_seq_num(0)
-		, m_first_packet_received(false)
-		, m_is_cleared_to_first_seq_num(false)
-		, m_data_buffer()
-		, m_sequence_buffer(){}
-			virtual ~cpacket_buffer();
+		explicit cdav1d_decoder()
+		: context_(NULL){}
 
+		virtual ~cdav1d_decoder(){}
 	public:
-		bool init(uint32 start_buffer_size, uint32 max_buffer_size  = 2048);
+		bool init();
+
+
 		void destroy();
 
+
 	public:
+		int32_t Decode(const cvcm_encoded_frame& encoded_image, bool missing_frames, int64_t render_time_ms);
 
-		std::vector<cvcm_packet> insert_packet(cvcm_packet * packet);
-
-		void remove_packet(std::vector<cvcm_packet> vcm_packets);
-	private:
-		bool _expand_buffer_size();
-
-		std::vector<cvcm_packet> _find_frames(uint16 seq_num);
-
-		bool  _potential_new_frame(uint16 seq_num) const;
-
-
-		bool  _get_bitstream(uint16 first_seq_num, uint16 last_seq_num, uint32 timestamp, cvcm_encoded_frame & vcm_frame);
-	
-		void  _return_frame(uint16 first_seq_num, uint16 last_seq_num, uint32 timestamp);
 	protected:
 	private:
-
-		uint32		 m_size;
-		uint32       m_max_size; 
-
-		uint16       m_first_seq_num;
-
-		bool         m_first_packet_received;
-
-		bool		 m_is_cleared_to_first_seq_num;
-
-
-		std::vector<cvcm_packet>  m_data_buffer;
-
-		std::vector<ContinuityInfo> m_sequence_buffer;
-
+		Dav1dContext* context_ = nullptr;
 	};
 
 
 }
 
-#endif // 
+#endif//_C_DAV1D_DECODER_H_

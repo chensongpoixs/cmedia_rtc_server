@@ -57,6 +57,7 @@ namespace chen {
 		, m_rtt(0)
 		, m_has_rtt(false)
 		, m_packet_buffer()
+		, m_dav1d_decoder()
 	{
 		m_packet_buffer.init(500);
 		if ( params.use_nack)
@@ -72,6 +73,8 @@ namespace chen {
 		{
 			m_inactivityCheckPeriodicTimer->Start(InactivityCheckInterval);
 		}
+
+		m_dav1d_decoder.init();
 		 
 	}
 
@@ -117,8 +120,11 @@ namespace chen {
 			if (m_params.subtype == "AV1")
 			{
 				cav1::ProcessRtpPacket(packet);
-#if 1
-
+#if 0
+				auto timestamp =
+					std::chrono::duration_cast<std::chrono::milliseconds>(
+						std::chrono::system_clock::now().time_since_epoch())
+					.count();
 				if (packet->GetPayloadLength() > 0)
 				{
 					cvcm_packet vcm_data;
@@ -130,10 +136,11 @@ namespace chen {
 					vcm_data.m_video_header.is_first_packet_in_frame = packet->is_first_packet_in_frame();
 					vcm_data.m_video_header.is_last_packet_in_frame = packet->is_last_packet_in_frame();
 					cvideo_rtp_depacketizer_av1  rtp_depacketizer_av1;
-					std::vector<cvcm_encoded_frame> vcm_encoded_frame =  rtp_depacketizer_av1.AssembleFrame(m_packet_buffer.insert_packet(&vcm_data));
-
+					std::vector<cvcm_packet> fonds_frames = m_packet_buffer.insert_packet(&vcm_data);
+					std::vector<cvcm_encoded_frame> vcm_encoded_frame = rtp_depacketizer_av1.AssembleFrame(fonds_frames);
+					m_packet_buffer.remove_packet(fonds_frames);
 					for (cvcm_encoded_frame& encoded_frame : vcm_encoded_frame)
-					{ 
+					{
 #if 0
 						static FILE * out_file_ptr = ::fopen("./av1/test_webrtc.mp4", "wb+");;
 						if (out_file_ptr)
@@ -152,12 +159,17 @@ namespace chen {
 
 						}
 #endif
-
+						m_dav1d_decoder.Decode(encoded_frame, false, 0);
 						encoded_frame.free();
 					}
 
 
 				}
+
+				auto timestamp_curr = std::chrono::duration_cast<std::chrono::milliseconds>(
+					std::chrono::system_clock::now().time_since_epoch())
+					.count();
+				NORMAL_EX_LOG(" AV1 packet encoder render  %u], seq = %u, rtp = %u", (timestamp_curr - timestamp), packet->GetSequenceNumber(), packet->GetTimestamp());
 #endif
 			}
 			else
@@ -296,6 +308,57 @@ namespace chen {
 			if (m_params.subtype == "AV1")
 			{
 				cav1::ProcessRtpPacket(packet);
+#if 0
+				 auto timestamp =
+					std::chrono::duration_cast<std::chrono::milliseconds>(
+						std::chrono::system_clock::now().time_since_epoch())
+					.count();
+				if (packet->GetPayloadLength() > 0)
+				{
+					cvcm_packet vcm_data;
+					vcm_data.m_data_ptr = new uint8[packet->GetPayloadLength()];
+					memcpy(vcm_data.m_data_ptr, packet->GetPayload(), packet->GetPayloadLength());
+					vcm_data.m_size_bytes = packet->GetPayloadLength();
+					vcm_data.m_seq_num = packet->GetSequenceNumber();
+					vcm_data.m_timestamp = packet->GetTimestamp();
+					vcm_data.m_video_header.is_first_packet_in_frame = packet->is_first_packet_in_frame();
+					vcm_data.m_video_header.is_last_packet_in_frame = packet->is_last_packet_in_frame();
+					cvideo_rtp_depacketizer_av1  rtp_depacketizer_av1;
+					std::vector<cvcm_packet> fonds_frames = m_packet_buffer.insert_packet(&vcm_data);
+					std::vector<cvcm_encoded_frame> vcm_encoded_frame = rtp_depacketizer_av1.AssembleFrame(fonds_frames);
+					m_packet_buffer.remove_packet(fonds_frames);
+					for (cvcm_encoded_frame& encoded_frame : vcm_encoded_frame)
+					{
+#if 0
+						static FILE * out_file_ptr = ::fopen("./av1/test_webrtc.mp4", "wb+");;
+						if (out_file_ptr)
+						{
+							//static bool ret = true;
+							//if (ret)
+							{
+								uint8 p[2] = { 0X12u, 0u };
+								::fwrite(&p[0], 1, 2, out_file_ptr);
+								::fflush(out_file_ptr);
+								//ret = false;
+							}
+							::fwrite(encoded_frame.data(), 1, encoded_frame.data_size(), out_file_ptr);
+							//	NORMAL_EX_LOG("[rtp_packet][rtc_count = %u][packet_size = %u]", rtc_count, frame_data.data_size());
+							::fflush(out_file_ptr);
+
+						}
+#endif
+						m_dav1d_decoder.Decode(encoded_frame, false, 0);
+						encoded_frame.free();
+					}
+
+
+				}
+
+				auto timestamp_curr = std::chrono::duration_cast<std::chrono::milliseconds>(
+					std::chrono::system_clock::now().time_since_epoch())
+					.count();
+				NORMAL_EX_LOG(" AV1 packet encoder render  %u", (timestamp_curr - timestamp));
+#endif
 			}
 			else
 			{

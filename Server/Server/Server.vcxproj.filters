@@ -208,6 +208,15 @@
     <Filter Include="rtp_video_header">
       <UniqueIdentifier>{c1903a29-96fe-4f9f-bb33-b6bbdc7d0dbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{5fd8f939-9a2c-41dd-b612-93dc36ca577a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="video_coding\av1">
+      <UniqueIdentifier>{9298b4fd-5777-4140-9706-efb38bcd69a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="video_render">
+      <UniqueIdentifier>{e47e1093-21c1-4155-aa3a-d848beb53f46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -954,6 +963,12 @@
     </ClCompile>
     <ClCompile Include="cbyte_buffer.cpp">
       <Filter>buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="cdav1d_decoder.cpp">
+      <Filter>video_coding\av1</Filter>
+    </ClCompile>
+    <ClCompile Include="cvideo_renderer.cpp">
+      <Filter>video_render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1835,6 +1850,12 @@
     </ClInclude>
     <ClInclude Include="cbyte_buffer.h">
       <Filter>buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="cdav1d_decoder.h">
+      <Filter>video_coding\av1</Filter>
+    </ClInclude>
+    <ClInclude Include="cvideo_renderer.h">
+      <Filter>video_render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -82,15 +82,15 @@ namespace chen {
 			
 			size_t dataLen = this->bufferDataLen - this->frameStart;
 			//NORMAL_EX_LOG("[buffer = %s][datalen  = %u]", buffer, dataLen);
-			//size_t packetLen;
+			size_t packetLen;
 
-			//if (dataLen >= 2)
-			//	packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
+			 if (dataLen >= 2)
+			 	packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
 
 			// We have packetLen bytes.
 			if ( dataLen >= 0  )
 			{
-				const uint8_t* packet = this->buffer + this->frameStart;/* +2 */ ;
+				const uint8_t* packet = this->buffer + this->frameStart;  +2   ;
 
 				// Update received bytes and notify the listener.
 				if (dataLen != 0)
@@ -104,7 +104,7 @@ namespace chen {
 
 				// If there is no more space available in the buffer and that is because
 				// the latest parsed frame filled it, then empty the full buffer.
-				if ((this->frameStart /*+ 2*/ + dataLen) == this->bufferSize)
+				if ((this->frameStart + 2 + dataLen) == this->bufferSize)
 				{
 					NORMAL_EX_LOG("no more space in the buffer, emptying the buffer data");
 
@@ -115,7 +115,7 @@ namespace chen {
 				// frame to the next position after the parsed frame.
 				else
 				{
-					this->frameStart +=/* 2 +*/ dataLen;
+					this->frameStart += 2 + dataLen;
 				}
 
 				// If there is more data in the buffer after the parsed frame then
