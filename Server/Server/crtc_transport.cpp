@@ -121,12 +121,21 @@ namespace chen {
 
 		//m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
 
-		for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
+		/*for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
 		{
 			std::string ip = wan_ip;
 			cudp_socket * socket_ptr = new   cudp_socket(this,  ip, (*iter).m_port);
 			m_udp_ports.push_back((*iter).m_port);
 			m_udp_sockets.push_back(socket_ptr);
+			socket_ptr = NULL;
+		}*/
+
+		for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
+		{
+			std::string ip = "192.168.1.175";
+			ctcp_server * socket_ptr = new   ctcp_server(this, this, ip, (*iter).m_port);
+			m_udp_ports.push_back((*iter).m_port);
+			m_tcp_servers.push_back(socket_ptr);
 			socket_ptr = NULL;
 		}
 		//m_dtls_ptr = new cdtls_client(this);
@@ -478,7 +487,7 @@ namespace chen {
 	void crtc_transport::destroy()
 	{
 		DEBUG_EX_LOG("");
-		m_current_socket_ptr = NULL;
+		//m_current_socket_ptr = NULL;
 		m_all_rtp_listener.destroy();
 		if (m_dtls_ptr)
 		{
@@ -495,6 +504,13 @@ namespace chen {
 		for (std::vector<cudp_socket*>::iterator iter = m_udp_sockets.begin(); iter != m_udp_sockets.end(); ++iter)
 		{
 			cudp_socket* ptr = *iter;
+			delete ptr;
+		}
+		m_udp_sockets.clear();
+
+		for (std::vector<ctcp_server*>::iterator iter = m_tcp_servers.begin(); iter != m_tcp_servers.end(); ++iter)
+		{
+			ctcp_server* ptr = *iter;
 			delete ptr;
 		}
 		m_udp_sockets.clear();
@@ -677,7 +693,7 @@ namespace chen {
 			WARNING_EX_LOG("");
 			return  ;
 		}*/
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
 		{
 			if (m_srtp_send_session_ptr->EncryptRtp((const uint8_t**)&data, (size_t *)&size))
 			{
@@ -685,7 +701,8 @@ namespace chen {
 				return;
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", size);
-			m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+			//m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+			m_tcp_connection_ptr->Send((const uint8_t *)data, size, NULL);
 		}
 	}
 	void crtc_transport::send_rtp_data(RTC::RtpPacket * packet)
@@ -695,7 +712,7 @@ namespace chen {
 			WARNING_EX_LOG("");
 			return;
 		}*/
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
 		{
 			//{
 			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
@@ -725,12 +742,13 @@ namespace chen {
 				return;
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
+			//m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
+			m_tcp_connection_ptr->Send(data, len,  NULL);
 		}
 	}
 	void crtc_transport::send_rtp_packet(RTC::RtpPacket * packet, cudp_socket_handler::onSendCallback * cb)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
 		{
 			//{
 			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
@@ -765,7 +783,8 @@ namespace chen {
 				return;
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			m_tcp_connection_ptr->Send(data, len, NULL);
 			if (cb)
 			{
 				(*cb)(true);
@@ -874,7 +893,7 @@ namespace chen {
 
 	bool crtc_transport::send_rtcp(const uint8 * data, size_t len)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
 		{
 			if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
 			{
@@ -882,14 +901,15 @@ namespace chen {
 				return false;
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			m_tcp_connection_ptr->Send(data, len, NULL);
 			return true;
 		}
 		return false;
 	}
 	void crtc_transport::send_rtcp_compound_packet(RTC::RTCP::CompoundPacket * packet)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
 		{
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
@@ -899,7 +919,8 @@ namespace chen {
 				return;
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			m_tcp_connection_ptr->Send((const uint8_t *)data, len, NULL);
 		}
 	}
 	bool crtc_transport::send_sctp_data(const uint8 * data, size_t len)
@@ -936,7 +957,7 @@ namespace chen {
 	}
 	void crtc_transport::send_rtcp_packet(RTC::RTCP::Packet * packet)
 	{
-		if (m_current_socket_ptr && m_srtp_send_session_ptr)
+		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
 		{
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
@@ -946,7 +967,8 @@ namespace chen {
 				return;
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
-			m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
+			m_tcp_connection_ptr->Send((const uint8_t *)data, len, NULL);
 		}
 		
 
@@ -968,9 +990,10 @@ namespace chen {
 	}
 	int32 crtc_transport::write_dtls_data(void * data, int size)
 	{
-		if (m_current_socket_ptr)
+		if (m_tcp_connection_ptr)
 		{
-			m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+			//m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
+			m_tcp_connection_ptr->Send((const uint8_t *)data, size, NULL);
 		}
 		
 		return 0;
@@ -1088,7 +1111,7 @@ namespace chen {
 			}
 		}*/
 		// TODO@chensong 2023-05-23 单线程 没有问题 多线程是有问题哈 ^_^
-		m_current_socket_ptr  = socket;
+		//m_current_socket_ptr  = socket;
 		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
 		if (m_rtc_net_state == ERtcNetworkStateEstablished)
 		{
@@ -1158,6 +1181,68 @@ namespace chen {
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - elapse));
 		}*/
+	}
+	void crtc_transport::OnRtcTcpConnectionNew(ctcp_server * tcpServer, ctcp_connection * connection)
+	{
+	}
+	void crtc_transport::OnTcpConnectionPacketReceived(ctcp_connection * connection, const uint8_t * data, size_t len)
+	{
+		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
+		//if (m_rtc_net_state == ERtcNetworkStateEstablished)
+		{
+			m_time_out_ms = uv_util::GetTimeMs();
+		}
+
+		m_tcp_connection_ptr = connection;
+		// Check if it's STUN.
+		if (crtc_stun_packet::is_stun(data, len))
+		{
+			//NORMAL_EX_LOG("is_stun");
+
+			//OnStunDataReceived(tuple, data, len);
+			/*m_rtc_stun_packet.decode((const char *)(data), len);
+			if (!m_rtc_stun_packet.is_binding_request())
+			{
+				WARNING_EX_LOG("stun not binding request failed !!!");
+				return;
+			}*/
+			//uint64 ms = uv_util::GetTimeMs();
+			_on_stun_data_received(NULL, data, len, connection->GetPeerAddress());
+			//uint64 diff_ms = uv_util::GetTimeMs();
+			//NORMAL_EX_LOG("media stun --> ms = %u", diff_ms - ms);
+		}
+		// Check if it's RTCP.
+		else if (RTC::RTCP::Packet::IsRtcp(data, len))
+		{
+			//NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+			//OnRtcpDataReceived(tuple, data, len);
+			_on_rtcp_data_received(NULL, data, len, connection->GetPeerAddress());
+
+		}
+		// Check if it's RTP.
+		else if (RTC::RtpPacket::IsRtp(data, len))
+		{
+			//NORMAL_EX_LOG("IsRtp");
+
+			//OnRtpDataReceived(tuple, data, len);
+			_on_rtp_data_received(NULL, data, len, connection->GetPeerAddress());
+		}
+		// Check if it's DTLS.
+		else if (RTC::DtlsTransport::IsDtls(data, len))
+		{
+			//NORMAL_EX_LOG("IsDtls");
+			//OnDtlsDataReceived(tuple, data, len);
+			_on_dtls_data_received(NULL, data, len, connection->GetPeerAddress());
+		}
+		else
+		{
+
+			WARNING_EX_LOG("ignoring received packet of unknown type");
+		}
+	}
+	void crtc_transport::OnRtcTcpConnectionClosed(ctcp_server * tcpServer, ctcp_connection * connection)
+	{
 	}
 	void crtc_transport::OnTransportCongestionControlServerSendRtcpPacket(RTC::TransportCongestionControlServer * tccServer, RTC::RTCP::Packet * packet)
 	{
@@ -1400,7 +1485,8 @@ namespace chen {
 			stun_response.set_mapped_address(be32toh(inet_addr(ip.c_str())));
 			stun_response.set_mapped_port(port);
 			stun_response.encode(m_local_sdp.get_ice_pwd(), &stream);
-			m_current_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
+			//m_current_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
+			m_tcp_connection_ptr->Send((const uint8_t *)stream.data(), stream.pos() , nullptr);
 			
 		}
 		//NORMAL_EX_LOG("[m_time_out_ms = %u]", uv_util::GetTimeMs() - m_time_out_ms);

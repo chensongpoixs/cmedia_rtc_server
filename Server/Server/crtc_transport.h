@@ -40,6 +40,8 @@ purpose:		crtc_transport
 #include "TransportCongestionControlServer.hpp"
 #include "TransportCongestionControlClient.hpp"
 #include "csctp_association.h"
+#include "ctcp_connection_handler.h"
+#include "ctcp_server.h"
 namespace chen {
 
 	class cdtls_session;
@@ -64,7 +66,8 @@ namespace chen {
 			, m_user_name(""){}
 	};
 
-	class crtc_transport : public cudp_socket::Listener, public crtc_transportlinster,
+	class crtc_transport : public ctcp_server::Listener, public ctcp_connection::Listener,
+		public cudp_socket::Listener, public crtc_transportlinster,
 		public RTC::TransportCongestionControlClient::Listener,
 		public RTC::TransportCongestionControlServer::Listener, 
 		public chen::ctimer::Listener, public csctp_association::Listener
@@ -75,7 +78,7 @@ namespace chen {
 		, m_remote_sdp ()
 		, m_rtc_net_state(ERtcNetworkStateInit)
 		, m_udp_sockets()
-		, m_current_socket_ptr(NULL)
+		//, m_current_socket_ptr(NULL)
 		, m_dtls_ptr(NULL)
 		, m_srtp_send_session_ptr(NULL)
 		, m_srtp_recv_session_ptr(NULL)
@@ -103,6 +106,8 @@ namespace chen {
 			, m_rtp_header_extension_ids()
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
+			, m_tcp_servers()
+			, m_tcp_connection_ptr(NULL)
 		 {}
 
 		virtual ~crtc_transport();
@@ -184,7 +189,13 @@ namespace chen {
 		virtual void OnUdpSocketPacketReceived(
 			cudp_socket* socket, const uint8_t* data, size_t len, const struct sockaddr* remoteAddr);
 
-
+		public:
+			//void on_connect(uint64_t session_id, const char* buf);
+			//void on_msg_receive(uint64_t session_id, const void* p, uint32 size);
+			//void on_disconnect(uint64_t session_id);
+			virtual void OnRtcTcpConnectionNew(ctcp_server* tcpServer, ctcp_connection* connection);
+			virtual void OnTcpConnectionPacketReceived(ctcp_connection* connection, const uint8_t* data, size_t len);
+			virtual void OnRtcTcpConnectionClosed(ctcp_server* tcpServer, ctcp_connection* connection);
 	public:
 		void OnTransportCongestionControlServerSendRtcpPacket(
 			RTC::TransportCongestionControlServer* tccServer, RTC::RTCP::Packet* packet);
@@ -263,10 +274,7 @@ namespace chen {
 
 		// 
 		
-		std::vector<cudp_socket*>		m_udp_sockets;
 		
-		sockaddr 						m_remote_addr;
-		cudp_socket		*				m_current_socket_ptr;
 		//crtc_stun_packet				m_rtc_stun_packet;
 		//cdtls_session *					m_dtls_ptr;
 		crtc_dtls	*					m_dtls_ptr;
@@ -314,6 +322,20 @@ namespace chen {
 		ctimer				*					m_timer_ptr;
 		csctp_association *						m_sctp_association_ptr;
 		RTC::RtpHeaderExtensionIds				m_rtp_header_extension_ids;
+
+
+
+		std::vector<cudp_socket*>		m_udp_sockets;
+
+		sockaddr 						m_remote_addr;
+		//cudp_socket		*				m_current_socket_ptr;
+
+
+
+
+		std::vector < ctcp_server*> m_tcp_servers;
+		ctcp_connection *			m_tcp_connection_ptr;
+
 	};
 
 

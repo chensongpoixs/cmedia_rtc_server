@@ -88,7 +88,7 @@ namespace chen {
 			 	packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
 
 			// We have packetLen bytes.
-			if ( dataLen >= 0  )
+			if ( dataLen >= 0 && dataLen >= 2 + packetLen)
 			{
 				const uint8_t* packet = this->buffer + this->frameStart;  +2   ;
 
@@ -181,6 +181,6 @@ namespace chen {
 
 		uint8_t frameLen[2];
 		rtc_byte::set2bytes(frameLen, 0, len);
-		ctcp_connection_handler::Write(frameLen, 0, data, len, cb);
+		ctcp_connection_handler::Write(frameLen, 2, data, len, cb);
 	}
 }
