@@ -593,7 +593,10 @@ namespace chen {
 	}
 	bool crtc_transport::IsConnected() const
 	{
-	
+		if (!m_ice_server_ptr|| !m_dtls_ptr)
+		{
+			return false;
+		}
 		//NORMAL_EX_LOG("[ice status = %u][dtls status = %u]", m_ice_server_ptr->GetState(), m_dtls_ptr->get_dtls_state());
 		return (m_ice_server_ptr->GetState() == cice_server::EIceConnected || m_ice_server_ptr->GetState() == cice_server::EIceCompleted) && (m_dtls_ptr->get_dtls_state() == EDtlsStateServerDone);
 	}
