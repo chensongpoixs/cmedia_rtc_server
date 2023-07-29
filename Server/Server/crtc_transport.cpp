@@ -1462,7 +1462,7 @@ namespace chen {
 
 	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
+		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		crtc_stun_packet stun_packet;
 		if (0 != stun_packet.decode((const char *)(data), len) )
 		{
@@ -1517,7 +1517,7 @@ namespace chen {
 	{
 		// TODO@chensong 2023-02-17 
 		 // DTLS 的状态是否在连接中   connecting -> connected
-		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
+		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		if (true/* connected  conecting*/)
 		{
 			m_dtls_ptr->process_dtls_data(data, len);
@@ -1526,7 +1526,7 @@ namespace chen {
 
 	void crtc_transport::_on_rtp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
 	{
-		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
+		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		if (!m_srtp_recv_session_ptr)
 		{
 			WARNING_EX_LOG("srtp recv session ptr = null !!!");
@@ -1650,7 +1650,7 @@ namespace chen {
 		//{
 		//	WARNING_EX_LOG("rtcp unprotect rtcp OK !!!-------->>>>>>>");
 		//}
-		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
+		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		if (!m_srtp_recv_session_ptr->DecryptSrtcp((uint8_t *)data, &len))
 		{
 			WARNING_EX_LOG("rtcp unprotect rtp failed !!!-------->>>>>>>");
