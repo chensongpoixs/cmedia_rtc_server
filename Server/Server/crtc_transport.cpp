@@ -132,7 +132,7 @@ namespace chen {
 
 		for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
 		{
-			std::string ip = "192.168.1.175";
+			std::string ip = wan_ip ;
 			ctcp_server * socket_ptr = new   ctcp_server(this, this, ip, (*iter).m_port);
 			m_udp_ports.push_back((*iter).m_port);
 			m_tcp_servers.push_back(socket_ptr);
@@ -551,7 +551,12 @@ namespace chen {
 	}
 	bool crtc_transport::is_active() const
 	{
-		return (m_time_out_ms + g_cfg.get_uint32(ECI_StunTimeOut)) > uv_util::GetTimeMs();
+		bool ret = (m_time_out_ms + g_cfg.get_uint32(ECI_StunTimeOut)) > uv_util::GetTimeMs();
+		if (!ret)
+		{
+			WARNING_EX_LOG("[cur_ms = %u][pre_ms = %u][diff = %u]", uv_util::GetTimeMs(), m_time_out_ms, uv_util::GetTimeMs() - m_time_out_ms);;
+		}
+		return ret;
 	}
 	void crtc_transport::request_key_frame()
 	{
@@ -1184,14 +1189,17 @@ namespace chen {
 	}
 	void crtc_transport::OnRtcTcpConnectionNew(ctcp_server * tcpServer, ctcp_connection * connection)
 	{
+		NORMAL_EX_LOG("new [address=%s:%u]", connection->GetPeerIp().c_str(), connection->GetPeerPort());
 	}
 	void crtc_transport::OnTcpConnectionPacketReceived(ctcp_connection * connection, const uint8_t * data, size_t len)
 	{
+		
 		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
 		//if (m_rtc_net_state == ERtcNetworkStateEstablished)
 		{
 			m_time_out_ms = uv_util::GetTimeMs();
 		}
+		//NORMAL_EX_LOG("[%s]", data);
 
 		m_tcp_connection_ptr = connection;
 		// Check if it's STUN.
@@ -1243,6 +1251,7 @@ namespace chen {
 	}
 	void crtc_transport::OnRtcTcpConnectionClosed(ctcp_server * tcpServer, ctcp_connection * connection)
 	{
+		NORMAL_EX_LOG("close [address=%s:%u]", connection->GetPeerIp().c_str(), connection->GetPeerPort());
 	}
 	void crtc_transport::OnTransportCongestionControlServerSendRtcpPacket(RTC::TransportCongestionControlServer * tccServer, RTC::RTCP::Packet * packet)
 	{
@@ -1453,7 +1462,7 @@ namespace chen {
 
 	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-
+		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		crtc_stun_packet stun_packet;
 		if (0 != stun_packet.decode((const char *)(data), len) )
 		{
@@ -1508,6 +1517,7 @@ namespace chen {
 	{
 		// TODO@chensong 2023-02-17 
 		 // DTLS 的状态是否在连接中   connecting -> connected
+		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		if (true/* connected  conecting*/)
 		{
 			m_dtls_ptr->process_dtls_data(data, len);
@@ -1516,7 +1526,7 @@ namespace chen {
 
 	void crtc_transport::_on_rtp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
 	{
-		
+		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		if (!m_srtp_recv_session_ptr)
 		{
 			WARNING_EX_LOG("srtp recv session ptr = null !!!");
@@ -1640,6 +1650,7 @@ namespace chen {
 		//{
 		//	WARNING_EX_LOG("rtcp unprotect rtcp OK !!!-------->>>>>>>");
 		//}
+		NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		if (!m_srtp_recv_session_ptr->DecryptSrtcp((uint8_t *)data, &len))
 		{
 			WARNING_EX_LOG("rtcp unprotect rtp failed !!!-------->>>>>>>");

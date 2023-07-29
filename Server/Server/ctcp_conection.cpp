@@ -88,23 +88,23 @@ namespace chen {
 			 	packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
 
 			// We have packetLen bytes.
-			if ( dataLen >= 0 && dataLen >= 2 + packetLen)
+			if ( dataLen >= 2 && dataLen >= 2 + packetLen)
 			{
-				const uint8_t* packet = this->buffer + this->frameStart;  +2   ;
+				const uint8_t* packet = this->buffer + this->frameStart  +2   ;
 
 				// Update received bytes and notify the listener.
-				if (dataLen != 0)
+				if (packetLen != 0)
 				{
 					// Copy the received packet into the static buffer so it can be expanded
 					// later.
-					std::memcpy(ReadBuffer, packet, dataLen);
+					std::memcpy(ReadBuffer, packet, packetLen);
 
-					this->listener->OnTcpConnectionPacketReceived(this, ReadBuffer, dataLen);
+					this->listener->OnTcpConnectionPacketReceived(this, ReadBuffer, packetLen);
 				}
 
 				// If there is no more space available in the buffer and that is because
 				// the latest parsed frame filled it, then empty the full buffer.
-				if ((this->frameStart + 2 + dataLen) == this->bufferSize)
+				if ((this->frameStart + 2 + packetLen) == this->bufferSize)
 				{
 					NORMAL_EX_LOG("no more space in the buffer, emptying the buffer data");
 
@@ -115,7 +115,7 @@ namespace chen {
 				// frame to the next position after the parsed frame.
 				else
 				{
-					this->frameStart += 2 + dataLen;
+					this->frameStart += 2 + packetLen;
 				}
 
 				// If there is more data in the buffer after the parsed frame then

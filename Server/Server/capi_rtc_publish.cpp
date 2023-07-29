@@ -117,7 +117,7 @@ namespace chen {
 		{
 			//static  int32 udp_port = 60000;//_srs_config->get_rtc_server_listen();
 			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
-			std::string protocol = "udp";//_srs_config->get_rtc_server_protocol();
+			std::string protocol = "tcp";//_srs_config->get_rtc_server_protocol();
 
 		   //std::set<std::string> candidates = {"192.168.1.175"};;// = discover_candidates(ruc);
 			//for (std::set<std::string>::iterator it = candidates.begin(); it != candidates.end(); ++it) 
