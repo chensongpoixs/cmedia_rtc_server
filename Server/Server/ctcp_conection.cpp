@@ -48,12 +48,12 @@ namespace chen {
 	{
 		//MS_TRACE();
 
-		NORMAL_EX_LOG(
+		/*NORMAL_EX_LOG(
 			"data received [local:%s :%" PRIu16 ", remote:%s :%" PRIu16 "]",
 			GetLocalIp().c_str(),
 			GetLocalPort(),
 			GetPeerIp().c_str(),
-			GetPeerPort());
+			GetPeerPort());*/
 
 		/*
 		 * Framing RFC 4571
@@ -106,7 +106,7 @@ namespace chen {
 				// the latest parsed frame filled it, then empty the full buffer.
 				if ((this->frameStart + 2 + packetLen) == this->bufferSize)
 				{
-					NORMAL_EX_LOG("no more space in the buffer, emptying the buffer data");
+					//NORMAL_EX_LOG("no more space in the buffer, emptying the buffer data");
 
 					this->frameStart = 0;
 					this->bufferDataLen = 0;
@@ -122,7 +122,7 @@ namespace chen {
 				// parse again. Otherwise break here and wait for more data.
 				if (this->bufferDataLen > this->frameStart)
 				{
-					NORMAL_EX_LOG("there is more data after the parsed frame, continue parsing");
+					//NORMAL_EX_LOG("there is more data after the parsed frame, continue parsing");
 
 					continue;
 				}
@@ -139,9 +139,9 @@ namespace chen {
 				// the buffer, so move the frame to the position 0.
 				if (this->frameStart != 0)
 				{
-					NORMAL_EX_LOG(
-						"no more space in the buffer, moving parsed bytes to the beginning of "
-						"the buffer and wait for more data");
+					//NORMAL_EX_LOG(
+						//"no more space in the buffer, moving parsed bytes to the beginning of "
+						//"the buffer and wait for more data");
 
 					std::memmove(
 						this->buffer, this->buffer + this->frameStart, this->bufferSize - this->frameStart);
