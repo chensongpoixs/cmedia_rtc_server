@@ -215,24 +215,24 @@ namespace chen {
 				//int32 tport = tcp_port; 
 				//parse_hostport(*it, hostname, tport);
 //
-				 if (protocol == "udp")
+				 if (player_message.m_rtc_protocol == "udp")
 				{
 					rtc_local_sdp.add_candidate("udp", hostname, uport, "host");
 				}
-				else  if (protocol == "tcp")
+				else  if (player_message.m_rtc_protocol == "tcp")
 				{
 					rtc_local_sdp.add_candidate("tcp", hostname, uport, "host");
 				}
 				else
 				{
-					WARNING_EX_LOG("[protocol = %s][hostname = %s][uport = %u]", protocol.c_str(), hostname.c_str(), uport);
+					WARNING_EX_LOG("[protocol = %s][hostname = %s][uport = %u]", player_message.m_rtc_protocol.c_str(), hostname.c_str(), uport);
 					/*m_local_sdp.add_candidate("udp", hostname, uport, "host");
 					m_local_sdp.add_candidate("tcp", hostname, tport, "host");*/
 				}
 			}
 
 			//std::vector<std::string> v = std::vector<std::string>(candidates.begin(), candidates.end());
-			NORMAL_EX_LOG("RTC: Use candidates  = , protocol=%s", /*srs_join_vector_string(v, ", ").c_str(),*/ protocol.c_str());
+			NORMAL_EX_LOG("RTC: Use candidates  = , protocol=%s", /*srs_join_vector_string(v, ", ").c_str(),*/ player_message.m_rtc_protocol.c_str());
 		}
 
 		// Setup the negotiate DTLS by config.

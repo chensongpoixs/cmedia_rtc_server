@@ -727,9 +727,6 @@
     <ClCompile Include="ctransport_util.cpp">
       <Filter>rtc</Filter>
     </ClCompile>
-    <ClCompile Include="cice_server.cpp">
-      <Filter>stun</Filter>
-    </ClCompile>
     <ClCompile Include="crtc_dtls.cpp">
       <Filter>dtls</Filter>
     </ClCompile>
@@ -969,6 +966,12 @@
     </ClCompile>
     <ClCompile Include="cvideo_renderer.cpp">
       <Filter>video_render</Filter>
+    </ClCompile>
+    <ClCompile Include="ctransport_tuple.cpp">
+      <Filter>rtc</Filter>
+    </ClCompile>
+    <ClCompile Include="cice_server.cpp">
+      <Filter>rtc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1569,9 +1572,6 @@
     <ClInclude Include="crtc_transport_define.h">
       <Filter>rtc</Filter>
     </ClInclude>
-    <ClInclude Include="cice_server.h">
-      <Filter>stun</Filter>
-    </ClInclude>
     <ClInclude Include="crtc_dtls.h">
       <Filter>dtls</Filter>
     </ClInclude>
@@ -1856,6 +1856,12 @@
     </ClInclude>
     <ClInclude Include="cvideo_renderer.h">
       <Filter>video_render</Filter>
+    </ClInclude>
+    <ClInclude Include="ctransport_tuple.h">
+      <Filter>rtc</Filter>
+    </ClInclude>
+    <ClInclude Include="cice_server.h">
+      <Filter>rtc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

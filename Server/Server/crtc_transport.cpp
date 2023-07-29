@@ -48,6 +48,7 @@ purpose:		crtc_transport
 #include "FeedbackPsRemb.hpp"
 #include <unordered_map>
 #include "cglobal_rtc_port.h"
+#include "cice_server.h"
 namespace chen {
 
 	static const char * wan_ip = "0.0.0.0";
@@ -62,7 +63,7 @@ namespace chen {
 		m_remote_sdp = remote_sdp;
 		m_local_sdp = local_sdp;
 		
-
+		
 
 
 		 
@@ -129,14 +130,30 @@ namespace chen {
 			m_udp_sockets.push_back(socket_ptr);
 			socket_ptr = NULL;
 		}*/
-
+		std::string ip = wan_ip ;
 		for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
 		{
-			std::string ip = wan_ip ;
-			ctcp_server * socket_ptr = new   ctcp_server(this, this, ip, (*iter).m_port);
 			m_udp_ports.push_back((*iter).m_port);
-			m_tcp_servers.push_back(socket_ptr);
-			socket_ptr = NULL;
+			
+			if (iter->m_protocol == "tcp")
+			{
+				ctcp_server * socket_ptr = new   ctcp_server(this, this, ip, (*iter).m_port);
+				
+				m_tcp_servers.push_back(socket_ptr);
+				socket_ptr = NULL;
+			}
+			else if (iter->m_protocol == "udp")
+			{
+				cudp_socket * socket_ptr = new   cudp_socket(this, ip, (*iter).m_port);
+
+				m_udp_sockets.push_back(socket_ptr);
+				socket_ptr = NULL;
+			}
+			else
+			{
+				WARNING_EX_LOG("rtc protocol not type [%s]", iter->m_protocol.c_str());
+				return false;
+			}
 		}
 		//m_dtls_ptr = new cdtls_client(this);
 
@@ -419,7 +436,8 @@ namespace chen {
 		
 
 		m_timer_ptr = new ctimer(this);
-		
+		m_ice_server_ptr = new cice_server(this);
+		m_ice_server_ptr->init(local_sdp.get_ice_ufrag(), local_sdp.get_ice_pwd());
 		return true;
 	}
 	bool crtc_transport::create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations)
@@ -488,6 +506,16 @@ namespace chen {
 	{
 		DEBUG_EX_LOG("");
 		//m_current_socket_ptr = NULL;
+
+		/*if (m_rtc_client_type == ERtcClientPublisher && m_srtp_recv_session_ptr)
+		{
+			for (const std::pair<uint32, uint32> &p : m_ssrc_media_type_map)
+			{
+				m_srtp_recv_session_ptr->RemoveStream(p.second);
+			}
+			
+		}*/
+
 		m_all_rtp_listener.destroy();
 		if (m_dtls_ptr)
 		{
@@ -547,7 +575,12 @@ namespace chen {
 			delete m_sctp_association_ptr;
 			m_sctp_association_ptr = NULL;
 		}
-		
+		if (m_ice_server_ptr)
+		{
+			m_ice_server_ptr->destroy();
+			delete m_ice_server_ptr;
+			m_ice_server_ptr = NULL;
+		}
 	}
 	bool crtc_transport::is_active() const
 	{
@@ -557,6 +590,12 @@ namespace chen {
 			WARNING_EX_LOG("[cur_ms = %u][pre_ms = %u][diff = %u]", uv_util::GetTimeMs(), m_time_out_ms, uv_util::GetTimeMs() - m_time_out_ms);;
 		}
 		return ret;
+	}
+	bool crtc_transport::IsConnected() const
+	{
+	
+		//NORMAL_EX_LOG("[ice status = %u][dtls status = %u]", m_ice_server_ptr->GetState(), m_dtls_ptr->get_dtls_state());
+		return (m_ice_server_ptr->GetState() == cice_server::EIceConnected || m_ice_server_ptr->GetState() == cice_server::EIceCompleted) && (m_dtls_ptr->get_dtls_state() == EDtlsStateServerDone);
 	}
 	void crtc_transport::request_key_frame()
 	{
@@ -693,12 +732,16 @@ namespace chen {
 	}
 	void crtc_transport::send_rtp_data(void * data, int32 size)
 	{
+		if (!IsConnected())
+		{
+			return;
+		}
 		/*if (m_rtc_net_state != ERtcNetworkStateEstablished)
 		{
 			WARNING_EX_LOG("");
 			return  ;
 		}*/
-		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
+		if (/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			if (m_srtp_send_session_ptr->EncryptRtp((const uint8_t**)&data, (size_t *)&size))
 			{
@@ -707,17 +750,22 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", size);
 			//m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
-			m_tcp_connection_ptr->Send((const uint8_t *)data, size, NULL);
+			//m_tcp_connection_ptr->Send((const uint8_t *)data, size, NULL);
+			m_ice_server_ptr->GetSelectedTuple()->Send((const uint8_t *)data, size);
 		}
 	}
 	void crtc_transport::send_rtp_data(RTC::RtpPacket * packet)
 	{
+		if (!IsConnected())
+		{
+			return;
+		}
 	/*	if (m_rtc_net_state != ERtcNetworkStateEstablished)
 		{
 			WARNING_EX_LOG("");
 			return;
 		}*/
-		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
+		if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			//{
 			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
@@ -748,12 +796,17 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			//m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
-			m_tcp_connection_ptr->Send(data, len,  NULL);
+			//m_tcp_connection_ptr->Send(data, len,  NULL);
+			m_ice_server_ptr->GetSelectedTuple()->Send(data, len);
 		}
 	}
 	void crtc_transport::send_rtp_packet(RTC::RtpPacket * packet, cudp_socket_handler::onSendCallback * cb)
 	{
-		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
+		if (!IsConnected())
+		{
+			return;
+		}
+		if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			//{
 			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
@@ -789,7 +842,8 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
-			m_tcp_connection_ptr->Send(data, len, NULL);
+			//m_tcp_connection_ptr->Send(data, len, NULL);
+			m_ice_server_ptr->GetSelectedTuple()->Send(data, len);
 			if (cb)
 			{
 				(*cb)(true);
@@ -898,7 +952,11 @@ namespace chen {
 
 	bool crtc_transport::send_rtcp(const uint8 * data, size_t len)
 	{
-		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
+		if (!IsConnected())
+		{
+			return false;
+		}
+		if (m_ice_server_ptr&&/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
 			{
@@ -907,14 +965,19 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
-			m_tcp_connection_ptr->Send(data, len, NULL);
+			//m_tcp_connection_ptr->Send(data, len, NULL);
+			m_ice_server_ptr->GetSelectedTuple()->Send(data, len);
 			return true;
 		}
 		return false;
 	}
 	void crtc_transport::send_rtcp_compound_packet(RTC::RTCP::CompoundPacket * packet)
 	{
-		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
+		if (!IsConnected())
+		{
+			return;
+		}
+		if (m_ice_server_ptr&&/*m_tcp_connection_ptr && */m_srtp_send_session_ptr)
 		{
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
@@ -925,11 +988,18 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
-			m_tcp_connection_ptr->Send((const uint8_t *)data, len, NULL);
+			//m_tcp_connection_ptr->Send((const uint8_t *)data, len, NULL);
+			m_ice_server_ptr->GetSelectedTuple()->Send((const uint8_t *)data, len);
 		}
 	}
 	bool crtc_transport::send_sctp_data(const uint8 * data, size_t len)
 	{
+		// TODO@chensong 2023-07-30
+		if (!IsConnected())
+		{
+			WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
+			return false;
+		}
 		if (m_dtls_ptr)
 		{
 			m_dtls_ptr->send_application_data(data, len);
@@ -938,6 +1008,7 @@ namespace chen {
 	}
 	void crtc_transport::send_sctp_data(uint16_t streamId, uint32_t ppid, const uint8_t * msg, size_t len)
 	{
+		
 		if (m_rtc_net_state != ERtcNetworkStateEstablished)
 		{
 			WARNING_EX_LOG("rtc status = %u", m_rtc_net_state);
@@ -952,6 +1023,11 @@ namespace chen {
 	}
 	void crtc_transport::send_consumer(RTC::RtpPacket * packet)
 	{
+		if (!IsConnected())
+		{
+			//WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
+			return;
+		}
 		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet);
 		if (!consumer_ptr)
 		{
@@ -962,7 +1038,12 @@ namespace chen {
 	}
 	void crtc_transport::send_rtcp_packet(RTC::RTCP::Packet * packet)
 	{
-		if (m_tcp_connection_ptr && m_srtp_send_session_ptr)
+		if (!IsConnected())
+		{
+			//WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
+			return;
+		}
+		if (/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
@@ -973,7 +1054,8 @@ namespace chen {
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
 			//m_current_socket_ptr->Send(data, len, &m_remote_addr, NULL);
-			m_tcp_connection_ptr->Send((const uint8_t *)data, len, NULL);
+			//m_tcp_connection_ptr->Send((const uint8_t *)data, len, NULL);
+			m_ice_server_ptr->GetSelectedTuple()->Send((const uint8_t *)data, len);
 		}
 		
 
@@ -995,10 +1077,16 @@ namespace chen {
 	}
 	int32 crtc_transport::write_dtls_data(void * data, int size)
 	{
-		if (m_tcp_connection_ptr)
+		if (!this->m_ice_server_ptr->GetSelectedTuple())
+		{
+			WARNING_EX_LOG( "no selected tuple set, cannot send DTLS packet");
+
+			return 0;
+		}
+		//if (m_tcp_connection_ptr)
 		{
 			//m_current_socket_ptr->Send((const uint8_t *)data, size, &m_remote_addr, NULL);
-			m_tcp_connection_ptr->Send((const uint8_t *)data, size, NULL);
+			m_ice_server_ptr->GetSelectedTuple()->Send((const uint8_t *)data, size);
 		}
 		
 		return 0;
@@ -1080,33 +1168,33 @@ namespace chen {
 		{
 			m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
 			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate));
-			m_tcc_server->TransportConnected();
+			//m_tcc_server->TransportConnected();
 		}
 		if (!m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
 		{
 			m_tcc_client   = new RTC::TransportCongestionControlClient(
 				this, RTC::BweType::TRANSPORT_CC, g_cfg.get_uint32(ECI_RtcStartBitrate), g_cfg.get_uint32(ECI_RtcMaxBitrate));
-			m_tcc_client->TransportConnected();
+			//m_tcc_client->TransportConnected();
 
 		}
 		if (m_sctp_association_ptr)
 		{
-			m_sctp_association_ptr->TransportConnected();
+			//m_sctp_association_ptr->TransportConnected();
 		}
 		if (m_timer_ptr)
 		{
-			m_timer_ptr->Start(static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs / 2));
+			//m_timer_ptr->Start(static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs / 2));
 		}
 	}
 
-	void crtc_transport::OnPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::OnPacketReceived(ctransport_tuple* tuple, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
 		//NORMAL_EX_LOG("---->");
 		// Increase receive transmission.
 		//RTC::Transport::DataReceived(len);
 
 
-		memcpy(&m_remote_addr, remoteAddr, sizeof(*remoteAddr));
+		//memcpy(&m_remote_addr, remoteAddr, sizeof(*remoteAddr));
 		/*for ( cudp_socket * temp : m_udp_sockets)
 		{
 			if (temp == socket)
@@ -1135,7 +1223,7 @@ namespace chen {
 				return;
 			}*/
 			//uint64 ms = uv_util::GetTimeMs();
-			_on_stun_data_received(socket, data, len, remoteAddr);
+			_on_stun_data_received(tuple, data, len, remoteAddr);
 			//uint64 diff_ms = uv_util::GetTimeMs();
 			//NORMAL_EX_LOG("media stun --> ms = %u", diff_ms - ms);
 		}
@@ -1145,7 +1233,7 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			 
 			//OnRtcpDataReceived(tuple, data, len);
-			_on_rtcp_data_received(socket, data, len, remoteAddr);
+			_on_rtcp_data_received(tuple, data, len, remoteAddr);
 			
 		}
 		// Check if it's RTP.
@@ -1154,14 +1242,14 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtp");
 			 
 			//OnRtpDataReceived(tuple, data, len);
-			_on_rtp_data_received(socket, data, len, remoteAddr);
+			_on_rtp_data_received(tuple, data, len, remoteAddr);
 		}
 		// Check if it's DTLS.
 		else if (RTC::DtlsTransport::IsDtls(data, len))
 		{
 			//NORMAL_EX_LOG("IsDtls");
 			//OnDtlsDataReceived(tuple, data, len);
-			_on_dtls_data_received(socket, data, len, remoteAddr);
+			_on_dtls_data_received(tuple, data, len, remoteAddr);
 		}
 		else
 		{
@@ -1176,7 +1264,8 @@ namespace chen {
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
 		std::chrono::microseconds ms;*/
-		OnPacketReceived(socket, data, len, remoteAddr);
+		ctransport_tuple tuple(socket, remoteAddr);
+		OnPacketReceived(&tuple, data, len, remoteAddr);
 		/*cur_time_ms = std::chrono::steady_clock::now();
 		dur = cur_time_ms - pre_time;
 		ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);*/
@@ -1194,6 +1283,10 @@ namespace chen {
 	void crtc_transport::OnTcpConnectionPacketReceived(ctcp_connection * connection, const uint8_t * data, size_t len)
 	{
 		
+		ctransport_tuple tuple(connection);
+
+		OnPacketReceived(&tuple, data, len, NULL);
+		return;
 		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
 		//if (m_rtc_net_state == ERtcNetworkStateEstablished)
 		{
@@ -1201,7 +1294,7 @@ namespace chen {
 		}
 		//NORMAL_EX_LOG("[%s]", data);
 
-		m_tcp_connection_ptr = connection;
+		//m_tcp_connection_ptr = connection;
 		// Check if it's STUN.
 		if (crtc_stun_packet::is_stun(data, len))
 		{
@@ -1252,6 +1345,9 @@ namespace chen {
 	void crtc_transport::OnRtcTcpConnectionClosed(ctcp_server * tcpServer, ctcp_connection * connection)
 	{
 		NORMAL_EX_LOG("close [address=%s:%u]", connection->GetPeerIp().c_str(), connection->GetPeerPort());
+		ctransport_tuple tuple(connection);
+
+		m_ice_server_ptr-> RemoveTuple(&tuple);
 	}
 	void crtc_transport::OnTransportCongestionControlServerSendRtcpPacket(RTC::TransportCongestionControlServer * tccServer, RTC::RTCP::Packet * packet)
 	{
@@ -1460,8 +1556,105 @@ namespace chen {
 		//WARNING_EX_LOG("");
 	}
 
-	void crtc_transport::_on_stun_data_received(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::OnIceServerSendStunPacket( ctransport_tuple * tuple, const uint8* data, size_t len)
 	{
+		// Send the STUN response over the same transport tuple.
+		tuple->Send(data, len);
+		m_time_out_ms = uv_util::GetTimeMs();
+		///////////////////////////////////////////////////////////////////////////////////////
+		if (m_rtc_net_state == ERtcNetworkStateWaitingStun)
+		{
+			m_rtc_net_state = ERtcNetworkStateDtls;
+			//cdtls_client * dtls_client_ptr = dynamic_cast<cdtls_client*>(m_dtls_ptr);
+			//dtls_client_ptr->init();
+			//m_dtls_ptr->start_active_handshake("server");
+		}
+	}
+
+	void crtc_transport::OnIceServerSelectedTuple(ctransport_tuple* tuple)
+	{
+		/*
+		* RFC 5245 section 11.2 "Receiving Media":
+		*
+		* ICE implementations MUST be prepared to receive media on each component
+		* on any candidates provided for that component.
+		*/
+	}
+
+	void crtc_transport::OnIceServerConnected()
+	{
+		MayRunDtlsTransport();
+		//if (m_dtls_ptr->get_dtls_state() == EDtlsStateClientCertificate)
+		{
+			//m_dtls_ptr->start_active_handshake("server");
+		}
+		if (m_rtc_net_state == ERtcNetworkStateEstablished)
+		{
+			Connected();
+		}
+	}
+
+	void crtc_transport::OnIceServerCompleted()
+	{
+		// If ready, run the DTLS handler.
+		MayRunDtlsTransport();
+		if (m_rtc_net_state == ERtcNetworkStateEstablished)
+		{
+			Connected();
+		}
+	}
+
+	void crtc_transport::OnIceServerDisconnected()
+	{
+		// If DTLS was already connected, notify the parent class.
+		//if (this->dtlsTransport->GetState() == RTC::DtlsTransport::DtlsState::CONNECTED)
+		{
+		//	RTC::Transport::Disconnected();
+		}
+		if (m_dtls_ptr && m_rtc_net_state == ERtcNetworkStateEstablished)
+		{
+			// Tell all Consumers.
+			/*for (auto& kv : this->mapConsumers)
+			{
+				auto* consumer = kv.second;
+
+				consumer->TransportDisconnected();
+			}
+*/
+			// Tell all DataConsumers.
+			/*for (auto& kv : this->mapDataConsumers)
+			{
+				auto* dataConsumer = kv.second;
+
+				dataConsumer->TransportDisconnected();
+			}
+*/
+			// Stop the RTCP timer.
+			DisConnected();
+			//this->rtcpTimer->Stop();
+			//if (m_timer_ptr)
+			//{
+			//	m_timer_ptr->Stop();
+			//}
+			//// Tell the TransportCongestionControlClient.
+			//if (this->m_tcc_client)
+			//{
+			//	this->m_tcc_client->TransportDisconnected();
+			//}
+
+			//// Tell the TransportCongestionControlServer.
+			//if (this->m_tcc_server)
+			//{
+			//	this->m_tcc_server->TransportDisconnected();
+			//}
+		}
+
+	}
+
+	void crtc_transport::_on_stun_data_received(ctransport_tuple* tuple, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	{
+		m_ice_server_ptr->ProcessStunPacket(data, len, tuple);
+		return;
 		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
 		crtc_stun_packet stun_packet;
 		if (0 != stun_packet.decode((const char *)(data), len) )
@@ -1495,13 +1688,13 @@ namespace chen {
 			stun_response.set_mapped_port(port);
 			stun_response.encode(m_local_sdp.get_ice_pwd(), &stream);
 			//m_current_socket_ptr->Send((const uint8_t *)stream.data(), stream.pos(), remoteAddr, nullptr);
-			m_tcp_connection_ptr->Send((const uint8_t *)stream.data(), stream.pos() , nullptr);
+			//m_tcp_connection_ptr->Send((const uint8_t *)stream.data(), stream.pos() , nullptr);
 			
 		}
 		//NORMAL_EX_LOG("[m_time_out_ms = %u]", uv_util::GetTimeMs() - m_time_out_ms);
 		m_time_out_ms = uv_util::GetTimeMs();
 		
-		if (m_rtc_net_state != ERtcNetworkStateDtls && m_rtc_net_state != ERtcNetworkStateEstablished)
+		if (m_rtc_net_state == ERtcNetworkStateWaitingStun)
 		{
 			m_rtc_net_state = ERtcNetworkStateDtls;
 			//cdtls_client * dtls_client_ptr = dynamic_cast<cdtls_client*>(m_dtls_ptr);
@@ -1513,8 +1706,20 @@ namespace chen {
 
 	}
 
-	void crtc_transport::_on_dtls_data_received(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::_on_dtls_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len, const sockaddr * remoteAddr)
 	{
+		if (!m_ice_server_ptr->IsValidTuple(tuple))
+		{
+			WARNING_EX_LOG("ignoring DTSL data coming from an invalid tuple failed !!!");
+			return;
+		}
+		m_ice_server_ptr->ForceSelectedTuple(tuple);
+
+		//if (m_rtc_net_state == ERtcNetworkStateDtls)
+		{
+			m_dtls_ptr->process_dtls_data(data, len);
+		}// 
+		return;
 		// TODO@chensong 2023-02-17 
 		 // DTLS 的状态是否在连接中   connecting -> connected
 		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
@@ -1524,12 +1729,22 @@ namespace chen {
 		}
 	}
 
-	void crtc_transport::_on_rtp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::_on_rtp_data_received(ctransport_tuple* tuple, const uint8 * data, size_t len, const sockaddr * remoteAddr)
 	{
 		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
+		if (m_rtc_net_state < ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG("ignoring RTP packet while DTLS no connected failed !!!");
+			return;
+		}
 		if (!m_srtp_recv_session_ptr)
 		{
 			WARNING_EX_LOG("srtp recv session ptr = null !!!");
+			return;
+		}
+		if (!m_ice_server_ptr->IsValidTuple(tuple))
+		{
+			WARNING_EX_LOG("ignoring RTP packet due to non receiving SRTP session ");
 			return;
 		}
 		// TODO@chensong 2023-2-23 native rtc 客户端推流  会有一个522长度数据 srtp 解码崩溃问题 --> 
@@ -1567,7 +1782,7 @@ namespace chen {
 				return;
 			}
 
-
+			m_ice_server_ptr->ForceSelectedTuple(tuple);
 			// Apply the Transport RTP header extension ids so the RTP listener can use them.
 			packet->SetMidExtensionId(m_rtp_header_extension_ids.mid);
 			 packet->SetRidExtensionId(m_rtp_header_extension_ids.rid);
@@ -1640,8 +1855,23 @@ namespace chen {
 		}
 	}
 
-	void crtc_transport::_on_rtcp_data_received(cudp_socket * socket, const uint8 * data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::_on_rtcp_data_received(ctransport_tuple* tuple, const uint8 * data, size_t len, const sockaddr * remoteAddr)
 	{
+		if (m_rtc_net_state < ERtcNetworkStateEstablished)
+		{
+			WARNING_EX_LOG("ignoring RTP packet while DTLS no connected failed !!!");
+			return;
+		}
+		if (!m_srtp_recv_session_ptr)
+		{
+			WARNING_EX_LOG("srtp recv session ptr = null !!!");
+			return;
+		}
+		if (!m_ice_server_ptr->IsValidTuple(tuple))
+		{
+			WARNING_EX_LOG("ignoring RTCP packet due to non receiving SRTP session ");
+			return;
+		}
 		//if (!m_srtp.unprotect_rtcp(/*static_cast<void*>*//*(void *)(data)*/const_cast<uint8_t*>(data), reinterpret_cast<int32*>(&len)))
 		//{
 		//	WARNING_EX_LOG("rtcp unprotect rtcp failed !!!-------->>>>>>>");
@@ -2306,6 +2536,68 @@ namespace chen {
 		//	return srs_error_wrap(err, "handle rtcp");
 		//}
 		return true;
+	}
+
+	void crtc_transport::MayRunDtlsTransport()
+	{
+		if (m_rtc_net_state < ERtcNetworkStateDtls)
+		{
+			return;
+		}
+		if (m_rtc_net_state == ERtcNetworkStateDtls)
+		{
+			m_dtls_ptr->start_active_handshake("server");
+		}
+	}
+
+	void crtc_transport::Connected()
+	{
+		if (m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
+		{
+		//	m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
+			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate));
+			m_tcc_server->TransportConnected();
+		}
+		if (m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
+		{
+			//m_tcc_client = new RTC::TransportCongestionControlClient(
+				//this, RTC::BweType::TRANSPORT_CC, g_cfg.get_uint32(ECI_RtcStartBitrate), g_cfg.get_uint32(ECI_RtcMaxBitrate));
+			m_tcc_client->TransportConnected();
+
+		}
+		if (m_sctp_association_ptr)
+		{
+			m_sctp_association_ptr->TransportConnected();
+		}
+		if (m_timer_ptr)
+		{
+			m_timer_ptr->Start(static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs / 2));
+		}
+	}
+
+	void crtc_transport::DisConnected()
+	{
+		if (m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
+		{
+			//	m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
+			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate));
+			m_tcc_server->TransportDisconnected();
+		}
+		if (m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
+		{
+			//m_tcc_client = new RTC::TransportCongestionControlClient(
+			//this, RTC::BweType::TRANSPORT_CC, g_cfg.get_uint32(ECI_RtcStartBitrate), g_cfg.get_uint32(ECI_RtcMaxBitrate));
+			m_tcc_client->TransportDisconnected();
+
+		}
+		if (m_sctp_association_ptr)
+		{
+			//m_sctp_association_ptr->TransportConnected();
+		}
+		if (m_timer_ptr)
+		{
+			m_timer_ptr->Stop( );
+		}
 	}
 
 	void crtc_transport::OnTimer(ctimer * timer)

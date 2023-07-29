@@ -1015,6 +1015,7 @@ namespace chen {
 		//NORMAL_EX_LOG("");
 		// Set state and notify the listener.
 		//this->state = DtlsState::CONNECTED;
+		m_dtls_status = EDtlsStateServerDone;
 		m_callback_ptr->on_dtls_transport_connected( 
 			srtpCryptoSuite,
 			srtpLocalMasterKey,

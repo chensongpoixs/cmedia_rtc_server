@@ -40,11 +40,13 @@ namespace chen {
 		std::string  m_remote_sdp;
 		std::string  m_room_name;
 		std::string  m_peer_id;
+		std::string  m_rtc_protocol;
 		std::string  m_codec;
 		cclient_message_base()
 		: m_remote_sdp("")
 		, m_room_name("")
 		, m_peer_id("")
+		, m_rtc_protocol("udp")
 		, m_codec("H264"){}
 	};
 

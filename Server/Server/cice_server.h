@@ -25,26 +25,105 @@ purpose:		 rtc——stun define
 #ifndef _C_ICE_SERVER_H_
 #define _C_ICE_SERVER_H_
 #include "cnet_type.h"
-
+#include <list>
+#include "ctransport_tuple.h"
+//#include "crtc_transport.h"
 namespace chen {
+
+	//class ctransport_tuple;
+	class cice_server_istener;
 	class cice_server
 	{
 	public:
-		explicit cice_server() {}
-		virtual ~cice_server();
+		enum EIceState
+		{
+			EIceNew = 1,
+			EIceConnected,
+			EIceCompleted,
+			EIceDisConnected
+		};
+	
+	public:
+		
+	public:
+		 cice_server(cice_server_istener* listener)
+		: m_listenter_ptr(listener)
+		, m_username_fragment("")
+		, m_password("")
+		, m_old_username_fragment("")
+		, m_old_password("")
+		, m_ice_state(EIceNew)
+		, m_tuples()
+		, m_selected_tuple_ptr(NULL){}
+		virtual ~cice_server() {}
 
 	public:
-		bool init();
+		bool init(const std::string& username, const std::string &password);
 		void update(uint32 uDeltaTime);
 		void destroy();
 
+	public:
+		void ProcessStunPacket(const uint8* data, size_t len, ctransport_tuple* tuple);
+		const std::string& GetUsernameFragment() const
+		{
+			return this->m_username_fragment;
+		}
+		const std::string& GetPassword() const
+		{
+			return this->m_password;
+		}
+		EIceState GetState() const
+		{
+			return this->m_ice_state;
+		}
+		ctransport_tuple* GetSelectedTuple() const
+		{
+			return this->m_selected_tuple_ptr;
+		}
+		void SetUsernameFragment(const std::string& usernameFragment)
+		{
+			this->m_old_username_fragment = this->m_username_fragment;
+			this->m_username_fragment    = usernameFragment;
+		}
+		void SetPassword(const std::string& password)
+		{
+			this->m_old_password = this->m_password;
+			this->m_password    = password;
+		}
+		bool IsValidTuple(const ctransport_tuple* tuple) const;
+		void RemoveTuple(ctransport_tuple* tuple);
+		// This should be just called in 'connected' or completed' state
+		// and the given tuple must be an already valid tuple.
+		void ForceSelectedTuple(const ctransport_tuple* tuple);
 
+	private:
+		void HandleTuple(ctransport_tuple* tuple, bool hasUseCandidate);
+		/**
+		* Store the given tuple and return its stored address.
+		*/
+		ctransport_tuple* AddTuple(ctransport_tuple* tuple);
+		/**
+		* If the given tuple exists return its stored address, nullptr otherwise.
+		*/
+		ctransport_tuple* HasTuple(const ctransport_tuple* tuple) const;
+		/**
+		* Set the given tuple as the selected tuple.
+		* NOTE: The given tuple MUST be already stored within the list.
+		*/
+		void SetSelectedTuple(ctransport_tuple* storedTuple);
 
 	protected:
 	private:
+		cice_server_istener *  m_listenter_ptr;
+		std::string		m_username_fragment; 
+		std::string		m_password;
+		std::string		m_old_username_fragment;
+		std::string		m_old_password;
 
+		EIceState       m_ice_state;
 
-
+		std::list<ctransport_tuple>   m_tuples; //元组
+		ctransport_tuple *			m_selected_tuple_ptr;
 	};
 }
 

@@ -309,6 +309,10 @@ namespace chen {
 			{
 				publish_message.m_codec = value["data"]["codec"].asCString();
 			}
+			if (value["data"].isMember("rtc_protocol") && value["data"]["rtc_protocol"].isString())
+			{
+				publish_message.m_rtc_protocol = value["data"]["rtc_protocol"].asCString();
+			}
 			std::string media_stream_url = publish_message.m_room_name + "/" + publish_message.m_peer_id;
 			if (!g_global_rtc_config.get_stream_uri(media_stream_url /*roomname + "/" + peerid*/))
 			{
@@ -390,6 +394,10 @@ namespace chen {
 			if (value["data"].isMember("codec") && value["data"]["codec"].isString())
 			{
 				player_message.m_codec = value["data"]["codec"].asCString();
+			}
+			if (value["data"].isMember("rtc_protocol") && value["data"]["rtc_protocol"].isString())
+			{
+				player_message.m_rtc_protocol = value["data"]["rtc_protocol"].asCString();
 			}
 			if (!g_global_rtc_config.get_stream_uri(player_message.m_room_name + "/" + player_message.m_video_peer_id))
 			{

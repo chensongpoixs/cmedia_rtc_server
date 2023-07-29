@@ -35,10 +35,10 @@ namespace chen {
 	// STUN info 
 	struct ccandidate
 	{
-		std::string m_protocol;
+		std::string m_protocol;// TCP  or UDP 
 		std::string m_ip; // host
 		int32		m_port;
-		std::string m_type; // TCP  or UDP 
+		std::string m_type; // host
 	};
 
 

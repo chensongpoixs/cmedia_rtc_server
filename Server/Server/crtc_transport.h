@@ -42,9 +42,14 @@ purpose:		crtc_transport
 #include "csctp_association.h"
 #include "ctcp_connection_handler.h"
 #include "ctcp_server.h"
+
+//#include "ctransport_tuple.h"
+//#include "cice_server.h"
 namespace chen {
 
 	class cdtls_session;
+	class ctransport_tuple;
+	class cice_server;
 
 	class crtc_transportlinster
 	{
@@ -55,7 +60,25 @@ namespace chen {
 		virtual void  on_dtls_application_data(const uint8* data, int32 size) = 0;
 		virtual void  on_dtls_transport_connected(ECRYPTO_SUITE srtp_crypto_suite, uint8* srtp_local_key, size_t srtp_local_key_len, uint8* srtp_remote_key, size_t srtp_remote_key_len) = 0;
 	};
+	class cice_server_istener
+	{
+	public:
+		virtual ~cice_server_istener() = default;
+	public:
 
+		/**
+		* These callbacks are guaranteed to be called before ProcessStunPacket()
+		* returns, so the given pointers are still usable.
+		*/
+		virtual void OnIceServerSendStunPacket(  ctransport_tuple* tuple, const uint8* data, size_t len) = 0;
+		virtual void OnIceServerSelectedTuple( ctransport_tuple* tuple)        = 0;
+		virtual void OnIceServerConnected()    = 0;
+		virtual void OnIceServerCompleted()    = 0;
+		virtual void OnIceServerDisconnected() = 0;
+
+	protected:
+	private:
+	};
 
 	struct crtc_room_master
 	{
@@ -66,7 +89,8 @@ namespace chen {
 			, m_user_name(""){}
 	};
 
-	class crtc_transport : public ctcp_server::Listener, public ctcp_connection::Listener,
+	class crtc_transport : public cice_server_istener, 
+		public ctcp_server::Listener, public ctcp_connection::Listener,
 		public cudp_socket::Listener, public crtc_transportlinster,
 		public RTC::TransportCongestionControlClient::Listener,
 		public RTC::TransportCongestionControlServer::Listener, 
@@ -107,7 +131,8 @@ namespace chen {
 			//, m_feedback_rtp_transport_packet()
 			//, m_srtp()
 			, m_tcp_servers()
-			, m_tcp_connection_ptr(NULL)
+//			, m_tcp_connection_ptr(NULL)
+			, m_ice_server_ptr(NULL)
 		 {}
 
 		virtual ~crtc_transport();
@@ -121,6 +146,7 @@ namespace chen {
 
 		void destroy();
 		bool is_active() const;
+		bool IsConnected() const;
 	public:
 
 		void request_key_frame();
@@ -184,7 +210,7 @@ namespace chen {
 	protected:
 	public:
 
-		void OnPacketReceived(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
+		void OnPacketReceived(ctransport_tuple* tuple, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
 	public:
 		virtual void OnUdpSocketPacketReceived(
 			cudp_socket* socket, const uint8_t* data, size_t len, const struct sockaddr* remoteAddr);
@@ -199,41 +225,53 @@ namespace chen {
 	public:
 		void OnTransportCongestionControlServerSendRtcpPacket(
 			RTC::TransportCongestionControlServer* tccServer, RTC::RTCP::Packet* packet);
+public:
+		void OnTransportCongestionControlClientBitrates(RTC::TransportCongestionControlClient * tccClient, RTC::TransportCongestionControlClient::Bitrates & bitrates);
 
-	public:
-		virtual void OnTransportCongestionControlClientBitrates(
+	
+		/*virtual void OnTransportCongestionControlClientBitrates(
 			RTC::TransportCongestionControlClient* tccClient,
-			RTC::TransportCongestionControlClient::Bitrates& bitrates) ;
+			const webrtc::PacedPacketInfo& pacingInfo)  ;
+		const webrtc::PacedPacketInfo& pacingInfo)  ;
+		RTC::TransportCongestionControlClient::Bitrates& bitrates);*/
 		virtual void OnTransportCongestionControlClientSendRtpPacket(
 			RTC::TransportCongestionControlClient* tccClient,
 			RTC::RtpPacket* packet,
-			const webrtc::PacedPacketInfo& pacingInfo)  ;
+			const webrtc::PacedPacketInfo& pacingInfo)   ;
 
 
 		public:
-			virtual void OnSctpAssociationConnecting(csctp_association* sctpAssociation)  ;
-			virtual void OnSctpAssociationConnected(csctp_association* sctpAssociation)  ;
-			virtual void OnSctpAssociationFailed(csctp_association* sctpAssociation)  ;
-			virtual void OnSctpAssociationClosed(csctp_association* sctpAssociation)  ;
+			virtual void OnSctpAssociationConnecting(csctp_association* sctpAssociation)   ;
+			virtual void OnSctpAssociationConnected(csctp_association* sctpAssociation)   ;
+			virtual void OnSctpAssociationFailed(csctp_association* sctpAssociation)   ;
+			virtual void OnSctpAssociationClosed(csctp_association* sctpAssociation)   ;
 			virtual void OnSctpAssociationSendData(
-				csctp_association* sctpAssociation, const uint8_t* data, size_t len)  ;
+				csctp_association* sctpAssociation, const uint8_t* data, size_t len)   ;
 			virtual void OnSctpAssociationMessageReceived(
 				csctp_association* sctpAssociation,
 				uint16_t streamId,
 				uint32_t ppid,
 				const uint8_t* msg,
-				size_t len) ;
+				size_t len) override;
 			virtual void OnSctpAssociationBufferedAmount(
-				csctp_association* sctpAssociation, uint32_t len)  ;
+				csctp_association* sctpAssociation, uint32_t len)   ;
 	public:
+		public:
+			// ICE server
+
+			virtual void OnIceServerSendStunPacket( ctransport_tuple* tuple, const uint8* data, size_t len)   ;
+			virtual void OnIceServerSelectedTuple( ctransport_tuple* tuple)   ;
+			virtual void OnIceServerConnected()   ;
+			virtual void OnIceServerCompleted()   ;
+			virtual void OnIceServerDisconnected()   ;
 		
 	private:
 
-		void _on_stun_data_received(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
-		void _on_dtls_data_received(cudp_socket* socket, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
+		void _on_stun_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
+		void _on_dtls_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
 	
-		void _on_rtp_data_received(cudp_socket* socket, const uint8* data, size_t len, const sockaddr*remoteAddr );
-		void _on_rtcp_data_received(cudp_socket* socket, const uint8* data, size_t len, const sockaddr*remoteAddr );
+		void _on_rtp_data_received(ctransport_tuple* tuple, const uint8* data, size_t len, const sockaddr*remoteAddr );
+		void _on_rtcp_data_received(ctransport_tuple* tuple, const uint8* data, size_t len, const sockaddr*remoteAddr );
 		// data channel 
 		void  _on_application_data_receviced(const uint8* data, size_t len);
 		//void _on_application_data_receviced(cudp_socket* socket, const uint8* data, size_t len, const sockaddr*remoteAddr);
@@ -253,7 +291,15 @@ namespace chen {
 		bool _dispatch_rtcp(crtcp_common* rtcp);
 
 
-		public:
+
+
+	public:
+			
+		void MayRunDtlsTransport();
+	
+		void Connected();
+		void DisConnected();
+	public:
 			void OnTimer(ctimer* timer)  ;
 	private:
 		// p2p net 
@@ -334,8 +380,8 @@ namespace chen {
 
 
 		std::vector < ctcp_server*> m_tcp_servers;
-		ctcp_connection *			m_tcp_connection_ptr;
-
+	//	ctcp_connection *			m_tcp_connection_ptr;
+		cice_server		*			m_ice_server_ptr;
 	};
 
 

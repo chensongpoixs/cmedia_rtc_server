@@ -116,7 +116,24 @@ namespace chen {
 			WARNING_EX_LOG("parse packet not is stun !!!");
 			return -1;
 		}
-		 
+		 /*
+		  The message type field is decomposed further into the following
+		    structure:
+
+		    0                 1
+		    2  3  4 5 6 7 8 9 0 1 2 3 4 5
+		       +--+--+-+-+-+-+-+-+-+-+-+-+-+-+
+		       |M |M |M|M|M|C|M|M|M|C|M|M|M|M|
+		       |11|10|9|8|7|1|6|5|4|0|3|2|1|0|
+		       +--+--+-+-+-+-+-+-+-+-+-+-+-+-+
+
+		    Figure 3: Format of STUN Message Type Field
+
+		   Here the bits in the message type field are shown as most significant
+		   (M11) through least significant (M0).  M11 through M0 represent a 12-
+		   bit encoding of the method.  C1 and C0 represent a 2-bit encoding of
+		   the class.
+		 */
 		m_message_type		=  rtc_byte::get2bytes((const uint8*)buf, 0);
 		uint16 message_len  =  rtc_byte::get2bytes((const uint8*)buf, 2);
 		// length field must be total size minus header's 20 bytes, and must be multiple of 4 Bytes.

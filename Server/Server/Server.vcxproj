@@ -271,6 +271,7 @@
     <ClCompile Include="ctime_util.cpp" />
     <ClCompile Include="ctransport_feedback.cc" />
     <ClCompile Include="ctransport_mgr.cpp" />
+    <ClCompile Include="ctransport_tuple.cpp" />
     <ClCompile Include="ctransport_util.cpp" />
     <ClCompile Include="cudp_socket.cpp" />
     <ClCompile Include="cudp_socket_handler.cpp" />
@@ -551,6 +552,7 @@
     <ClInclude Include="ctime_util.h" />
     <ClInclude Include="ctransport_feedback.h" />
     <ClInclude Include="ctransport_mgr.h" />
+    <ClInclude Include="ctransport_tuple.h" />
     <ClInclude Include="ctransport_util.h" />
     <ClInclude Include="cudp_socket.h" />
     <ClInclude Include="cudp_socket_handler.h" />

@@ -97,6 +97,8 @@ namespace chen {
 
 		 inline bool set_timeout();
 
+
+		 EDtlsState get_dtls_state() const { return m_dtls_status; }
 	 public:
 		 inline bool process_handshake();
 	 public:
