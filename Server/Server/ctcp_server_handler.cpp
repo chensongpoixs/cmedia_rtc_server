@@ -65,6 +65,7 @@ namespace chen {
 			uv_close(reinterpret_cast<uv_handle_t*>(this->uvHandle), static_cast<uv_close_cb>(onClose));
 
 			ERROR_EX_LOG("uv_listen() failed: %s", uv_strerror(err));
+			return;
 		}
 
 		// Set local address.

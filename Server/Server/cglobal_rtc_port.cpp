@@ -42,7 +42,12 @@ namespace chen {
 		m_max_port = g_cfg.get_uint32(ECI_RtcMaxPort);
 		RTC::g_rtcMinPort = m_min_port;
 		RTC::g_rtcMaxPort = m_max_port;
-		m_cur_use_port = m_min_port - 1;
+
+		for (uint32 i = m_min_port; i <= m_max_port; ++i)
+		{
+			m_unuse_port.push_back(i);
+		}
+		m_cur_use_port = m_max_port ;
 		return true;
 	}
 	void cglobal_rtc_port::update()
