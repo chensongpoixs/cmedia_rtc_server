@@ -11,10 +11,14 @@ let kbEvent = document.createEvent("KeyboardEvent");
 let initMethod = typeof kbEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
 
 let webRtcPlayerObj = null;
+let webRtcDataChannelObj = null;
 let print_stats = false;
 let print_inputs = false;
 let connect_on_load = true;
 
+
+
+//let webRtcDataChannel_pc = null;
 let is_reconnection = false;
 let ws;
 const WS_OPEN_STATE = 1;
@@ -470,15 +474,123 @@ function resetAfkWarningTimer() {
 }
 
 function createWebRtcOffer() {
-    if (webRtcPlayerObj) {
+    if (webRtcPlayerObj ) {
         console.log('Creating offer');
         showTextOverlay('Starting connection to server, please wait');
         webRtcPlayerObj.createOffer();
+      //  webRtcDataChannelObj.createOffer();
     } else {
         console.log('WebRTC player not setup, cannot create offer');
         showTextOverlay('Unable to setup video');
     }
 }
+
+
+
+
+/**
+ 功能： 获取Offer SDP 描述符的
+
+*/
+function getOffer(desc)
+{
+    console.log('DataChannel offer desc ==> ', desc );
+    //设置Offer
+    webRtcDataChannelObj.setLocalDescription(desc);
+    
+     if (ws && ws.readyState === WS_OPEN_STATE) 
+            { 
+                console.log('DataChannel cs --> offer : = ', desc);
+               let offersdp  = JSON.stringify({
+                       msg_id: 208,
+                        data:  {
+                                    rtc_type:1,
+                                    offer : desc.sdp
+                              } 
+                   });
+               console.log(`DataChannel -> SS: offer:\n${offersdp}`);
+                 
+                ws.send(offersdp);
+           }
+}
+
+function handleOfferError(err)
+{
+    console.log('Failed ot carete offer:', err);
+}
+
+
+function createWebRtcDataChannelOffer()
+{
+    if (  webRtcDataChannelObj) {
+        console.log('DataChannel Creating offer');
+        showTextOverlay('Starting connection to server, please wait');
+       let datachannel = webRtcDataChannelObj.createDataChannel('rtc', {ordered: true});
+             console.log(`Created datachannel `);
+    // Inform browser we would like binary data as an ArrayBuffer (FF chooses Blob by default!)
+        datachannel.binaryType = "arraybuffer";
+        datachannel.onopen = function (e) {
+        console.log(`data channel ( connect`);
+  
+         }
+
+        datachannel.onclose = function (e) {
+            console.log(`data channel  closed`);
+         }
+
+            datachannel.onmessage = function (e) {
+              console.log(`Got message  `, e.data);
+       
+         }
+         webRtcDataChannelObj.datachannel = datachannel;
+
+        webRtcDataChannelObj.createOffer()
+            .then(getOffer)
+            .catch(handleOfferError);
+       // webRtcDataChannelObj.createOffer() .then(async function (offerStr){
+        //    webRtcDataChannelObj.setLocalDescription(offerStr);
+       //     if (ws && ws.readyState === WS_OPEN_STATE) 
+       //     { 
+      //          console.log('DataChannel cs --> offer : = ', offerStr);
+      //          let offersdp  = JSON.stringify({
+     //                   msg_id: 208,
+      //                  data:  {
+     //                               rtc_type:0,
+     //                               offer : offerStr.sdp
+    //                           } 
+    //                });
+    //            console.log(`DataChannel -> SS: offer:\n${offersdp}`);
+   //               
+   //             ws.send(offersdp);
+   //         }
+   //     }, function(){console.warn("Couldn't create offer") ;});
+           // .catch(handleOfferError);
+
+         // pc.createOffer(self.sdpConstraints).then(function (offer) {
+                
+         //        // Munging is where we modifying the sdp string to set parameters that are not exposed to the browser's WebRTC API
+         //        mungeSDPOffer(offer);
+
+         //        // Set our munged SDP on the local peer connection so it is "set" and will be send across
+         //        pc.setLocalDescription(offer);
+         //        if (self.onWebRtcDataChannelOffer) {
+         //            console.log('rtctype == 1-');
+         //            self.onWebRtcDataChannelOffer(1, offer);
+         //        }
+         //        else
+         //        {
+         //            console.warn('not find DataChannel Offer callback send msg function ');
+         //        }
+         //    },
+         //    function () { console.warn("Couldn't create offer") });
+        //webRtcDataChannelObj.createOffer();
+    } else {
+        console.log('WebRTC DataChannel not setup, cannot create offer');
+        //showTextOverlay('Unable to setup video');
+    }
+}
+
+
 function arrayBufferToString(buffer, encoding = 'gb2312') {
   const decoder = new TextDecoder(encoding);
   return decoder.decode(buffer);
@@ -503,9 +615,16 @@ function xsendInputData(data) {
 }
 
 function sendInputData(data) {
-    if (webRtcPlayerObj) {
-        resetAfkWarningTimer();
-         webRtcPlayerObj.send(data);
+    // 
+    if (webRtcDataChannelObj && webRtcDataChannelObj.datachannel.readyState == 'open')  {
+       // resetAfkWarningTimer();
+         webRtcDataChannelObj.datachannel.send(data);
+         console.log('send input data =', data);
+     }
+     else 
+     {
+
+        console.warn('send message failed !!! webRtcDataChannelObj.readyState =', webRtcDataChannelObj.readyState);
      }
 	 return;
     if (webRtcPlayerObj) {
@@ -567,24 +686,24 @@ function getQueryVariable(variable)
 }
 
 function setupWebRtcPlayer(htmlElement, config) {
+
     webRtcPlayerObj = new webRtcPlayer(config);
     htmlElement.appendChild(webRtcPlayerObj.video);
     htmlElement.appendChild(freezeFrameOverlay);
 
-    webRtcPlayerObj.onWebRtcOffer = function(offerStr) {
+    webRtcPlayerObj.onWebRtcOffer = function(webrtc_type, offerStr) {
         if (ws && ws.readyState === WS_OPEN_STATE) 
 		{
 			var room_name = getQueryVariable('roomname');
 			var video_user_name	= getQueryVariable('videousername');
+			var codecs = getQueryVariable('codec');;
 
-			console.log('ss --> offer : = ', offerStr);
+			console.log('cs --> offer : = ', offerStr);
             let offersdp  = JSON.stringify({
-					msg_id: 1074,
+					msg_id: 208,
 					data:  {
-								offer : offerStr.sdp,
-								roomname : room_name.toString(),
-								video_peerid: video_user_name.toString(),
-								peerid : Math.round(Math.random()*10000).toString()
+                                rtc_type:webrtc_type,
+								offer : offerStr.sdp
 						   } 
 				});
             console.log(`-> SS: offer:\n${offersdp}`);
@@ -596,12 +715,20 @@ function setupWebRtcPlayer(htmlElement, config) {
         }
     };
 
-    webRtcPlayerObj.onWebRtcCandidate = function(candidate) {
+    webRtcPlayerObj.onWebRtcCandidate = function(webrtc_type, iceCandidate) {
         if (ws && ws.readyState === WS_OPEN_STATE) {
-            console.log(`-> SS: iceCandidate\n${JSON.stringify(candidate, undefined, 4)}`);
+            console.log(`-> SS: iceCandidate\n${JSON.stringify(iceCandidate, undefined, 4)}`);
             ws.send(JSON.stringify({
-                type: 'iceCandidate',
-                candidate: candidate
+               /* type: 'iceCandidate',*/
+                /*candidate: candidate*/
+				msg_id: 208,
+					data:  {
+                                rtc_type:webrtc_type,
+								type : 'candidate',
+								label : iceCandidate.sdpMLineIndex,
+								id :  iceCandidate.sdpMid,
+								candidate :  iceCandidate.candidate
+						   } 
             }));
         }
     };
@@ -619,15 +746,15 @@ function setupWebRtcPlayer(htmlElement, config) {
         }
     };
 
-    webRtcPlayerObj.onDataChannelConnected = function() {
-        if (ws && ws.readyState === WS_OPEN_STATE) {
-            showTextOverlay('WebRTC connected, waiting for video');
+    // webRtcPlayerObj.onDataChannelConnected = function() {
+    //     if (ws && ws.readyState === WS_OPEN_STATE) {
+    //         showTextOverlay('WebRTC connected, waiting for video');
 
-            if (webRtcPlayerObj.video && webRtcPlayerObj.video.srcObject && webRtcPlayerObj.onVideoInitialised) {
-                webRtcPlayerObj.onVideoInitialised();
-            }
-        }
-    };
+    //         if (webRtcPlayerObj.video && webRtcPlayerObj.video.srcObject && webRtcPlayerObj.onVideoInitialised) {
+    //             webRtcPlayerObj.onVideoInitialised();
+    //         }
+    //     }
+    // };
 
     function showFreezeFrame() {
         let base64 = btoa(freezeFrame.jpeg.reduce((data, byte) => data + String.fromCharCode(byte), ''));
@@ -694,72 +821,72 @@ function setupWebRtcPlayer(htmlElement, config) {
         }
     }
 
-        webRtcPlayerObj.onDataChannelMessage = function(data) {
-        let view = new Uint8Array(data);
+    // webRtcPlayerObj.onDataChannelMessage = function(data) {
+    //     let view = new Uint8Array(data);
 
-        if (view[0] === ToClientMessageType.QualityControlOwnership) {
-            let ownership = view[1] === 0 ? false : true;
-            console.log("Received quality controller message, will control quality: " + ownership);
-            // If we own the quality control, we can't relenquish it. We only loose
-            // quality control when another peer asks for it
-            if (qualityControlOwnershipCheckBox !== null) {
-                qualityControlOwnershipCheckBox.disabled = ownership;
-                qualityControlOwnershipCheckBox.checked = ownership;
-            }
-        } else if (view[0] === ToClientMessageType.Response) {
-            let response = new TextDecoder("utf-16").decode(data.slice(1));
-            for (let listener of responseEventListeners.values()) {
-                listener(response);
-            }
-        } else if (view[0] === ToClientMessageType.Command) {
-            let commandAsString = new TextDecoder("utf-16").decode(data.slice(1));
-            console.log(commandAsString);
-            let command = JSON.parse(commandAsString);
-            if (command.command === 'onScreenKeyboard') {
-                showOnScreenKeyboard(command);
-            }
-        } else if (view[0] === ToClientMessageType.FreezeFrame) {
-            processFreezeFrameMessage(view);
-        } else if (view[0] === ToClientMessageType.UnfreezeFrame) {
-            invalidateFreezeFrameOverlay();
-        } else if (view[0] === ToClientMessageType.VideoEncoderAvgQP) {
-            VideoEncoderQP = new TextDecoder("utf-16").decode(data.slice(1));
-            //console.log(`received VideoEncoderAvgQP ${VideoEncoderQP}`);
-        } else if (view[0] == ToClientMessageType.LatencyTest) {
-            let latencyTimingsAsString = new TextDecoder("utf-16").decode(data.slice(1));
-            console.log("Got latency timings from UE.")
-            console.log(latencyTimingsAsString);
-            let latencyTimingsFromUE = JSON.parse(latencyTimingsAsString);
-            if (webRtcPlayerObj) {
-                webRtcPlayerObj.latencyTestTimings.SetUETimings(latencyTimingsFromUE);
-            }
-        } else if (view[0] == ToClientMessageType.InitialSettings) {
-            let settingsString = new TextDecoder("utf-16").decode(data.slice(1));
-            let settingsJSON = JSON.parse(settingsString);
+    //     if (view[0] === ToClientMessageType.QualityControlOwnership) {
+    //         let ownership = view[1] === 0 ? false : true;
+    //         console.log("Received quality controller message, will control quality: " + ownership);
+    //         // If we own the quality control, we can't relenquish it. We only loose
+    //         // quality control when another peer asks for it
+    //         if (qualityControlOwnershipCheckBox !== null) {
+    //             qualityControlOwnershipCheckBox.disabled = ownership;
+    //             qualityControlOwnershipCheckBox.checked = ownership;
+    //         }
+    //     } else if (view[0] === ToClientMessageType.Response) {
+    //         let response = new TextDecoder("utf-16").decode(data.slice(1));
+    //         for (let listener of responseEventListeners.values()) {
+    //             listener(response);
+    //         }
+    //     } else if (view[0] === ToClientMessageType.Command) {
+    //         let commandAsString = new TextDecoder("utf-16").decode(data.slice(1));
+    //         console.log(commandAsString);
+    //         let command = JSON.parse(commandAsString);
+    //         if (command.command === 'onScreenKeyboard') {
+    //             showOnScreenKeyboard(command);
+    //         }
+    //     } else if (view[0] === ToClientMessageType.FreezeFrame) {
+    //         processFreezeFrameMessage(view);
+    //     } else if (view[0] === ToClientMessageType.UnfreezeFrame) {
+    //         invalidateFreezeFrameOverlay();
+    //     } else if (view[0] === ToClientMessageType.VideoEncoderAvgQP) {
+    //         VideoEncoderQP = new TextDecoder("utf-16").decode(data.slice(1));
+    //         //console.log(`received VideoEncoderAvgQP ${VideoEncoderQP}`);
+    //     } else if (view[0] == ToClientMessageType.LatencyTest) {
+    //         let latencyTimingsAsString = new TextDecoder("utf-16").decode(data.slice(1));
+    //         console.log("Got latency timings from UE.")
+    //         console.log(latencyTimingsAsString);
+    //         let latencyTimingsFromUE = JSON.parse(latencyTimingsAsString);
+    //         if (webRtcPlayerObj) {
+    //             webRtcPlayerObj.latencyTestTimings.SetUETimings(latencyTimingsFromUE);
+    //         }
+    //     } else if (view[0] == ToClientMessageType.InitialSettings) {
+    //         let settingsString = new TextDecoder("utf-16").decode(data.slice(1));
+    //         let settingsJSON = JSON.parse(settingsString);
 
-            // reminder bitrates are sent in bps but displayed in kbps
+    //         // reminder bitrates are sent in bps but displayed in kbps
 
-            if (settingsJSON.Encoder) {
-                document.getElementById('encoder-rate-control').value = settingsJSON.Encoder.RateControl;
-                document.getElementById('encoder-target-bitrate-text').value = settingsJSON.Encoder.TargetBitrate > 0 ? settingsJSON.Encoder.TargetBitrate / 1000 : settingsJSON.Encoder.TargetBitrate;
-                document.getElementById('encoder-max-bitrate-text').value = settingsJSON.Encoder.MaxBitrate > 0 ? settingsJSON.Encoder.MaxBitrate / 1000 : settingsJSON.Encoder.MaxBitrate;
-                document.getElementById('encoder-min-qp-text').value = settingsJSON.Encoder.MinQP;
-                document.getElementById('encoder-max-qp-text').value = settingsJSON.Encoder.MaxQP;
-                document.getElementById('encoder-filler-data-tgl').checked = settingsJSON.Encoder.FillerData == 1;
-                document.getElementById('encoder-multipass').value = settingsJSON.Encoder.MultiPass;
-            }
-            if (settingsJSON.WebRTC) {
-                document.getElementById('webrtc-degradation-pref').value = settingsJSON.WebRTC.DegradationPref;
-                document.getElementById("webrtc-max-fps-text").value = settingsJSON.WebRTC.MaxFPS;
-                document.getElementById("webrtc-min-bitrate-text").value = settingsJSON.WebRTC.MinBitrate / 1000;
-                document.getElementById("webrtc-max-bitrate-text").value = settingsJSON.WebRTC.MaxBitrate / 1000;
-                document.getElementById("webrtc-low-qp-text").value = settingsJSON.WebRTC.LowQP;
-                document.getElementById("webrtc-high-qp-text").value = settingsJSON.WebRTC.HighQP;
-            }
-        } else {
-            console.error(`unrecognized data received, packet ID ${view[0]}`);
-        }
-    }; 
+    //         if (settingsJSON.Encoder) {
+    //             document.getElementById('encoder-rate-control').value = settingsJSON.Encoder.RateControl;
+    //             document.getElementById('encoder-target-bitrate-text').value = settingsJSON.Encoder.TargetBitrate > 0 ? settingsJSON.Encoder.TargetBitrate / 1000 : settingsJSON.Encoder.TargetBitrate;
+    //             document.getElementById('encoder-max-bitrate-text').value = settingsJSON.Encoder.MaxBitrate > 0 ? settingsJSON.Encoder.MaxBitrate / 1000 : settingsJSON.Encoder.MaxBitrate;
+    //             document.getElementById('encoder-min-qp-text').value = settingsJSON.Encoder.MinQP;
+    //             document.getElementById('encoder-max-qp-text').value = settingsJSON.Encoder.MaxQP;
+    //             document.getElementById('encoder-filler-data-tgl').checked = settingsJSON.Encoder.FillerData == 1;
+    //             document.getElementById('encoder-multipass').value = settingsJSON.Encoder.MultiPass;
+    //         }
+    //         if (settingsJSON.WebRTC) {
+    //             document.getElementById('webrtc-degradation-pref').value = settingsJSON.WebRTC.DegradationPref;
+    //             document.getElementById("webrtc-max-fps-text").value = settingsJSON.WebRTC.MaxFPS;
+    //             document.getElementById("webrtc-min-bitrate-text").value = settingsJSON.WebRTC.MinBitrate / 1000;
+    //             document.getElementById("webrtc-max-bitrate-text").value = settingsJSON.WebRTC.MaxBitrate / 1000;
+    //             document.getElementById("webrtc-low-qp-text").value = settingsJSON.WebRTC.LowQP;
+    //             document.getElementById("webrtc-high-qp-text").value = settingsJSON.WebRTC.HighQP;
+    //         }
+    //     } else {
+    //         console.error(`unrecognized data received, packet ID ${view[0]}`);
+    //     }
+    // }; 
 
     registerInputs(webRtcPlayerObj.video);
 
@@ -772,6 +899,163 @@ function setupWebRtcPlayer(htmlElement, config) {
 
     return webRtcPlayerObj.video;
 }
+
+
+function setupWebRtcDataChannel(config)
+{
+    // if (!webRtcPlayerObj)
+    // {
+
+    //     console.warn('webrtcPlayer Obj == nullptr');
+    //     return;
+    // }
+    webRtcDataChannelObj = new RTCPeerConnection(null);
+     webRtcDataChannelObj.addEventListener('iceconnectionstatechange', () => {
+            console.log(' DataChannel+++ rtc sdk core debugger  iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+               
+            switch (webRtcDataChannelObj.iceConnectionState) {
+                 case 'checking':
+                  console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                    //this.emit('@connectionstatechange', 'connecting');
+                    
+                    break;
+                case 'connected':
+                case 'completed':
+                    console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                    //this.emit('@connectionstatechange', 'connected');
+                    break;
+                case 'failed':
+                console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'failed');
+                    break;
+                case 'disconnected':
+                console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                  //  this.emit('@connectionstatechange', 'disconnected');
+                    break;
+                case 'closed':
+                console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'closed');
+                    break;
+            }
+        });
+         
+         
+          webRtcDataChannelObj.addEventListener('icegatheringstatechange', (state) => {
+            console.log(' DataChannel +++ rtc sdk core debugger  icegatheringstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!' , state);
+               
+            switch (webRtcDataChannelObj.iceConnectionState) {
+                 case 'checking':
+                  console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                    //this.emit('@connectionstatechange', 'connecting');
+                    
+                    break;
+                case 'connected':
+                case 'completed':
+                    console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                    //this.emit('@connectionstatechange', 'connected');
+                    break;
+                case 'failed':
+                console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'failed');
+                    break;
+                case 'disconnected':
+                console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                  //  this.emit('@connectionstatechange', 'disconnected');
+                    break;
+                case 'closed':
+                console.log('DataChannel iceconnectionstatechange ---> [' +  webRtcDataChannelObj.iceConnectionState + '] ^_^ !!!');
+                //    this.emit('@connectionstatechange', 'closed');
+                    break;
+            }
+        });
+          webRtcDataChannelObj.addEventListener('onicecandidate', (e)=>{
+            if (ws && ws.readyState === WS_OPEN_STATE) {
+            console.log(`datachannel -> SS: iceCandidate\n${JSON.stringify(e, undefined, 4)}`);
+            ws.send(JSON.stringify({
+               /* type: 'iceCandidate',*/
+                /*candidate: candidate*/
+                msg_id: 208,
+                    data:  {
+                                rtc_type:1,
+                                type : 'candidate',
+                                label : e.sdpMLineIndex,
+                                id :  e.sdpMid,
+                                candidate :  e.candidate
+                           } 
+            }));
+        }
+          });
+  //  webRtcDataChannelObj = new webRtcDataChannel(config);
+  //   webRtcDataChannelObj.onWebRtcDataChannelOffer = function(webrtc_type, offerStr)
+    //{
+    //    if (ws && ws.readyState === WS_OPEN_STATE) 
+    //    {
+    //        var room_name = getQueryVariable('roomname');
+    //        var video_user_name = getQueryVariable('videousername');
+    //        var codecs = getQueryVariable('codec');;
+	//
+    //        console.log('datachannel cs --> offer : = ', offerStr);
+    //        let offersdp  = JSON.stringify({
+    //                msg_id: 208,
+    //                data:  {
+    //                            rtc_type: webrtc_type,
+    //                            offer : offerStr.sdp
+    //                       } 
+    //            });
+    //        console.log(`-> SS: offer:\n${offersdp}`);
+    //        
+    //        
+    //        
+    //         
+    //        ws.send(offersdp);
+    //    }
+    //};
+
+   // webRtcDataChannelObj.onWebRtcDataChannelOCandidate = function(webrtc_type, iceCandidate) {
+   //     if (ws && ws.readyState === WS_OPEN_STATE) {
+   //         console.log(`datachannel -> SS: iceCandidate\n${JSON.stringify(iceCandidate, undefined, 4)}`);
+   //         ws.send(JSON.stringify({
+   //            /* type: 'iceCandidate',*/
+   //             /*candidate: candidate*/
+   //             msg_id: 208,
+   //                 data:  {
+   //                             rtc_type:webrtc_type,
+   //                             type : 'candidate',
+   //                             label : iceCandidate.sdpMLineIndex,
+   //                             id :  iceCandidate.sdpMid,
+   //                             candidate :  iceCandidate.candidate
+   //                        } 
+   //         }));
+   //     }
+   // };
+
+   // webRtcDataChannelObj.onVideoDataChannelOInitialised = function() {
+   //     if (ws && ws.readyState === WS_OPEN_STATE) {
+   //         if (shouldShowPlayOverlay) {
+   //             showPlayOverlay();
+   //             resizePlayerStyle();
+   //         }
+   //         else {
+   //             resizePlayerStyle();
+   //             playVideoStream();
+   //         }
+   //     }
+   // };
+   //
+   // webRtcDataChannelObj.onDataChannelDataChannelOConnected = function() {
+   //     if (ws && ws.readyState === WS_OPEN_STATE)
+   //     {
+   //         showTextOverlay('WebRTC connected, waiting for video');
+   //
+   //         if (webRtcPlayerObj.video && webRtcPlayerObj.video.srcObject && webRtcPlayerObj.onVideoInitialised) {
+   //             webRtcPlayerObj.onVideoInitialised();
+   //         }
+   //     }
+   // };
+    createWebRtcDataChannelOffer();
+}
+
+
 
 function onWebRtcAnswer(webRTCData) {
     webRtcPlayerObj.receiveAnswer(webRTCData);
@@ -927,9 +1211,162 @@ function onWebRtcAnswer(webRTCData) {
     }
 }
 
+
+
+function onWebRtcDataChannelAnswer(webRtcDataChannelData)
+{
+    if (webRtcDataChannelObj)
+    {
+        console.log('DataChannel --> Received answer:', webRtcDataChannelData);
+            ///console.log(answer);
+            // var answerDesc = new RTCSessionDescription(webRtcDataChannelData);
+            webRtcDataChannelObj.setRemoteDescription(webRtcDataChannelData);
+
+    //         let receivers = webRtcDataChannelObj.getReceivers();
+    //         for(let receiver of receivers)
+    //         {
+    //             receiver.playoutDelayHint = 0;
+    //         }
+    }
+    //webRtcDataChannelObj.receiveAnswer(webRtcDataChannelData);
+
+    // let printInterval = 5 * 60 * 1000; /*Print every 5 minutes*/
+    // let nextPrintDuration = printInterval;
+
+    // webRtcPlayerObj.onAggregatedStats = (aggregatedStats) => {
+    //     let numberFormat = new Intl.NumberFormat(window.navigator.language, {
+    //         maximumFractionDigits: 0
+    //     });
+    //     let timeFormat = new Intl.NumberFormat(window.navigator.language, {
+    //         maximumFractionDigits: 0,
+    //         minimumIntegerDigits: 2
+    //     });
+
+    //     // Calculate duration of run
+    //     let runTime = (aggregatedStats.timestamp - aggregatedStats.timestampStart) / 1000;
+    //     let timeValues = [];
+    //     let timeDurations = [60, 60];
+    //     for (let timeIndex = 0; timeIndex < timeDurations.length; timeIndex++) {
+    //         timeValues.push(runTime % timeDurations[timeIndex]);
+    //         runTime = runTime / timeDurations[timeIndex];
+    //     }
+    //     timeValues.push(runTime);
+
+    //     let runTimeSeconds = timeValues[0];
+    //     let runTimeMinutes = Math.floor(timeValues[1]);
+    //     let runTimeHours = Math.floor([timeValues[2]]);
+
+    //     receivedBytesMeasurement = 'B';
+    //     receivedBytes = aggregatedStats.hasOwnProperty('bytesReceived') ? aggregatedStats.bytesReceived : 0;
+    //     let dataMeasurements = ['kB', 'MB', 'GB'];
+    //     for (let index = 0; index < dataMeasurements.length; index++) {
+    //         if (receivedBytes < 100 * 1000)
+    //             break;
+    //         receivedBytes = receivedBytes / 1000;
+    //         receivedBytesMeasurement = dataMeasurements[index];
+    //     }
+
+    //     let qualityStatus = document.getElementById("qualityStatus");
+
+    //     // "blinks" quality status element for 1 sec by making it transparent, speed = number of blinks
+    //     let blinkQualityStatus = function(speed) {
+    //         let iter = speed;
+    //         let opacity = 1; // [0..1]
+    //         let tickId = setInterval(
+    //             function() {
+    //                 opacity -= 0.1;
+    //                 // map `opacity` to [-0.5..0.5] range, decrement by 0.2 per step and take `abs` to make it blink: 1 -> 0 -> 1
+    //                 qualityStatus.style = `opacity: ${Math.abs((opacity - 0.5) * 2)}`;
+    //                 if (opacity <= 0.1) {
+    //                     if (--iter == 0) {
+    //                         clearInterval(tickId);
+    //                     } else { // next blink
+    //                         opacity = 1;
+    //                     }
+    //                 }
+    //             },
+    //             100 / speed // msecs
+    //         );
+    //     };
+
+    //     const orangeQP = 26;
+    //     const redQP = 35;
+
+    //     let statsText = '';
+
+    //     let color = "lime";
+    //     if (VideoEncoderQP > redQP) {
+    //         color = "red";
+    //         blinkQualityStatus(2);
+    //         statsText += `<div style="color: ${color}">Bad network connection</div>`;
+    //     } else if (VideoEncoderQP > orangeQP) {
+    //         color = "orange";
+    //         blinkQualityStatus(1);
+    //         statsText += `<div style="color: ${color}">Spotty network connection</div>`;
+    //     }
+
+    //     qualityStatus.className = `${color}Status`;
+
+    //     statsText += `<div>Duration: ${timeFormat.format(runTimeHours)}:${timeFormat.format(runTimeMinutes)}:${timeFormat.format(runTimeSeconds)}</div>`;
+    //     statsText += `<div>Video Resolution: ${
+    //         aggregatedStats.hasOwnProperty('frameWidth') && aggregatedStats.frameWidth && aggregatedStats.hasOwnProperty('frameHeight') && aggregatedStats.frameHeight ?
+    //             aggregatedStats.frameWidth + 'x' + aggregatedStats.frameHeight : 'Chrome only'
+    //         }</div>`;
+    //     statsText += `<div>Received (${receivedBytesMeasurement}): ${numberFormat.format(receivedBytes)}</div>`;
+    //     statsText += `<div>Frames Decoded: ${aggregatedStats.hasOwnProperty('framesDecoded') ? numberFormat.format(aggregatedStats.framesDecoded) : 'Chrome only'}</div>`;
+    //     statsText += `<div>Packets Lost: ${aggregatedStats.hasOwnProperty('packetsLost') ? numberFormat.format(aggregatedStats.packetsLost) : 'Chrome only'}</div>`;
+    //     statsText += `<div style="color: ${color}">Bitrate (kbps): ${aggregatedStats.hasOwnProperty('bitrate') ? numberFormat.format(aggregatedStats.bitrate) : 'Chrome only'}</div>`;
+    //     statsText += `<div>Framerate: ${aggregatedStats.hasOwnProperty('framerate') ? numberFormat.format(aggregatedStats.framerate) : 'Chrome only'}</div>`;
+    //     statsText += `<div>Frames dropped: ${aggregatedStats.hasOwnProperty('framesDropped') ? numberFormat.format(aggregatedStats.framesDropped) : 'Chrome only'}</div>`;
+    //     statsText += `<div>Net RTT (ms): ${aggregatedStats.hasOwnProperty('currentRoundTripTime') ? numberFormat.format(aggregatedStats.currentRoundTripTime * 1000) : 'Can\'t calculate'}</div>`;
+    //     statsText += `<div>Browser receive to composite (ms): ${aggregatedStats.hasOwnProperty('receiveToCompositeMs') ? numberFormat.format(aggregatedStats.receiveToCompositeMs) : 'Chrome only'}</div>`;
+    //     statsText += `<div style="color: ${color}">Video Quantization Parameter: ${VideoEncoderQP}</div>`;
+
+    //     let statsDiv = document.getElementById("stats");
+    //     statsDiv.innerHTML = statsText;
+
+    //     if (print_stats) {
+    //         if (aggregatedStats.timestampStart) {
+    //             if ((aggregatedStats.timestamp - aggregatedStats.timestampStart) > nextPrintDuration) {
+    //                 if (ws && ws.readyState === WS_OPEN_STATE) {
+    //                     console.log(`-> SS: stats\n${JSON.stringify(aggregatedStats)}`);
+    //                     ws.send(JSON.stringify({
+    //                         type: 'stats',
+    //                         data: aggregatedStats
+    //                     }));
+    //                 }
+    //                 nextPrintDuration += printInterval;
+    //             }
+    //         }
+    //     }
+    // };
+
+   // webRtcPlayerObj.aggregateStats(1 * 1000 /*Check every 1 second*/ );
+
+   
+}
+
 function onWebRtcIce(iceCandidate) {
     if (webRtcPlayerObj)
         webRtcPlayerObj.handleCandidateFromServer(iceCandidate);
+}
+
+function onWebRtcDataChannelIce(iceCandidate) 
+{
+    if (webRtcDataChannelObj)
+    {
+        console.log("datachannel ICE candidate: ", iceCandidate);
+            
+            //?????Candidate??
+            // var candidate = new RTCIceCandidate({
+            //   sdpMLineIndex :data.label,
+            //   candidate:data.candidate
+            // });
+            //
+            let candidate = new RTCIceCandidate(iceCandidate);
+            webRtcDataChannelObj.addIceCandidate(candidate);
+        // webRtcDataChannelObj.handleCandidateFromServer(iceCandidate);
+    }
 }
 
 let styleWidth;
@@ -2039,12 +2476,13 @@ function connect() {
 	//window.location.href.replace('http://', 'ws://').replace('https://', 'wss://')
 	var rtc_ip = getQueryVariable('rtc_ip');
 	var rtc_port =  getQueryVariable('rtc_port');
-	var ws_url = 'ws://'+rtc_ip+':'+rtc_port;
+	var video_user_name	= getQueryVariable('videousername');
+	var ws_url = 'ws://'+rtc_ip+':'+rtc_port +'/?peerId='+video_user_name;
 
     ws = new WebSocket(ws_url);
 
     ws.onmessage = function(event) {
-        //console.log(`<- SS: ${event.data}`);
+        console.log(`>>>>>SS: ${event.data}`);
        
 	    let msg = JSON.parse(event.data);
 		/*
@@ -2065,8 +2503,41 @@ function connect() {
         }
         else if (msg.msg_id === 211)
         {
- 
+			
         } 
+		else if (msg.msg_id === 500)
+		{
+			if (msg.data.type === 'answer')
+			{
+				var answerDesc = new RTCSessionDescription({type: 'answer', sdp: msg.data.sdp});
+                if (msg.data.rtc_type === 0)
+                {
+                    onWebRtcAnswer(answerDesc);
+                }
+				else
+                {
+                    onWebRtcDataChannelAnswer(answerDesc);
+                }
+			}
+			else if (msg.data.hasOwnProperty('candidate'))
+			{
+				console.log(msg.data.candidate);
+				//let candidate = new RTCIceCandidate({type: 'candidate', sdp: msg.data.candidate});
+				//var candidate = new RTCIceCandidate({
+				//	sdpMLineIndex :0,
+				//	candidate: msg.data.candidate
+				//});
+				
+				if (msg.data.rtc_type === 0)
+                {
+                    onWebRtcIce({sdpMid:msg.data.id, sdpMLineIndex :msg.data.label, candidate:msg.data.candidate});
+                }
+                else 
+                {
+                    onWebRtcDataChannelIce({sdpMid:msg.data.id, sdpMLineIndex :msg.data.label, candidate:msg.data.candidate});
+                }
+			}
+		}
         else 
         {
             console.log(`invalid SS message type: ${msg.type}`);
@@ -2090,6 +2561,16 @@ function connect() {
             webRtcPlayerObj.close();
             webRtcPlayerObj = undefined;
         }
+        if (webRtcDataChannelObj)
+        {
+            webRtcDataChannelObj.close();
+            webRtcDataChannelObj = null;
+        }
+       // if (webRtcDataChannelObj)
+        {
+         //   webRtcDataChannelObj.close();
+           // webRtcDataChannelObj = undefined;
+        }
 
         showTextOverlay(`Disconnected: ${event.reason}`);
         let reclickToStart = setTimeout(start, 4000);
@@ -2098,6 +2579,23 @@ function connect() {
 	{
 		
 		console.log('---> wss open --->');
+		console.log('cs --> login ');
+        var room_name = getQueryVariable('roomname');
+            var video_user_name = getQueryVariable('videousername');
+            var codecs = getQueryVariable('codec');;
+            let offersdp  = JSON.stringify({
+					msg_id: 202,
+					data:  {
+								user_name : video_user_name.toString(),
+								room_name : room_name.toString()
+						   } 
+				});
+            console.log(`-> SS: offer:\n${offersdp}`);
+			
+			
+			
+			 
+            ws.send(offersdp);
 		onConfig('');
 	}
 }
@@ -2106,6 +2604,7 @@ function connect() {
 function onConfig(config) {
     let playerDiv = document.getElementById('player');
     let playerElement = setupWebRtcPlayer(playerDiv, config);
+    setupWebRtcDataChannel(config);
     resizePlayerStyle();
 
     switch (inputOptions.controlScheme) {

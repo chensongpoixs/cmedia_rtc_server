@@ -270,7 +270,7 @@
         onicecandidate = function (e) {
 			console.log('ICE candidate', e)
 			if (e.candidate && e.candidate.candidate) {
-                self.onWebRtcCandidate(e.candidate);
+                self.onWebRtcCandidate(0, e.candidate);
             }
         };
 
@@ -283,7 +283,8 @@
                 // Set our munged SDP on the local peer connection so it is "set" and will be send across
             	pc.setLocalDescription(offer);
             	if (self.onWebRtcOffer) {
-            		self.onWebRtcOffer(offer);
+                    console.log('rtctype == 0-');
+            		self.onWebRtcOffer(0, offer);
                 }
             },
             function () { console.warn("Couldn't create offer") });
@@ -309,7 +310,7 @@
             pc.onicegatheringstatechange = onicegatheringstatechange;
 
             pc.ontrack = handleOnTrack;
-          //  pc.onicecandidate = onicecandidate;
+            pc.onicecandidate = onicecandidate;
         };
 
         generateAggregatedStatsFunction = function(){
@@ -462,6 +463,13 @@
         //This is currently not used but would be called externally from this class
         this.handleCandidateFromServer = function(iceCandidate) {
             console.log("ICE candidate: ", iceCandidate);
+			
+			//?????Candidate??
+			// var candidate = new RTCIceCandidate({
+			//	 sdpMLineIndex :data.label,
+			//	 candidate:data.candidate
+			// });
+			//
             let candidate = new RTCIceCandidate(iceCandidate);
             self.pcClient.addIceCandidate(candidate).then(_=>{
                 console.log('ICE candidate successfully added');
@@ -475,12 +483,31 @@
                 self.pcClient.close();
                 self.pcClient = null;
             }
-            self.pcClient = new RTCPeerConnection(null /*self.cfg*/);
+			var pcConfig = {
+	'iceServer' : [{
+		//TURN?????
+		'urls': 'stun:stun.l.google.com:19302'
+		// TURN??????
+		//'username': 'xxx',
+		//TURN?????
+		//'credential': "xxx"
+	}],
+	// ????relay?????? turn ?? ?? ^_^
+	"iceTransportPolicy": "all",
+	//"iceTransportPolicy": "relay",
+	// ?????????
+	"bundlePolicy": "max-bundle",
+	// ???rtcp?rtp? ????Candidate ???????? ^_^
+	"rtcpMuxPolicy": "require",
+	"iceCandiatePoolSize": "0"
+};
+
+            self.pcClient = new RTCPeerConnection(   /*self.cfg*/);
 
             setupTracksToSendAsync(self.pcClient).finally(function()
             {
                 setupPeerConnection(self.pcClient);
-                self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
+              //  self.dcClient = setupDataChannel(self.pcClient, 'rtc', self.dataChannelOptions);
                 handleCreateOffer(self.pcClient);
             });
             
@@ -518,7 +545,7 @@
 		{
 		//	console.log('---------------> self.dcClient.readyState = ', self.dcClient.readyState);
             if(self.dcClient && self.dcClient.readyState == 'open'){
-                //console.log('Sending data on dataconnection', self.dcClient)
+                console.log('Sending data on dataconnection', self.dcClient)
                 self.dcClient.send(data);
             }
         };
