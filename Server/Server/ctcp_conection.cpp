@@ -84,11 +84,13 @@ namespace chen {
 			//NORMAL_EX_LOG("[buffer = %s][datalen  = %u]", buffer, dataLen);
 			size_t packetLen;
 
-			 if (dataLen >= 2)
-			 	packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
+			if (dataLen >= 2)
+			{
+				packetLen = size_t{ rtc_byte::get2bytes(this->buffer + this->frameStart, 0) };
+			}
 
 			// We have packetLen bytes.
-			if ( dataLen >= 2 && dataLen >= 2 + packetLen)
+			if ( dataLen >= 0 && dataLen >= 2 + packetLen)
 			{
 				const uint8_t* packet = this->buffer + this->frameStart  +2   ;
 
@@ -165,7 +167,7 @@ namespace chen {
 			// The buffer is not full.
 			else
 			{
-				NORMAL_EX_LOG("frame not finished yet, waiting for more data");
+				//NORMAL_EX_LOG("frame not finished yet, waiting for more data");
 			}
 
 			// Exit the parsing loop.
