@@ -36,8 +36,9 @@ namespace chen {
 	{
 		{ ECRYPTO_AEAD_AES_256_GCM, "SRTP_AEAD_AES_256_GCM" },
 	{ ECRYPTO_AEAD_AES_128_GCM, "SRTP_AEAD_AES_128_GCM" },
-	{ ECRYPTO_AES_CM_128_HMAC_SHA1_80, "SRTP_AES128_CM_SHA1_80" },
-	{ ECRYPTO_AES_CM_128_HMAC_SHA1_32, "SRTP_AES128_CM_SHA1_32" }
+	{ ECRYPTO_AES_CM_128_HMAC_SHA1_32, "SRTP_AES128_CM_SHA1_32" },
+	{ ECRYPTO_AES_CM_128_HMAC_SHA1_80, "SRTP_AES128_CM_SHA1_80" }
+	
 	};
 	static const int32  g_ssl_read_buffer_size = 65536;
 	static uint8        g_ssl_read_buffer[g_ssl_read_buffer_size] = {0};
@@ -767,7 +768,7 @@ namespace chen {
 
 			return false;
 		}
-		hashFunction = EVP_sha256();
+		hashFunction = EVP_sha1();
 		/*switch (this->remoteFingerprint.algorithm)
 		{
 		case FingerprintAlgorithm::SHA1:

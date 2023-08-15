@@ -28,6 +28,7 @@ purpose:		csrtp_session
 #include "cnet_type.h"
 #include <srtp2/srtp.h>
 #include "csrtp_define.h"
+#include "ctimer.h"
 namespace chen {
 	
 
@@ -37,10 +38,12 @@ namespace chen {
 		csrtp_session(EType type, ECRYPTO_SUITE cryptoSuite, uint8_t* key, size_t keyLen);
 		~csrtp_session();
 
-
+	
 	public:
 		static bool init();
 		static void destroy();
+		//static void CreateChecker();
+		//static void CloseChecker();
 		static bool IsError(srtp_err_status_t code)
 		{
 			return (code != srtp_err_status_ok);
@@ -57,6 +60,7 @@ namespace chen {
 		}
 	private:
 		srtp_t					m_session;
+		//static	 Checker *	    m_checker;
 	};
 }
 

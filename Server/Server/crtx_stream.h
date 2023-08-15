@@ -32,6 +32,7 @@ Copyright boost
 #include "SenderReport.hpp"
 #include "crate_calculator.h"
 #include "ReceiverReport.hpp"
+#include "crtp_stream_define.h"
 namespace chen {
 	class crtx_stream 
 	{
@@ -40,8 +41,8 @@ namespace chen {
 		{
 			uint8		payload_type;
 			uint32		ssrc;
-			std::string type;
-			std::string subtype;
+			/*std::string*/EMediaDataType type;
+			/*std::string*/EDataSubType subtype;
 			uint32		clock_rate;
 		};
 	public:
@@ -74,7 +75,7 @@ namespace chen {
 		{
 			return m_params.payload_type;
 		}
-		const std::string& get_mime_type() const
+		const EDataSubType& get_mime_type() const
 		{
 			return m_params.subtype;
 		}

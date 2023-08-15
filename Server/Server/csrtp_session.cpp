@@ -23,7 +23,9 @@ purpose:		csrtp_session
 ************************************************************************************************/
 #include "csrtp_session.h"
 #include "clog.h"
+#include "cuv_util.h"
 #include <vector>
+#include <usrsctp.h>
 namespace chen {
 	static clock_type   g_srtp_global_sync_mutex;
 	static size_t		g_srtp_global_instances = 0;
@@ -184,6 +186,18 @@ namespace chen {
 			}
 		}
 	}
+	/*void csrtp_session::CreateChecker()
+	{
+		m_checker = new Checker();
+	}
+	void csrtp_session::CloseChecker()
+	{
+		if (m_checker)
+		{
+			delete m_checker;
+			m_checker = NULL;
+		}
+	}*/
 	const char * csrtp_session::GetErrorString(srtp_err_status_t code)
 	{
 		return g_srtp_global_errors .at(code);
@@ -270,4 +284,33 @@ namespace chen {
 
 		return true;
 	}
+	/*csrtp_session::Checker::Checker()
+	{
+		timer = new ctimer(this);
+	}
+	csrtp_session::Checker::~Checker()
+	{
+		delete timer;
+	}
+	void csrtp_session::Checker::Start()
+	{
+		this->lastCalledAtMs = 0u;
+
+		this->timer->Start(10, 10);
+	}
+	void csrtp_session::Checker::Stop()
+	{
+		this->lastCalledAtMs = 0u;
+
+		this->timer->Stop();
+	}
+	void csrtp_session::Checker::OnTimer(ctimer * timer)
+	{
+		auto nowMs = uv_util::GetTimeMs();
+		int elapsedMs = this->lastCalledAtMs ? static_cast<int>(nowMs - this->lastCalledAtMs) : 0;
+
+		usrsctp_handle_timers(elapsedMs);
+
+		this->lastCalledAtMs = nowMs;
+	}*/
 }

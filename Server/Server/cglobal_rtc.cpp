@@ -53,6 +53,9 @@ namespace chen
 
 		csrtp_session::init();
 		SYSTEM_LOG("sctp session init OK !!!");
+
+		
+
 		if (!g_sctp_association_mgr.init())
 		{
 			return false;

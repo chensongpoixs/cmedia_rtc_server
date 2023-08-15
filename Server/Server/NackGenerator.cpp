@@ -34,7 +34,7 @@ namespace RTC
 	constexpr size_t MaxNackPackets{ 1000u };
 	constexpr uint32_t DefaultRtt{ 100u };
 	constexpr uint8_t MaxNackRetries{ 10u };
-	constexpr uint64_t TimerInterval{ 40u };
+	constexpr uint64_t TimerInterval{ 50u };
 
 	/* Instance methods. */
 
@@ -192,7 +192,10 @@ namespace RTC
 	void NackGenerator::AddPacketsToNackList(uint16_t seqStart, uint16_t seqEnd)
 	{
 		//MS_TRACE();
-
+		if (seqStart != seqEnd)
+		{
+			WARNING_EX_LOG("[seqStart =%u][seqEnd = %u]", seqStart, seqEnd);
+		}
 		// Remove old packets.
 		auto it = this->nackList.lower_bound(seqEnd - MaxPacketAge);
 
@@ -229,6 +232,7 @@ namespace RTC
 
 		//TODO@chensong 2022-11-18  统计没有接受的的包的seqnumber
 //>>>>>>> e7c53c323244c384996ff48dc36fc15109b527f0
+		//uint64_t nowMs = uv_util::GetTimeMs();
 		for (uint16_t seq = seqStart; seq != seqEnd; ++seq)
 		{
 			cassert_desc(this->nackList.find(seq) == this->nackList.end(), "packet already in the NACK list");
@@ -239,7 +243,7 @@ namespace RTC
 				continue;
 			}
 
-			this->nackList.emplace(std::make_pair(seq, NackInfo{ seq, seq }));
+			this->nackList.emplace(std::make_pair(seq, NackInfo{ seq, seq /*, nowMs*/ }));
 		}
 	}
 
@@ -283,6 +287,7 @@ namespace RTC
 			uint16_t seq       = nackInfo.seq;
 
 			// clang-format off
+			// 完全实时系统
 			if ( filter == NackFilter::SEQ && nackInfo.sentAtMs == 0 && (
 				nackInfo.sendAtSeq == this->lastSeq || SeqManager<uint16_t>::IsSeqHigherThan(this->lastSeq, nackInfo.sendAtSeq) )
 			)
@@ -306,7 +311,7 @@ namespace RTC
 
 				continue;
 			}
-
+			//NORMAL_EX_LOG("rtt = %u", rtt);
 			if (filter == NackFilter::TIME && nowMs - nackInfo.sentAtMs >= this->rtt)
 			{
 				nackBatch.emplace_back(seq);

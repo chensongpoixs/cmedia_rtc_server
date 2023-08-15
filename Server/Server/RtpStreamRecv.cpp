@@ -814,8 +814,8 @@ namespace RTC
 		 
 		cassert(this->params.useNack, "NACK required but not supported");
 
-		DEBUG_EX_LOG( "triggering NACK [ssrc:%" PRIu32 ", first seq:%" PRIu16 ", num packets:%zu]",
-		  this->params.ssrc,
+		DEBUG_EX_LOG( "triggering NACK [PayloadType:%" PRIu32 ", ssrc:%" PRIu32 ", first seq:%" PRIu16 ", num packets:%zu]",
+		  this->params.ssrc, GetPayloadType(),
 		  seqNumbers[0],
 		  seqNumbers.size());
 

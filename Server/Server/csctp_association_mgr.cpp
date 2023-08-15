@@ -62,7 +62,7 @@ namespace chen {
 
 		va_end(ap);
 	}
-
+	  csctp_association_mgr::Checker* csctp_association_mgr::checker = NULL;
 
 	csctp_association_mgr::csctp_association_mgr()
 		: m_num_sctp_associations(0u)
@@ -150,7 +150,9 @@ namespace chen {
 		m_sctp_association_map[sctpAssociation->get_id()] = sctpAssociation;
 
 		if (++m_num_sctp_associations == 1u)
-		{ }
+		{
+			//checker->Start();
+		}
 			//DepUsrSCTP::checker->Start();
 	}
 	void csctp_association_mgr::DeregisterSctpAssociation(csctp_association * sctpAssociation)
@@ -160,7 +162,9 @@ namespace chen {
 
 
 		if (--m_num_sctp_associations == 0u)
-		{ }
+		{ 
+			//checker->Stop();
+		}
 			//DepUsrSCTP::checker->Stop();
 	}
 	csctp_association * csctp_association_mgr::RetrieveSctpAssociation(uintptr_t id)

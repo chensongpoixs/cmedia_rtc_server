@@ -197,14 +197,17 @@ namespace chen {
 		rtc_local_sdp.set_ice_pwd(local_pwd);
 		rtc_local_sdp.set_fingerprint_algo("sha-256");
 		rtc_local_sdp.set_fingerprint(g_dtls_certificate.get_fingerprint());
-
+		crtc_room_master master;
+		master.m_room_name = player_message.m_room_name;
+		master.m_user_name = player_message.m_video_peer_id;
+		crtc_transport * transport_ptr = new crtc_transport(master);
 		// We allows to mock the eip of server.
 		if (true)
 		{
 			//static  int32 udp_port = 4000;//_srs_config->get_rtc_server_listen();
 			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
 			std::string protocol = "tcp";//_srs_config->get_rtc_server_protocol();
-
+			std::string wan_ip = "0.0.0.0";
 		   //std::set<std::string> candidates = {"192.168.1.175"};;// = discover_candidates(ruc);
 			//for (std::set<std::string>::iterator it = candidates.begin(); it != candidates.end(); ++it) 
 			for (std::set<std::string>::const_iterator iter = g_global_config.get_all_ips().begin(); iter != g_global_config.get_all_ips().end(); ++iter)
@@ -217,12 +220,24 @@ namespace chen {
 //
 				 if (player_message.m_rtc_protocol == "udp")
 				{
-					rtc_local_sdp.add_candidate("udp", hostname, uport, "host");
+				/*	rtc_local_sdp.add_candidate("udp", hostname, uport, "host");
 				}
 				else  if (player_message.m_rtc_protocol == "tcp")
 				{
 					rtc_local_sdp.add_candidate("tcp", hostname, uport, "host");
-				}
+				}*/
+					 cudp_socket * socket_ptr = new   cudp_socket(transport_ptr, wan_ip);
+					 uport = socket_ptr->GetLocalPort();
+					 rtc_local_sdp.add_candidate("udp", hostname, socket_ptr->GetLocalPort(), "host");
+					 transport_ptr->insert_udp_socket(socket_ptr);
+				 }
+				 else if ("tcp" == player_message.m_rtc_protocol)
+				 {
+					 ctcp_server * socket_ptr = new   ctcp_server(transport_ptr, transport_ptr, wan_ip);
+					 uport = socket_ptr->GetLocalPort();
+					 rtc_local_sdp.add_candidate("tcp", hostname, socket_ptr->GetLocalPort(), "host");
+					 transport_ptr->insert_tcp_server(socket_ptr);
+				 }
 				else
 				{
 					WARNING_EX_LOG("[protocol = %s][hostname = %s][uport = %u]", player_message.m_rtc_protocol.c_str(), hostname.c_str(), uport);
@@ -265,10 +280,7 @@ namespace chen {
 		// We must setup the local SDP, then initialize the session object.
 		//session->set_local_sdp(local_sdp);
 	//	session->set_state_as_waiting_stun();
-		crtc_room_master master;
-		master.m_room_name = player_message.m_room_name;
-		master.m_user_name = player_message.m_video_peer_id;
-		crtc_transport * transport_ptr = new crtc_transport(master);
+		
 		transport_ptr->create_players(play_sub_relations);
 		transport_ptr->init( ERtcClientPlayer, rtc_remote_sdp, rtc_local_sdp, stream_desc);
 		transport_ptr->set_state_as_waiting_stun();
@@ -283,7 +295,12 @@ namespace chen {
 		g_transport_mgr.insert_username(username, transport_ptr);
 		//g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
 		g_transport_mgr.m_all_consumer_map[media_stream_url].insert(transport_ptr);
-
+		ctransport_mgr::STREAM_URL_MAP::iterator iter =  g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
+		if (iter != g_transport_mgr.m_all_stream_url_map.end())
+		{
+			iter->second->register_consumer(transport_ptr);
+			transport_ptr->register_producer(iter->second);
+		}
 
 		std::ostringstream    sdp;
 		rtc_local_sdp.encode(sdp);

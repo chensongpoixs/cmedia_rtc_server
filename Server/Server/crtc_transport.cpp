@@ -49,6 +49,7 @@ purpose:		crtc_transport
 #include <unordered_map>
 #include "cglobal_rtc_port.h"
 #include "cice_server.h"
+#include "cglobal_config.h"
 namespace chen {
 
 	static const char * wan_ip = "0.0.0.0";
@@ -62,7 +63,45 @@ namespace chen {
 		m_rtc_client_type = rtc_client_type;
 		m_remote_sdp = remote_sdp;
 		m_local_sdp = local_sdp;
-		
+//		std::string ip = wan_ip;
+//
+//
+//		if (true)
+//		{
+//			//static  int32 udp_port = 60000;//_srs_config->get_rtc_server_listen();
+//			int32 tcp_port = 0;//_srs_config->get_rtc_server_tcp_listen();
+//			//std::string protocol = "tcp";//_srs_config->get_rtc_server_protocol();
+//
+//		   //std::set<std::string> candidates = {"192.168.1.175"};;// = discover_candidates(ruc);
+//			//for (std::set<std::string>::iterator it = candidates.begin(); it != candidates.end(); ++it) 
+//			for (std::set<std::string>::const_iterator iter = g_global_config.get_all_ips().begin(); iter != g_global_config.get_all_ips().end(); ++iter)
+//			{
+//				std::string hostname = *iter;/*"172.20.10.2";*/
+//				//int32 uport = g_global_rtc_port.get_new_port();//udp_port++;
+//				//parse_hostport(*it, hostname, uport);
+//				//int32 tport = tcp_port; 
+//				//parse_hostport(*it, hostname, tport);
+////
+//				//if ("udp" == publish_message.m_rtc_protocol)
+//				{
+//					rtc_local_sdp.add_candidate("udp", hostname, uport, "host");
+//				}
+//				else if ("tcp" == publish_message.m_rtc_protocol)
+//				{
+//					rtc_local_sdp.add_candidate("tcp", hostname, uport, "host");
+//				}
+//				else
+//				{
+//					WARNING_EX_LOG("[protocol = %s][hostname = %s][uport = %u]", publish_message.m_rtc_protocol.c_str(), hostname.c_str(), uport);
+//					/*m_local_sdp.add_candidate("udp", hostname, uport, "host");
+//					m_local_sdp.add_candidate("tcp", hostname, tport, "host");*/
+//				}
+//			}
+//			m_local_sdp = local_sdp;
+//			//std::vector<std::string> v = std::vector<std::string>(candidates.begin(), candidates.end());
+//			NORMAL_EX_LOG("RTC: Use candidates  = , protocol=%s", /*srs_join_vector_string(v, ", ").c_str(),*/ publish_message.m_rtc_protocol.c_str());
+//		}
+//		
 		
 
 
@@ -118,7 +157,7 @@ namespace chen {
 
 
 
-		std::vector<ccandidate> candidates =  m_local_sdp.get_candidate();
+		//std::vector<ccandidate> candidates =  m_local_sdp.get_candidate();
 
 		//m_update_socket_ptr = new cudp_socket(this, candidate.m_ip, candidate.m_port);
 
@@ -130,8 +169,9 @@ namespace chen {
 			m_udp_sockets.push_back(socket_ptr);
 			socket_ptr = NULL;
 		}*/
-		std::string ip = wan_ip ;
-		for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
+		
+		
+		/*for (std::vector<ccandidate>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
 		{
 			m_udp_ports.push_back((*iter).m_port);
 			
@@ -154,7 +194,7 @@ namespace chen {
 				WARNING_EX_LOG("rtc protocol not type [%s]", iter->m_protocol.c_str());
 				return false;
 			}
-		}
+		}*/
 		//m_dtls_ptr = new cdtls_client(this);
 
 		//m_dtls_ptr->init();
@@ -175,8 +215,8 @@ namespace chen {
 				params.mid = stream_desc.m_audio_track_desc_ptr->m_mid;
 				params.params.payload_type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_pt;
 				params.params.ssrc = stream_desc.m_audio_track_desc_ptr->m_ssrc;
-				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
-				params.params.subtype = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_name;
+				params.params.type = EMediaAudio/*stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type*/;
+				params.params.subtype = EDataOpus/*stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_name*/;
 				//if (stream_desc.m_audio_track_desc_ptr-)
 				/*if (rtc_ssrc_info_ptr)
 				{
@@ -203,9 +243,9 @@ namespace chen {
 					crtc_producer::crtp_params params;
 					params.mid = rtc_track->m_mid;
 					params.params.payload_type = rtc_track->m_media_ptr->m_pt;
-					params.params.subtype = rtc_track->m_media_ptr->m_name;
+					params.params.subtype =  (rtc_track->m_media_ptr->m_name == "H264" ? EDataH264 : EDataAV1) ;
 					params.params.ssrc = rtc_track->m_ssrc;
-					params.params.type = rtc_track->m_type;
+					params.params.type = EMediaVideo/*rtc_track->m_type*/;
 					params.params.use_nack = true;
 					params.params.use_fir = true;
 					params.params.use_pli = true;
@@ -307,8 +347,8 @@ namespace chen {
 				params.mid = stream_desc.m_audio_track_desc_ptr->m_mid;
 				params.params.payload_type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_pt;
 				params.params.ssrc = stream_desc.m_audio_track_desc_ptr->m_ssrc;
-				params.params.type = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type;
-				params.params.subtype = stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_name;
+				params.params.type = EMediaAudio/*stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type*/;
+				params.params.subtype = EDataOpus/*stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_name*/;
 				if (rtc_ssrc_info_ptr)
 				{
 					if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc)).second)
@@ -332,8 +372,8 @@ namespace chen {
 					params.mid = rtc_track->m_mid;
 					params.params.payload_type = rtc_track->m_media_ptr->m_pt;
 					params.params.ssrc = rtc_track->m_ssrc;
-					params.params.type = rtc_track->m_type;
-					params.params.subtype = rtc_track->m_media_ptr->m_name;
+					params.params.type = EMediaVideo/*rtc_track->m_type*/;
+					params.params.subtype = rtc_track->m_media_ptr->m_name == "H264" ? EDataH264 : EDataAV1;
 					params.params.use_nack = true;
 					params.params.use_fir = true;
 					params.params.use_pli = true;
@@ -502,6 +542,14 @@ namespace chen {
 		//}
 		
 	}
+	void crtc_transport::insert_udp_socket(cudp_socket * socket)
+	{
+		m_udp_sockets.push_back(socket);
+	}
+	void crtc_transport::insert_tcp_server(ctcp_server * socket)
+	{
+		m_tcp_servers.push_back(socket);
+	}
 	void crtc_transport::destroy()
 	{
 		DEBUG_EX_LOG("");
@@ -515,7 +563,18 @@ namespace chen {
 			}
 			
 		}*/
-
+		for (crtc_transport* consumer : m_consumer_transports)
+		{
+			//consumer->IsConnected()
+			consumer->unregister_producer(this);
+		}
+		m_consumer_transports.clear();
+		for (crtc_transport* producer : m_producer_transports)
+		{
+			//consumer->IsConnected()
+			producer->unredister_consumer(this);
+		}
+		m_producer_transports.clear();
 		m_all_rtp_listener.destroy();
 		if (m_dtls_ptr)
 		{
@@ -649,19 +708,26 @@ namespace chen {
 	}
 	void crtc_transport::OnTransportConsumerKeyFrameRequested()
 	{
-		if (!get_dtls_connected_ok())
+		if (!IsConnected())
 		{
 			WARNING_EX_LOG("not dtls connected ok !!!");
 			return;
 		}
-		ctransport_mgr:: STREAM_URL_MAP::iterator iter =   g_transport_mgr.m_all_stream_url_map.find(m_rtc_master.m_room_name + "/" + m_rtc_master.m_user_name);
+		/*ctransport_mgr:: STREAM_URL_MAP::iterator iter =   g_transport_mgr.m_all_stream_url_map.find(m_rtc_master.m_room_name + "/" + m_rtc_master.m_user_name);
 	
 		if (iter == g_transport_mgr.m_all_stream_url_map.end())
 		{
 			WARNING_EX_LOG("not find stream url = %s", std::string(m_rtc_master.m_room_name + "/" + m_rtc_master.m_room_name).c_str());
 			return;
 		}
-		iter->second->request_key_frame();
+		iter->second->request_key_frame();*/
+		for (crtc_transport * rtc : m_producer_transports)
+		{
+			if (rtc->IsConnected())
+			{
+				rtc->request_key_frame();
+			}
+		}
 	}
 	void crtc_transport::OnConsumerRetransmitRtpPacket(crtc_consumer * consumer, RTC::RtpPacket * packet)
 	{
@@ -770,6 +836,7 @@ namespace chen {
 		}*/
 		if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
+			//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 			//{
 			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
 			//	{
@@ -1012,7 +1079,7 @@ namespace chen {
 	void crtc_transport::send_sctp_data(uint16_t streamId, uint32_t ppid, const uint8_t * msg, size_t len)
 	{
 		
-		if (m_rtc_net_state != ERtcNetworkStateEstablished)
+		if (m_rtc_net_state != ERtcNetworkStateDtls && ERtcNetworkStateEstablished != m_rtc_net_state)
 		{
 			WARNING_EX_LOG("rtc status = %u", m_rtc_net_state);
 			return;
@@ -1043,7 +1110,7 @@ namespace chen {
 	{
 		if (!IsConnected())
 		{
-			//WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
+			WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
 			return;
 		}
 		if (/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
@@ -1195,8 +1262,7 @@ namespace chen {
 		//NORMAL_EX_LOG("---->");
 		// Increase receive transmission.
 		//RTC::Transport::DataReceived(len);
-
-
+		
 		//memcpy(&m_remote_addr, remoteAddr, sizeof(*remoteAddr));
 		/*for ( cudp_socket * temp : m_udp_sockets)
 		{
@@ -1206,10 +1272,14 @@ namespace chen {
 				DEBUG_EX_LOG(" find cur dup socket Ok !!");
 			}
 		}*/
+		/*std::chrono::steady_clock::time_point cur_time_ms;
+		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::duration dur;
+		std::chrono::microseconds ms;*/
 		// TODO@chensong 2023-05-23 单线程 没有问题 多线程是有问题哈 ^_^
 		//m_current_socket_ptr  = socket;
 		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
-		if (m_rtc_net_state == ERtcNetworkStateEstablished)
+		//if (m_rtc_net_state == ERtcNetworkStateEstablished)
 		{
 			m_time_out_ms = uv_util::GetTimeMs();
 		}
@@ -1226,7 +1296,14 @@ namespace chen {
 				return;
 			}*/
 			//uint64 ms = uv_util::GetTimeMs();
-			_on_stun_data_received(tuple, data, len, remoteAddr);
+			_on_stun_data_received(tuple, data, len);
+			/*cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 20)
+			{
+				NORMAL_EX_LOG("udp stun recv packet [microseconds = %" PRIi64 "]", ms.count());
+			}*/
 			//uint64 diff_ms = uv_util::GetTimeMs();
 			//NORMAL_EX_LOG("media stun --> ms = %u", diff_ms - ms);
 		}
@@ -1236,8 +1313,14 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			 
 			//OnRtcpDataReceived(tuple, data, len);
-			_on_rtcp_data_received(tuple, data, len, remoteAddr);
-			
+			_on_rtcp_data_received(tuple, data, len );
+			/*cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 20)
+			{
+				NORMAL_EX_LOG("udp rtcp recv packet [microseconds = %" PRIi64 "]", ms.count());
+			}*/
 		}
 		// Check if it's RTP.
 		else if (RTC::RtpPacket::IsRtp(data, len))
@@ -1245,14 +1328,30 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtp");
 			 
 			//OnRtpDataReceived(tuple, data, len);
-			_on_rtp_data_received(tuple, data, len, remoteAddr);
+			
+			//return;
+			_on_rtp_data_received(tuple, data, len);
+			/*cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 20)
+			{
+				NORMAL_EX_LOG("udp rtp recv packet [microseconds = %" PRIi64 "]", ms.count());
+			}*/
 		}
 		// Check if it's DTLS.
 		else if (RTC::DtlsTransport::IsDtls(data, len))
 		{
 			//NORMAL_EX_LOG("IsDtls");
 			//OnDtlsDataReceived(tuple, data, len);
-			_on_dtls_data_received(tuple, data, len, remoteAddr);
+			_on_dtls_data_received(tuple, data, len);
+			/*cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 20)
+			{
+				NORMAL_EX_LOG("udp dtls recv packet [microseconds = %" PRIi64 "]", ms.count());
+			}*/
 		}
 		else
 		{
@@ -1263,21 +1362,54 @@ namespace chen {
 	}
 	void crtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-		/*std::chrono::steady_clock::time_point cur_time_ms;
+		 std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
-		std::chrono::microseconds ms;*/
+		std::chrono::microseconds ms; 
 		ctransport_tuple tuple(socket, remoteAddr);
 		OnPacketReceived(&tuple, data, len, remoteAddr);
-		/*cur_time_ms = std::chrono::steady_clock::now();
-		dur = cur_time_ms - pre_time;
-		ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);*/
-		//NORMAL_EX_LOG("udp recv packet [microseconds = %u]", ms.count());
-		/*elapse = static_cast<uint32_t>(ms.count());
-		if (elapse < TICK_TIME)
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - elapse));
-		}*/
+	 //	cur_time_ms = std::chrono::steady_clock::now();
+		//dur = cur_time_ms - pre_time;
+		//ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+		//if (ms.count() > 50)
+		//{
+		//	std::string rtp_type;
+
+
+		//	if (crtc_stun_packet::is_stun(data, len))
+		//	{ 
+		//		rtp_type = "stun";
+		//	}
+		//	// Check if it's RTCP.
+		//	else if (RTC::RTCP::Packet::IsRtcp(data, len))
+		//	{ 
+		//		rtp_type = "rtcp";
+		//	}
+		//	// Check if it's RTP.
+		//	else if (RTC::RtpPacket::IsRtp(data, len))
+		//	{
+		//		rtp_type = "rtp";
+		//	}
+		//	// Check if it's DTLS.
+		//	else if (RTC::DtlsTransport::IsDtls(data, len))
+		//	{
+		//		rtp_type = "dtls";
+		//	}
+		//	else
+		//	{
+
+		//		WARNING_EX_LOG("ignoring received packet of unknown type");
+		//	}
+
+
+		//	NORMAL_EX_LOG("udp recv  %s packet [microseconds = %" PRIi64 "]", rtp_type.c_str(),  ms.count());
+		//}
+		//int64 elapse = static_cast<uint32_t>(ms.count());
+		//NORMAL
+		//if (elapse < TICK_TIME)
+		//{
+		//	std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - elapse));
+		//}
 	}
 	void crtc_transport::OnRtcTcpConnectionNew(ctcp_server * tcpServer, ctcp_connection * connection)
 	{
@@ -1311,7 +1443,7 @@ namespace chen {
 				return;
 			}*/
 			//uint64 ms = uv_util::GetTimeMs();
-			_on_stun_data_received(NULL, data, len, connection->GetPeerAddress());
+			_on_stun_data_received(NULL, data, len);
 			//uint64 diff_ms = uv_util::GetTimeMs();
 			//NORMAL_EX_LOG("media stun --> ms = %u", diff_ms - ms);
 		}
@@ -1321,7 +1453,7 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
 			//OnRtcpDataReceived(tuple, data, len);
-			_on_rtcp_data_received(NULL, data, len, connection->GetPeerAddress());
+			_on_rtcp_data_received(NULL, data, len);
 
 		}
 		// Check if it's RTP.
@@ -1330,14 +1462,14 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtp");
 
 			//OnRtpDataReceived(tuple, data, len);
-			_on_rtp_data_received(NULL, data, len, connection->GetPeerAddress());
+			_on_rtp_data_received(NULL, data, len);
 		}
 		// Check if it's DTLS.
 		else if (RTC::DtlsTransport::IsDtls(data, len))
 		{
 			//NORMAL_EX_LOG("IsDtls");
 			//OnDtlsDataReceived(tuple, data, len);
-			_on_dtls_data_received(NULL, data, len, connection->GetPeerAddress());
+			_on_dtls_data_received(NULL, data, len);
 		}
 		else
 		{
@@ -1654,7 +1786,7 @@ namespace chen {
 
 	}
 
-	void crtc_transport::_on_stun_data_received(ctransport_tuple* tuple, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::_on_stun_data_received(ctransport_tuple* tuple, const uint8_t * data, size_t len)
 	{
 		m_ice_server_ptr->ProcessStunPacket(data, len, tuple);
 		return;
@@ -1684,7 +1816,7 @@ namespace chen {
 			uint16_t port;
 			std::string ip;
 
-			uv_ip::GetAddressInfo(remoteAddr, family, ip, port);
+			//uv_ip::GetAddressInfo(remoteAddr, family, ip, port);
 			//NORMAL_EX_LOG("[remote_ip = %s][remote_port = %u]",  ip.c_str(), port);
 			//NORMAL_EX_LOG(" [localip = %s][localport = %u]",  m_current_socket_ptr->GetLocalIp().c_str(), m_current_socket_ptr->GetLocalPort());
 			stun_response.set_mapped_address(be32toh(inet_addr(ip.c_str())));
@@ -1709,7 +1841,7 @@ namespace chen {
 
 	}
 
-	void crtc_transport::_on_dtls_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::_on_dtls_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len)
 	{
 		if (!m_ice_server_ptr->IsValidTuple(tuple))
 		{
@@ -1732,10 +1864,11 @@ namespace chen {
 		}
 	}
 
-	void crtc_transport::_on_rtp_data_received(ctransport_tuple* tuple, const uint8 * data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::_on_rtp_data_received(ctransport_tuple* tuple, const uint8 * data, size_t len)
 	{
+		//return;
 		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
-		if (m_rtc_net_state < ERtcNetworkStateEstablished)
+		if (m_rtc_net_state < ERtcNetworkStateDtls)
 		{
 			WARNING_EX_LOG("ignoring RTP packet while DTLS no connected failed !!!");
 			return;
@@ -1765,16 +1898,21 @@ namespace chen {
 				fclose(out_rtp_core_ptr);
 				out_rtp_core_ptr = NULL;
 			}
-			
+			WARNING_EX_LOG("rtp packet size = 522 !!!");
 			return;
 		}
-
+		//return;
+		/*std::chrono::steady_clock::time_point cur_time_ms;
+		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::duration dur;
+		std::chrono::microseconds ms;*/
 		if (!m_srtp_recv_session_ptr->DecryptSrtp((uint8_t *)data, &len))
 		{
 			WARNING_EX_LOG("rtp unprotect rtp failed !!!-------->>>>>>>");
 		}
 		else
 		{
+			//return;
 			//NORMAL_EX_LOG("rtp unprotect rtp OK !!!-------->>>>>>>");
 			RTC::RtpPacket* packet = RTC::RtpPacket::Parse(data, len);
 
@@ -1784,7 +1922,18 @@ namespace chen {
 
 				return;
 			}
-
+			 
+			if (packet->GetPayloadType() == 106)
+			{
+				//NORMAL_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
+				static uint64 seq = packet->GetSequenceNumber();
+				if (seq != packet->GetSequenceNumber())
+				{
+					WARNING_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
+				}
+				seq = packet->GetSequenceNumber() + 1;
+			}
+			//return;
 			m_ice_server_ptr->ForceSelectedTuple(tuple);
 			// Apply the Transport RTP header extension ids so the RTP listener can use them.
 			packet->SetMidExtensionId(m_rtp_header_extension_ids.mid);
@@ -1810,7 +1959,7 @@ namespace chen {
 				return;
 			}
 
-
+			producer_ptr->receive_rtp_packet(packet);
 			//if (m_all_video_ssrc == packet->GetSsrc())
 			//{
 			//	m_remote_estimator.on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
@@ -1851,14 +2000,20 @@ namespace chen {
 			//}
 			
 			//crtc_producer::mangle_rtp_packet(packet, producer_ptr->get_rtcp_params().params/*params*/);
-			producer_ptr->receive_rtp_packet(packet);
-			 
+			
+			/*cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 40)
+			{
+				WARNING_EX_LOG("udp recv rtp packet  encode --> [microseconds = %" PRIi64 "]", ms.count());
+			}*/
 			
 			
 		}
 	}
 
-	void crtc_transport::_on_rtcp_data_received(ctransport_tuple* tuple, const uint8 * data, size_t len, const sockaddr * remoteAddr)
+	void crtc_transport::_on_rtcp_data_received(ctransport_tuple* tuple, const uint8 * data, size_t len )
 	{
 		if (m_rtc_net_state < ERtcNetworkStateEstablished)
 		{
@@ -2539,6 +2694,37 @@ namespace chen {
 		//	return srs_error_wrap(err, "handle rtcp");
 		//}
 		return true;
+	}
+
+	void crtc_transport::broadcast_consumers(RTC::RtpPacket * packet)
+	{
+		for (crtc_transport * rtc : m_consumer_transports)
+		{
+			if (rtc->IsConnected())
+			{
+				rtc->send_consumer(packet);
+			}
+		}
+	}
+
+	void crtc_transport::register_consumer(crtc_transport * transport)
+	{
+		m_consumer_transports.insert(transport);
+	}
+
+	void crtc_transport::unredister_consumer(crtc_transport * transport)
+	{
+		m_consumer_transports.erase(transport);
+	}
+
+	void crtc_transport::register_producer(crtc_transport * transport)
+	{
+		m_producer_transports.insert(transport);
+	}
+
+	void crtc_transport::unregister_producer(crtc_transport * transport)
+	{
+		m_producer_transports.erase(transport);
 	}
 
 	void crtc_transport::MayRunDtlsTransport()

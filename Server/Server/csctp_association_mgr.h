@@ -29,7 +29,9 @@ purpose:		csctp_association_mgr
 #include <map>
 #include <usrsctp.h>
 #include <mutex>
+#include "cuv_util.h"
 #include <unordered_map>
+#include "ctimer.h"
 namespace chen
 {
 	class csctp_association;
@@ -43,12 +45,47 @@ namespace chen
 	public:
 		csctp_association_mgr();
 		~csctp_association_mgr();
+	private:
+		class Checker : public ctimer::Listener
+		{
+		public:
+			Checker() { this->timer = new ctimer(this); }
+			  ~Checker() override{ delete this->timer; }
 
+		public:
+			void Start() {
+				this->lastCalledAtMs = 0u;
+
+				this->timer->Start(10, 10);
+			}
+			void Stop() {
+				this->lastCalledAtMs = 0u;
+
+				this->timer->Stop();
+			}
+
+			/* Pure virtual methods inherited from Timer::Listener. */
+		public:
+			void OnTimer(ctimer* timer) {
+				auto nowMs = uv_util::GetTimeMs();
+				int elapsedMs = this->lastCalledAtMs ? static_cast<int>(nowMs - this->lastCalledAtMs) : 0;
+
+				usrsctp_handle_timers(elapsedMs);
+
+				this->lastCalledAtMs = nowMs;
+			}
+
+		private:
+			ctimer* timer{ nullptr };
+			uint64_t lastCalledAtMs{ 0u };
+		};
 	public:
 		bool init();
 		void update(uint32 uDeltaTime);
 		void destroy();
 
+		void CreateChecker() {/* checker = new Checker();*/ }
+		void CloseChecker() { /*delete checker;*/ }
 
 	public:
 		uintptr_t GetNextSctpAssociationId();
@@ -63,6 +100,7 @@ namespace chen
 		clock_type				m_global_sync_mutex;
 		size_t					m_global_instances;
 		C_SCTP_ASSOCIATION_MAP  m_sctp_association_map;
+		static Checker* checker;
 	};
 
 	extern csctp_association_mgr g_sctp_association_mgr;

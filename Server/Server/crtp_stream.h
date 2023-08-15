@@ -34,6 +34,7 @@ Copyright boost
 #include "crate_calculator.h"
 #include "ReceiverReport.hpp"
 #include "crtx_stream.h"
+#include "crtp_stream_define.h"
 namespace chen {
 	class crtp_stream
 	{
@@ -42,8 +43,8 @@ namespace chen {
 		{
 			uint8			 payload_type;
 			uint32			 ssrc;
-			std::string		 type; // audio, video, datachannel
-			std::string		 subtype; // opus, h264, ...
+			/*std::string*/EMediaDataType		 type; // audio, video, datachannel
+			/*std::string*/EDataSubType		 subtype; // opus, h264, ...
 			uint32			 clock_rate;
 							 
 			uint8			 rtx_payload_type;
@@ -98,7 +99,7 @@ namespace chen {
 		{
 			return m_params.payload_type;
 		}
-		const std::string& get_type() const
+		const EMediaDataType& get_type() const
 		{
 			return m_params.type;
 		}

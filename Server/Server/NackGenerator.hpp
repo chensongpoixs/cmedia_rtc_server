@@ -46,7 +46,7 @@ namespace RTC
 		struct NackInfo
 		{
 			NackInfo() = default;
-			explicit NackInfo(uint16_t seq, uint16_t sendAtSeq) : seq(seq), sendAtSeq(sendAtSeq)
+			explicit NackInfo(uint16_t seq, uint16_t sendAtSeq, uint64_t sentms = 0) : seq(seq), sendAtSeq(sendAtSeq), sentAtMs(sentms)
 			{
 			}
 

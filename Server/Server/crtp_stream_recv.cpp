@@ -111,13 +111,14 @@ namespace chen {
 		// Call the parent method.
 		if (!crtp_stream::receive_packet(packet))
 		{
-			WARNING_EX_LOG("rtp, packet discarded");
+			WARNING_EX_LOG("rtp, packet discarded[seq = %u]", packet->GetSequenceNumber());
 
 			return false;
 		}
-		if (m_params.type == "video")
+		if (m_params.type == EMediaVideo)
 		{
-			if (m_params.subtype == "AV1")
+			//NORMAL_EX_LOG("[payload_type = %u][seq =%u]", packet->GetPayloadType(), packet->GetSequenceNumber());
+			if (m_params.subtype != EDataH264)
 			{
 				cav1::ProcessRtpPacket(packet);
 #if 0
@@ -198,6 +199,7 @@ namespace chen {
 		// Pass the packet to the NackGenerator.
 		if (m_params.use_nack)
 		{
+			
 			// If there is RTX just provide the NackGenerator with the packet.
 			if (has_rtx())
 			{
@@ -301,11 +303,11 @@ namespace chen {
 		}
 
 		// Process the packet at codec level.
-		if (m_params.type == "video")
+		if (m_params.type == EMediaVideo)
 		{
 			//RTC::Codecs::H264::ProcessRtpPacket(packet);
 			//cav1::ProcessRtpPacket(packet);
-			if (m_params.subtype == "AV1")
+			if (m_params.subtype != EDataH264)
 			{
 				cav1::ProcessRtpPacket(packet);
 #if 0
@@ -674,8 +676,8 @@ namespace chen {
 	{
 	//	cassert_desc(m_params.use_nack, "NACK required but not supported");
 
-		DEBUG_EX_LOG( "triggering NACK [ssrc:%" PRIu32 ", first seq:%" PRIu16 ", num packets:%zu]",
-			m_params.ssrc,
+		DEBUG_EX_LOG( "triggering NACK [PayloadType:%" PRIu32 ",ssrc:%" PRIu32 ", first seq:%" PRIu16 ", num packets:%zu]",
+			 get_payload_type(), m_params.ssrc,
 			seqNumbers[0],
 			seqNumbers.size());
 

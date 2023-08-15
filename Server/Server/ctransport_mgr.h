@@ -40,10 +40,10 @@ namespace chen {
 		typedef std::unordered_map<std::string, crtc_transport*>   STREAM_URL_MAP;
 		////////////////////////////////////////////////////////////////////////////////
 		// key-->
-		typedef std::unordered_map<std::string, std::set<crtc_transport*>> CONSUMER_MAP;
+		typedef std::unordered_map<std::string, std::unordered_set<crtc_transport*>> CONSUMER_MAP;
 
 		//  key ---> 0: audio 1: video 2: datachannel
-		typedef std::unordered_map < std::string, std::vector<std::set<crtp_stream*>>>  ALL_RTP_STREAM_MAP;
+		typedef std::unordered_map < std::string, std::vector<std::unordered_set<crtp_stream*>>>  ALL_RTP_STREAM_MAP;
 
 
 		// key -->

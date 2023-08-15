@@ -34,7 +34,7 @@ namespace chen {
 		MaxRequestedPackets + 1);
 
 	// Don't retransmit packets older than this (ms).
-	static constexpr uint32_t MaxRetransmissionDelay{ 500u };
+	static constexpr uint32_t MaxRetransmissionDelay{ 2000 };
 	static constexpr uint32_t DefaultRtt{ 100 };
 
 
@@ -86,12 +86,13 @@ namespace chen {
 	{
 		crtp_stream::set_rtx(payload_type, ssrc);
 
-		m_rtx_seq = c_rand.rand(0u, 0xFFFF);
+		m_rtx_seq = c_rand.rand(0u, 0xFFFF);  
 	}
 	bool crtp_stream_send::receive_packet(RTC::RtpPacket * packet)
 	{
 		if (!crtp_stream::receive_packet(packet))
 		{
+			WARNING_EX_LOG("[seq = %u]", packet->GetSequenceNumber());
 			return false;
 		}
 
@@ -420,7 +421,7 @@ void crtp_stream_send::_store_packet(RTC::RtpPacket * packet)
 			// the next one.
 			if (this->m_buffer_start_idx == seq)
 			{
-				WARNING_EX_LOG("[buffer start index = %u]",m_buffer_start_idx);
+				//WARNING_EX_LOG("[buffer start index = %u]",m_buffer_start_idx);
 				UpdateBufferStartIdx();
 			}
 		}

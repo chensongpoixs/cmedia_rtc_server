@@ -55,8 +55,8 @@ namespace chen {
 		 rtx_params.clock_rate = 9000;
 		 rtx_params.payload_type = m_params.rtx_payload_type;
 		 rtx_params.ssrc = m_params.rtx_ssrc;
-		 rtx_params.type = "rtx";
-		 rtx_params.subtype = "rtx";
+		 rtx_params.type = EMediaVideo;
+		 rtx_params.subtype = EDataRtx;
 
 		//params.ssrc = ssrc;
 		//params.payloadType = payloadType;
@@ -150,9 +150,9 @@ namespace chen {
 			}
 			else
 			{
-				WARNING_EX_LOG("rtx bad sequence number, ignoring packet [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
+				WARNING_EX_LOG("rtx bad sequence number, ignoring packet [ssrc:%" PRIu32 ", seq:%" PRIu16 ", max_seq:%" PRIu16 "]",
 					packet->GetSsrc(),
-					packet->GetSequenceNumber());
+					packet->GetSequenceNumber(), m_max_seq);
 
 				m_bad_seq = (seq + 1) & (RtpSeqMod - 1);
 

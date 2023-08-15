@@ -54,7 +54,7 @@ namespace chen {
 	{
 		//MS_TRACE();
 
-		if (!fixedPort)
+		if (!fixedPort && localPort != 0)
 		{
 			RTC::PortManager::UnbindTcp(this->localIp, this->localPort);
 		}

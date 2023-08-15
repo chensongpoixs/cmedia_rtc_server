@@ -133,6 +133,8 @@ namespace chen {
 			, m_tcp_servers()
 //			, m_tcp_connection_ptr(NULL)
 			, m_ice_server_ptr(NULL)
+			, m_consumer_transports()
+			, m_producer_transports()
 		 {}
 
 		virtual ~crtc_transport();
@@ -143,6 +145,10 @@ namespace chen {
 
 		bool create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations);
 		void update(uint32 uDeltaTime);
+
+
+		void insert_udp_socket(cudp_socket* socket);
+		void insert_tcp_server(ctcp_server* socket);
 
 		void destroy();
 		bool is_active() const;
@@ -267,11 +273,11 @@ public:
 		
 	private:
 
-		void _on_stun_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
-		void _on_dtls_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len, const sockaddr * remoteAddr);
+		void _on_stun_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len );
+		void _on_dtls_data_received(ctransport_tuple* tuple, const uint8_t* data, size_t len );
 	
-		void _on_rtp_data_received(ctransport_tuple* tuple, const uint8* data, size_t len, const sockaddr*remoteAddr );
-		void _on_rtcp_data_received(ctransport_tuple* tuple, const uint8* data, size_t len, const sockaddr*remoteAddr );
+		void _on_rtp_data_received(ctransport_tuple* tuple, const uint8* data, size_t len  );
+		void _on_rtcp_data_received(ctransport_tuple* tuple, const uint8* data, size_t len );
 		// data channel 
 		void  _on_application_data_receviced(const uint8* data, size_t len);
 		//void _on_application_data_receviced(cudp_socket* socket, const uint8* data, size_t len, const sockaddr*remoteAddr);
@@ -291,8 +297,18 @@ public:
 		bool _dispatch_rtcp(crtcp_common* rtcp);
 
 
+	public:
 
 
+
+		void broadcast_consumers(RTC::RtpPacket * packet);
+
+
+		void register_consumer(crtc_transport* transport);
+		void unredister_consumer(crtc_transport* transport);
+
+		void register_producer(crtc_transport* transport);
+		void unregister_producer(crtc_transport* transport);
 	public:
 			
 		void MayRunDtlsTransport();
@@ -357,7 +373,7 @@ public:
 		//RTC::RTCP::FeedbackRtpTransportPacket   m_feedback_rtp_transport_packet;
 
 		crtp_listener							m_all_rtp_listener;
-		std::map<uint32, uint32>				m_server_ssrc_map;
+		std::unordered_map<uint32, uint32>				m_server_ssrc_map;
 		RTC::TransportCongestionControlClient*	m_tcc_client;
 		RTC::TransportCongestionControlServer*	m_tcc_server;
 
@@ -382,6 +398,9 @@ public:
 		std::vector < ctcp_server*> m_tcp_servers;
 	//	ctcp_connection *			m_tcp_connection_ptr;
 		cice_server		*			m_ice_server_ptr;
+		std::unordered_set<crtc_transport*>		m_consumer_transports;
+		std::unordered_set<crtc_transport*>		m_producer_transports;
+
 	};
 
 

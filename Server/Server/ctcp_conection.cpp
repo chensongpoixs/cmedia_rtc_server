@@ -78,11 +78,13 @@ namespace chen {
 			// a DTLS Close Alert this would be closed (Close() called) so we cannot call
 			// our listeners anymore.
 			if (IsClosed())
+			{
 				return;
+			}
 			
 			size_t dataLen = this->bufferDataLen - this->frameStart;
 			//NORMAL_EX_LOG("[buffer = %s][datalen  = %u]", buffer, dataLen);
-			size_t packetLen;
+			size_t packetLen = 0;
 
 			if (dataLen >= 2)
 			{

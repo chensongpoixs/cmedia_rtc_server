@@ -112,14 +112,14 @@ namespace chen {
 		//struct socketaddr_storage		m_local_addr ;
 		struct sockaddr_storage			m_local_addr;
 		std::string						m_local_ip;
-		uint16							m_local_port;
+		uint16							m_local_port{0u};
 	private:
 		// Allocated by this (may be passed by argument).
-		uv_udp_t*						m_uvHandle;// { nullptr };
+		uv_udp_t*						m_uvHandle{nullptr};// { nullptr };
 		// Others.
-		bool							m_closed;// { false };
-		size_t							m_recvBytes;// { 0u };
-		size_t							m_sentBytes;// { 0u };
+		bool							m_closed{false};// { false };
+		size_t							m_recvBytes{ 0u };// { 0u };
+		size_t							m_sentBytes{ 0u };// { 0u };
 	};
 }
 

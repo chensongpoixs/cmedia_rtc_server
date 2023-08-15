@@ -77,13 +77,14 @@
     <IncludePath>$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(C_INCLUDE)\protobuf\lib\x64\debug;$(C_INCLUDE)\libsrtp2\lib\x64\debug;$(C_INCLUDE)\abseil-cpp\lib\x64\debug;$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\openssl_1.1.0\lib\x64\debug;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)1</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(C_INCLUDE)\libyuv\include;$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(C_INCLUDE)\libdav1d\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(C_INCLUDE)\libyuv\lib\x64\release;$(C_INCLUDE)\protobuf\lib\x64\release;$(C_INCLUDE)\libsrtp2\lib\x64\release;$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\json\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Release;$(C_INCLUDE)\openssl_1.1.0\lib\x64\release;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(C_INCLUDE)\libdav1d\lib\x64\release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)1</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -131,7 +132,8 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -139,7 +141,7 @@
       <AdditionalIncludeDirectories>libwebrtc;./;rtc_sdp;rtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>
       </LanguageStandard>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>

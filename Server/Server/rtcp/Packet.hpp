@@ -63,7 +63,7 @@ namespace RTC
 					// RTCP packet types defined by IANA:
 					// http://www.iana.org/assignments/rtp-parameters/rtp-parameters.xhtml#rtp-parameters-4
 					// RFC 5761 (RTCP-mux) states this range for secure RTCP/RTP detection.
-					(header->packetType >= 192 && header->packetType <= 223)
+					(header->packetType > 191/*>= 192*/ && header->packetType <224/*<= 223*/)
 				);
 				// clang-format on
 			}

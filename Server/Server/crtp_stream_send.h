@@ -63,7 +63,7 @@ namespace chen {
 		, m_buffer(65536, nullptr)
 		, m_buffer_start_idx(0u)
 		, m_buffer_size(0u)
-		, m_storage(600u) // 缓存大小
+		, m_storage(65536) // 缓存大小
 		, m_rtx_seq(0u)
 		{}
 		~crtp_stream_send();

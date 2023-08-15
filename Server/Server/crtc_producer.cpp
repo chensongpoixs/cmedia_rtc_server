@@ -34,7 +34,7 @@ namespace chen {
 
 	void crtc_producer::destroy()
 	{
-		for (std::map<uint32, crtp_stream_recv*>::iterator iter = m_ssrc_rtp_stream_map.begin(); iter != m_ssrc_rtp_stream_map.end(); ++iter)
+		for (std::unordered_map<uint32, crtp_stream_recv*>::iterator iter = m_ssrc_rtp_stream_map.begin(); iter != m_ssrc_rtp_stream_map.end(); ++iter)
 		{
 			iter->second->destroy();
 			delete iter->second;
@@ -48,10 +48,13 @@ namespace chen {
 	{
 		// Reset current packet.
 		//this->currentRtpPacket = nullptr;
-
+		//return true;
 		// Count number of RTP streams.
 	//	auto numRtpStreamsBefore = this->mapSsrcRtpStream.size();
-
+		/*std::chrono::steady_clock::time_point cur_time_ms;
+		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::duration dur;
+		std::chrono::microseconds ms;*/
 		crtp_stream_recv* rtpStream = _get_rtp_stream(packet);
 
 		if (!rtpStream)
@@ -86,6 +89,7 @@ namespace chen {
 					NotifyNewRtpStream(rtpStream);
 				}
 */
+				WARNING_EX_LOG("[ssrc = %u][seq = %u][timestamp = %u] ", packet->GetSsrc(), packet->GetSequenceNumber());
 				return false;
 			}
 		}
@@ -98,15 +102,17 @@ namespace chen {
 			// Process the packet.
 			if (!rtpStream->receive_rtx_packet(packet))
 			{
+				WARNING_EX_LOG("[ssrc = %u][seq = %u] ", packet->GetSsrc(), packet->GetSequenceNumber());
 				return false;
 			}
 		}
 		// Should not happen.
 		else
 		{
+			WARNING_EX_LOG("[ssrc = %u][seq = %u][timestamp = %u] ", packet->GetSsrc(), packet->GetSequenceNumber());
 			cassert("found stream does not match received packet");
 		}
-
+		//return true;
 		if (packet->IsKeyFrame())
 		{
 			DEBUG_EX_LOG( "rtp key frame received [ssrc:%" PRIu32 ", seq:%" PRIu16 "]",
@@ -116,7 +122,7 @@ namespace chen {
 			// Tell the keyFrameRequestManager.
 			//if (this->keyFrameRequestManager)
 			{
-			//	this->keyFrameRequestManager->KeyFrameReceived(packet->GetSsrc());
+				//this->keyFrameRequestManager->KeyFrameReceived(packet->GetSsrc());
 			}
 		}
 
@@ -156,14 +162,46 @@ namespace chen {
 		}*/
 
 		  mangle_rtp_packet(packet, m_params.params);
-
+		 
+		  /*cur_time_ms = std::chrono::steady_clock::now();
+		    dur = cur_time_ms - pre_time;
+		    ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 20)
+			{
+				WARNING_EX_LOG("==>udp recv rtp packet  recv packet  --> [microseconds = %" PRIi64 "]", ms.count());
+		   }
+			pre_time = cur_time_ms;*/
+		  //return true;
+		  if (m_rtc_ptr)
+		  {
+			  m_rtc_ptr->broadcast_consumers(packet);
+			  /*cur_time_ms = std::chrono::steady_clock::now();
+			  dur = cur_time_ms - pre_time;
+			  ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			  if (ms.count() > 20)
+			  {
+				  WARNING_EX_LOG("==>udp recv rtp packet  send consumer  packet  --> [microseconds = %" PRIi64 "]", ms.count());
+			  }*/
+		  }
+		 // for (crtc_transport* transport: m)
+		  return true;
+		 // return true;
 		// Post-process the packet.
 		// 处理视频 转的角度
 		//PostProcessRtpPacket(packet);
 		// 所有的订阅的客户端媒体信息
 		// 数据保持在每个接受客户端缓存中中了RtpSend
 		//this->listener->OnProducerRtpPacketReceived(this, packet);
-		for (crtc_transport* rtc_ptr : g_transport_mgr.m_all_consumer_map[m_rtc_ptr->get_rtp_sdp().m_msids[0]])
+		///*  cur_time_ms = std::chrono::steady_clock::now();
+		//  dur = cur_time_ms - pre_time;
+		//  ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+		//  NORMAL_EX_LOG("udp recv rtp packet  recv packet  --> [microseconds = %" PRIi64 "]", ms.count());*/
+		  std::unordered_set <crtc_transport*> & consumer_all =  g_transport_mgr.m_all_consumer_map[m_rtc_ptr->get_rtp_sdp().m_msids[0]];
+		  if (consumer_all.empty())
+		  {
+			  return true;
+		  }
+		for (crtc_transport* rtc_ptr : consumer_all)
 		{
 			//crtc_transport* rtc_ptr = g_transport_mgr.find_stream_name(stream_name);
 			if (!rtc_ptr)
@@ -173,7 +211,7 @@ namespace chen {
 			}
 			if (!rtc_ptr->get_dtls_connected_ok())
 			{
-				//WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
+				WARNING_EX_LOG("  stream_name = %s  ICE dtls connected not ok !!!", m_rtc_ptr->get_rtp_sdp().m_msids[0].c_str());
 				continue;
 			}
 			rtc_ptr->send_consumer(packet);
@@ -281,7 +319,7 @@ namespace chen {
 
 		// If stream found in media ssrcs map, return it.
 		{
-			std::map<uint32, crtp_stream_recv*>::iterator it = this->m_ssrc_rtp_stream_map.find(ssrc);
+			std::unordered_map<uint32, crtp_stream_recv*>::iterator it = this->m_ssrc_rtp_stream_map.find(ssrc);
 
 			if (it != this->m_ssrc_rtp_stream_map.end())
 			{
@@ -294,7 +332,7 @@ namespace chen {
 		// If stream found in RTX ssrcs map, return it.
 		// 这边会看map中是否有ssrc中RTX中重传数据ssrc
 		{
-			std::map<uint32, crtp_stream_recv*>::iterator  it = this->m_rtx_ssrc_rtp_stream_map.find(ssrc);
+			std::unordered_map<uint32, crtp_stream_recv*>::iterator  it = this->m_rtx_ssrc_rtp_stream_map.find(ssrc);
 
 			if (it != this->m_rtx_ssrc_rtp_stream_map.end())
 			{
@@ -408,7 +446,7 @@ namespace chen {
 		}
 		else if (m_params.params.rtx_payload_type == packet->GetPayloadType() && m_params.params.rtx_ssrc == packet->GetSsrc())
 		{
-			std::map<uint32, crtp_stream_recv*>::iterator iter =  m_ssrc_rtp_stream_map.find(m_params.params.ssrc);
+			std::unordered_map<uint32, crtp_stream_recv*>::iterator iter =  m_ssrc_rtp_stream_map.find(m_params.params.ssrc);
 			if (iter == m_ssrc_rtp_stream_map.end())
 			{
 				WARNING_EX_LOG("find (ssrc = %u) failed  create rtp stream (packet_ssrc = %u)(rtx_ssrc = %u) failed !!!", m_params.params.ssrc, packet->GetSsrc(), m_params.params.rtx_ssrc);
@@ -433,7 +471,7 @@ namespace chen {
 		// Mangle the SSRC.
 		{
 			// 2.  修改为服务端ssrc   这个可能是因为不同端可能会冲突的问题吧
-			std::map<uint32, uint32>::const_iterator iter =  m_server_ssrc_map.find(packet->GetSsrc());
+			std::unordered_map<uint32, uint32>::const_iterator iter =  m_server_ssrc_map.find(packet->GetSsrc());
 			if (iter == m_server_ssrc_map.end())
 			{
 				WARNING_EX_LOG("not find ssrc = %u failed !!!", packet->GetSsrc());
@@ -443,7 +481,7 @@ namespace chen {
 				packet->SetSsrc(iter->second);
 			} 
 		}
-
+		//return true;
 		// Mangle RTP header extensions.
 		{
 			thread_local static uint8_t buffer[4096];
@@ -471,7 +509,7 @@ namespace chen {
 				bufferPtr += extenLen;
 			}
 
-			if (params.type == "audio")
+			if (params.type == EMediaAudio)
 			{
 				// Proxy urn:ietf:params:rtp-hdrext:ssrc-audio-level.
 				extenValue = packet->GetExtension(ESSRC_AUDIO_LEVEL, extenLen);
@@ -489,7 +527,7 @@ namespace chen {
 					// bufferPtr += extenLen;
 				}
 			}
-			else if (params.type == "video")
+			else if (params.type == EMediaVideo)
 			{
 				// Add http://www.webrtc.org/experiments/rtp-hdrext/abs-send-time.
 				{

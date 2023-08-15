@@ -158,7 +158,7 @@ TransportFeedbackAdapter::ProcessTransportFeedback(
 
       msg.packet_feedbacks.push_back(feedback);
     } else if (rtp_feedback.arrival_time_ms == PacketFeedback::kNotReceived) {
-      DEBUG_EX_LOG("--- rtp_feedback.arrival_time_ms == PacketFeedback::kNotReceived ---");
+      //DEBUG_EX_LOG("--- rtp_feedback.arrival_time_ms == PacketFeedback::kNotReceived ---");
       msg.sendless_arrival_times.push_back(Timestamp::PlusInfinity());
     } else {
       msg.sendless_arrival_times.push_back(

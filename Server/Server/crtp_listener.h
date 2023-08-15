@@ -68,16 +68,16 @@ namespace chen {
 		crtc_consumer * get_consumer(uint32 ssrc)  ;
 	public: 
 		// Table of SSRC / Producer pairs.
-		std::map<uint32, crtc_producer*>			m_ssrcTable;
-		std::map<uint32 , crtc_producer*>			m_ssrc_rtx_table;
+		std::unordered_map<uint32, crtc_producer*>			m_ssrcTable;
+		std::unordered_map<uint32 , crtc_producer*>			m_ssrc_rtx_table;
 		//  Table of MID / Producer pairs.
 		std::unordered_map<std::string, crtc_producer*>		m_midTable;
 		//  Table of RID / Producer pairs.
 		std::unordered_map<std::string, crtc_producer*>		m_ridTable;
 
 
-		std::map<uint32, crtc_consumer*>			m_ssrc_consumer_table;
-		std::map<uint32, crtc_consumer*>			m_ssrc_rtx_consumer_table;
+		std::unordered_map<uint32, crtc_consumer*>			m_ssrc_consumer_table;
+		std::unordered_map<uint32, crtc_consumer*>			m_ssrc_rtx_consumer_table;
 
 	protected:
 	private:

@@ -42,7 +42,11 @@ purpose:		cmedia_server
 #include "cglobal_rtc_port.h"
 #include "crtsp_server.h"
 #include "cglobal_rtsp.h"
+#include "system_wrappers/source/field_trial.h" // webrtc::field_trial
 namespace chen {
+	static std::once_flag globalInitOnce;
+	static  const  char FieldTrials[] = "WebRTC-Bwe-AlrLimitedBackoff/Enabled/";
+
 	cmedia_server g_media_server;
 
 	cmedia_server::cmedia_server() 
@@ -119,6 +123,8 @@ namespace chen {
 		}
 		SYSTEM_LOG("srtp init OK !!!");
 
+		std::call_once(globalInitOnce, [] { webrtc::field_trial::InitFieldTrialsFromString(FieldTrials); });
+
 		SYSTEM_LOG("dtls certificate init ");
 
 		if (!g_room_mgr.init())
@@ -160,7 +166,7 @@ namespace chen {
 		m_server_intaval = new ctimer(this);
 		SYSTEM_LOG("timer startup  ...");
 
-		m_server_intaval->Start(1u, 100u);
+		m_server_intaval->Start(100u);
 
 		SYSTEM_LOG(" media rtc server init ok");
 
@@ -170,6 +176,7 @@ namespace chen {
 	bool cmedia_server::Loop()
 	{
 		SYSTEM_LOG("starting libuv loop");
+		g_sctp_association_mgr.CreateChecker();
 		//DepLibUV::RunLoop();
 		uv_util::run_loop();
 		SYSTEM_LOG("libuv loop ended");
@@ -247,6 +254,7 @@ namespace chen {
 
 		g_global_config.destroy();
 		SYSTEM_LOG("global config destroy OK !!!");
+		 uv_util::destroy();
 
 		g_global_rtc_port.destroy();
 		SYSTEM_LOG("global rtc port config destroy ok !!!");
@@ -295,6 +303,7 @@ namespace chen {
 					std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
 				}*/
 			}
+			m_server_intaval->Start(100u);
 
 		}
 		//SYSTEM_LOG("Leave main loop");
