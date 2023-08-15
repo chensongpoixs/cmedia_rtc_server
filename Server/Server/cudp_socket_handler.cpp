@@ -32,7 +32,7 @@ namespace chen {
 
 	/* Static. */
 
-	static constexpr size_t ReadBufferSize{ 65536 };
+	static constexpr size_t ReadBufferSize{ (65536 * 64) };
 	thread_local static uint8_t ReadBuffer[ReadBufferSize];
 
 	/* Static methods for UV callbacks. */

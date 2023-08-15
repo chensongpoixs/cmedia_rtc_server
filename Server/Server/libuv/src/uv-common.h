@@ -68,7 +68,7 @@ extern int snprintf(char*, size_t, const char*, ...);
 #define uv__store_relaxed(p, v) do *p = v; while (0)
 #endif
 
-#define UV__UDP_DGRAM_MAXSIZE (64 * 1024)
+#define UV__UDP_DGRAM_MAXSIZE (64 * 1024 * 64)
 
 /* Handle flags. Some flags are specific to Windows or UNIX. */
 enum {

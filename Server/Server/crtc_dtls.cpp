@@ -40,7 +40,7 @@ namespace chen {
 	{ ECRYPTO_AES_CM_128_HMAC_SHA1_80, "SRTP_AES128_CM_SHA1_80" }
 	
 	};
-	static const int32  g_ssl_read_buffer_size = 65536;
+	static const int32  g_ssl_read_buffer_size = 65536 * 64;
 	static uint8        g_ssl_read_buffer[g_ssl_read_buffer_size] = {0};
 	inline static void on_ssl_info(const SSL* ssl, int32 where, int32 ret)
 	{

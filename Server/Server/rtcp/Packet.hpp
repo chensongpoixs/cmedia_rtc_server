@@ -10,7 +10,7 @@ namespace RTC
 	namespace RTCP
 	{
 		// Internal buffer for RTCP serialization.
-		constexpr size_t BufferSize{ 65536 };
+		constexpr size_t BufferSize{ 65536 * 64 };
 		extern uint8_t Buffer[BufferSize];
 
 		// Maximum interval for regular RTCP mode.
