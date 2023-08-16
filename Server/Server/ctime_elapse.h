@@ -32,13 +32,13 @@ namespace chen
 	public:
 		ctime_elapse() : m_cur_time(0)
 		{
-			m_cur_time = ctime_base_api::get_time_ms();
+			m_cur_time = ctime_base_api::get_time_mcs();
 		}
 
 		unsigned int get_elapse()
 		{
 			long long last_time = m_cur_time;
-			m_cur_time = ctime_base_api::get_time_ms();
+			m_cur_time = ctime_base_api::get_time_mcs();
 			if (m_cur_time >= last_time)
 			{
 				return static_cast<unsigned int>(m_cur_time - last_time);

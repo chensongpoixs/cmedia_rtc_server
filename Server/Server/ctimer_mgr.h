@@ -1,10 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2022-08-09
+created: 		2022-08-11
 
 author:			chensong
 
-purpose:		cmedia_server
-
+purpose:		tiemr
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -21,30 +20,73 @@ purpose:		cmedia_server
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 ************************************************************************************************/
-#ifndef _C_MEDIA_SERVER_H_
-#define _C_MEDIA_SERVER_H_
-#include "cnoncopyable.h"
-#include "ctimer.h"
+
+
+#ifndef _C_TIMER_MGR_H_
+#define _C_TIMER_MGR_H_
+#include "clog.h"
+#include "cnet_type.h"
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <queue>
+
 namespace chen {
-	class cmedia_server/* : public ctimer::Listener*/ /*: public  cnoncopyable*/
+	
+	struct ctimer_qunue
 	{
 	public:
-		explicit cmedia_server();
-	    virtual	~cmedia_server();
-
-
-	public:
-		bool init(const char* log_path, const char* config_file);
-		bool Loop();
-		void destroy();
-		void stop();
-	public:
-		//virtual void OnTimer(ctimer * timer);
-	private:
-		volatile bool m_stop;
-		ctimer * m_server_intaval;
+		uint64    timestamp;
+		uint64	  timer_id;
+		//ctimer_qunue() {}
+		//bool operator()(const ctimer_qunue& _Left, const ctimer_qunue& _Right) const
+		//{	// apply operator< to operands
+		//	return (_Left.timestamp < _Right.timestamp);
+		//}
 	};
-	extern cmedia_server g_media_server;
-}
+	inline bool operator<(const ctimer_qunue& _Left, const ctimer_qunue& _Right)  
+	{	// apply operator< to operands
+		return (_Left.timestamp < _Right.timestamp);
+	}
+	inline bool operator>=(const ctimer_qunue& _Left, const ctimer_qunue& _Right)
+	{	// apply operator< to operands
+		return (_Left.timestamp >= _Right.timestamp);
+	}
+	class ctimer;
+	class ctimer_mgr
+	{
+	public:
+	  explicit	ctimer_mgr();
+		virtual ~ctimer_mgr();
 
-#endif // _C_MEDIA_SERVER_H_
+	public:
+		bool init();
+		void update(uint32 uDeltaTime);
+		void destroy();
+
+	public:
+		uint64   get_timer_id();
+	public:
+		void insert(ctimer * timer);
+		void insert(uint64 timestamp, ctimer * timer);
+		void erase(uint64 timestamp, ctimer* timer);
+		void erase(ctimer * timer);
+	private:
+		void _work_pthread();
+	protected:
+	private:
+		uint64          m_timer_id;
+	//	bool			m_stoped;
+	//	std::thread		m_thread;
+
+
+		std::unordered_map <uint64, ctimer* >    m_all_timers;
+		//std::map<uint64, std::set<uint64>/*, cless<uint64>*/>  m_all_callback_timers;
+		std::priority_queue<ctimer_qunue  >      m_all_callback_timers;
+
+	};
+
+	extern ctimer_mgr g_timer_mgr;
+
+}
+#endif //_C_TIMER_MGR_H_

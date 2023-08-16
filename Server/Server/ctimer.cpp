@@ -24,7 +24,7 @@ purpose:		tiemr
 
 #include "ctimer.h"
 #include "cuv_util.h"
-
+#include "ctimer_mgr.h"
 namespace chen {
 
 	/* Static methods for UV callbacks. */
@@ -42,12 +42,14 @@ namespace chen {
 
 	ctimer::ctimer(Listener *listener)
 		: m_listener(listener)
-		, m_uvHandle(NULL)
-		, m_closed(false)
+		, m_id(g_timer_mgr.get_timer_id())
+		, m_timestamp(0)
+		/*, m_uvHandle(NULL)
+		, m_closed(false)*/
 		, m_timeout(0u)
 		, m_repeat(0u)
 	{
-		m_uvHandle = new uv_timer_t;
+		/*m_uvHandle = new uv_timer_t;
 		if (!m_uvHandle)
 		{
 			WARNING_EX_LOG(" uv timer alloc filed !!!");
@@ -65,20 +67,25 @@ namespace chen {
 
 			ERROR_EX_LOG("uv_timer_init() failed: %s", uv_strerror(err));
 			return  ;
-		}
-
+		}*/
+		g_timer_mgr.insert(this);
 	}
 	ctimer::~ctimer()
 	{
-		if (!this->m_closed)
+		g_timer_mgr.erase(this);
+		/*if (!this->m_closed)
 		{
 			Close();
-		}
+		}*/
 	}
 
 	void ctimer::Start(uint64_t timeout, uint64_t repeat)
 	{
-		if (m_closed)
+		m_timestamp = uv_util::GetTimeMs();
+		m_timeout = timeout;
+		m_repeat = repeat;
+		g_timer_mgr.insert(m_timestamp + m_timeout, this);
+		/*if (m_closed)
 		{
 			ERROR_EX_LOG("timer closeed ");
 			return;
@@ -98,34 +105,57 @@ namespace chen {
 		if (0 != err)
 		{
 			ERROR_EX_LOG("uv_timer_start() failed: %s", uv_strerror(err));
-		}
+		}*/
 	}
 	void ctimer::Stop()
 	{
-		if (m_closed)
+		m_timestamp = uv_util::GetTimeMs();
+		/*if (m_closed)
+		{
+			ERROR_EX_LOG("closed");
+			return;
+		}*/
+		//g_timer_mgr.erase(this);
+		/*if (m_closed)
 		{
 			ERROR_EX_LOG("closed");
 			return;
 		}
-		
+
 		int32 err = uv_timer_stop(m_uvHandle);
 		if (0 != err)
 		{
 			ERROR_EX_LOG("uv_timer_stop() failed: %s", uv_strerror(err));
-		}
+		}*/
 	}
 	void ctimer::Close()
 	{
-		if (m_closed)
+		/*if (m_closed)
 		{
 			return;
 		}
 		m_closed = true;
-		uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));
+		uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));*/
 	}
 	void ctimer::Reset()
 	{
-		if (m_closed)
+		uint64  timestamp = uv_util::GetTimeMs();
+		if (m_timeout + m_timeout > timestamp)
+		{
+			return;
+		}
+		if (m_repeat == 0u)
+		{
+			return;
+		}
+		m_timestamp = timestamp;
+		//m_timeout = timeout;
+		//m_repeat = repeat;
+		g_timer_mgr.insert(m_timestamp + m_timeout, this);
+		//uv_is_active();
+		//uv_is_active();
+		//g_timer_mgr.insert(m_id , this);
+		/*if (m_closed)
 		{
 			ERROR_EX_LOG("closed");
 			return;
@@ -146,11 +176,26 @@ namespace chen {
 		if (err != 0)
 		{
 			ERROR_EX_LOG("uv_timer_start() failed: %s", uv_strerror(err));
-		}
+		}*/
 	}
 	void ctimer::Restart()
 	{
-		if (m_closed)
+		uint64  timestamp = uv_util::GetTimeMs();
+		/*if (m_timeout + m_timeout > timestamp)
+		{
+			return;
+		}*/
+		/*if (m_repeat == 0u)
+		{
+			return;
+		}*/
+		//uv_timer_start
+		m_timestamp = timestamp;
+		//m_timeout = timeout;
+		//m_repeat = repeat;
+		g_timer_mgr.insert(m_timestamp + m_timeout, this);
+		//g_timer_mgr.insert(m_id , this);
+		/*if (m_closed)
 		{
 			ERROR_EX_LOG("closed");
 		}
@@ -165,12 +210,21 @@ namespace chen {
 		if (0 != err)
 		{
 			ERROR_EX_LOG("uv_timer_start() failed: %s", uv_strerror(err));
-		}
+		}*/
 	}
 	void ctimer::OnUvTimer()
 	{
 		// Callback TODO@chensong 20220811 
 		//OnTimer(this);
+		if (m_timestamp + m_timeout > uv_util::GetTimeMs())
+		{
+			return;
+		}
 		m_listener->OnTimer(this);
+		if (0 != m_repeat)
+		{
+			m_timestamp = uv_util::GetTimeMs();
+			g_timer_mgr.insert(m_timestamp + m_timeout, this);
+		}
 	}
 }

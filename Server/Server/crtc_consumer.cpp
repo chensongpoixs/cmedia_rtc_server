@@ -68,6 +68,7 @@ namespace chen {
 		std::chrono::microseconds ms;
 #endif 
 		uint8_t payload_type  = packet->GetPayloadType();
+
 		if (m_sync_required && m_rtp_params.params.type == EMediaVideo && !packet->IsKeyFrame())
 		{
 			WARNING_EX_LOG("keyframe ---> return");

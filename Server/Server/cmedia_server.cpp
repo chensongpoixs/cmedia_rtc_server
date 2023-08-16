@@ -43,6 +43,7 @@ purpose:		cmedia_server
 #include "crtsp_server.h"
 #include "cglobal_rtsp.h"
 #include "system_wrappers/source/field_trial.h" // webrtc::field_trial
+#include "ctimer_mgr.h"
 namespace chen {
 	static std::once_flag globalInitOnce;
 	static  const  char FieldTrials[] = "WebRTC-Bwe-AlrLimitedBackoff/Enabled/";
@@ -90,6 +91,12 @@ namespace chen {
 			return false;
 		}
 
+
+		if (!g_timer_mgr.init())
+		{
+			return false;
+		}
+
 		SYSTEM_LOG("global rtc init OK !!!");
 		if (!g_client_msg_dispatch.init())
 		{
@@ -103,11 +110,11 @@ namespace chen {
 
 		SYSTEM_LOG("uv init ...");
 
-		if (!uv_util::init())
+		/*if (!uv_util::init())
 		{
 			return false;
 		}
-		uv_util::print_version();
+		uv_util::print_version();*/
 
 		SYSTEM_LOG("room mgr init ...");
 
@@ -150,23 +157,23 @@ namespace chen {
 
 
 		SYSTEM_LOG("rtsp init ...");
-		g_rtsp_server.init();
+	//	g_rtsp_server.init();
 #ifdef AUTH_CONFIG
 		g_rtsp_server.SetAuthConfig("-_-", "admin", "12345");
 #endif
-		init_rtsp_global();
-		g_rtsp_server.startup();
+		//init_rtsp_global();
+		//g_rtsp_server.startup();
 		SYSTEM_LOG("rtsp start OK !!!");
 
-		SYSTEM_LOG("timer init ...");
+		//SYSTEM_LOG("timer init ...");
 		/*if (!ctimer::init())
 		{
 			return false;
 		}*/
-		m_server_intaval = new ctimer(this);
-		SYSTEM_LOG("timer startup  ...");
+		//m_server_intaval = new ctimer(this);
+		//SYSTEM_LOG("timer startup  ...");
 
-		m_server_intaval->Start(100u);
+		//m_server_intaval->Start(100u);
 
 		SYSTEM_LOG(" media rtc server init ok");
 
@@ -175,34 +182,45 @@ namespace chen {
 
 	bool cmedia_server::Loop()
 	{
-		SYSTEM_LOG("starting libuv loop");
+		SYSTEM_LOG("starting  loop");
 		g_sctp_association_mgr.CreateChecker();
 		//DepLibUV::RunLoop();
-		uv_util::run_loop();
-		SYSTEM_LOG("libuv loop ended");
-		//static const uint32 TICK_TIME = 100;
+		//uv_util::run_loop();
+		//SYSTEM_LOG("libuv loop ended");
+		static const uint32 TICK_TIME = 100;
 		////启动内网并等待初始化完成
 
-		//ctime_elapse time_elapse;
-		//uint32 uDelta = 0;
-		//while (!m_stop)
-		//{
-		//	uDelta += time_elapse.get_elapse();
+		ctime_elapse time_elapse;
+		uint32 uDelta = 0;
+		uint32 count = 0;
+		uint32 timer_tick = 0;
+		while (!m_stop)
+		{
+			
+			uDelta += time_elapse.get_elapse();
 
-		//	//	g_game_client.update(uDelta);
-		//	g_wan_server.update(uDelta);
+			if (++timer_tick > 10)
+			{
+				timer_tick = 0;
+				g_timer_mgr.update(1);
+			}
+			if (++count > 100)
+			{ 
+				count = 0;
+				//	g_game_client.update(uDelta);
+				g_wan_server.update(10); 
+				g_room_mgr.update(10);
+			}
+			
 
- 
-		//	g_room_mgr.update(uDelta);
 
+			uDelta = time_elapse.get_elapse();
 
-		//	uDelta = time_elapse.get_elapse();
-
-		//	if (uDelta < TICK_TIME)
-		//	{
-		//		std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
-		//	}
-		//}
+			if (uDelta < TICK_TIME)
+			{
+				std::this_thread::sleep_for(std::chrono::microseconds(TICK_TIME - uDelta));
+			}
+		}
 
 		//SYSTEM_LOG("Leave main loop");
 
@@ -221,7 +239,7 @@ namespace chen {
 			m_server_intaval = NULL;
 		//	SYSTEM_LOG("g_wan_server timer destroy OK !!!");
 		}
-		
+		g_timer_mgr.destroy();
 
 		g_wan_server.shutdown();
 		g_wan_server.destroy();
@@ -234,8 +252,8 @@ namespace chen {
 		SYSTEM_LOG("rtsp server Destroy OK !!!");
 
 
-		uv_util::destroy();
-		SYSTEM_LOG("uv destroy OK !!!");
+		//uv_util::destroy();
+		//SYSTEM_LOG("uv destroy OK !!!");
 		//g_client_collection_mgr.destroy();
 		//SYSTEM_LOG("g_client_collection_mgr Destroy OK !!!");
 
@@ -267,46 +285,46 @@ namespace chen {
 
 	void cmedia_server::stop()
 	{
-		m_server_intaval->Stop();
+		//m_server_intaval->Stop();
 		m_stop = true;
 	}
 
-	void cmedia_server::OnTimer(ctimer * timer)
-	{
-		//static const uint32 TICK_TIME = 100;
-		////启动内网并等待初始化完成
-		if (timer == m_server_intaval)
-		{
-			static int64 prev_time_ms = uv_util::GetTimeMsInt64();
+	//void cmedia_server::OnTimer(ctimer * timer)
+	//{
+	//	//static const uint32 TICK_TIME = 100;
+	//	////启动内网并等待初始化完成
+	//	if (timer == m_server_intaval)
+	//	{
+	//		static int64 prev_time_ms = uv_util::GetTimeMsInt64();
 
-			uint32 tick_time = uv_util::GetTimeMsInt64() - prev_time_ms;
+	//		uint32 tick_time = uv_util::GetTimeMsInt64() - prev_time_ms;
 
-			//DEBUG_EX_LOG("   %u ms", tick_time);
-			prev_time_ms = uv_util::GetTimeMsInt64();
-			//ctime_elapse time_elapse;
-			//uint32 uDelta = 0;
-			if (!m_stop)
-			{
-				//uDelta += time_elapse.get_elapse();
+	//		//DEBUG_EX_LOG("   %u ms", tick_time);
+	//		prev_time_ms = uv_util::GetTimeMsInt64();
+	//		//ctime_elapse time_elapse;
+	//		//uint32 uDelta = 0;
+	//		if (!m_stop)
+	//		{
+	//			//uDelta += time_elapse.get_elapse();
 
-				//	g_game_client.update(uDelta);
-				g_wan_server.update(tick_time);
+	//			//	g_game_client.update(uDelta);
+	//			g_wan_server.update(tick_time);
 
 
-				g_room_mgr.update(tick_time);
+	//			g_room_mgr.update(tick_time);
 
-				g_transport_mgr.update(tick_time);
-				//uDelta = time_elapse.get_elapse();
+	//			g_transport_mgr.update(tick_time);
+	//			//uDelta = time_elapse.get_elapse();
 
-				/*if (uDelta < TICK_TIME)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
-				}*/
-			}
-			m_server_intaval->Start(100u);
+	//			/*if (uDelta < TICK_TIME)
+	//			{
+	//				std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
+	//			}*/
+	//		}
+	//		m_server_intaval->Start(100u);
 
-		}
-		//SYSTEM_LOG("Leave main loop");
-	}
+	//	}
+	//	//SYSTEM_LOG("Leave main loop");
+	//}
 
 }

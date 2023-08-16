@@ -36,12 +36,12 @@ namespace chen {
 	class cglobal_rtc_port
 	{
 	public:
-		cglobal_rtc_port() 
+		explicit cglobal_rtc_port() 
 		: m_min_port(0)
 		, m_max_port(0)
 		, m_cur_use_port(0)
 		, m_unuse_port(){}
-		~cglobal_rtc_port();
+		virtual ~cglobal_rtc_port();
 
 
 	public:

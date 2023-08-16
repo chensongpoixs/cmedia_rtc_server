@@ -46,7 +46,19 @@ purpose:		crtc_transport
 //#include "ctransport_tuple.h"
 //#include "cice_server.h"
 namespace chen {
-
+	struct crtc_rtp_packet
+	{
+		// Cloned packet.
+		RTC::RtpPacket* packet{ nullptr };
+		// Memory to hold the cloned packet (with extra space for RTX encoding).
+		uint8  store[RTC::MtuSize + 100];
+		// Last time this packet was resent.
+		uint64  resentAtMs{ 0u };
+		// Number of times this packet was resent.
+		uint8  sentTimes{ 0u };
+		// Whether the packet has been already RTX encoded.
+		bool rtxEncoded{ false };
+	};
 	class cdtls_session;
 	class ctransport_tuple;
 	class cice_server;
@@ -417,6 +429,8 @@ public:
 		bool									m_stoped;
 		std::list<std::shared_ptr<cqueue_packet>> m_pakcet;
 		std::mutex								m_lock;
+		std::list<std::shared_ptr<crtc_rtp_packet>>              m_rtp_packets;
+		std::mutex                              m_rtp_packets_lock;
 	};
 
 

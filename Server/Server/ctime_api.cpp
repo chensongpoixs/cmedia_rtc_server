@@ -158,6 +158,12 @@ namespace chen
 			
 			return  std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - g_cur_time ).count();
 		}
+		long long get_time_mcs()
+		{
+			//g_cur_time
+
+			return  std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - g_cur_time).count();
+		}
 		time_t get_today_stamp_time64(int hour)
 		{
 			tm now_tm;

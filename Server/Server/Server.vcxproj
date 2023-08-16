@@ -392,6 +392,7 @@
     <ClCompile Include="ctcp_connection_handler.cpp" />
     <ClCompile Include="ctcp_server.cpp" />
     <ClCompile Include="ctcp_server_handler.cpp" />
+    <ClCompile Include="ctimer_mgr.cpp" />
     <ClCompile Include="ctime_util.cpp" />
     <ClCompile Include="ctransport_feedback.cc" />
     <ClCompile Include="ctransport_mgr.cpp" />
@@ -712,6 +713,7 @@
     <ClInclude Include="ctcp_connection_handler.h" />
     <ClInclude Include="ctcp_server.h" />
     <ClInclude Include="ctcp_server_handler.h" />
+    <ClInclude Include="ctimer_mgr.h" />
     <ClInclude Include="ctime_util.h" />
     <ClInclude Include="ctransport_feedback.h" />
     <ClInclude Include="ctransport_mgr.h" />

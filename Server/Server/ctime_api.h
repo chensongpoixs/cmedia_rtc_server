@@ -49,6 +49,7 @@ namespace chen
 		int time64_datetime_format(time_t time, char* out, char date_conn, char datetime_conn, char time_conn);
 	
 		long long get_time_ms();
+		long long get_time_mcs();
 		//int time64_today();
 		time_t get_today_stamp_time64(int hour);
 	}  // namespace ctime_base_api

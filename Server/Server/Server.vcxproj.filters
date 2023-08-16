@@ -1105,6 +1105,9 @@
     <ClCompile Include="crtc_udp_socket_handler.cpp">
       <Filter>rtc_net</Filter>
     </ClCompile>
+    <ClCompile Include="ctimer_mgr.cpp">
+      <Filter>timer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -2060,6 +2063,9 @@
     </ClInclude>
     <ClInclude Include="crtc_udp_socket_handler.h">
       <Filter>rtc_net</Filter>
+    </ClInclude>
+    <ClInclude Include="ctimer_mgr.h">
+      <Filter>timer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

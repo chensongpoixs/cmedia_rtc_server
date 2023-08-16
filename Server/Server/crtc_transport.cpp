@@ -1110,6 +1110,13 @@ namespace chen {
 			//WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
 			return;
 		}
+		{
+			std::shared_ptr<crtc_rtp_packet> rtc_rtp_ptr = std::make_shared<crtc_rtp_packet>();
+			rtc_rtp_ptr->packet = packet->Clone(rtc_rtp_ptr->store);
+			std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
+			m_rtp_packets.push_back(rtc_rtp_ptr);
+		}
+		return;
 		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet);
 		if (!consumer_ptr)
 		{
@@ -1374,7 +1381,7 @@ namespace chen {
 	}
 	void crtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
-		/*std::shared_ptr<cqueue_packet> packet = std::make_shared<cqueue_packet>();
+		std::shared_ptr<cqueue_packet> packet = std::make_shared<cqueue_packet>();
 		packet->socket = socket;
 		memcpy(packet->data, data, len);
 		packet->len = len;
@@ -1384,7 +1391,7 @@ namespace chen {
 			m_pakcet.push_back(packet);
 		}
 
-		return;*/
+		return;
 #if RTP_PACKET_MCS
 		 std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
@@ -2773,6 +2780,7 @@ namespace chen {
 	void crtc_transport::_work_pthread()
 	{
 		std::list<std::shared_ptr<cqueue_packet>> ps;
+		std::list<std::shared_ptr<crtc_rtp_packet>> rtps;
 		while (!m_stoped)
 		{
 			{
@@ -2789,6 +2797,40 @@ namespace chen {
 				ctransport_tuple tuple(cur->socket, &cur->remoteAddr);
 				OnPacketReceived(&tuple, cur->data, cur->len, &cur->remoteAddr);
 				ps.pop_front();
+			}
+
+			/*std::shared_ptr<crtc_rtp_packet> rtc_rtp_ptr = std::make_shared<crtc_rtp_packet>();
+			rtc_rtp_ptr->packet = packet->Clone(rtc_rtp_ptr->store);
+			std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
+			m_rtp_packets.push_back(rtc_rtp_ptr);*/
+			{
+				//
+				std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
+				if (!m_rtp_packets.empty())
+				{
+					rtps.swap(m_rtp_packets);
+				}
+			}
+			while (rtps.size())
+			{
+				std::shared_ptr<crtc_rtp_packet>& cur = rtps.front();
+				//ctransport_tuple tuple(cur->socket, &cur->remoteAddr);
+				//OnPacketReceived(&tuple, cur->data, cur->len, &cur->remoteAddr);
+				crtc_consumer * consumer_ptr = m_all_rtp_listener.get_consumer(cur->packet);
+				if (!consumer_ptr)
+				{
+					WARNING_EX_LOG("not find consumer ssrc = %u", cur->packet->GetSsrc());
+					//delete cur->packet;
+					//cur->packet = NULL;
+					//return;
+				}
+				else
+				{
+					consumer_ptr->send_rtp_packet(cur->packet);
+				}
+				delete cur->packet;
+				cur->packet = NULL;
+				rtps.pop_front();
 			}
 			if (m_pakcet.empty())
 			{
@@ -2895,6 +2937,7 @@ namespace chen {
 		// RTCP timer.
 		if (timer == m_timer_ptr)
 		{
+			uint8_t cur_Buffer[1024 * 64] = {0};
 			auto interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
 			uint64_t nowMs = uv_util::GetTimeMs();
 		//	m_remote_estimator.send_periodic_Feedbacks();
@@ -2910,7 +2953,7 @@ namespace chen {
 				// Send the RTCP compound packet if there is a sender report.
 				if (packet->HasSenderReport())
 				{
-					packet->Serialize(RTC::RTCP::Buffer);
+					packet->Serialize(cur_Buffer);
 					send_rtcp_compound_packet(packet.get());
 					//SendRtcpCompoundPacket(packet.get());
 				}
@@ -2926,14 +2969,14 @@ namespace chen {
 				// Send the RTCP compound packet if there is a sender report.
 				if (packet->HasSenderReport())
 				{
-					packet->Serialize(RTC::RTCP::Buffer);
+					packet->Serialize(cur_Buffer);
 					send_rtcp_compound_packet(packet.get());
 					//SendRtcpCompoundPacket(packet.get());
 				}
 			}
 			if (packet->GetReceiverReportCount() != 0u)
 			{
-				packet->Serialize(RTC::RTCP::Buffer);
+				packet->Serialize(cur_Buffer);
 				send_rtcp_compound_packet(packet.get());
 			}
 			// Recalculate next RTCP interval.

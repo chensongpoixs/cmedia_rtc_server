@@ -68,7 +68,7 @@ namespace chen {
 			return uv_is_active(reinterpret_cast<uv_handle_t*>(m_uvHandle)) != 0;
 		}
 
-		
+		uint64 get_timer_id() const { return m_id; }
 	public:
 		/* Callbacks fired by UV events. */
 		void OnUvTimer();
@@ -81,6 +81,8 @@ namespace chen {
 
 	private:
 		Listener	*		m_listener;
+		uint64				m_id{0};
+		uint64				m_timestamp;
 		// Allocated by this.
 		uv_timer_t*			m_uvHandle/*{ nullptr }*/;
 		// Others.

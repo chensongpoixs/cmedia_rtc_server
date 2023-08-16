@@ -23,7 +23,7 @@ namespace chen {
 		{
 			//read_callback_();
 			//recvfrom();
-			while (true)
+			if (true)
 			{
 				/*int
 					WSAAPI
@@ -45,10 +45,10 @@ namespace chen {
 				{
 					 read_callback_(m_data_ptr, bytes_read, &from);
 				}
-				else
+				/*else
 				{
 					break;
-				}
+				}*/
 			}
 		}
 

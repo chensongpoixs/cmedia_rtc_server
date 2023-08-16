@@ -1,10 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2022-08-09
+created: 		2022-08-11
 
 author:			chensong
 
-purpose:		cmedia_server
-
+purpose:		tiemr
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -21,30 +20,89 @@ purpose:		cmedia_server
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 ************************************************************************************************/
-#ifndef _C_MEDIA_SERVER_H_
-#define _C_MEDIA_SERVER_H_
-#include "cnoncopyable.h"
+
+
+#include "ctimer_mgr.h"
 #include "ctimer.h"
+#include "cuv_util.h"
 namespace chen {
-	class cmedia_server/* : public ctimer::Listener*/ /*: public  cnoncopyable*/
+	ctimer_mgr g_timer_mgr;
+	ctimer_mgr::ctimer_mgr()
+		: m_timer_id(0u)
+		//, m_stoped(false)
+		, m_all_timers()
+		, m_all_callback_timers()
 	{
-	public:
-		explicit cmedia_server();
-	    virtual	~cmedia_server();
+	}
+	ctimer_mgr::~ctimer_mgr()
+	{
+	}
+	bool ctimer_mgr::init()
+	{
+		//m_stoped = false;
+		//m_thread = std::thread(&ctimer_mgr::_work_pthread, this);
+		return true;
+	}
+	void ctimer_mgr::update(uint32 uDeltaTime)
+	{
+		uint64 cur_ms = uv_util::GetTimeMs();
+		/*for (std::map<uint64, std::set<uint64>>::iterator iter = m_all_callback_timers.begin(); iter != m_all_callback_timers.end(); ++iter)
+		{
+			if (iter->first < cur_ms)
+			{
+				break;
+			}
+			 
+			iter->second.clear();
 
-
-	public:
-		bool init(const char* log_path, const char* config_file);
-		bool Loop();
-		void destroy();
-		void stop();
-	public:
-		//virtual void OnTimer(ctimer * timer);
-	private:
-		volatile bool m_stop;
-		ctimer * m_server_intaval;
-	};
-	extern cmedia_server g_media_server;
+		}*/
+		if (m_all_callback_timers.empty())
+		{
+			return;
+		}
+		while (m_all_callback_timers.top().timestamp > cur_ms)
+		{
+			std::unordered_map <uint64, ctimer* >::iterator iter =  m_all_timers.find(m_all_callback_timers.top().timer_id);
+			if (iter != m_all_timers.end())
+			{
+				iter->second->OnUvTimer();
+			}
+			m_all_callback_timers.pop();
+		}
+	}
+	void ctimer_mgr::destroy()
+	{
+		m_all_callback_timers.size();
+		m_all_timers.clear();
+	}
+	uint64 ctimer_mgr::get_timer_id()
+	{
+		return ++m_timer_id;
+	}
+	void ctimer_mgr::insert(ctimer * timer)
+	{
+		m_all_timers.insert(std::make_pair(timer->get_timer_id(), timer));
+	}
+	void ctimer_mgr::insert(uint64 timestamp, ctimer * timer)
+	{
+		//m_all_timers[1] = timer;
+		//m_all_callback_timers[timestamp].insert(1) ;
+		m_all_callback_timers.push({timestamp, timer->get_timer_id()});
+		//m_all_timers.insert(std::make_pair(1, timer));
+		//m_all_callback_timers.insert(std::make_pair(1, 1));
+		//m_all_callback_timers.erase();
+	}
+	void ctimer_mgr::erase(uint64 timestamp, ctimer* timer)
+	{
+		// 再mu中有可能重复key
+		//m_all_callback_timers.push({1, 1});
+		
+	}
+	void ctimer_mgr::erase(ctimer * timer)
+	{
+		m_all_timers.erase(timer->get_timer_id());
+	}
+	void ctimer_mgr::_work_pthread()
+	{
+	}
 }
-
-#endif // _C_MEDIA_SERVER_H_
