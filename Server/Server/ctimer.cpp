@@ -75,37 +75,7 @@ namespace chen {
 			Close();
 		}
 	}
-	/*bool ctimer::init()
-	{
-		m_uvHandle = new uv_timer_t;
-		if (!m_uvHandle)
-		{
-			WARNING_EX_LOG(" uv timer alloc filed !!!");
-			return false;
-		}
 
-		m_uvHandle->data = static_cast<void*>(this);
-
-		int32 err = uv_timer_init(uv_util::get_loop(), m_uvHandle);
-
-		if (0 != err)
-		{
-			delete m_uvHandle;
-			m_uvHandle = NULL;
-
-			ERROR_EX_LOG("uv_timer_init() failed: %s", uv_strerror(err));
-			return false;
-		}
-
-		return true;
-	}*/
-	/*void ctimer::destroy()
-	{
-		if (!m_closed)
-		{
-			Close();
-		}
-	}*/
 	void ctimer::Start(uint64_t timeout, uint64_t repeat)
 	{
 		if (m_closed)

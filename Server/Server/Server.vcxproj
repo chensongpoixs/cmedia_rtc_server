@@ -84,7 +84,7 @@
     <IncludePath>$(C_INCLUDE)\libyuv\include;$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libfffffffuv\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(C_INCLUDE)\libdav1d\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(C_INCLUDE)\libyuv\lib\x64\release;$(C_INCLUDE)\protobuf\lib\x64\release;$(C_INCLUDE)\libsrtp2\lib\x64\release;$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\json\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuvfffffffffff\lib\x64\Release;$(C_INCLUDE)\openssl_1.1.0\lib\x64\release;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(C_INCLUDE)\libdav1d\lib\x64\release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)3</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -137,7 +137,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0602;_INTSAFE_H_INCLUDED_;_WINSOCK_DEPRECATED_NO_WARNINGS;_WINDOWS;MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>RTP_PACKET_FILE_MCS;RTP_PACKET_MCS=0;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0602;_INTSAFE_H_INCLUDED_;_WINSOCK_DEPRECATED_NO_WARNINGS;_WINDOWS;MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>libuv/src/win;libuv/src;libuv/include;libwebrtc;./;rtc_sdp;rtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>
       </LanguageStandard>
@@ -318,6 +318,7 @@
     <ClCompile Include="cnetwork.cpp" />
     <ClCompile Include="cnet_adapter_test.cpp" />
     <ClCompile Include="cnet_rtsp_server.cpp" />
+    <ClCompile Include="cnet_session.cpp" />
     <ClCompile Include="Consumer.cpp" />
     <ClCompile Include="cortc.cpp" />
     <ClCompile Include="cpacket_buffer.cpp" />
@@ -349,6 +350,8 @@
     <ClCompile Include="crtc_stun_packet.cpp" />
     <ClCompile Include="crtc_track_description.cpp" />
     <ClCompile Include="crtc_transport.cpp" />
+    <ClCompile Include="crtc_udp_socket.cpp" />
+    <ClCompile Include="crtc_udp_socket_handler.cpp" />
     <ClCompile Include="crtc_user_config.cpp" />
     <ClCompile Include="crtp_connection.cpp" />
     <ClCompile Include="crtp_fb.cpp" />
@@ -375,6 +378,7 @@
     <ClCompile Include="csctp_association.cpp" />
     <ClCompile Include="csctp_association_mgr.cpp" />
     <ClCompile Include="csdp_util.cpp" />
+    <ClCompile Include="cselect_scheduler.cpp" />
     <ClCompile Include="csender_report.cpp" />
     <ClCompile Include="csequence_number.cpp" />
     <ClCompile Include="cseq_manager.cpp" />
@@ -623,6 +627,7 @@
     <ClInclude Include="cnet_adapter_test.h" />
     <ClInclude Include="cnet_define.h" />
     <ClInclude Include="cnet_rtsp_server.h" />
+    <ClInclude Include="cnet_session.h" />
     <ClInclude Include="cntp_time.h" />
     <ClInclude Include="common_types.h" />
     <ClInclude Include="Consumer.hpp" />
@@ -659,6 +664,8 @@
     <ClInclude Include="crtc_track_description.h" />
     <ClInclude Include="crtc_transport.h" />
     <ClInclude Include="crtc_transport_define.h" />
+    <ClInclude Include="crtc_udp_socket.h" />
+    <ClInclude Include="crtc_udp_socket_handler.h" />
     <ClInclude Include="crtc_user_config.h" />
     <ClInclude Include="crtp.h" />
     <ClInclude Include="crtp_connection.h" />
@@ -689,6 +696,7 @@
     <ClInclude Include="csctp_association.h" />
     <ClInclude Include="csctp_association_mgr.h" />
     <ClInclude Include="csdp_util.h" />
+    <ClInclude Include="cselect_scheduler.h" />
     <ClInclude Include="csender_report.h" />
     <ClInclude Include="csequence_number.h" />
     <ClInclude Include="cseq_manager.h" />

@@ -478,6 +478,12 @@ namespace chen {
 		m_timer_ptr = new ctimer(this);
 		m_ice_server_ptr = new cice_server(this);
 		m_ice_server_ptr->init(local_sdp.get_ice_ufrag(), local_sdp.get_ice_pwd());
+		if (m_thread.joinable())
+		{
+			m_thread.join();
+		}
+		m_stoped = false;
+		m_thread = std::thread(&crtc_transport::_work_pthread, this);
 		return true;
 	}
 	bool crtc_transport::create_players(const std::map<uint32_t, crtc_track_description*>& sub_relations)
@@ -563,6 +569,11 @@ namespace chen {
 			}
 			
 		}*/
+		m_stoped = true;
+		if (m_thread.joinable())
+		{
+			m_thread.join();
+		}
 		for (crtc_transport* consumer : m_consumer_transports)
 		{
 			//consumer->IsConnected()
@@ -640,6 +651,7 @@ namespace chen {
 			delete m_ice_server_ptr;
 			m_ice_server_ptr = NULL;
 		}
+		
 	}
 	bool crtc_transport::is_active() const
 	{
@@ -1362,48 +1374,64 @@ namespace chen {
 	}
 	void crtc_transport::OnUdpSocketPacketReceived(cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr)
 	{
+		/*std::shared_ptr<cqueue_packet> packet = std::make_shared<cqueue_packet>();
+		packet->socket = socket;
+		memcpy(packet->data, data, len);
+		packet->len = len;
+		memcpy(&packet->remoteAddr, remoteAddr, sizeof(*remoteAddr));
+		{
+			std::lock_guard<std::mutex> lock(m_lock);
+			m_pakcet.push_back(packet);
+		}
+
+		return;*/
+#if RTP_PACKET_MCS
 		 std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
 		std::chrono::microseconds ms; 
+		
+#endif
 		ctransport_tuple tuple(socket, remoteAddr);
 		OnPacketReceived(&tuple, data, len, remoteAddr);
-	 //	cur_time_ms = std::chrono::steady_clock::now();
-		//dur = cur_time_ms - pre_time;
-		//ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
-		//if (ms.count() > 50)
-		//{
-		//	std::string rtp_type;
+#if RTP_PACKET_MCS
+	 	cur_time_ms = std::chrono::steady_clock::now();
+		dur = cur_time_ms - pre_time;
+		ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+		if (ms.count() > 50)
+		{
+			std::string rtp_type;
 
 
-		//	if (crtc_stun_packet::is_stun(data, len))
-		//	{ 
-		//		rtp_type = "stun";
-		//	}
-		//	// Check if it's RTCP.
-		//	else if (RTC::RTCP::Packet::IsRtcp(data, len))
-		//	{ 
-		//		rtp_type = "rtcp";
-		//	}
-		//	// Check if it's RTP.
-		//	else if (RTC::RtpPacket::IsRtp(data, len))
-		//	{
-		//		rtp_type = "rtp";
-		//	}
-		//	// Check if it's DTLS.
-		//	else if (RTC::DtlsTransport::IsDtls(data, len))
-		//	{
-		//		rtp_type = "dtls";
-		//	}
-		//	else
-		//	{
+			if (crtc_stun_packet::is_stun(data, len))
+			{ 
+				rtp_type = "stun";
+			}
+			// Check if it's RTCP.
+			else if (RTC::RTCP::Packet::IsRtcp(data, len))
+			{ 
+				rtp_type = "rtcp";
+			}
+			// Check if it's RTP.
+			else if (RTC::RtpPacket::IsRtp(data, len))
+			{
+				rtp_type = "rtp";
+			}
+			// Check if it's DTLS.
+			else if (RTC::DtlsTransport::IsDtls(data, len))
+			{
+				rtp_type = "dtls";
+			}
+			else
+			{
 
-		//		WARNING_EX_LOG("ignoring received packet of unknown type");
-		//	}
+				WARNING_EX_LOG("ignoring received packet of unknown type");
+			}
 
 
-		//	NORMAL_EX_LOG("udp recv  %s packet [microseconds = %" PRIi64 "]", rtp_type.c_str(),  ms.count());
-		//}
+			NORMAL_EX_LOG("udp recv  %s packet [microseconds = %" PRIi64 "]", rtp_type.c_str(),  ms.count());
+		}
+#endif
 		//int64 elapse = static_cast<uint32_t>(ms.count());
 		//NORMAL
 		//if (elapse < TICK_TIME)
@@ -1902,16 +1930,34 @@ namespace chen {
 			return;
 		}
 		//return;
-		/*std::chrono::steady_clock::time_point cur_time_ms;
+#if RTP_PACKET_MCS
+		std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
-		std::chrono::microseconds ms;*/
-		if (!m_srtp_recv_session_ptr->DecryptSrtp((uint8_t *)data, &len))
+		std::chrono::microseconds ms;
+#endif
+#if RTP_PACKET_FILE_MCS
+		std::chrono::steady_clock::time_point cur_time_ms;
+		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::duration dur;
+		std::chrono::microseconds ms;
+#endif
+		if (!m_srtp_recv_session_ptr->DecryptSrtp(const_cast<uint8_t*>(data), &len))
 		{
 			WARNING_EX_LOG("rtp unprotect rtp failed !!!-------->>>>>>>");
 		}
 		else
 		{
+#if 0
+			cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 10)
+			{
+				WARNING_EX_LOG("udp decrypt  rtp packet   --> [microseconds = %" PRIi64 "]", ms.count());
+			}
+			pre_time = cur_time_ms;
+#endif 
 			//return;
 			//NORMAL_EX_LOG("rtp unprotect rtp OK !!!-------->>>>>>>");
 			RTC::RtpPacket* packet = RTC::RtpPacket::Parse(data, len);
@@ -1922,7 +1968,33 @@ namespace chen {
 
 				return;
 			}
-			 
+#if RTP_PACKET_FILE_MCS
+			cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			static FILE * out_file_enpypt_ptr = fopen("./rtp_data_enpty.csv", "wb+");
+			if (out_file_enpypt_ptr)
+			{
+				fprintf(out_file_enpypt_ptr, "%" PRIi64 ", %" PRIi32 "\n", ms.count(), len);
+				fflush(out_file_enpypt_ptr);
+			}
+#endif 
+#if RTP_PACKET_MCS
+			cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			static FILE * out_file_enpypt_ptr = fopen("./rtp_data_enpty.csv", "wb+");
+			if (out_file_enpypt_ptr)
+			{
+				fprintf(out_file_enpypt_ptr, "%" PRIi64 ", %" PRIi32 "\n", ms.count(), len);
+				fflush(out_file_enpypt_ptr);
+			}
+			if (ms.count() > 10)
+			{
+				WARNING_EX_LOG("udp parse  rtp packet   --> [microseconds = %" PRIi64 "]", ms.count());
+			}
+			pre_time = cur_time_ms;
+#endif 
 			if (packet->GetPayloadType() == 106)
 			{
 				//NORMAL_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
@@ -1960,6 +2032,7 @@ namespace chen {
 			}
 
 			producer_ptr->receive_rtp_packet(packet);
+			delete packet;
 			//if (m_all_video_ssrc == packet->GetSsrc())
 			//{
 			//	m_remote_estimator.on_packet_arrival(packet->GetSequenceNumber(), packet->GetSsrc(), packet->GetTimestamp());
@@ -2000,14 +2073,15 @@ namespace chen {
 			//}
 			
 			//crtc_producer::mangle_rtp_packet(packet, producer_ptr->get_rtcp_params().params/*params*/);
-			
-			/*cur_time_ms = std::chrono::steady_clock::now();
+#if RTP_PACKET_MCS
+			cur_time_ms = std::chrono::steady_clock::now();
 			dur = cur_time_ms - pre_time;
 			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
-			if (ms.count() > 40)
+			if (ms.count() > 10)
 			{
-				WARNING_EX_LOG("udp recv rtp packet  encode --> [microseconds = %" PRIi64 "]", ms.count());
-			}*/
+				WARNING_EX_LOG("udp recv rtp packet   ==>>--> [microseconds = %" PRIi64 "]", ms.count());
+			}
+#endif 
 			
 			
 		}
@@ -2694,6 +2768,33 @@ namespace chen {
 		//	return srs_error_wrap(err, "handle rtcp");
 		//}
 		return true;
+	}
+
+	void crtc_transport::_work_pthread()
+	{
+		std::list<std::shared_ptr<cqueue_packet>> ps;
+		while (!m_stoped)
+		{
+			{
+				//
+				std::lock_guard<std::mutex> lock(m_lock);
+				if (!m_pakcet.empty())
+				{
+					ps.swap(m_pakcet);
+				}
+			}
+			while (ps.size())
+			{
+				std::shared_ptr<cqueue_packet>& cur = ps.front();
+				ctransport_tuple tuple(cur->socket, &cur->remoteAddr);
+				OnPacketReceived(&tuple, cur->data, cur->len, &cur->remoteAddr);
+				ps.pop_front();
+			}
+			if (m_pakcet.empty())
+			{
+				std::this_thread::sleep_for(std::chrono::microseconds(10));
+			}
+		}
 	}
 
 	void crtc_transport::broadcast_consumers(RTC::RtpPacket * packet)

@@ -1,11 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2022-08-10
+created: 		2023-01-15
 
 author:			chensong
 
-purpose:		room
-
-Copyright boost
+purpose:		_C_RTC_TRACK_DESCRIPTION_H_
 
 输赢不重要，答案对你们有什么意义才重要。
 
@@ -24,35 +22,106 @@ Copyright boost
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 ************************************************************************************************/
 
-#ifndef _C_RTP_STREAM_DEFINE_H_
-#define _C_RTP_STREAM_DEFINE_H_
-
+#ifndef _C_NET_SESSION_H_
+#define _C_NET_SESSION_H_
 #include "cnet_type.h"
+#include <sstream>
+#include <iostream>
+#include <vector>
+#include <map>
+#include "crtc_sdp.h"
+#include "cmedia_desc.h"
+#include "crtx_paylod_des.h"
+#include "cred_payload.h"
+#include "cvideo_payload.h"
+#include "caudio_payload.h"
+#include "cred_payload.h"
+#include "crtp_stream_send.h"
+#include "crtc_producer.h"
 namespace chen {
-
-	static const  uint16  MaxDropout{ 3000 };
-	static const  uint16  MaxMisorder{ 1500 };
-	static const  uint32  RtpSeqMod{ 1 << 16 };
-	static const  size_t ScoreHistogramLength{ 24 };
-	static const  uint64  InactivityCheckInterval{ 1500u };        // In ms.
-	static const  uint64  InactivityCheckIntervalWithDtx{ 5000u }; // In ms.
-
-
-
-	enum EMediaDataType
+	enum EventType
 	{
-		EMediaAudio = 0,
-		EMediaVideo,
-		EMediaChannelData,
+		EVENT_NONE = 0,
+		EVENT_IN = 1,
+		EVENT_PRI = 2,
+		EVENT_OUT = 4,
+		EVENT_ERR = 8,
+		EVENT_HUP = 16,
+		EVENT_RDHUP = 8192
 	};
-
-	enum EDataSubType
+	class cnet_session
 	{
-		EDataOpus = 0,
-		EDataH264,
-		EDataAV1,
-		EDataRtx,
+	public:
+		typedef std::function<void(uint8* data, int32 len, struct sockaddr_storage* addr)> EventReadCallback;
+		typedef std::function<void()> EventWriteCallback;
+
+	public:
+		explicit cnet_session(SOCKET socket);
+		
+		virtual ~cnet_session();
+
+		SOCKET GetSocket() const { return m_socket; }
+		int  GetEvents() const { return events_; }
+		void SetEvents(int events) { events_ = events; }
+
+
+		void SetReadCallback(const EventReadCallback& cb)
+		{
+			read_callback_ = cb;
+		}
+
+		void SetWriteCallback(const EventWriteCallback& cb)
+		{
+			write_callback_ = cb;
+		}
+
+	/*	void SetCloseCallback(const EventCallback& cb)
+		{
+			close_callback_ = cb;
+		}
+
+		void SetErrorCallback(const EventCallback& cb)
+		{
+			error_callback_ = cb;
+		}*/
+
+
+		void EnableReading()
+		{
+			events_ |= EVENT_IN;
+		}
+
+		void EnableWriting()
+		{
+			events_ |= EVENT_OUT;
+		}
+
+		void DisableReading()
+		{
+			events_ &= ~EVENT_IN;
+		}
+
+		void DisableWriting()
+		{
+			events_ &= ~EVENT_OUT;
+		}
+		void HandleEvent(int32 event);
+
+		bool IsNoneEvent() const { return events_ == EVENT_NONE; }
+		bool IsWriting() const { return (events_ & EVENT_OUT) != 0; }
+		bool IsReading() const { return (events_ & EVENT_IN) != 0; }
+
+
+
+		
+	private: 
+		EventReadCallback read_callback_ = [](uint8* data, int32 len, struct sockaddr_storage* addr) {};
+		EventWriteCallback write_callback_ = [] (){};
+			// EventCallback close_callback_ = [] {};
+			// EventCallback error_callback_ = [] {};
+		SOCKET      m_socket;
+		int			events_ = 0;
+		uint8 *		m_data_ptr{NULL};
 	};
 }
-
-#endif //_C_RTP_STREAM_DEFINE_H_
+#endif //

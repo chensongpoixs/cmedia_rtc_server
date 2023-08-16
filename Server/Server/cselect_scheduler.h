@@ -1,11 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2022-08-10
+created: 		2023-01-15
 
 author:			chensong
 
-purpose:		room
-
-Copyright boost
+purpose:		_C_RTC_TRACK_DESCRIPTION_H_
 
 输赢不重要，答案对你们有什么意义才重要。
 
@@ -24,35 +22,52 @@ Copyright boost
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 ************************************************************************************************/
 
-#ifndef _C_RTP_STREAM_DEFINE_H_
-#define _C_RTP_STREAM_DEFINE_H_
-
+#ifndef _C_SELECT_SCHEDULER_H_
+#define _C_SELECT_SCHEDULER_H_
 #include "cnet_type.h"
+#include <sstream>
+#include <iostream>
+#include <vector>
+#include <map>
+#include "crtc_sdp.h"
+#include "cmedia_desc.h"
+#include "crtx_paylod_des.h"
+#include "cred_payload.h"
+#include "cvideo_payload.h"
+#include "caudio_payload.h"
+#include "cred_payload.h"
+#include "crtp_stream_send.h"
+#include "crtc_producer.h"
+#include "cnet_session.h"
 namespace chen {
 
-	static const  uint16  MaxDropout{ 3000 };
-	static const  uint16  MaxMisorder{ 1500 };
-	static const  uint32  RtpSeqMod{ 1 << 16 };
-	static const  size_t ScoreHistogramLength{ 24 };
-	static const  uint64  InactivityCheckInterval{ 1500u };        // In ms.
-	static const  uint64  InactivityCheckIntervalWithDtx{ 5000u }; // In ms.
-
-
-
-	enum EMediaDataType
+	class cselect_scheduler
 	{
-		EMediaAudio = 0,
-		EMediaVideo,
-		EMediaChannelData,
-	};
+	public:
 
-	enum EDataSubType
-	{
-		EDataOpus = 0,
-		EDataH264,
-		EDataAV1,
-		EDataRtx,
+		explicit cselect_scheduler(); 
+		virtual ~cselect_scheduler();
+
+
+	public:
+		void UpdateChannel(cnet_session* session);
+		void RemoveChannel(cnet_session* session);
+		bool HandleEvent(int32 timeout);
+
+	private:
+		fd_set fd_read_backup_;
+		fd_set fd_write_backup_;
+		fd_set fd_exp_backup_;
+
+		SOCKET maxfd_ = 0;
+
+		bool is_fd_read_reset_ = false;
+		bool is_fd_write_reset_ = false;
+		bool is_fd_exp_reset_ = false;
+
+		std::mutex								mutex_;
+		std::unordered_map<SOCKET, cnet_session*> m_sessions;
+
 	};
 }
-
-#endif //_C_RTP_STREAM_DEFINE_H_
+#endif //
