@@ -61,10 +61,12 @@ namespace chen {
 
 	void crtc_consumer::send_rtp_packet(RTC::RtpPacket* packet)
 	{
-		/*std::chrono::steady_clock::time_point cur_time_ms;
+#if RTP_PACKET_MCS
+		std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
-		std::chrono::microseconds ms;*/
+		std::chrono::microseconds ms;
+#endif 
 		uint8_t payload_type  = packet->GetPayloadType();
 		if (m_sync_required && m_rtp_params.params.type == EMediaVideo && !packet->IsKeyFrame())
 		{
@@ -123,14 +125,29 @@ namespace chen {
 		// Process the packet.
 		if (m_rtp_stream_send_ptr->receive_packet(packet))
 		{
-			/*cur_time_ms = std::chrono::steady_clock::now();
+#if RTP_PACKET_MCS
+			cur_time_ms = std::chrono::steady_clock::now();
 			dur = cur_time_ms - pre_time;
 			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
-			NORMAL_EX_LOG("udp send consumer  packet [microseconds = %" PRIi64 "]", ms.count());*/
+			if (ms.count() > 5)
+			{
+				WARNING_EX_LOG("udp   consumer recv seq  $$$$$$$$$$$$$$$$$$$$ packet [microseconds = %" PRIi64 "]", ms.count());
+			}
+			pre_time = cur_time_ms;
+#endif 
 			// Send the packet.
 			//this->listener->OnConsumerSendRtpPacket(this, packet);
 			//NORMAL_EX_LOG("client [send seq = %u][ssrc = %u][seq = %u][timestamp = %u]", origSeq, packet->GetSsrc(), packet->GetSequenceNumber(), packet->GetTimestamp());
 			m_rtc_ptr->send_rtp_data(packet);
+#if RTP_PACKET_MCS
+			cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			if (ms.count() > 5)
+			{
+				WARNING_EX_LOG("udp send consumer $$$$$$$$$$$$$$$$$$$$ packet [microseconds = %" PRIi64 "]", ms.count());
+			}
+#endif 
 			// May emit 'trace' event.
 			//EmitTraceEventRtpAndKeyFrameTypes(packet);
 		}

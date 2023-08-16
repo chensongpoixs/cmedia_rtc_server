@@ -27,7 +27,8 @@
 #include "handle-inl.h"
 #include "stream-inl.h"
 #include "req-inl.h"
-
+#include <stdio.h>
+#include <stddef.h>
 
 /*
  * Threshold of active udp streams for which to preallocate udp read buffers.
@@ -448,7 +449,7 @@ static int uv__send(uv_udp_send_t* req,
 
   return 0;
 }
-
+static FILE * out_file_ptr = NULL;
 
 void uv_process_udp_recv_req(uv_loop_t* loop, uv_udp_t* handle,
     uv_req_t* req) {
@@ -521,11 +522,15 @@ void uv_process_udp_recv_req(uv_loop_t* loop, uv_udp_t* handle,
                     (struct sockaddr*) &from,
                     &from_len,
                     NULL,
-                    NULL) != SOCKET_ERROR) {
+                    NULL) != SOCKET_ERROR  ) {
 
       /* Message received */
       handle->recv_cb(handle, bytes, &buf, (const struct sockaddr*) &from, 0);
-    } else {
+	  /*buf.len = 0;*/
+	  //bytes = 0;
+    } 
+	else 
+	{
       err = WSAGetLastError();
       if (err == WSAEMSGSIZE) {
         /* Message truncated */
@@ -556,6 +561,21 @@ done:
       !(handle->flags & UV_HANDLE_READ_PENDING)) {
     uv_udp_queue_recv(loop, handle);
   }
+#if 0
+  else
+  {
+	    // out_file_ptr 
+	  if (!out_file_ptr)
+	  {
+		  out_file_ptr = fopen("./libuv.log", "wb+");
+	  }
+	  int reading = (handle->flags & UV_HANDLE_READING > 0 ? 1 : 0);
+	  int read_pending = (handle->flags & UV_HANDLE_READ_PENDING > 0 ? 0 : 1);
+	  fprintf(out_file_ptr, "=========[UV_HANDLE_READING = %u][UV_HANDLE_READ_PENDING = %u]==============> UV read ==>\n" , reading, read_pending);
+	  printf("=========[UV_HANDLE_READING = %u][UV_HANDLE_READ_PENDING = %u]==============> UV read ==>\n", reading, read_pending);
+	  fflush(out_file_ptr);
+  }
+#endif 
 
   DECREASE_PENDING_REQ_COUNT(handle);
 }

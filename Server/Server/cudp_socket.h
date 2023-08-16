@@ -20,6 +20,21 @@ purpose:		cudp_socket
 我叫他本心猎手。他可能是和宇宙同在的级别 但是我并不害怕，我仔细回忆自己平淡的一生 寻找本心猎手的痕迹。
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
+
+
+
+UDP主要丢包原因
+
+ 
+1、接收端处理时间过长导致丢包：接收端调用recv方法收到数据后，处理数据花了一些时间，处理完后再次调用recv方法，在这二次调用间隔里，发过来的包可能丢失。对于这种情况可以修改接收端，将包接收后存入一个缓冲区。
+
+2、发送的包太大导致丢包：虽然send方法会将大包切割成小包然后再发送，但包太大也不行。例如超过50K的一个udp包，不切割直接通过send方法发送也会导致这个包丢失。这种情况需要切割成小包再逐个send。
+
+3、UDP发送的包较大，超过接受者缓存导致丢包：几个大的udp包可能会超过接收者的缓冲，导致丢包。这种情况可以设置socket接收缓冲。比如将接收缓冲增加到64K。
+
+4、发送包的频率太快：即使每个包的大小都小于接收缓冲，但是如果频率太快中间不sleep，也有可能导致丢包。这种情况有时通过设置socket接收缓冲可以解决，但有时解决不了。解决方法就是减小发送频率。
+
+5、局域网内不丢包，公网上丢包。这个问题也可以通过对packet进行切割并sleep来解决。但是如果网络流量太大，这个办法也不能保证不丢包。另外还有这几种方法来解决丢包： 减小流量、换tcp协议传输或者做丢包重传的工作。
 ************************************************************************************************/
 
 
@@ -48,7 +63,7 @@ namespace chen {
 
 	public:
 		/* Pure virtual methods inherited from ::UdpSocketHandler. */
-		void UserOnUdpDatagramReceived(const uint8_t* data, size_t len, const struct sockaddr* addr)  ;
+		void UserOnUdpDatagramReceived(const uint8_t* data, size_t len, const struct sockaddr* addr)  override;
 	private:
 		// Passed by argument.
 		Listener*			m_listener;// { nullptr };

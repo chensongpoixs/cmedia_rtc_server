@@ -1093,6 +1093,18 @@
     <ClCompile Include="libuv\src\version.c">
       <Filter>libuv\src</Filter>
     </ClCompile>
+    <ClCompile Include="cselect_scheduler.cpp">
+      <Filter>rtc_net</Filter>
+    </ClCompile>
+    <ClCompile Include="cnet_session.cpp">
+      <Filter>rtc_net</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_udp_socket.cpp">
+      <Filter>rtc_net</Filter>
+    </ClCompile>
+    <ClCompile Include="crtc_udp_socket_handler.cpp">
+      <Filter>rtc_net</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -2036,6 +2048,18 @@
     </ClInclude>
     <ClInclude Include="libuv\src\uv-common.h">
       <Filter>libuv\src</Filter>
+    </ClInclude>
+    <ClInclude Include="cselect_scheduler.h">
+      <Filter>rtc_net</Filter>
+    </ClInclude>
+    <ClInclude Include="cnet_session.h">
+      <Filter>rtc_net</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_udp_socket.h">
+      <Filter>rtc_net</Filter>
+    </ClInclude>
+    <ClInclude Include="crtc_udp_socket_handler.h">
+      <Filter>rtc_net</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

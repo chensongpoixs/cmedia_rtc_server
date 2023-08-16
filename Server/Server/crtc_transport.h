@@ -50,7 +50,15 @@ namespace chen {
 	class cdtls_session;
 	class ctransport_tuple;
 	class cice_server;
+	//cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr
 
+
+		struct cqueue_packet {
+			cudp_socket* socket;
+			uint8     data[65535];
+			size_t   len;
+			struct sockaddr remoteAddr;
+		};
 	class crtc_transportlinster
 	{
 	public:
@@ -135,6 +143,8 @@ namespace chen {
 			, m_ice_server_ptr(NULL)
 			, m_consumer_transports()
 			, m_producer_transports()
+			, m_stoped(false)
+			, m_pakcet()
 		 {}
 
 		virtual ~crtc_transport();
@@ -153,6 +163,7 @@ namespace chen {
 		void destroy();
 		bool is_active() const;
 		bool IsConnected() const;
+
 	public:
 
 		void request_key_frame();
@@ -296,6 +307,7 @@ public:
 
 		bool _dispatch_rtcp(crtcp_common* rtcp);
 
+		void _work_pthread();
 
 	public:
 
@@ -401,6 +413,10 @@ public:
 		std::unordered_set<crtc_transport*>		m_consumer_transports;
 		std::unordered_set<crtc_transport*>		m_producer_transports;
 
+		std::thread								m_thread;
+		bool									m_stoped;
+		std::list<std::shared_ptr<cqueue_packet>> m_pakcet;
+		std::mutex								m_lock;
 	};
 
 

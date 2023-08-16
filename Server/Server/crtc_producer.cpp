@@ -51,10 +51,18 @@ namespace chen {
 		//return true;
 		// Count number of RTP streams.
 	//	auto numRtpStreamsBefore = this->mapSsrcRtpStream.size();
-		/*std::chrono::steady_clock::time_point cur_time_ms;
+#if RTP_PACKET_MCS
+		std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
-		std::chrono::microseconds ms;*/
+		std::chrono::microseconds ms;
+#endif
+#if RTP_PACKET_FILE_MCS
+		std::chrono::steady_clock::time_point cur_time_ms;
+		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::duration dur;
+		std::chrono::microseconds ms;
+#endif
 		crtp_stream_recv* rtpStream = _get_rtp_stream(packet);
 
 		if (!rtpStream)
@@ -92,6 +100,7 @@ namespace chen {
 				WARNING_EX_LOG("[ssrc = %u][seq = %u][timestamp = %u] ", packet->GetSsrc(), packet->GetSequenceNumber());
 				return false;
 			}
+			 
 		}
 		// RTX packet.
 		else if (packet->GetSsrc() == rtpStream->get_rtx_ssrc())
@@ -160,28 +169,62 @@ namespace chen {
 		{
 			return ReceiveRtpPacketResult::DISCARDED;
 		}*/
-
+#if 0
+		cur_time_ms = std::chrono::steady_clock::now();
+		dur = cur_time_ms - pre_time;
+		ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+		if (ms.count() > 5)
+		{
+			WARNING_EX_LOG("==>udp recv rtp packet seq #########  --> [microseconds = %" PRIi64 "]", ms.count());
+		}
+		pre_time = cur_time_ms;
+#endif 
 		  mangle_rtp_packet(packet, m_params.params);
-		 
-		  /*cur_time_ms = std::chrono::steady_clock::now();
+#if RTP_PACKET_MCS
+		  cur_time_ms = std::chrono::steady_clock::now();
 		    dur = cur_time_ms - pre_time;
 		    ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
-			if (ms.count() > 20)
+
+			static FILE * out_file_recv_ptr = fopen("./rtp_recv_packet.csv", "wb+");
+			if (out_file_recv_ptr)
 			{
-				WARNING_EX_LOG("==>udp recv rtp packet  recv packet  --> [microseconds = %" PRIi64 "]", ms.count());
+				fprintf(out_file_recv_ptr, "%" PRIi64 ", %" PRIi32 "\n", ms.count(), packet->GetSize());
+				fflush(out_file_recv_ptr);
+			}
+			if (ms.count() > 5)
+			{
+				WARNING_EX_LOG("==>udp recv rtp packet mangle_rtp_packet #########  --> [microseconds = %" PRIi64 "]", ms.count());
 		   }
-			pre_time = cur_time_ms;*/
+			pre_time = cur_time_ms;
+#endif 
+#if RTP_PACKET_FILE_MCS
+			cur_time_ms = std::chrono::steady_clock::now();
+			dur = cur_time_ms - pre_time;
+			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+
+			static FILE * out_file_recv_ptr = fopen("./rtp_recv_packet.csv", "wb+");
+			if (out_file_recv_ptr)
+			{
+				fprintf(out_file_recv_ptr, "%" PRIi64 ", %" PRIi32 "\n", ms.count(), packet->GetSize());
+				fflush(out_file_recv_ptr);
+			}
+			 
+			pre_time = cur_time_ms;
+#endif 
 		  //return true;
 		  if (m_rtc_ptr)
 		  {
 			  m_rtc_ptr->broadcast_consumers(packet);
-			  /*cur_time_ms = std::chrono::steady_clock::now();
+
+#if RTP_PACKET_MCS
+			   cur_time_ms = std::chrono::steady_clock::now();
 			  dur = cur_time_ms - pre_time;
 			  ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
 			  if (ms.count() > 20)
 			  {
-				  WARNING_EX_LOG("==>udp recv rtp packet  send consumer  packet  --> [microseconds = %" PRIi64 "]", ms.count());
-			  }*/
+				  WARNING_EX_LOG("==>udp recv rtp packet  send consumer  ######## packet  --> [microseconds = %" PRIi64 "]", ms.count());
+			  } 
+#endif 
 		  }
 		 // for (crtc_transport* transport: m)
 		  return true;
