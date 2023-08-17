@@ -32,8 +32,12 @@ namespace chen {
 	{
 		for (std::pair<const uint32, crtc_producer*> &p : m_ssrcTable)
 		{
-			p.second->destroy();
-			delete p.second;
+			if (p.second)
+			{
+				p.second->destroy();
+				delete p.second;
+			}
+			
 		}
 		for (std::pair<const uint32, crtc_consumer*> &p : m_ssrc_consumer_table)
 		{
@@ -78,7 +82,13 @@ namespace chen {
 
 	chen::crtc_producer * crtp_listener::get_producer( RTC::RtpPacket * packet)
 	{ 
-		std::unordered_map<uint32, crtc_producer*>::iterator iter = m_ssrcTable.find(packet->GetSsrc());
+		chen::crtc_producer * producer_ptr = m_ssrcTable[packet->GetSsrc()];
+		if (producer_ptr)
+		{
+			return producer_ptr;
+		}
+		return m_ssrc_rtx_table[packet->GetSsrc()];
+		/*std::unordered_map<uint32, crtc_producer*>::iterator iter = m_ssrcTable.find(packet->GetSsrc());
 		if (iter != m_ssrcTable.end())
 		{
 			return iter->second;
@@ -91,18 +101,18 @@ namespace chen {
 		if (iter != m_ssrc_rtx_table.end())
 		{
 			return iter->second;
-		}
+		}*/
 		return NULL;
 	}
 
 	crtc_producer * crtp_listener::get_producer(uint32 ssrc)  
 	{ 
-		std::unordered_map<uint32, crtc_producer*>::const_iterator iter = m_ssrcTable.find(ssrc);
+		/*std::unordered_map<uint32, crtc_producer*>::const_iterator iter = m_ssrcTable.find(ssrc);
 		if (iter != m_ssrcTable.end())
 		{
 			return iter->second;
-		}
-		return nullptr;
+		}*/
+		return m_ssrcTable[ssrc];
 	}
 
 	bool crtp_listener::add_consumer(uint32 ssrc, crtc_consumer * consumer)
@@ -140,34 +150,49 @@ namespace chen {
 		
 	}
 
-	crtc_consumer * crtp_listener::get_consumer( RTC::RtpPacket * packet)
+	crtc_consumer * crtp_listener::get_consumer(RTC::RtpPacket * packet)
 	{
 		/*if (m_ssrc_consumer_table.empty())
 		{
 			return NULL;
 		 }*/
-		std::unordered_map<uint32, crtc_consumer*>::iterator iter = m_ssrc_consumer_table.find(packet->GetSsrc());
-		if (iter != m_ssrc_consumer_table.end())
+		 /*std::unordered_map<uint32, crtc_consumer*>::iterator iter = m_ssrc_consumer_table.find(packet->GetSsrc());
+		 if (iter != m_ssrc_consumer_table.end())
+		 {
+			 return iter->second;
+		 }*/
+		crtc_consumer* consumer_ptr = m_ssrc_consumer_table[packet->GetSsrc()];
+		if (consumer_ptr)
 		{
-			return iter->second;
+			return consumer_ptr;
 		}
-
-		if (  m_ssrc_rtx_consumer_table.empty())
+		/*if (  m_ssrc_rtx_consumer_table.empty())
 		{
 			return NULL;
-		}
-		iter = m_ssrc_rtx_consumer_table.find(packet->GetSsrc());
+		}*/
+		return m_ssrc_rtx_consumer_table[packet->GetSsrc()];
+		/*iter = m_ssrc_rtx_consumer_table.find(packet->GetSsrc());
 		if (iter != m_ssrc_rtx_consumer_table.end())
 		{
 			return iter->second;
-		}
+		}*/
 		return nullptr;
 	}
 
 	crtc_consumer * crtp_listener::get_consumer(uint32 ssrc)  
 	{ 
 		 
-		std::unordered_map<uint32, crtc_consumer*>::const_iterator iter = m_ssrc_consumer_table.find(ssrc);
+		crtc_consumer* consumer_ptr = m_ssrc_consumer_table[ssrc];
+		if (consumer_ptr)
+		{
+			return consumer_ptr;
+		}
+		/*if (  m_ssrc_rtx_consumer_table.empty())
+		{
+			return NULL;
+		}*/
+		return m_ssrc_rtx_consumer_table[ssrc];
+		/*std::unordered_map<uint32, crtc_consumer*>::const_iterator iter = m_ssrc_consumer_table.find(ssrc);
 		if (iter != m_ssrc_consumer_table.end())
 		{
 			return iter->second;
@@ -180,7 +205,7 @@ namespace chen {
 		if (iter != m_ssrc_rtx_consumer_table.end())
 		{
 			return iter->second;
-		}
+		}*/
 		return nullptr;
 	}
 

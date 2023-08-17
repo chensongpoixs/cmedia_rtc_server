@@ -47,6 +47,8 @@ namespace RTC
 	  :  listener(listener), bweType(bweType),
 	    initialAvailableBitrate(std::max<uint32_t>(initialAvailableBitrate, MinBitrate)),
 	    maxOutgoingBitrate(maxOutgoingBitrate)
+		, m_next_timestamp(0)
+		, m_stoped(false)
 	{
 		//MS_TRACE();
 
@@ -68,17 +70,27 @@ namespace RTC
 
 		this->probationGenerator = new RTC::RtpProbationGenerator();
 
-		this->processTimer = new chen::ctimer(this);
+		//this->processTimer = new chen::ctimer(this);
 		//ctimer::init();
 		// NOTE: This is supposed to recover computed available bandwidth after
 		// network issues.
 		this->rtpTransportControllerSend->EnablePeriodicAlrProbing(true);
-		processTimer->Start(std::min(
-				// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
-				this->rtpTransportControllerSend->packet_sender()->TimeUntilNextProcess(),
-				// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
-				this->controllerFactory->GetProcessInterval().ms()
-			));
+		//processTimer->Start(std::min(
+		//		// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
+		//		this->rtpTransportControllerSend->packet_sender()->TimeUntilNextProcess(),
+		//		// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
+		//		this->controllerFactory->GetProcessInterval().ms()
+		//	));
+
+
+		uint64 ms = std::min(
+			// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
+			this->rtpTransportControllerSend->packet_sender()->TimeUntilNextProcess(),
+			// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
+			this->controllerFactory->GetProcessInterval().ms()
+		);
+		m_next_timestamp = uv_util::GetTimeMs() + ms;
+
 		// clang-format off
 		//this->processTimer->Start(std::min(
 		//	// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
@@ -102,9 +114,10 @@ namespace RTC
 		delete this->probationGenerator;
 		this->probationGenerator = nullptr;
 
-		
-		 delete this->processTimer;
-		 this->processTimer = nullptr;
+		m_next_timestamp = 0;
+		m_stoped = true;
+		 /*delete this->processTimer;
+		 this->processTimer = nullptr;*/
 	}
 
 	void TransportCongestionControlClient::TransportConnected()
@@ -396,7 +409,7 @@ namespace RTC
 	{
 		//MS_TRACE();
 
-		 if (timer == this->processTimer)
+		 if (/*timer == this->processTimer*/ m_next_timestamp < uv_util::GetTimeMs())
 		{
 			// Time to call RtpTransportControllerSend::Process().
 			this->rtpTransportControllerSend->Process();
@@ -411,12 +424,20 @@ namespace RTC
 			//	// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
 			//	this->controllerFactory->GetProcessInterval().ms()
 			//));
-			processTimer->Start(std::min<uint64_t>(
+			//processTimer->Start(std::min<uint64_t>(
+			//	// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
+			//	this->rtpTransportControllerSend->packet_sender()->TimeUntilNextProcess(),
+			//	// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
+			//	this->controllerFactory->GetProcessInterval().ms()
+			//	));
+			int64 ms = std::min<uint64_t>(
 				// Depends on probation being done and WebRTC-Pacer-MinPacketLimitMs field trial.
 				this->rtpTransportControllerSend->packet_sender()->TimeUntilNextProcess(),
 				// Fixed value (25ms), libwebrtc/api/transport/goog_cc_factory.cc.
 				this->controllerFactory->GetProcessInterval().ms()
-				));
+				);
+			m_next_timestamp = uv_util::GetTimeMs()  + ms;
+
 			/* clang-format on */
 
 			MayEmitAvailableBitrateEvent(this->bitrates.availableBitrate);

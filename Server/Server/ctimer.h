@@ -27,7 +27,7 @@ purpose:		tiemr
 #include "clog.h"
 #include "cnet_type.h"
 
-
+#include "cuv_util.h"
 
 namespace chen {
 
@@ -65,7 +65,7 @@ namespace chen {
 		}
 		bool IsActive() const
 		{
-			return uv_is_active(reinterpret_cast<uv_handle_t*>(m_uvHandle)) != 0;
+			return m_timestamp + m_timeout > uv_util::GetTimeMs() /*uv_is_active(reinterpret_cast<uv_handle_t*>(m_uvHandle)) != 0*/;
 		}
 
 		uint64 get_timer_id() const { return m_id; }

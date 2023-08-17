@@ -475,7 +475,7 @@ namespace chen {
 		}
 		
 
-		m_timer_ptr = new ctimer(this);
+		//m_timer_ptr = new ctimer(this);
 		m_ice_server_ptr = new cice_server(this);
 		m_ice_server_ptr->init(local_sdp.get_ice_ufrag(), local_sdp.get_ice_pwd());
 		if (m_thread.joinable())
@@ -593,12 +593,13 @@ namespace chen {
 			delete m_dtls_ptr;
 			m_dtls_ptr = NULL;
 		}
-		if (m_timer_ptr)
+		/*if (m_timer_ptr)
 		{
 			m_timer_ptr->Stop();
 			delete m_timer_ptr;
 			m_timer_ptr = NULL;
-		}
+		}*/
+		m_stoped_rtcp = true;
 		for (std::vector<cudp_socket*>::iterator iter = m_udp_sockets.begin(); iter != m_udp_sockets.end(); ++iter)
 		{
 			cudp_socket* ptr = *iter;
@@ -1113,8 +1114,9 @@ namespace chen {
 		{
 			std::shared_ptr<crtc_rtp_packet> rtc_rtp_ptr = std::make_shared<crtc_rtp_packet>();
 			rtc_rtp_ptr->packet = packet->Clone(rtc_rtp_ptr->store);
-			std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
-			m_rtp_packets.push_back(rtc_rtp_ptr);
+			/*std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
+			m_rtp_packets.push_back(rtc_rtp_ptr);*/
+			m_rtp_queues.enqueue(rtc_rtp_ptr);
 		}
 		return;
 		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet);
@@ -1270,7 +1272,7 @@ namespace chen {
 		{
 			//m_sctp_association_ptr->TransportConnected();
 		}
-		if (m_timer_ptr)
+		//if (m_timer_ptr)
 		{
 			//m_timer_ptr->Start(static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs / 2));
 		}
@@ -1386,11 +1388,13 @@ namespace chen {
 		memcpy(packet->data, data, len);
 		packet->len = len;
 		memcpy(&packet->remoteAddr, remoteAddr, sizeof(*remoteAddr));
-		{
+		m_queues.enqueue(packet);
+		/*{
 			std::lock_guard<std::mutex> lock(m_lock);
 			m_pakcet.push_back(packet);
 		}
 
+*/
 		return;
 #if RTP_PACKET_MCS
 		 std::chrono::steady_clock::time_point cur_time_ms;
@@ -1541,9 +1545,12 @@ namespace chen {
 		for (auto& kv : m_all_rtp_listener.m_ssrc_consumer_table)
 		{
 			//auto* consumer = kv.second;
-			auto desiredBitrate = kv.second->get_desired_bitrate();
+			if (kv.second)
+			{
+				auto desiredBitrate = kv.second->get_desired_bitrate();
 
-			totalDesiredBitrate += desiredBitrate;
+				totalDesiredBitrate += desiredBitrate;
+			}
 		}
 
 		NORMAL_EX_LOG("total desired bitrate: %" PRIu32, totalDesiredBitrate);
@@ -1737,7 +1744,7 @@ namespace chen {
 			m_rtc_net_state = ERtcNetworkStateDtls;
 			//cdtls_client * dtls_client_ptr = dynamic_cast<cdtls_client*>(m_dtls_ptr);
 			//dtls_client_ptr->init();
-			//m_dtls_ptr->start_active_handshake("server");
+			m_dtls_ptr->start_active_handshake("server");
 		}
 	}
 
@@ -2010,6 +2017,10 @@ namespace chen {
 				{
 					WARNING_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
 				}
+				/*else
+				{
+					NORMAL_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
+				}*/
 				seq = packet->GetSequenceNumber() + 1;
 			}
 			//return;
@@ -2781,60 +2792,128 @@ namespace chen {
 	{
 		std::list<std::shared_ptr<cqueue_packet>> ps;
 		std::list<std::shared_ptr<crtc_rtp_packet>> rtps;
+		std::chrono::steady_clock::time_point cur_time_ms;
+		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+		std::chrono::steady_clock::duration dur;
+		std::chrono::nanoseconds ms;
+		uint32 count = 0;
 		while (!m_stoped)
 		{
+			pre_time = std::chrono::steady_clock::now();
+			//{
+			//	//
+			//	std::lock_guard<std::mutex> lock(m_lock);
+			//	if (!m_pakcet.empty())
+			//	{
+			//		ps.swap(m_pakcet);
+			//	}
+			//}
 			{
-				//
-				std::lock_guard<std::mutex> lock(m_lock);
-				if (!m_pakcet.empty())
+				std::shared_ptr<cqueue_packet>  cur = m_queues.dequeue();
+				while (cur)
 				{
-					ps.swap(m_pakcet);
+
+					//std::chrono::steady_clock::time_point ps_pre_time = std::chrono::steady_clock::now();
+					//std::shared_ptr<cqueue_packet>& cur = ps.front();
+					ctransport_tuple tuple(cur->socket, &cur->remoteAddr);
+					OnPacketReceived(&tuple, cur->data, cur->len, &cur->remoteAddr);
+					//dur = std::chrono::steady_clock::now() - ps_pre_time;
+					//ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+					//size_t msc = ms.count();
+					size_t len = cur->len;
+					cur = cur->next;
+					//ps.pop_front();
+					/*dur = std::chrono::steady_clock::now() - ps_pre_time;
+					ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+					static FILE * out_file_ptr = ::fopen("recv_rtp_packet.csv", "wb+");
+					if (out_file_ptr)
+					{
+						fprintf(out_file_ptr, "%" PRIi32 ",%" PRIi64 " ,%" PRIi64 "\n", len, msc, ms.count());
+						fflush(out_file_ptr);
+					}*/
 				}
-			}
-			while (ps.size())
-			{
-				std::shared_ptr<cqueue_packet>& cur = ps.front();
-				ctransport_tuple tuple(cur->socket, &cur->remoteAddr);
-				OnPacketReceived(&tuple, cur->data, cur->len, &cur->remoteAddr);
-				ps.pop_front();
 			}
 
 			/*std::shared_ptr<crtc_rtp_packet> rtc_rtp_ptr = std::make_shared<crtc_rtp_packet>();
 			rtc_rtp_ptr->packet = packet->Clone(rtc_rtp_ptr->store);
 			std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
 			m_rtp_packets.push_back(rtc_rtp_ptr);*/
+			//{
+			//	//
+			//	std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
+			//	if (!m_rtp_packets.empty())
+			//	{
+			//		rtps.swap(m_rtp_packets);
+			//	}
+			//}
 			{
-				//
-				std::lock_guard<std::mutex> lock(m_rtp_packets_lock);
-				if (!m_rtp_packets.empty())
+				std::shared_ptr<crtc_rtp_packet>  cur = m_rtp_queues.dequeue();
+				while (cur)
 				{
-					rtps.swap(m_rtp_packets);
+					//std::chrono::steady_clock::time_point ps_pre_time = std::chrono::steady_clock::now();
+					//std::shared_ptr<crtc_rtp_packet>& cur = rtps.front();
+					//ctransport_tuple tuple(cur->socket, &cur->remoteAddr);
+					//OnPacketReceived(&tuple, cur->data, cur->len, &cur->remoteAddr);
+					crtc_consumer * consumer_ptr = m_all_rtp_listener.get_consumer(cur->packet);
+					if (!consumer_ptr)
+					{
+						WARNING_EX_LOG("not find consumer ssrc = %u", cur->packet->GetSsrc());
+						//delete cur->packet;
+						//cur->packet = NULL;
+						//return;
+					}
+					else
+					{
+						/*if (cur->packet->GetPayloadType() == 106 || 107 == cur->packet->GetPayloadType())
+						{
+							RTC::Codecs::H264::ProcessRtpPacket(cur->packet);
+						}*/
+						consumer_ptr->send_rtp_packet(cur->packet);
+					}
+					//dur = std::chrono::steady_clock::now() - ps_pre_time;
+					//ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+					//size_t msc = ms.count();
+					int32 size = cur->packet->GetSize();
+					delete cur->packet;
+					cur->packet = NULL;
+					//rtps.pop_front();
+					cur = cur->next;
+					/*dur = std::chrono::steady_clock::now() - ps_pre_time;
+					ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+					static FILE * out_send_file_ptr = ::fopen("send_rtp_packet.csv", "wb+");
+					if (out_send_file_ptr)
+					{
+						fprintf(out_send_file_ptr, "%" PRIi32 ",%" PRIi64 " %" PRIi64 "\n", size, msc, ms.count());
+						fflush(out_send_file_ptr);
+					}*/
 				}
 			}
-			while (rtps.size())
+			if (!m_stoped && ++count > 1000)
 			{
-				std::shared_ptr<crtc_rtp_packet>& cur = rtps.front();
-				//ctransport_tuple tuple(cur->socket, &cur->remoteAddr);
-				//OnPacketReceived(&tuple, cur->data, cur->len, &cur->remoteAddr);
-				crtc_consumer * consumer_ptr = m_all_rtp_listener.get_consumer(cur->packet);
-				if (!consumer_ptr)
+				count = 0;
+				if (m_tcc_client)
 				{
-					WARNING_EX_LOG("not find consumer ssrc = %u", cur->packet->GetSsrc());
-					//delete cur->packet;
-					//cur->packet = NULL;
-					//return;
+					m_tcc_client->OnTimer(NULL);
 				}
-				else
+				if (m_tcc_server)
 				{
-					consumer_ptr->send_rtp_packet(cur->packet);
+					m_tcc_server->OnTimer(NULL);
 				}
-				delete cur->packet;
-				cur->packet = NULL;
-				rtps.pop_front();
+
+				OnTimer(NULL);
+
+
 			}
-			if (m_pakcet.empty())
+			if (m_queues.empty()&& m_rtp_queues.empty())
 			{
-				std::this_thread::sleep_for(std::chrono::microseconds(10));
+				cur_time_ms = std::chrono::steady_clock::now();
+				dur = cur_time_ms - pre_time;
+				ms = std::chrono::duration_cast<std::chrono::nanoseconds>(dur);
+				if (ms.count() < 1000)
+				{
+					std::this_thread::sleep_for(std::chrono::nanoseconds(1000-ms.count()));
+				} 
+				
 			}
 		}
 	}
@@ -2876,10 +2955,12 @@ namespace chen {
 		{
 			return;
 		}
-		if (m_rtc_net_state == ERtcNetworkStateDtls)
+		/*if (m_rtc_net_state == ERtcNetworkStateDtls)
 		{
+
 			m_dtls_ptr->start_active_handshake("server");
-		}
+			m_rtc_net_state = ERtcNetworkStateDtlsing;
+		}*/
 	}
 
 	void crtc_transport::Connected()
@@ -2901,10 +2982,12 @@ namespace chen {
 		{
 			m_sctp_association_ptr->TransportConnected();
 		}
-		if (m_timer_ptr)
+		/*if (m_timer_ptr)
 		{
 			m_timer_ptr->Start(static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs / 2));
-		}
+		}*/
+		m_next_rtcp_timestamp = uv_util::GetTimeMs() + static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs / 2);
+		m_stoped_rtcp = false;
 	}
 
 	void crtc_transport::DisConnected()
@@ -2926,17 +3009,19 @@ namespace chen {
 		{
 			//m_sctp_association_ptr->TransportConnected();
 		}
-		if (m_timer_ptr)
+		/*if (m_timer_ptr)
 		{
 			m_timer_ptr->Stop( );
-		}
+		}*/
+		m_stoped_rtcp = true;
 	}
 
 	void crtc_transport::OnTimer(ctimer * timer)
 	{
 		// RTCP timer.
-		if (timer == m_timer_ptr)
+		if (!m_stoped_rtcp/*timer == m_timer_ptr*/ /*IsConnected()*/ && m_next_rtcp_timestamp < uv_util::GetTimeMs() )
 		{
+			
 			uint8_t cur_Buffer[1024 * 64] = {0};
 			auto interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
 			uint64_t nowMs = uv_util::GetTimeMs();
@@ -2947,15 +3032,18 @@ namespace chen {
 			for (std::pair<const uint32, crtc_consumer*> & p : m_all_rtp_listener.m_ssrc_consumer_table)
 			{
 				// Reset the Compound packet.
-				packet.reset(new RTC::RTCP::CompoundPacket());
-				p.second->get_rtcp(packet.get(), nowMs);
-
-				// Send the RTCP compound packet if there is a sender report.
-				if (packet->HasSenderReport())
+				if (p.second)
 				{
-					packet->Serialize(cur_Buffer);
-					send_rtcp_compound_packet(packet.get());
-					//SendRtcpCompoundPacket(packet.get());
+					packet.reset(new RTC::RTCP::CompoundPacket());
+					p.second->get_rtcp(packet.get(), nowMs);
+
+					// Send the RTCP compound packet if there is a sender report.
+					if (packet->HasSenderReport())
+					{
+						packet->Serialize(cur_Buffer);
+						send_rtcp_compound_packet(packet.get());
+						//SendRtcpCompoundPacket(packet.get());
+					}
 				}
 			}
 			// Reset the Compound packet.
@@ -2963,15 +3051,18 @@ namespace chen {
 			for (std::pair<const uint32, crtc_producer*> & p : m_all_rtp_listener.m_ssrcTable)
 			{
 				// Reset the Compound packet.
-				packet.reset(new RTC::RTCP::CompoundPacket());
-				p.second->get_rtcp(packet.get(), nowMs);
-
-				// Send the RTCP compound packet if there is a sender report.
-				if (packet->HasSenderReport())
+				if (p.second)
 				{
-					packet->Serialize(cur_Buffer);
-					send_rtcp_compound_packet(packet.get());
-					//SendRtcpCompoundPacket(packet.get());
+					packet.reset(new RTC::RTCP::CompoundPacket());
+					p.second->get_rtcp(packet.get(), nowMs);
+
+					// Send the RTCP compound packet if there is a sender report.
+					if (packet->HasSenderReport())
+					{
+						packet->Serialize(cur_Buffer);
+						send_rtcp_compound_packet(packet.get());
+						//SendRtcpCompoundPacket(packet.get());
+					}
 				}
 			}
 			if (packet->GetReceiverReportCount() != 0u)
@@ -3007,8 +3098,8 @@ namespace chen {
 			 * of all participants.
 			 */
 			interval *= static_cast<float>(s_crypto_random.GetRandomUInt(5, 15)) / 10;
-
-			m_timer_ptr->Start(interval);
+			m_next_rtcp_timestamp = uv_util::GetTimeMs() + interval;
+			//m_timer_ptr->Start(interval);
 		}
 	}
 

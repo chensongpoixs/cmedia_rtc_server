@@ -110,6 +110,8 @@ namespace chen {
 	void ctimer::Stop()
 	{
 		m_timestamp = uv_util::GetTimeMs();
+		m_timeout = 0;
+		m_repeat = 0;
 		/*if (m_closed)
 		{
 			ERROR_EX_LOG("closed");
@@ -225,6 +227,10 @@ namespace chen {
 		{
 			m_timestamp = uv_util::GetTimeMs();
 			g_timer_mgr.insert(m_timestamp + m_timeout, this);
+		}
+		else
+		{
+			m_timeout = 0;
 		}
 	}
 }

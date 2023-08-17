@@ -51,7 +51,7 @@ Copyright boost
 namespace chen {
 	
 	class crtc_producer;
-	class crtp_stream_recv : public crtp_stream, public ctimer::Listener, public RTC::NackGenerator::Listener
+	class crtp_stream_recv : public crtp_stream, /*public ctimer::Listener,*/ public RTC::NackGenerator::Listener
 	{
 	public:
 		explicit crtp_stream_recv(crtc_producer * ptr, const crtp_stream::crtp_stream_params & params);
@@ -129,7 +129,7 @@ namespace chen {
 		uint8			m_fir_seq_number{ 0u };
 		uint32			m_reported_packet_lost{ 0u };
 		std::unique_ptr<RTC::NackGenerator> nackGenerator;
-		ctimer*			m_inactivityCheckPeriodicTimer{ nullptr };
+		//ctimer*			m_inactivityCheckPeriodicTimer{ nullptr };
 		bool			m_inactive{ false };
 		//TransmissionCounter transmissionCounter;      // Valid media + valid RTX.
 		RtpDataCounter m_media_transmission_counter; // Just valid media.

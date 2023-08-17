@@ -92,10 +92,10 @@ namespace chen {
 		}
 
 
-		if (!g_timer_mgr.init())
+		/*if (!g_timer_mgr.init())
 		{
 			return false;
-		}
+		}*/
 
 		SYSTEM_LOG("global rtc init OK !!!");
 		if (!g_client_msg_dispatch.init())
@@ -187,30 +187,24 @@ namespace chen {
 		//DepLibUV::RunLoop();
 		//uv_util::run_loop();
 		//SYSTEM_LOG("libuv loop ended");
-		static const uint32 TICK_TIME = 100;
+		static const uint32 TICK_TIME = 10;
 		////启动内网并等待初始化完成
 
 		ctime_elapse time_elapse;
 		uint32 uDelta = 0;
-		uint32 count = 0;
-		uint32 timer_tick = 0;
+	 
 		while (!m_stop)
 		{
 			
 			uDelta += time_elapse.get_elapse();
 
-			if (++timer_tick > 10)
-			{
-				timer_tick = 0;
-				g_timer_mgr.update(1);
-			}
-			if (++count > 100)
-			{ 
-				count = 0;
-				//	g_game_client.update(uDelta);
-				g_wan_server.update(10); 
-				g_room_mgr.update(10);
-			}
+			 
+			//g_timer_mgr.update(uDelta);
+			 
+			//	g_game_client.update(uDelta);
+			g_wan_server.update(uDelta);
+			g_room_mgr.update(uDelta);
+			g_transport_mgr.update(uDelta);
 			
 
 
@@ -218,7 +212,7 @@ namespace chen {
 
 			if (uDelta < TICK_TIME)
 			{
-				std::this_thread::sleep_for(std::chrono::microseconds(TICK_TIME - uDelta));
+				std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));
 			}
 		}
 
@@ -239,7 +233,7 @@ namespace chen {
 			m_server_intaval = NULL;
 		//	SYSTEM_LOG("g_wan_server timer destroy OK !!!");
 		}
-		g_timer_mgr.destroy();
+		//g_timer_mgr.destroy();
 
 		g_wan_server.shutdown();
 		g_wan_server.destroy();

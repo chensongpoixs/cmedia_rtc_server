@@ -32,8 +32,17 @@ purpose:		cudp_socket_handler
 #include <cstring>
 #include <ws2def.h>
 #include <string>
-
+#include <memory>
+#include <list>
 namespace chen {
+
+	struct csend_data 
+	{
+		uint8 data[1024*64];
+		size_t len;
+		 struct sockaddr addr;
+	};
+
 	class cudp_socket_handler
 	{
 	public:
@@ -104,6 +113,9 @@ namespace chen {
 	private:
 		bool SetLocalAddress();
 
+
+	private:
+		void _work_pthread();
 	private:
 		cudp_socket_handler(const cudp_socket_handler&);
 		cudp_socket_handler& operator=(const cudp_socket_handler&)   ;
@@ -120,6 +132,12 @@ namespace chen {
 		bool							m_closed{false};// { false };
 		size_t							m_recvBytes{ 0u };// { 0u };
 		size_t							m_sentBytes{ 0u };// { 0u };
+		SOCKET							m_socket;
+
+		std::thread						m_thread;
+		uint8 *							m_ReadBuffer_ptr;
+		std::list<std::shared_ptr<csend_data>>    m_send_queue;
+		std::mutex						m_send_lock;
 	};
 }
 

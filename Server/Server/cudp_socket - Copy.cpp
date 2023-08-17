@@ -28,14 +28,14 @@ purpose:		cudp_socket
 
 namespace chen {
 	 cudp_socket::cudp_socket(Listener * listener, std::string & ip)
-		 : cudp_socket_handler(RTC::PortManager::BindUdp(ip))
+		 : cudp_socket_handler(NULL/*RTC::PortManager::BindUdp(ip)*/)
 		 , m_listener(listener)
 		 , m_fixedPort(false)
 	{
 	}
 
 	 cudp_socket::cudp_socket(Listener * listener, std::string & ip, uint16_t port)
-		 :  cudp_socket_handler(RTC::PortManager::BindUdp(ip, port))
+		 :  cudp_socket_handler(NULL/*RTC::PortManager::BindUdp(ip, port)*/)
 		 , m_listener(listener)
 		 , m_fixedPort(true)
 	{
@@ -46,7 +46,7 @@ namespace chen {
 		 if (!m_fixedPort)
 		 {
 			 //NORMAL_EX_LOG("[ip = %s][port = %u]", m_local_ip.c_str(), m_local_port);
-			 RTC::PortManager::UnbindUdp(m_local_ip, m_local_port);
+			 //RTC::PortManager::UnbindUdp(m_local_ip, m_local_port);
 		 }
 	}
 

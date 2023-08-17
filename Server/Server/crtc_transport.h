@@ -42,35 +42,35 @@ purpose:		crtc_transport
 #include "csctp_association.h"
 #include "ctcp_connection_handler.h"
 #include "ctcp_server.h"
-
+#include "crtc_queue.h"
 //#include "ctransport_tuple.h"
 //#include "cice_server.h"
 namespace chen {
-	struct crtc_rtp_packet
-	{
-		// Cloned packet.
-		RTC::RtpPacket* packet{ nullptr };
-		// Memory to hold the cloned packet (with extra space for RTX encoding).
-		uint8  store[RTC::MtuSize + 100];
-		// Last time this packet was resent.
-		uint64  resentAtMs{ 0u };
-		// Number of times this packet was resent.
-		uint8  sentTimes{ 0u };
-		// Whether the packet has been already RTX encoded.
-		bool rtxEncoded{ false };
-	};
+	//struct crtc_rtp_packet
+	//{
+	//	// Cloned packet.
+	//	RTC::RtpPacket* packet{ nullptr };
+	//	// Memory to hold the cloned packet (with extra space for RTX encoding).
+	//	uint8  store[RTC::MtuSize + 100];
+	//	// Last time this packet was resent.
+	//	uint64  resentAtMs{ 0u };
+	//	// Number of times this packet was resent.
+	//	uint8  sentTimes{ 0u };
+	//	// Whether the packet has been already RTX encoded.
+	//	bool rtxEncoded{ false };
+	//};
 	class cdtls_session;
 	class ctransport_tuple;
 	class cice_server;
 	//cudp_socket * socket, const uint8_t * data, size_t len, const sockaddr * remoteAddr
 
 
-		struct cqueue_packet {
+	/*	struct cqueue_packet {
 			cudp_socket* socket;
 			uint8     data[65535];
 			size_t   len;
 			struct sockaddr remoteAddr;
-		};
+		};*/
 	class crtc_transportlinster
 	{
 	public:
@@ -114,7 +114,7 @@ namespace chen {
 		public cudp_socket::Listener, public crtc_transportlinster,
 		public RTC::TransportCongestionControlClient::Listener,
 		public RTC::TransportCongestionControlServer::Listener, 
-		public chen::ctimer::Listener, public csctp_association::Listener
+		/*public chen::ctimer::Listener,*/ public csctp_association::Listener
 	{
 	public:
 		explicit crtc_transport(const crtc_room_master & master)
@@ -145,7 +145,7 @@ namespace chen {
 			, m_transportWideCcSeq(0u)
 			, m_udp_ports()
 			, m_tcp_ports()
-			, m_timer_ptr(NULL)
+			//, m_timer_ptr(NULL)
 			, m_sctp_association_ptr(NULL)
 			, m_rtp_header_extension_ids()
 			//, m_feedback_rtp_transport_packet()
@@ -156,7 +156,11 @@ namespace chen {
 			, m_consumer_transports()
 			, m_producer_transports()
 			, m_stoped(false)
-			, m_pakcet()
+			//, m_pakcet()
+			, m_queues()
+			, m_rtp_queues()
+			, m_next_rtcp_timestamp(0)
+			, m_stoped_rtcp(true)
 		 {}
 
 		virtual ~crtc_transport();
@@ -405,7 +409,7 @@ public:
 		uint32									m_transportWideCcSeq;
 		std::vector<uint32>									m_udp_ports;
 		std::vector< uint32>									m_tcp_ports;
-		ctimer				*					m_timer_ptr;
+	//	ctimer				*					m_timer_ptr;
 		csctp_association *						m_sctp_association_ptr;
 		RTC::RtpHeaderExtensionIds				m_rtp_header_extension_ids;
 
@@ -427,10 +431,14 @@ public:
 
 		std::thread								m_thread;
 		bool									m_stoped;
-		std::list<std::shared_ptr<cqueue_packet>> m_pakcet;
+		/*std::list<std::shared_ptr<cqueue_packet>> m_pakcet;
 		std::mutex								m_lock;
 		std::list<std::shared_ptr<crtc_rtp_packet>>              m_rtp_packets;
-		std::mutex                              m_rtp_packets_lock;
+		std::mutex                              m_rtp_packets_lock;*/
+		crtc_queue								m_queues;
+		crtc_rtp_queue							m_rtp_queues;
+		uint64									m_next_rtcp_timestamp;
+		bool									m_stoped_rtcp;
 	};
 
 

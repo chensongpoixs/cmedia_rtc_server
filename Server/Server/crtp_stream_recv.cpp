@@ -66,13 +66,13 @@ namespace chen {
 		}
 		// Run the RTP inactivity periodic timer (use a different timeout if DTX is
 		// enabled).
-		m_inactivityCheckPeriodicTimer = new ctimer(this);
+		//m_inactivityCheckPeriodicTimer = new ctimer(this);
 		m_inactive = false;
 
 		//if (!this->params.useDtx)
-		{
+		/*{
 			m_inactivityCheckPeriodicTimer->Start(InactivityCheckInterval);
-		}
+		}*/
 
 		m_dav1d_decoder.init();
 		 
@@ -80,12 +80,12 @@ namespace chen {
 
 	crtp_stream_recv::~crtp_stream_recv()
 	{
-		if (m_inactivityCheckPeriodicTimer)
-		{
-			// Close the RTP inactivity check periodic timer.
-			delete this->m_inactivityCheckPeriodicTimer;
-			m_inactivityCheckPeriodicTimer = NULL;
-		}
+		//if (m_inactivityCheckPeriodicTimer)
+		//{
+		//	// Close the RTP inactivity check periodic timer.
+		//	delete this->m_inactivityCheckPeriodicTimer;
+		//	m_inactivityCheckPeriodicTimer = NULL;
+		//}
 		
 		
 	}
@@ -98,12 +98,12 @@ namespace chen {
 			nackGenerator.reset(NULL);
 		}
 		// Close the RTP inactivity check periodic timer.
-		if (m_inactivityCheckPeriodicTimer)
-		{
-			// Close the RTP inactivity check periodic timer.
-			delete this->m_inactivityCheckPeriodicTimer;
-			m_inactivityCheckPeriodicTimer = NULL;
-		}
+		//if (m_inactivityCheckPeriodicTimer)
+		//{
+		//	// Close the RTP inactivity check periodic timer.
+		//	delete this->m_inactivityCheckPeriodicTimer;
+		//	m_inactivityCheckPeriodicTimer = NULL;
+		//}
 	}
 
 	bool crtp_stream_recv::receive_packet(RTC::RtpPacket * packet)
@@ -228,10 +228,10 @@ namespace chen {
 		}
 
 		// Restart the inactivityCheckPeriodicTimer.
-		if (this->m_inactivityCheckPeriodicTimer)
+		/*if (this->m_inactivityCheckPeriodicTimer)
 		{
 			this->m_inactivityCheckPeriodicTimer->Restart();
-		}
+		}*/
 		return true;
 	}
 	bool crtp_stream_recv::receive_rtx_packet(RTC::RtpPacket * packet)
@@ -390,10 +390,10 @@ namespace chen {
 			}
 
 			// Restart the inactivityCheckPeriodicTimer.
-			if (this->m_inactivityCheckPeriodicTimer)
+			/*if (this->m_inactivityCheckPeriodicTimer)
 			{
 				this->m_inactivityCheckPeriodicTimer->Restart();
-			}
+			}*/
 
 			return true;
 		}
@@ -621,10 +621,10 @@ namespace chen {
 
 	void crtp_stream_recv::pause()
 	{
-		if (this->m_inactivityCheckPeriodicTimer)
+		/*if (this->m_inactivityCheckPeriodicTimer)
 		{
 			this->m_inactivityCheckPeriodicTimer->Stop();
-		}
+		}*/
 
 		 if (m_params.use_nack)
 		 {
@@ -638,10 +638,10 @@ namespace chen {
 
 	void crtp_stream_recv::resume()
 	{
-		if (this->m_inactivityCheckPeriodicTimer && !this->m_inactive)
+		/*if (this->m_inactivityCheckPeriodicTimer && !this->m_inactive)
 		{
 			this->m_inactivityCheckPeriodicTimer->Restart();
-		 }
+		 }*/
 	}
 	 
 	/*void crtp_stream_recv::set_rtx(uint8 payload_type, uint32 ssrc)
@@ -650,17 +650,17 @@ namespace chen {
 
 	void crtp_stream_recv::OnTimer(ctimer * timer)
 	{
-		if (timer == this->m_inactivityCheckPeriodicTimer)
-		{
-			m_inactive = true;
+		//if (timer == this->m_inactivityCheckPeriodicTimer)
+		//{
+		//	m_inactive = true;
 
-			if (get_score() != 0)
-			{
-				WARNING_EX_LOG("RTP inactivity detected, resetting score to 0 [ssrc:%" PRIu32 "]", get_ssrc());
-			}
+		//	if (get_score() != 0)
+		//	{
+		//		WARNING_EX_LOG("RTP inactivity detected, resetting score to 0 [ssrc:%" PRIu32 "]", get_ssrc());
+		//	}
 
-			reset_score(0, /*notify*/ true);
-		}
+		//	reset_score(0, /*notify*/ true);
+		//}
 	}
 
 	void crtp_stream_recv::del_rtx()

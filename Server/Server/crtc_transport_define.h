@@ -34,8 +34,9 @@ namespace chen {
 		ERtcNetworkStateWaitingAnswer = 1,
 		ERtcNetworkStateWaitingStun = 2,
 		ERtcNetworkStateDtls = 3,
-		ERtcNetworkStateEstablished = 4,
-		ERtcNetworkStateClosed = 5,
+		//ERtcNetworkStateDtlsing,
+		ERtcNetworkStateEstablished,
+		ERtcNetworkStateClosed ,
 	};
 
 

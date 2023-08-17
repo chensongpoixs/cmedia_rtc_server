@@ -25,7 +25,9 @@ purpose:		cudp_socket_handler
 #include "cudp_socket_handler.h"
 #include "clog.h"
 #include "cuv_ip.h"
-
+#include "cglobal_rtc_config.h"
+#include "cglobal_rtc_port.h"
+#include "csocket_util.h"
 namespace chen {
 
 
@@ -87,28 +89,61 @@ namespace chen {
 		, m_closed(false)
 		, m_recvBytes(0u)
 		, m_sentBytes(0u)
+		, m_socket(0)
+		, m_ReadBuffer_ptr(NULL)
+		, m_send_queue()
 	{
-		   int buffer_size = 1024 * 64 * 64;
-		 uv_send_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
-		 buffer_size = 1024 * 64 * 64;
-		 uv_recv_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
-		 int32 err;
-		 m_uvHandle->data = static_cast<void*>(this);
-
-		 err = uv_udp_recv_start(m_uvHandle, static_cast<uv_alloc_cb>(onAlloc), static_cast<uv_udp_recv_cb>(onRecv));
-
-		 if (err != 0)
+		 m_ReadBuffer_ptr = new uint8[ReadBufferSize];
+		 
+		 uint32 port = g_global_rtc_port.get_new_port();
+		 m_socket = socket(AF_INET, SOCK_DGRAM, 0);
+		 if (m_socket == INVALID_SOCKET)
 		 {
-			 uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));
-
-			 ERROR_EX_LOG("uv_udp_recv_start() failed: %s", uv_strerror(err));
+			int  err = WSAGetLastError();
+		//	 QUEUE_REMOVE(&handle->handle_queue);
+			// return uv_translate_sys_error(err);
 		 }
 
-		 // Set local address.
+		 while  (!socket_util::bind(m_socket, "0.0.0.0", port))
+		 {
+			 WARNING_EX_LOG("[udp]bind [port = %u] failed !!!", port);
+			 g_global_rtc_port.brack_port(port);
+			 port = g_global_rtc_port.get_new_port();
+		 }
+		 socket_util::setnonblock(m_socket);
+		 int value = 0;
+		 int len = sizeof(int);
+		 getsockopt(m_socket, SOL_SOCKET, SO_SNDBUF, (char*)&value, &len);
+		 len = sizeof(int);
+		 getsockopt(m_socket, SOL_SOCKET, SO_RCVBUF, (char*)&value, &len);
+		 value = 1024 * 64;
+		 len = sizeof(int);
+
+		 setsockopt(m_socket, SOL_SOCKET, SO_SNDBUF, (const char*)&value, len);
+//		 len = sizeof(int);
+		 setsockopt(m_socket, SOL_SOCKET, SO_RCVBUF, (const char*)&value, len);
+		 m_thread = std::thread(&cudp_socket_handler::_work_pthread, this);
+		//   int buffer_size = 1024 * 64 * 64;
+		 //uv_send_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
+		// buffer_size = 1024 * 64 * 64;
+		// uv_recv_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
+		// int32 err;
+		// m_uvHandle->data = static_cast<void*>(this);
+		//
+		// err = uv_udp_recv_start(m_uvHandle, static_cast<uv_alloc_cb>(onAlloc), static_cast<uv_udp_recv_cb>(onRecv));
+		//
+		// if (err != 0)
+		// {
+		//	 uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));
+		//
+		//	 ERROR_EX_LOG("uv_udp_recv_start() failed: %s", uv_strerror(err));
+		// }
+		//
+		// // Set local address.
 		 if (!SetLocalAddress())
 		 {
-			 uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));
-
+			// uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));
+		
 			 ERROR_EX_LOG("error setting local IP and port");
 		 }
 	}
@@ -128,19 +163,25 @@ namespace chen {
 		 }
 
 		 m_closed = true;
-
-		 // Tell the UV handle that the UdpSocketHandler has been closed.
-		 m_uvHandle->data = nullptr;
-
-		 // Don't read more.
-		 int err = uv_udp_recv_stop(m_uvHandle);
-
-		 if (err != 0)
+		 if (m_thread.joinable())
 		 {
-			 ERROR_EX_LOG("uv_udp_recv_stop() failed: %s", uv_strerror(err));
+			 m_thread.join();
 		 }
+		 //
 
-		 uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));
+		 socket_util::close(m_socket);
+		 // Tell the UV handle that the UdpSocketHandler has been closed.
+		 //m_uvHandle->data = nullptr;
+
+		 //// Don't read more.
+		 //int err = uv_udp_recv_stop(m_uvHandle);
+
+		 //if (err != 0)
+		 //{
+			// ERROR_EX_LOG("uv_udp_recv_stop() failed: %s", uv_strerror(err));
+		 //}
+
+		 //uv_close(reinterpret_cast<uv_handle_t*>(m_uvHandle), static_cast<uv_close_cb>(onClose));
 	 }
 	 void cudp_socket_handler::Dump() const
 	 {
@@ -173,7 +214,18 @@ namespace chen {
 
 			 return;
 		 }
+		 {
+			 std::shared_ptr<csend_data> data_ptr = std::make_shared<csend_data>();
+			 memcpy(&data_ptr->data[0], data, len);
+			 data_ptr->len = len;
+			 memcpy(&data_ptr->addr, addr, sizeof(*addr));
+			 std::lock_guard<std::mutex> lock(m_send_lock);
+			 m_send_queue.push_back(data_ptr);
+			// ::sendto(m_socket, (char *)data, len, 0, addr, sizeof(*addr));
 
+		 }
+		 // sending queue 
+		 return;
 		 // First try uv_udp_try_send(). In case it can not directly send the datagram
 		 // then build a uv_req_t and use uv_udp_send().
 
@@ -310,12 +362,11 @@ namespace chen {
 		 int32 err;
 		 int32 len = sizeof(m_local_addr);
 
-		 err =
-			 uv_udp_getsockname(m_uvHandle, reinterpret_cast<struct sockaddr*>(&m_local_addr), &len);
+		 err = getsockname(m_socket, reinterpret_cast<struct sockaddr*>(&m_local_addr), &len);
 
 		 if (err != 0)
 		 {
-			 ERROR_EX_LOG("uv_udp_getsockname() failed: %s", uv_strerror(err));
+			 ERROR_EX_LOG("getsockname() failed: %s", uv_strerror(err));
 
 			 return false;
 		 }
@@ -327,4 +378,99 @@ namespace chen {
 
 		 return true;
 	 }
+	 std::mutex g_mutex;
+	 void cudp_socket_handler::_work_pthread()
+	 {
+		 fd_set fd_read_backup_;
+		 fd_set fd_write_backup_;
+		 fd_set fd_exp_backup_;
+
+		 SOCKET maxfd_ = 0;
+		 fd_set fd_read;
+		 fd_set fd_write;
+		 fd_set fd_exp;
+		 FD_ZERO(&fd_read);
+		 FD_ZERO(&fd_write);
+		 FD_ZERO(&fd_exp);
+		 bool fd_read_reset = false;
+		 //bool fd_write_reset = false;
+		// bool fd_exp_reset = false;
+		 static const int32 timeout = 1000;
+		 std::list<std::shared_ptr<csend_data>>  temp_queue;
+		 while (!m_closed)
+		 {
+			 FD_SET(m_socket, &fd_read);
+			 //FD_SET(m_socket, &fd_write);
+			 maxfd_ = m_socket;
+			 //struct timeval tv = { 0/*timeout / 1000*/, timeout /*% 1000 * 1000*/ };
+			 struct timeval tv = {0};
+			 tv.tv_usec = timeout;
+			  std::chrono::steady_clock::time_point cur_time_ms;
+				 std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
+				 std::chrono::steady_clock::duration dur;
+				 std::chrono::microseconds ms;
+			 int ret = ::select((int)maxfd_ + 1, &fd_read, NULL /*&fd_write*/, NULL, &tv);
+			 
+			 cur_time_ms = std::chrono::steady_clock::now();
+			 dur = cur_time_ms - pre_time;
+			 ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			 static FILE *out_file_ptr = fopen("./net_udp.csv", "wb+");
+			 if (out_file_ptr)
+			 {
+				 std::lock_guard<std::mutex> lock(g_mutex);
+				 fprintf(out_file_ptr, "mcs = %" PRIi64 "\n", ms.count());
+				 fflush(out_file_ptr);
+			 }
+
+			 if (ret <= 0) {
+#if defined(__linux) || defined(__linux__) 
+				 if (errno == EINTR) {
+					 return true;
+				 }
+#endif 
+				// std::this_thread::sleep_for(std::chrono::microseconds()
+			 }
+			 else
+			 {
+				 if (FD_ISSET(m_socket, &fd_read)) 
+				 {
+					// events |= EVENT_IN;
+					// int recv_byte = ::recvfrom(m_socket, (char *)m_ReadBuffer_ptr, ReadBufferSize, 0, );
+					 struct sockaddr_storage from;
+					 int from_len;
+					 int32 bytes_read = 0;
+					 do {
+						 memset(&from, 0, sizeof from);
+						 from_len = sizeof from;
+						   bytes_read = ::recvfrom(m_socket, (char *)(m_ReadBuffer_ptr), ReadBufferSize, 0, (struct sockaddr*)&from, &from_len);
+						 if (bytes_read > 0)
+						 {
+							 // read_callback_(m_data_ptr, bytes_read, &from);
+							 UserOnUdpDatagramReceived(m_ReadBuffer_ptr, bytes_read, (const sockaddr*)&from);
+						 }
+					 } while (bytes_read > 0);
+				 }
+				 //if (FD_ISSET(m_socket, &fd_write))
+				 {
+					 {
+						 std::lock_guard<std::mutex> lock(m_send_lock);
+						 if (!m_send_queue.empty())
+						 {
+							 temp_queue.swap(m_send_queue);
+						 }
+					 }
+					 while (temp_queue.size())
+					 {
+						 std::shared_ptr<csend_data> & send_data_ptr = temp_queue.front();
+
+						 ::sendto(m_socket, (char *)&send_data_ptr->data[0], send_data_ptr->len, 0, &send_data_ptr->addr, sizeof(*&send_data_ptr->addr));
+
+						 temp_queue.pop_front();
+					 }
+				 }
+			 }
+			
+		 }
+	 }
+
 }

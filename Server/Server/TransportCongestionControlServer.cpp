@@ -43,6 +43,8 @@ namespace RTC
 	  RTC::BweType bweType,
 	  size_t maxRtcpPacketLen)
 	  : listener(listener), bweType(bweType), maxRtcpPacketLen(maxRtcpPacketLen)
+		, m_next_timestamp(0)
+		, m_stoped(true)
 	{
 		//MS_TRACE();
 
@@ -61,7 +63,7 @@ namespace RTC
 					ERROR_EX_LOG("ctimer init failed !!!");
 				}*/
 				// Create the feedback send periodic timer.
-				this->transportCcFeedbackSendPeriodicTimer = new chen::ctimer(this);
+				//this->transportCcFeedbackSendPeriodicTimer = new chen::ctimer(this);
 
 				break;
 			}
@@ -79,9 +81,9 @@ namespace RTC
 	{
 		//MS_TRACE();
 
-		delete this->transportCcFeedbackSendPeriodicTimer;
-		this->transportCcFeedbackSendPeriodicTimer = nullptr;
-
+		//delete this->transportCcFeedbackSendPeriodicTimer;
+		//this->transportCcFeedbackSendPeriodicTimer = nullptr;
+		m_stoped = true;
 		// Delete REMB server.
 		delete this->rembServer;
 		this->rembServer = nullptr;
@@ -95,9 +97,10 @@ namespace RTC
 		{
 			case RTC::BweType::TRANSPORT_CC:
 			{
-				this->transportCcFeedbackSendPeriodicTimer->Start(
-				  TransportCcFeedbackSendInterval, TransportCcFeedbackSendInterval);
-
+				//this->transportCcFeedbackSendPeriodicTimer->Start(
+				 // TransportCcFeedbackSendInterval, TransportCcFeedbackSendInterval);
+				m_next_timestamp = uv_util::GetTimeMs() + TransportCcFeedbackSendInterval;
+				m_stoped = false;
 				break;
 			}
 
@@ -113,8 +116,8 @@ namespace RTC
 		{
 			case RTC::BweType::TRANSPORT_CC:
 			{
-				 this->transportCcFeedbackSendPeriodicTimer-> Stop();
-
+				//this->transportCcFeedbackSendPeriodicTimer-> Stop();
+				m_stoped = true;
 				// Create a new feedback packet.
 				this->transportCcFeedbackPacket.reset(new RTC::RTCP::FeedbackRtpTransportPacket(0u, 0u));
 
@@ -342,13 +345,15 @@ namespace RTC
 		this->listener->OnTransportCongestionControlServerSendRtcpPacket(this, &packet);
 	}
 
-	inline void TransportCongestionControlServer::OnTimer(chen::ctimer * timer)
+	/*inline*/ void TransportCongestionControlServer::OnTimer(chen::ctimer * timer)
 	{
 		//MS_TRACE();
 
-		if (timer == transportCcFeedbackSendPeriodicTimer)
+		if (/*timer == transportCcFeedbackSendPeriodicTimer*/ !m_stoped && m_next_timestamp < uv_util::GetTimeMs())
 		{
+			m_next_timestamp = uv_util::GetTimeMs() + TransportCcFeedbackSendInterval;
 			SendTransportCcFeedback();
+			
 		 }
 	}
 } // namespace RTC

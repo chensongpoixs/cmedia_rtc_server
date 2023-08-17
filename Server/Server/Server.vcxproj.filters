@@ -2067,6 +2067,9 @@
     <ClInclude Include="ctimer_mgr.h">
       <Filter>timer</Filter>
     </ClInclude>
+    <ClInclude Include="crtc_queue.h">
+      <Filter>rtc_util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

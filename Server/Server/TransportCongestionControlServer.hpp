@@ -32,8 +32,9 @@
 
 namespace RTC
 {
+
 	class TransportCongestionControlServer : public webrtc::RemoteBitrateEstimator::Listener 
-	                                         ,public chen::ctimer::Listener 
+	                                        /* ,public chen::ctimer::Listener */
 	{
 	public:
 		class Listener
@@ -93,7 +94,7 @@ namespace RTC
 		// Passed by argument.
 		Listener* listener{ nullptr };
 		// Allocated by this.
-		chen::ctimer* transportCcFeedbackSendPeriodicTimer{ nullptr };
+		//chen::ctimer* transportCcFeedbackSendPeriodicTimer{ nullptr };
 		std::unique_ptr<RTC::RTCP::FeedbackRtpTransportPacket> transportCcFeedbackPacket;
 		webrtc::RemoteBitrateEstimatorAbsSendTime* rembServer{ nullptr };
 		// Others.
@@ -105,6 +106,8 @@ namespace RTC
 		uint32_t maxIncomingBitrate{ 0u };
 		uint64_t limitationRembSentAtMs{ 0u };
 		uint8_t unlimitedRembCounter{ 0u };
+		uint64_t   m_next_timestamp;
+		bool     m_stoped;
 	};
 } // namespace RTC
 

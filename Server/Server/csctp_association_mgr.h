@@ -49,8 +49,8 @@ namespace chen
 		class Checker : public ctimer::Listener
 		{
 		public:
-			Checker() { this->timer = new ctimer(this); }
-			  ~Checker() override{ delete this->timer; }
+			Checker() { /*this->timer = new ctimer(this);*/ }
+			  ~Checker() override{ /*delete this->timer;*/ }
 
 		public:
 			void Start() {

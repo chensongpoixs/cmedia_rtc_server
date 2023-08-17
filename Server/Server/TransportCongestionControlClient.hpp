@@ -34,7 +34,7 @@
 namespace RTC
 {
 	class TransportCongestionControlClient : public webrtc::PacketRouter,
-		public webrtc::TargetTransferRateObserver, chen::ctimer ::Listener 
+		public webrtc::TargetTransferRateObserver/*, chen::ctimer::Listener */
 	{
 	public:
 		struct Bitrates
@@ -120,7 +120,7 @@ namespace RTC
 		webrtc::NetworkControllerFactoryInterface* controllerFactory{ nullptr };
 		webrtc::RtpTransportControllerSend* rtpTransportControllerSend{ nullptr };
 		RTC::RtpProbationGenerator* probationGenerator{ nullptr };
-		ctimer* processTimer{ nullptr };
+		//ctimer* processTimer{ nullptr };
 		// Others.
 		RTC::BweType bweType;
 		uint32_t initialAvailableBitrate{ 0u };
@@ -129,6 +129,8 @@ namespace RTC
 		bool availableBitrateEventCalled{ false };
 		uint64_t lastAvailableBitrateEventAtMs{ 0u };
 		RTC::TrendCalculator desiredBitrateTrend;
+		uint64				  m_next_timestamp; // 
+		bool				  m_stoped;
 	};
 } // namespace RTC
 
