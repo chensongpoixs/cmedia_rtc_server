@@ -92,6 +92,8 @@ namespace chen {
 		 uv_send_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
 		 buffer_size = 1024 * 64 * 64;
 		 uv_recv_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
+		 buffer_size = 0;
+		 uv_recv_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
 		 int32 err;
 		 m_uvHandle->data = static_cast<void*>(this);
 
