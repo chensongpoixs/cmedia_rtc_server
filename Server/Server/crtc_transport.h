@@ -161,6 +161,7 @@ namespace chen {
 			, m_rtp_queues()
 			, m_next_rtcp_timestamp(0)
 			, m_stoped_rtcp(true)
+			, m_request_key_frame_timestamp(0)
 		 {}
 
 		virtual ~crtc_transport();
@@ -439,6 +440,7 @@ public:
 		crtc_rtp_queue							m_rtp_queues;
 		uint64									m_next_rtcp_timestamp;
 		bool									m_stoped_rtcp;
+		uint64									m_request_key_frame_timestamp;
 	};
 
 

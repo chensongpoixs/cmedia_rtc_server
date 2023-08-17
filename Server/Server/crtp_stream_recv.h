@@ -96,7 +96,7 @@ namespace chen {
 			 return this->transmissionCounter.GetLayerBitrate(nowMs, spatialLayer, temporalLayer);
 		 }*/
 		 /* Pure virtual methods inherited from Timer. */
-	protected:
+	public:
 		void OnTimer(ctimer* timer)  ;
 	public:
 		//virtual void set_rtx(uint8 payload_type, uint32 ssrc);
@@ -137,7 +137,10 @@ namespace chen {
 		bool			m_has_rtt;
 
 		cpacket_buffer		m_packet_buffer;
-		cdav1d_decoder		m_dav1d_decoder;
+		//cdav1d_decoder		m_dav1d_decoder;
+
+		uint64				m_timestamp;
+		bool				m_stoped;
 	};
 }
 

@@ -107,14 +107,7 @@ namespace chen {
 		{
 			return false;
 		}
-
-		SYSTEM_LOG("uv init ...");
-
-		/*if (!uv_util::init())
-		{
-			return false;
-		}
-		uv_util::print_version();*/
+		
 
 		SYSTEM_LOG("room mgr init ...");
 
@@ -155,16 +148,26 @@ namespace chen {
 			return false;
 		}
 
+		/*if (!uv_util::init())
+		{
+			return false;
+		}
+		uv_util::print_version();
 
+		uv_util::run_loop();*/
 		SYSTEM_LOG("rtsp init ...");
-	//	g_rtsp_server.init();
+		//g_rtsp_server.init();
 #ifdef AUTH_CONFIG
 		g_rtsp_server.SetAuthConfig("-_-", "admin", "12345");
 #endif
 		//init_rtsp_global();
 		//g_rtsp_server.startup();
 		SYSTEM_LOG("rtsp start OK !!!");
-
+		if (m_thread.joinable())
+		{
+			m_thread.join();
+		}
+		//m_thread = std::thread(&cmedia_server::_work_pthread, this);
 		//SYSTEM_LOG("timer init ...");
 		/*if (!ctimer::init())
 		{
@@ -187,6 +190,7 @@ namespace chen {
 		//DepLibUV::RunLoop();
 		//uv_util::run_loop();
 		//SYSTEM_LOG("libuv loop ended");
+		
 		static const uint32 TICK_TIME = 10;
 		////启动内网并等待初始化完成
 
@@ -281,6 +285,20 @@ namespace chen {
 	{
 		//m_server_intaval->Stop();
 		m_stop = true;
+	}
+
+	void cmedia_server::_work_pthread()
+	{
+		SYSTEM_LOG("uv init ...");
+
+		if (!uv_util::init())
+		{
+			//return false;
+		}
+		uv_util::print_version();
+
+		uv_util::run_loop();
+		SYSTEM_LOG("libuv loop ended");
 	}
 
 	//void cmedia_server::OnTimer(ctimer * timer)

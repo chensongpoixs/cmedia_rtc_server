@@ -69,11 +69,11 @@ namespace chen {
 #endif 
 		uint8_t payload_type  = packet->GetPayloadType();
 
-		/*if (m_sync_required && m_rtp_params.params.type == EMediaVideo && !packet->IsKeyFrame())
+		if (m_sync_required && m_rtp_params.params.type == EMediaVideo && !packet->IsKeyFrame())
 		{
 			WARNING_EX_LOG("keyframe ---> return");
 			return;
-		}*/
+		}
 		// Whether this is the first packet after re-sync.
 		bool isSyncPacket = m_sync_required;
 
@@ -239,7 +239,7 @@ namespace chen {
 
 	void crtc_consumer::request_key_frame()
 	{
-		if (m_kind != "video")
+		if (m_rtp_params.params.type != EMediaVideo)
 		{
 			return;
 		}

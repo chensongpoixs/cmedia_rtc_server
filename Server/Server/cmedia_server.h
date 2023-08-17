@@ -40,9 +40,11 @@ namespace chen {
 		void stop();
 	public:
 		//virtual void OnTimer(ctimer * timer);
+		void _work_pthread();
 	private:
 		volatile bool m_stop;
 		ctimer * m_server_intaval;
+		std::thread  m_thread;
 	};
 	extern cmedia_server g_media_server;
 }

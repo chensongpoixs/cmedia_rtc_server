@@ -57,7 +57,9 @@ namespace chen {
 		, m_rtt(0)
 		, m_has_rtt(false)
 		, m_packet_buffer()
-		, m_dav1d_decoder()
+		//, m_dav1d_decoder()
+		, m_timestamp(0)
+		, m_stoped(false)
 	{
 		m_packet_buffer.init(500);
 		if ( params.use_nack)
@@ -73,8 +75,9 @@ namespace chen {
 		/*{
 			m_inactivityCheckPeriodicTimer->Start(InactivityCheckInterval);
 		}*/
+		m_timestamp = uv_util::GetTimeMs() + InactivityCheckInterval;
 
-		m_dav1d_decoder.init();
+		//m_dav1d_decoder.init();
 		 
 	}
 
@@ -86,7 +89,7 @@ namespace chen {
 		//	delete this->m_inactivityCheckPeriodicTimer;
 		//	m_inactivityCheckPeriodicTimer = NULL;
 		//}
-		
+		m_stoped = true;
 		
 	}
  
@@ -97,6 +100,7 @@ namespace chen {
 			nackGenerator->destroy();
 			nackGenerator.reset(NULL);
 		}
+		m_stoped = true;
 		// Close the RTP inactivity check periodic timer.
 		//if (m_inactivityCheckPeriodicTimer)
 		//{
@@ -232,6 +236,7 @@ namespace chen {
 		{
 			this->m_inactivityCheckPeriodicTimer->Restart();
 		}*/
+		m_timestamp = uv_util::GetTimeMs() + InactivityCheckInterval;
 		return true;
 	}
 	bool crtp_stream_recv::receive_rtx_packet(RTC::RtpPacket * packet)
@@ -394,7 +399,7 @@ namespace chen {
 			{
 				this->m_inactivityCheckPeriodicTimer->Restart();
 			}*/
-
+			m_timestamp = uv_util::GetTimeMs() + InactivityCheckInterval;
 			return true;
 		}
 
@@ -625,7 +630,7 @@ namespace chen {
 		{
 			this->m_inactivityCheckPeriodicTimer->Stop();
 		}*/
-
+		m_stoped = true;
 		 if (m_params.use_nack)
 		 {
 			 this->nackGenerator->Reset();
@@ -638,10 +643,10 @@ namespace chen {
 
 	void crtp_stream_recv::resume()
 	{
-		/*if (this->m_inactivityCheckPeriodicTimer && !this->m_inactive)
+		if (/*this->m_inactivityCheckPeriodicTimer &&*/ !this->m_inactive)
 		{
-			this->m_inactivityCheckPeriodicTimer->Restart();
-		 }*/
+			//this->m_inactivityCheckPeriodicTimer->Restart();
+		 }
 	}
 	 
 	/*void crtp_stream_recv::set_rtx(uint8 payload_type, uint32 ssrc)
@@ -650,17 +655,18 @@ namespace chen {
 
 	void crtp_stream_recv::OnTimer(ctimer * timer)
 	{
-		//if (timer == this->m_inactivityCheckPeriodicTimer)
-		//{
-		//	m_inactive = true;
+		if (!m_stoped &&/*timer == this->m_inactivityCheckPeriodicTimer*/ m_timestamp < uv_util::GetTimeMs())
+		{
+			m_inactive = true;
 
-		//	if (get_score() != 0)
-		//	{
-		//		WARNING_EX_LOG("RTP inactivity detected, resetting score to 0 [ssrc:%" PRIu32 "]", get_ssrc());
-		//	}
+			if (get_score() != 0)
+			{
+				WARNING_EX_LOG("RTP inactivity detected, resetting score to 0 [ssrc:%" PRIu32 "]", get_ssrc());
+			}
 
-		//	reset_score(0, /*notify*/ true);
-		//}
+			reset_score(0, /*notify*/ true);
+			m_timestamp = uv_util::GetTimeMs() + InactivityCheckInterval;
+		}
 	}
 
 	void crtp_stream_recv::del_rtx()

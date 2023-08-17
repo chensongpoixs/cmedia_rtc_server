@@ -701,6 +701,18 @@ namespace chen {
 		it->second->receive_rtcp_xrdelay_since_lastrr(ssrcInfo);
 	}
 
+	void crtc_producer::OnTimer()
+	{
+		//std::unordered_map<uint32, crtp_stream_recv*>			m_ssrc_rtp_stream_map;
+		for (std::pair<const uint32, crtp_stream_recv*>&pi : m_ssrc_rtp_stream_map)
+		{
+			if (pi.second)
+			{
+				pi.second->OnTimer(NULL);
+			}
+		}
+	}
+
 	void crtc_producer::OnProducerSendRtcpPacket(RTC::RTCP::Packet* packet)
 	{
 		if (m_rtc_ptr)

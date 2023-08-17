@@ -674,6 +674,11 @@ namespace chen {
 	}
 	void crtc_transport::request_key_frame()
 	{
+		if (m_request_key_frame_timestamp > uv_util::GetTimeMs())
+		{
+			return;
+		}
+		m_request_key_frame_timestamp = uv_util::GetTimeMs() + 3;
 		++m_request_keyframe;
 		///////////////////////////////////////////////////////////////////////////
 		////                         IDR Request
@@ -2864,10 +2869,10 @@ namespace chen {
 					}
 					else
 					{
-						/*if (cur->packet->GetPayloadType() == 106 || 107 == cur->packet->GetPayloadType())
+						if (cur->packet->GetPayloadType() == 106 || 107 == cur->packet->GetPayloadType())
 						{
 							RTC::Codecs::H264::ProcessRtpPacket(cur->packet);
-						}*/
+						}
 						consumer_ptr->send_rtp_packet(cur->packet);
 					}
 					//dur = std::chrono::steady_clock::now() - ps_pre_time;
@@ -2901,7 +2906,7 @@ namespace chen {
 				}
 
 				OnTimer(NULL);
-
+				m_all_rtp_listener.OnTimer();
 
 			}
 			if (m_queues.empty()&& m_rtp_queues.empty())

@@ -66,6 +66,9 @@ namespace chen {
 		void remote_consumer(uint32 ssrc);
 		crtc_consumer * get_consumer( RTC::RtpPacket * packet);
 		crtc_consumer * get_consumer(uint32 ssrc)  ;
+
+	public:
+		void OnTimer();
 	public: 
 		// Table of SSRC / Producer pairs.
 		std::unordered_map<uint32, crtc_producer*>			m_ssrcTable;
