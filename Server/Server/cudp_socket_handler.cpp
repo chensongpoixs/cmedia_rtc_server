@@ -93,7 +93,7 @@ namespace chen {
 		 buffer_size = 1024 * 64 * 64;
 		 uv_recv_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
 		 buffer_size = 0;
-		 uv_recv_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size);
+		 uv_recv_buffer_size((uv_handle_t*)m_uvHandle, &buffer_size); 
 		 int32 err;
 		 m_uvHandle->data = static_cast<void*>(this);
 
@@ -178,43 +178,46 @@ namespace chen {
 
 		 // First try uv_udp_try_send(). In case it can not directly send the datagram
 		 // then build a uv_req_t and use uv_udp_send().
-
-		 uv_buf_t buffer = uv_buf_init(reinterpret_cast<char*>(const_cast<uint8_t*>(data)), len);
-		 int sent = uv_udp_try_send(m_uvHandle, &buffer, 1, addr);
-
-		 // Entire datagram was sent. Done.
-		 if (sent == static_cast<int>(len))
+		 uv_buf_t buffer;
+		 if (false)
 		 {
-			 // Update sent bytes.
-			 m_sentBytes += sent;
+			   buffer = uv_buf_init(reinterpret_cast<char*>(const_cast<uint8_t*>(data)), len);
+			 int sent = uv_udp_try_send(m_uvHandle, &buffer, 1, addr);
 
-			 if (cb)
+			 // Entire datagram was sent. Done.
+			 if (sent == static_cast<int>(len))
 			 {
-				 (*cb)(true);
-				 delete cb;
+				 // Update sent bytes.
+				 m_sentBytes += sent;
+
+				 if (cb)
+				 {
+					 (*cb)(true);
+					 delete cb;
+				 }
+
+				 return;
 			 }
-
-			 return;
-		 }
-		 else if (sent >= 0)
-		 {
-			 WARNING_EX_LOG("datagram truncated (just %d of %zu bytes were sent)", sent, len);
-
-			 // Update sent bytes.
-			 m_sentBytes += sent;
-
-			 if (cb)
+			 else if (sent >= 0)
 			 {
-				 (*cb)(false);
-				 delete cb;
-			 }
+				 WARNING_EX_LOG("datagram truncated (just %d of %zu bytes were sent)", sent, len);
 
-			 return;
-		 }
-		 // Any error but legit EAGAIN. Use uv_udp_send().
-		 else if (sent != UV_EAGAIN)
-		 {
-			 WARNING_EX_LOG("uv_udp_try_send() failed, trying uv_udp_send(): %s", uv_strerror(sent));
+				 // Update sent bytes.
+				 m_sentBytes += sent;
+
+				 if (cb)
+				 {
+					 (*cb)(false);
+					 delete cb;
+				 }
+
+				 return;
+			 }
+			 // Any error but legit EAGAIN. Use uv_udp_send().
+			 else if (sent != UV_EAGAIN)
+			 {
+				 WARNING_EX_LOG("uv_udp_try_send() failed, trying uv_udp_send(): %s", uv_strerror(sent));
+			 }
 		 }
 
 		 auto* sendData = new UvSendData(len);

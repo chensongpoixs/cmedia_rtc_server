@@ -50,6 +50,7 @@ purpose:		crtc_transport
 #include "cglobal_rtc_port.h"
 #include "cice_server.h"
 #include "cglobal_config.h"
+ 
 namespace chen {
 
 	static const char * wan_ip = "0.0.0.0";
@@ -1033,7 +1034,7 @@ namespace chen {
 	}
 
 	bool crtc_transport::send_rtcp(const uint8 * data, size_t len)
-	{
+	{ 
 		if (!IsConnected())
 		{
 			return false;
@@ -1120,6 +1121,7 @@ namespace chen {
 	}
 	void crtc_transport::send_rtcp_packet(RTC::RTCP::Packet * packet)
 	{
+		 
 		if (!IsConnected())
 		{
 			WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
@@ -1284,10 +1286,10 @@ namespace chen {
 				DEBUG_EX_LOG(" find cur dup socket Ok !!");
 			}
 		}*/
-		/*std::chrono::steady_clock::time_point cur_time_ms;
+		 std::chrono::steady_clock::time_point cur_time_ms;
 		std::chrono::steady_clock::time_point pre_time = std::chrono::steady_clock::now();
 		std::chrono::steady_clock::duration dur;
-		std::chrono::microseconds ms;*/
+		std::chrono::nanoseconds ms;
 		// TODO@chensong 2023-05-23 单线程 没有问题 多线程是有问题哈 ^_^
 		//m_current_socket_ptr  = socket;
 		// TODO@chensong 2023-05-11 firefox浏览器的适配   不知道firefox 修改webrtc的stun进行优化操作
@@ -1325,7 +1327,7 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			 
 			//OnRtcpDataReceived(tuple, data, len);
-			_on_rtcp_data_received(tuple, data, len );
+			//_on_rtcp_data_received(tuple, data, len );
 			/*cur_time_ms = std::chrono::steady_clock::now();
 			dur = cur_time_ms - pre_time;
 			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
@@ -1345,10 +1347,10 @@ namespace chen {
 			_on_rtp_data_received(tuple, data, len);
 			/*cur_time_ms = std::chrono::steady_clock::now();
 			dur = cur_time_ms - pre_time;
-			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+			ms = std::chrono::duration_cast<std::chrono::nanoseconds>(dur);
 			if (ms.count() > 20)
 			{
-				NORMAL_EX_LOG("udp rtp recv packet [microseconds = %" PRIi64 "]", ms.count());
+				NORMAL_EX_LOG("udp rtp recv packet [nanoseconds = %" PRIi64 "]", ms.count());
 			}*/
 		}
 		// Check if it's DTLS.
@@ -1942,7 +1944,7 @@ namespace chen {
 		std::chrono::steady_clock::duration dur;
 		std::chrono::microseconds ms;
 #endif
-		if (!m_srtp_recv_session_ptr->DecryptSrtp(const_cast<uint8_t*>(data), &len))
+		if ( !m_srtp_recv_session_ptr->DecryptSrtp(const_cast<uint8_t*>(data), &len))
 		{
 			WARNING_EX_LOG("rtp unprotect rtp failed !!!-------->>>>>>>");
 		}
@@ -1995,6 +1997,7 @@ namespace chen {
 			}
 			pre_time = cur_time_ms;
 #endif 
+#if 0
 			if (packet->GetPayloadType() == 106)
 			{
 				//NORMAL_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
@@ -2005,6 +2008,8 @@ namespace chen {
 				}
 				seq = packet->GetSequenceNumber() + 1;
 			}
+#endif // 0
+
 			//return;
 			m_ice_server_ptr->ForceSelectedTuple(tuple);
 			// Apply the Transport RTP header extension ids so the RTP listener can use them.
@@ -2113,12 +2118,11 @@ namespace chen {
 		//	WARNING_EX_LOG("rtcp unprotect rtcp OK !!!-------->>>>>>>");
 		//}
 		//NORMAL_EX_LOG(" [address=%s:%u]", m_tcp_connection_ptr->GetPeerIp().c_str(), m_tcp_connection_ptr->GetPeerPort());
-		if (!m_srtp_recv_session_ptr->DecryptSrtcp((uint8_t *)data, &len))
+		if (  !m_srtp_recv_session_ptr->DecryptSrtcp((uint8_t *)data, &len))
 		{
 			WARNING_EX_LOG("rtcp unprotect rtp failed !!!-------->>>>>>>");
 		}
-		else
-
+		else 
 		{
 			//NORMAL_EX_LOG("rtcp unprotect rtp OK !!!-------->>>>>>>");
 			RTC::RTCP::Packet* packet = RTC::RTCP::Packet::Parse(data, len);
@@ -2899,42 +2903,45 @@ namespace chen {
 			uint64_t nowMs = uv_util::GetTimeMs();
 		//	m_remote_estimator.send_periodic_Feedbacks();
 			//SendRtcp(nowMs);
-			std::unique_ptr<RTC::RTCP::CompoundPacket> packet{ nullptr };
-
-			for (std::pair<const uint32, crtc_consumer*> & p : m_all_rtp_listener.m_ssrc_consumer_table)
+			if (true)
 			{
+				std::unique_ptr<RTC::RTCP::CompoundPacket> packet{ nullptr };
+
+				for (std::pair<const uint32, crtc_consumer*> & p : m_all_rtp_listener.m_ssrc_consumer_table)
+				{
+					// Reset the Compound packet.
+					packet.reset(new RTC::RTCP::CompoundPacket());
+					p.second->get_rtcp(packet.get(), nowMs);
+
+					// Send the RTCP compound packet if there is a sender report.
+					if (packet->HasSenderReport())
+					{
+						packet->Serialize(RTC::RTCP::Buffer);
+						send_rtcp_compound_packet(packet.get());
+						//SendRtcpCompoundPacket(packet.get());
+					}
+				}
 				// Reset the Compound packet.
 				packet.reset(new RTC::RTCP::CompoundPacket());
-				p.second->get_rtcp(packet.get(), nowMs);
+				for (std::pair<const uint32, crtc_producer*> & p : m_all_rtp_listener.m_ssrcTable)
+				{
+					// Reset the Compound packet.
+					packet.reset(new RTC::RTCP::CompoundPacket());
+					p.second->get_rtcp(packet.get(), nowMs);
 
-				// Send the RTCP compound packet if there is a sender report.
-				if (packet->HasSenderReport())
+					// Send the RTCP compound packet if there is a sender report.
+					if (packet->HasSenderReport())
+					{
+						packet->Serialize(RTC::RTCP::Buffer);
+						send_rtcp_compound_packet(packet.get());
+						//SendRtcpCompoundPacket(packet.get());
+					}
+				}
+				if (packet->GetReceiverReportCount() != 0u)
 				{
 					packet->Serialize(RTC::RTCP::Buffer);
 					send_rtcp_compound_packet(packet.get());
-					//SendRtcpCompoundPacket(packet.get());
 				}
-			}
-			// Reset the Compound packet.
-			packet.reset(new RTC::RTCP::CompoundPacket());
-			for (std::pair<const uint32, crtc_producer*> & p : m_all_rtp_listener.m_ssrcTable)
-			{
-				// Reset the Compound packet.
-				packet.reset(new RTC::RTCP::CompoundPacket());
-				p.second->get_rtcp(packet.get(), nowMs);
-
-				// Send the RTCP compound packet if there is a sender report.
-				if (packet->HasSenderReport())
-				{
-					packet->Serialize(RTC::RTCP::Buffer);
-					send_rtcp_compound_packet(packet.get());
-					//SendRtcpCompoundPacket(packet.get());
-				}
-			}
-			if (packet->GetReceiverReportCount() != 0u)
-			{
-				packet->Serialize(RTC::RTCP::Buffer);
-				send_rtcp_compound_packet(packet.get());
 			}
 			// Recalculate next RTCP interval.
 			//if (!this->mapConsumers.empty())

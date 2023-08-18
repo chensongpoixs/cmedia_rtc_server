@@ -71,7 +71,7 @@ namespace chen {
 		if (m_sync_required && m_rtp_params.params.type == EMediaVideo && !packet->IsKeyFrame())
 		{
 			WARNING_EX_LOG("keyframe ---> return");
-			return;
+			//return;
 		}
 		// Whether this is the first packet after re-sync.
 		bool isSyncPacket = m_sync_required;
@@ -210,7 +210,7 @@ namespace chen {
 		////DEBUG_EX_LOG("");
 		//MS_ASSERT(rtpStream == this->rtpStream, "RTP stream does not match");
 
-		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 50)
+		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 1000)
 			return;
 
 		auto* report = m_rtp_stream_send_ptr->get_rtcp_sender_report(nowMs);
