@@ -232,6 +232,51 @@
     <Filter Include="libuv\src\win">
       <UniqueIdentifier>{6c1ca6d1-7376-447c-b97b-e59875cf5af6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="usrsctp">
+      <UniqueIdentifier>{43748408-04aa-4544-affd-66c652575ba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="usrsctp\usrsctplib">
+      <UniqueIdentifier>{3889016f-6951-4967-908a-7c597a980216}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="usrsctp\usrsctplib\netinet6">
+      <UniqueIdentifier>{0d1d8047-bb26-4cf9-9b41-6c15c21cc6c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="usrsctp\usrsctplib\netinet">
+      <UniqueIdentifier>{99a9846b-f8c2-4d69-8803-f1d3ac9ccd3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp">
+      <UniqueIdentifier>{c741d10e-b153-4c19-909d-16043726fea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp">
+      <UniqueIdentifier>{eb88b23b-25e4-40d2-bab2-2f99b7ab2d1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\srtp">
+      <UniqueIdentifier>{f92e1e09-8f94-478a-b489-33f72d1f2ca8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\include">
+      <UniqueIdentifier>{856c1054-13ec-4aa0-ad9a-ef45029e4cb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\crypto">
+      <UniqueIdentifier>{abb21d72-8e6c-4e99-be27-6cd6732b5903}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\crypto\cipher">
+      <UniqueIdentifier>{0a0b141c-71ed-4a15-a031-9de0f8abe2b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\crypto\hash">
+      <UniqueIdentifier>{8b2f5ac7-df3a-4a32-8fd3-534953b5674a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\crypto\include">
+      <UniqueIdentifier>{2315d760-450b-45bc-b0f2-af81edffee4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\crypto\kernel">
+      <UniqueIdentifier>{2c5e7f91-ffaa-4dbb-938e-2d39006424fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\crypto\math">
+      <UniqueIdentifier>{3fdb473e-e5ed-4bb5-a30d-3d0d0d51b78b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libsrtp\srtp\crypto\replay">
+      <UniqueIdentifier>{57132154-f27b-4343-9fff-16f87bc8a537}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -1104,6 +1149,132 @@
     </ClCompile>
     <ClCompile Include="crtc_udp_socket_handler.cpp">
       <Filter>rtc_net</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\user_environment.c">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\user_mbuf.c">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\user_recv_thread.c">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\user_socket.c">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet6\sctp6_usrreq.c">
+      <Filter>usrsctp\usrsctplib\netinet6</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_asconf.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_auth.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_bsd_addr.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_callout.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_cc_functions.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_crc32.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_indata.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_input.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_output.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_pcb.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_peeloff.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_sha1.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_ss_functions.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_sysctl.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_timer.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_userspace.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_usrreq.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctputil.c">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\srtp\ekt.c">
+      <Filter>libsrtp\srtp\srtp</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\srtp\srtp.c">
+      <Filter>libsrtp\srtp\srtp</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\aes.c">
+      <Filter>libsrtp\srtp\crypto\cipher</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\aes_gcm_ossl.c">
+      <Filter>libsrtp\srtp\crypto\cipher</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\aes_icm_ossl.c">
+      <Filter>libsrtp\srtp\crypto\cipher</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\cipher.c">
+      <Filter>libsrtp\srtp\crypto\cipher</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\null_cipher.c">
+      <Filter>libsrtp\srtp\crypto\cipher</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\hash\auth.c">
+      <Filter>libsrtp\srtp\crypto\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\hash\hmac_ossl.c">
+      <Filter>libsrtp\srtp\crypto\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\hash\null_auth.c">
+      <Filter>libsrtp\srtp\crypto\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\alloc.c">
+      <Filter>libsrtp\srtp\crypto\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\crypto_kernel.c">
+      <Filter>libsrtp\srtp\crypto\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\err.c">
+      <Filter>libsrtp\srtp\crypto\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\key.c">
+      <Filter>libsrtp\srtp\crypto\kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\math\datatypes.c">
+      <Filter>libsrtp\srtp\crypto\math</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\math\stat.c">
+      <Filter>libsrtp\srtp\crypto\math</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\replay\rdb.c">
+      <Filter>libsrtp\srtp\crypto\replay</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\replay\rdbx.c">
+      <Filter>libsrtp\srtp\crypto\replay</Filter>
+    </ClCompile>
+    <ClCompile Include="libsrtp\srtp\crypto\replay\ut_sim.c">
+      <Filter>libsrtp\srtp\crypto\replay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2060,6 +2231,201 @@
     </ClInclude>
     <ClInclude Include="crtc_udp_socket_handler.h">
       <Filter>rtc_net</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_atomic.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_environment.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_inpcb.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_ip_icmp.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_ip6_var.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_malloc.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_mbuf.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_queue.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_recv_thread.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_route.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_socketvar.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\user_uma.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\usrsctp.h">
+      <Filter>usrsctp\usrsctplib</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet6\sctp6_var.h">
+      <Filter>usrsctp\usrsctplib\netinet6</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_asconf.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_auth.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_bsd_addr.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_callout.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_constants.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_crc32.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_header.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_indata.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_input.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_lock_userspace.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_os.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_os_userspace.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_output.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_pcb.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_peeloff.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_process_lock.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_sha1.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_structs.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_sysctl.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_timer.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_uio.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_var.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctputil.h">
+      <Filter>usrsctp\usrsctplib\netinet</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\include\ekt.h">
+      <Filter>libsrtp\srtp\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\include\getopt_s.h">
+      <Filter>libsrtp\srtp\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\include\srtp.h">
+      <Filter>libsrtp\srtp\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\include\srtp_priv.h">
+      <Filter>libsrtp\srtp\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\include\ut_sim.h">
+      <Filter>libsrtp\srtp\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes_gcm.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes_icm.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes_icm_ext.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\alloc.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\auth.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\cipher.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\cipher_priv.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\cipher_types.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\crypto_kernel.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\crypto_types.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\datatypes.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\err.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\hmac.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\integers.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\key.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\null_auth.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\null_cipher.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\rdb.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\rdbx.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\sha1.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libsrtp\srtp\crypto\include\stat.h">
+      <Filter>libsrtp\srtp\crypto\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

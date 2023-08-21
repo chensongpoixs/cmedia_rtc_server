@@ -81,8 +81,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(C_INCLUDE)\libyuv\include;$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libfffffffuv\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(C_INCLUDE)\libdav1d\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(C_INCLUDE)\libyuv\lib\x64\release;$(C_INCLUDE)\protobuf\lib\x64\release;$(C_INCLUDE)\libsrtp2\lib\x64\release;$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\json\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuvfffffffffff\lib\x64\Release;$(C_INCLUDE)\openssl_1.1.0\lib\x64\release;$(C_INCLUDE)\usrsctplib\lib\x64\Release;$(C_INCLUDE)\libdav1d\lib\x64\release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(C_INCLUDE)\libyuv\include;$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtpff2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libfffffffuv\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplifffb\include;$(C_INCLUDE)\libdav1d\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(C_INCLUDE)\libyuv\lib\x64\release;$(C_INCLUDE)\protobuf\lib\x64\release;$(C_INCLUDE)\libsrtffp2\lib\x64\release;$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\json\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuvfffffffffff\lib\x64\Release;$(C_INCLUDE)\openssl_1.1.0\lib\x64\release;$(C_INCLUDE)\usrsctplffib\lib\x64\Release;$(C_INCLUDE)\libdav1d\lib\x64\release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)3</TargetName>
   </PropertyGroup>
@@ -137,8 +137,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>RTP_PACKET_FILE_MCS;RTP_PACKET_MCS=0;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0602;_INTSAFE_H_INCLUDED_;_WINSOCK_DEPRECATED_NO_WARNINGS;_WINDOWS;MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>libuv/src/win;libuv/src;libuv/include;libwebrtc;./;rtc_sdp;rtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>RTP_PACKET_FILE_MCS;RTP_PACKET_MCS=0;SCTP_PROCESS_LEVEL_LOCKS;SCTP_SIMPLE_ALLOCATOR;SCTP_USE_OPENSSL_SHA1;__Userspace__;HAVE_CONFIG_H;HAVE_STDLIB_H;HAVE_STRING_H;HAVE_STDINT_H;HAVE_INTTYPES_H;HAVE_INT8_T;HAVE_INT16_T;HAVE_INT32_T;HAVE_UINT8_T;HAVE_UINT16_T;HAVE_UINT32_T;HAVE_UINT64_T;OPENSSL;GCM;HAVE_WINSOCK2_H;CPU_CISC;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0602;_INTSAFE_H_INCLUDED_;_WINSOCK_DEPRECATED_NO_WARNINGS;_WINDOWS;MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>libsrtp\srtp\crypto\include;libsrtp\config;libsrtp\include;libsrtp\srtp\include;usrsctp\usrsctplib;usrsctp/usrsctplib;libuv/src/win;libuv/src;libuv/include;libwebrtc;./;rtc_sdp;rtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>
       </LanguageStandard>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -148,125 +148,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib
-;user32.lib
-;advapi32.lib
-;iphlpapi.lib
-;userenv.lib
-;ws2_32.lib
-;gdiplus.lib
-;comdlg32.lib
-;dbghelp.lib
-;dnsapi.lib
-;gdi32.lib
-;msimg32.lib
-;odbc32.lib
-;odbccp32.lib
-;oleaut32.lib
-;shell32.lib
-;shlwapi.lib
-;usp10.lib
-;uuid.lib
-;version.lib
-;wininet.lib
-;winmm.lib
-;winspool.lib
-;delayimp.lib
-;kernel32.lib
-;ole32.lib
-;crypt32.lib
-;secur32.lib
-;dmoguids.lib
-;wmcodecdspuuid.lib
-;amstrmid.lib
-;msdmo.lib
-;strmiids.lib
-;d3d11.lib
-;dxgi.lib
-;d3d10.lib
-;d3d9.lib
-;libyuv_internal.lib
-;dav1d.lib
-;dav1d_8bit.lib
-;dav1d_entrypoints.lib
-;dav1d_10bit.lib
-;dav1d_asm.lib
-;dav1d_x86.lib
-;libprotobuf-lite.lib
-;libprotobuf.lib
-;srtp2.lib
-;absl_bad_optional_access.lib
-;absl_bad_variant_access.lib
-;absl_base.lib
-;absl_demangle_internal.lib
-;absl_dynamic_annotations.lib
-;absl_failure_signal_handler.lib
-;absl_hash.lib
-;absl_int128.lib
-;absl_internal_bad_any_cast_impl.lib
-;absl_internal_city.lib
-;absl_internal_civil_time.lib
-;absl_internal_debugging_internal.lib
-;absl_internal_examine_stack.lib
-;absl_internal_hashtablez_sampler.lib
-;absl_internal_malloc_internal.lib
-;absl_internal_spinlock_wait.lib
-;absl_internal_strings_internal.lib
-;absl_internal_str_format_internal.lib
-;absl_internal_throw_delegate.lib
-;absl_internal_time_zone.lib
-;absl_leak_check.lib
-;absl_leak_check_disable.lib
-;absl_optional.lib
-;absl_raw_hash_set.lib
-;absl_stacktrace.lib
-;absl_strings.lib
-;absl_symbolize.lib
-;absl_synchronization.lib
-;absl_time.lib
-;jsoncpp.lib
-;libssl.lib
-;libcrypto.lib
-;Crypt32.lib
-;usrsctp.lib 
-;libboost_atomic-vc141-mt-x64-1_66.lib
-;libboost_chrono-vc141-mt-x64-1_66.lib
-;libboost_container-vc141-mt-x64-1_66.lib
-;libboost_context-vc141-mt-x64-1_66.lib
-;libboost_coroutine-vc141-mt-x64-1_66.lib
-;libboost_date_time-vc141-mt-x64-1_66.lib
-;libboost_exception-vc141-mt-x64-1_66.lib
-;libboost_fiber-vc141-mt-x64-1_66.lib
-;libboost_filesystem-vc141-mt-x64-1_66.lib
-;libboost_graph-vc141-mt-x64-1_66.lib
-;libboost_iostreams-vc141-mt-x64-1_66.lib
-;libboost_locale-vc141-mt-x64-1_66.lib
-;libboost_log-vc141-mt-x64-1_66.lib
-;libboost_log_setup-vc141-mt-x64-1_66.lib
-;libboost_math_c99-vc141-mt-x64-1_66.lib
-;libboost_math_c99f-vc141-mt-x64-1_66.lib
-;libboost_math_c99l-vc141-mt-x64-1_66.lib
-;libboost_math_tr1-vc141-mt-x64-1_66.lib
-;libboost_math_tr1f-vc141-mt-x64-1_66.lib
-;libboost_math_tr1l-vc141-mt-x64-1_66.lib
-;libboost_prg_exec_monitor-vc141-mt-x64-1_66.lib
-;libboost_program_options-vc141-mt-x64-1_66.lib
-;libboost_python-vc141-mt-x64-1_66.lib
-;libboost_random-vc141-mt-x64-1_66.lib
-;libboost_regex-vc141-mt-x64-1_66.lib
-;libboost_serialization-vc141-mt-x64-1_66.lib
-;libboost_signals-vc141-mt-x64-1_66.lib
-;libboost_stacktrace_noop-vc141-mt-x64-1_66.lib
-;libboost_stacktrace_windbg-vc141-mt-x64-1_66.lib
-;libboost_stacktrace_windbg_cached-vc141-mt-x64-1_66.lib
-;libboost_system-vc141-mt-x64-1_66.lib
-;libboost_test_exec_monitor-vc141-mt-x64-1_66.lib
-;libboost_thread-vc141-mt-x64-1_66.lib
-;libboost_timer-vc141-mt-x64-1_66.lib
-;libboost_type_erasure-vc141-mt-x64-1_66.lib
-;libboost_unit_test_framework-vc141-mt-x64-1_66.lib
-;libboost_wave-vc141-mt-x64-1_66.lib
-;libboost_wserialization-vc141-mt-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;user32.lib;advapi32.lib;iphlpapi.lib;userenv.lib;ws2_32.lib;gdiplus.lib;comdlg32.lib;dbghelp.lib;dnsapi.lib;gdi32.lib;msimg32.lib;odbc32.lib;odbccp32.lib;oleaut32.lib;shell32.lib;shlwapi.lib;usp10.lib;uuid.lib;version.lib;wininet.lib;winmm.lib;winspool.lib;delayimp.lib;kernel32.lib;ole32.lib;crypt32.lib;secur32.lib;dmoguids.lib;wmcodecdspuuid.lib;amstrmid.lib;msdmo.lib;strmiids.lib;d3d11.lib;dxgi.lib;d3d10.lib;d3d9.lib;libyuv_internal.lib;dav1d.lib;dav1d_8bit.lib;dav1d_entrypoints.lib;dav1d_10bit.lib;dav1d_asm.lib;dav1d_x86.lib;libprotobuf-lite.lib;libprotobuf.lib;absl_bad_optional_access.lib;absl_bad_variant_access.lib;absl_base.lib;absl_demangle_internal.lib;absl_dynamic_annotations.lib;absl_failure_signal_handler.lib;absl_hash.lib;absl_int128.lib;absl_internal_bad_any_cast_impl.lib;absl_internal_city.lib;absl_internal_civil_time.lib;absl_internal_debugging_internal.lib;absl_internal_examine_stack.lib;absl_internal_hashtablez_sampler.lib;absl_internal_malloc_internal.lib;absl_internal_spinlock_wait.lib;absl_internal_strings_internal.lib;absl_internal_str_format_internal.lib;absl_internal_throw_delegate.lib;absl_internal_time_zone.lib;absl_leak_check.lib;absl_leak_check_disable.lib;absl_optional.lib;absl_raw_hash_set.lib;absl_stacktrace.lib;absl_strings.lib;absl_symbolize.lib;absl_synchronization.lib;absl_time.lib;jsoncpp.lib;libssl.lib;libcrypto.lib;Crypt32.lib;libboost_atomic-vc141-mt-x64-1_66.lib;libboost_chrono-vc141-mt-x64-1_66.lib;libboost_container-vc141-mt-x64-1_66.lib;libboost_context-vc141-mt-x64-1_66.lib;libboost_coroutine-vc141-mt-x64-1_66.lib;libboost_date_time-vc141-mt-x64-1_66.lib;libboost_exception-vc141-mt-x64-1_66.lib;libboost_fiber-vc141-mt-x64-1_66.lib;libboost_filesystem-vc141-mt-x64-1_66.lib;libboost_graph-vc141-mt-x64-1_66.lib;libboost_iostreams-vc141-mt-x64-1_66.lib;libboost_locale-vc141-mt-x64-1_66.lib;libboost_log-vc141-mt-x64-1_66.lib;libboost_log_setup-vc141-mt-x64-1_66.lib;libboost_math_c99-vc141-mt-x64-1_66.lib;libboost_math_c99f-vc141-mt-x64-1_66.lib;libboost_math_c99l-vc141-mt-x64-1_66.lib;libboost_math_tr1-vc141-mt-x64-1_66.lib;libboost_math_tr1f-vc141-mt-x64-1_66.lib;libboost_math_tr1l-vc141-mt-x64-1_66.lib;libboost_prg_exec_monitor-vc141-mt-x64-1_66.lib;libboost_program_options-vc141-mt-x64-1_66.lib;libboost_python-vc141-mt-x64-1_66.lib;libboost_random-vc141-mt-x64-1_66.lib;libboost_regex-vc141-mt-x64-1_66.lib;libboost_serialization-vc141-mt-x64-1_66.lib;libboost_signals-vc141-mt-x64-1_66.lib;libboost_stacktrace_noop-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg-vc141-mt-x64-1_66.lib;libboost_stacktrace_windbg_cached-vc141-mt-x64-1_66.lib;libboost_system-vc141-mt-x64-1_66.lib;libboost_test_exec_monitor-vc141-mt-x64-1_66.lib;libboost_thread-vc141-mt-x64-1_66.lib;libboost_timer-vc141-mt-x64-1_66.lib;libboost_type_erasure-vc141-mt-x64-1_66.lib;libboost_unit_test_framework-vc141-mt-x64-1_66.lib;libboost_wave-vc141-mt-x64-1_66.lib;libboost_wserialization-vc141-mt-x64-1_66.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -426,6 +308,25 @@
     <ClCompile Include="IceCandidate.cpp" />
     <ClCompile Include="IceServer.cpp" />
     <ClCompile Include="KeyFrameRequestManager.cpp" />
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\aes.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\aes_gcm_ossl.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\aes_icm_ossl.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\cipher.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\cipher\null_cipher.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\hash\auth.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\hash\hmac_ossl.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\hash\null_auth.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\alloc.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\crypto_kernel.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\err.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\kernel\key.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\math\datatypes.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\math\stat.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\replay\rdb.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\replay\rdbx.c" />
+    <ClCompile Include="libsrtp\srtp\crypto\replay\ut_sim.c" />
+    <ClCompile Include="libsrtp\srtp\srtp\ekt.c" />
+    <ClCompile Include="libsrtp\srtp\srtp\srtp.c" />
     <ClCompile Include="libuv\src\fs-poll.c" />
     <ClCompile Include="libuv\src\idna.c" />
     <ClCompile Include="libuv\src\inet.c" />
@@ -561,6 +462,29 @@
     <ClCompile Include="TransportCongestionControlClient.cpp" />
     <ClCompile Include="TransportCongestionControlServer.cpp" />
     <ClCompile Include="TrendCalculator.cpp" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet6\sctp6_usrreq.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctputil.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_asconf.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_auth.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_bsd_addr.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_callout.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_cc_functions.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_crc32.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_indata.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_input.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_output.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_pcb.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_peeloff.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_sha1.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_ss_functions.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_sysctl.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_timer.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_userspace.c" />
+    <ClCompile Include="usrsctp\usrsctplib\netinet\sctp_usrreq.c" />
+    <ClCompile Include="usrsctp\usrsctplib\user_environment.c" />
+    <ClCompile Include="usrsctp\usrsctplib\user_mbuf.c" />
+    <ClCompile Include="usrsctp\usrsctplib\user_recv_thread.c" />
+    <ClCompile Include="usrsctp\usrsctplib\user_socket.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="buffer.h" />
@@ -750,6 +674,33 @@
     <ClInclude Include="IceCandidate.hpp" />
     <ClInclude Include="IceServer.hpp" />
     <ClInclude Include="KeyFrameRequestManager.hpp" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes_gcm.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes_icm.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\aes_icm_ext.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\alloc.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\auth.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\cipher.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\cipher_priv.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\cipher_types.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\crypto_kernel.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\crypto_types.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\datatypes.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\err.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\hmac.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\integers.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\key.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\null_auth.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\null_cipher.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\rdb.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\rdbx.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\sha1.h" />
+    <ClInclude Include="libsrtp\srtp\crypto\include\stat.h" />
+    <ClInclude Include="libsrtp\srtp\include\ekt.h" />
+    <ClInclude Include="libsrtp\srtp\include\getopt_s.h" />
+    <ClInclude Include="libsrtp\srtp\include\srtp.h" />
+    <ClInclude Include="libsrtp\srtp\include\srtp_priv.h" />
+    <ClInclude Include="libsrtp\srtp\include\ut_sim.h" />
     <ClInclude Include="libuv\include\uv.h" />
     <ClInclude Include="libuv\include\uv\errno.h" />
     <ClInclude Include="libuv\include\uv\threadpool.h" />
@@ -881,6 +832,44 @@
     <ClInclude Include="TransportCongestionControlClient.hpp" />
     <ClInclude Include="TransportCongestionControlServer.hpp" />
     <ClInclude Include="TrendCalculator.hpp" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet6\sctp6_var.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctputil.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_asconf.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_auth.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_bsd_addr.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_callout.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_constants.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_crc32.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_header.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_indata.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_input.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_lock_userspace.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_os.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_os_userspace.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_output.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_pcb.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_peeloff.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_process_lock.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_sha1.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_structs.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_sysctl.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_timer.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_uio.h" />
+    <ClInclude Include="usrsctp\usrsctplib\netinet\sctp_var.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_atomic.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_environment.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_inpcb.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_ip6_var.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_ip_icmp.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_malloc.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_mbuf.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_queue.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_recv_thread.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_route.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_socketvar.h" />
+    <ClInclude Include="usrsctp\usrsctplib\user_uma.h" />
+    <ClInclude Include="usrsctp\usrsctplib\usrsctp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

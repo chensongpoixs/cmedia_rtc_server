@@ -26,7 +26,7 @@ purpose:		csrtp_session
 #define _C_SRTP_SESSION_H_
 
 #include "cnet_type.h"
-#include <srtp2/srtp.h>
+#include <srtp.h>
 #include "csrtp_define.h"
 #include "ctimer.h"
 namespace chen {
