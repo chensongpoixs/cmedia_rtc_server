@@ -29,20 +29,20 @@ Copyright boost
 #include "cnet_type.h"
 #include <map>
 #include <json/json.h>
-#include "cwebrtc_transport.h"
+//#include "cwebrtc_transport.h"
 namespace chen
 {
 	struct cuser_info
 	{
 		uint64      session_id;
 		std::string username;
-		std::unordered_map<std::string, cwebrtc_transport*>     producers;
-		std::unordered_map<std::string, cwebrtc_transport*>     consumers;
+		//std::unordered_map<std::string, cwebrtc_transport*>     producers;
+		//std::unordered_map<std::string, cwebrtc_transport*>     consumers;
 		cuser_info()
 			: session_id(0)
 			, username("")
-			, producers()
-			, consumers() {}
+			/*, producers()
+			, consumers()*/ {}
 	};
 	class croom
 	{

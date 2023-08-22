@@ -24,8 +24,9 @@
 
 #include "cnet_type.h"
 #include <atomic>
-#include "cwebrtc_mgr.h"
-#include "cwebrtc_transport.h"
+//#include "cwebrtc_mgr.h"
+//#include "cwebrtc_transport.h"
+#include "cnoncopyable.h"
 #include <json/json.h>
 #include <unordered_map>
 #include "cmsg_base_id.h"

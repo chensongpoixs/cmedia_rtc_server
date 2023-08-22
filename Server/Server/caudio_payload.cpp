@@ -23,6 +23,7 @@ purpose:		_C_AUDIO_PAYLOAD_H_
 ************************************************************************************************/
 #include "caudio_payload.h"
 #include "crtc_sdp_util.h"
+#include "clog.h"
 #include "cshare_proto_error.h"
 namespace chen {
 	caudio_payload::~caudio_payload()

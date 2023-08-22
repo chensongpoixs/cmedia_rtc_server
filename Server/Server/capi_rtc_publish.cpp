@@ -24,20 +24,22 @@ purpose:		api_rtc_publish
 
 ************************************************************************************************/
 #include "capi_rtc_publish.h"
-#include "crtc_user_config.h"
+//#include "crtc_user_config.h"
 #include "cshare_proto_error.h"
 #include "crtc_source_description.h"
 #include "crtc_track_description.h"
 #include "csdp_util.h"
 #include "ccfg.h"
 #include "cdigit2str.h"
-#include "ctransport_mgr.h"
+//#include "ctransport_mgr.h"
 #include "crandom.h"
-#include "cdtls_certificate.h"
+//#include "cdtls_certificate.h"
 #include "cglobal_config.h"
-#include "crtp_header_extension_uri.h"
+//#include "crtp_header_extension_uri.h"
 #include "crtc_constants.h"
 #include "cglobal_rtc_config.h"
+#include <deque>
+#include "clog.h"
 #include "cglobal_rtc_port.h"
 namespace chen {
 	capi_rtc_publish::~capi_rtc_publish()
@@ -101,20 +103,20 @@ namespace chen {
 			local_ufrag = c_rand.rand_str(8);
 
 			username = local_ufrag + ":" + rtc_remote_sdp.get_ice_ufrag();
-			if (!g_transport_mgr.find_username(username))
+			/*if (!g_transport_mgr.find_username(username))
 			{
 				break;
-			}
+			}*/
 		}
 
 		rtc_local_sdp.set_ice_ufrag(local_ufrag);
 		rtc_local_sdp.set_ice_pwd(local_pwd);
 		rtc_local_sdp.set_fingerprint_algo("sha-256");
-		rtc_local_sdp.set_fingerprint(g_dtls_certificate.get_fingerprint());
-		crtc_room_master master;
-		master.m_room_name = publish_message.m_room_name; //roomname;
-		master.m_user_name = publish_message.m_peer_id; //peerid;
-		crtc_transport * transport_ptr = new crtc_transport(master);
+		rtc_local_sdp.set_fingerprint(/*g_dtls_certificate.get_fingerprint()*/"");
+		//crtc_room_master master;
+		//master.m_room_name = publish_message.m_room_name; //roomname;
+		//master.m_user_name = publish_message.m_peer_id; //peerid;
+		//crtc_transport * transport_ptr = new crtc_transport(master);
 		// We allows to mock the eip of server.
 		if (true)
 		{
@@ -153,17 +155,17 @@ namespace chen {
 						WARNING_EX_LOG("rtc protocol not type [%s]", iter->m_protocol.c_str());
 						return false;
 					}*/
-					cudp_socket * socket_ptr = new   cudp_socket(transport_ptr, wan_ip);
+					/*cudp_socket * socket_ptr = new   cudp_socket(transport_ptr, wan_ip);
 					uport = socket_ptr->GetLocalPort();
 					rtc_local_sdp.add_candidate("udp", hostname, socket_ptr->GetLocalPort(), "host");
-					transport_ptr->insert_udp_socket(socket_ptr);
+					transport_ptr->insert_udp_socket(socket_ptr);*/
 				}
 				else if ("tcp" == publish_message.m_rtc_protocol)
 				{
-					ctcp_server * socket_ptr = new   ctcp_server(transport_ptr, transport_ptr, wan_ip );
+					/*ctcp_server * socket_ptr = new   ctcp_server(transport_ptr, transport_ptr, wan_ip );
 					uport = socket_ptr->GetLocalPort();
 					rtc_local_sdp.add_candidate("tcp", hostname, socket_ptr->GetLocalPort(), "host");
-					transport_ptr->insert_tcp_server(socket_ptr);
+					transport_ptr->insert_tcp_server(socket_ptr);*/
 				}
 				else
 				{
@@ -208,8 +210,8 @@ namespace chen {
 	//	session->set_state_as_waiting_stun();
 		
 
-		transport_ptr->init(ERtcClientPublisher , rtc_remote_sdp, rtc_local_sdp, stream_desc);
-		transport_ptr->set_state_as_waiting_stun();
+		/*transport_ptr->init(ERtcClientPublisher , rtc_remote_sdp, rtc_local_sdp, stream_desc);
+		transport_ptr->set_state_as_waiting_stun();*/
 		// Before session initialize, we must setup the local SDP.
 		//if ((err = session->initialize(req, ruc->dtls_, ruc->srtp_, username)) != 0) 
 		{
@@ -218,37 +220,37 @@ namespace chen {
 
 		// We allows username is optional, but it never empty here.
 		//_srs_rtc_manager->add_with_name(username, session);
-		g_transport_mgr.insert_username(username, transport_ptr);
-		//g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
+		//g_transport_mgr.insert_username(username, transport_ptr);
+		////g_transport_mgr.insert_stream_name(roomname + "/" + peerid, transport_ptr);
 
-		if (!g_transport_mgr.m_all_stream_url_map.insert(std::make_pair(media_stream_url/*roomname + "/" + peerid*/, transport_ptr)).second)
-		{
-			/*ctransport_mgr::STREAM_URL_MAP::iterator iter =   g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
-			if (iter != g_transport_mgr.m_all_stream_url_map.end())
-			{
-				iter->second->unregister_consumer(transport_ptr);
-				transport_ptr->register_producer(iter->second);
-			}*/
+		//if (!g_transport_mgr.m_all_stream_url_map.insert(std::make_pair(media_stream_url/*roomname + "/" + peerid*/, transport_ptr)).second)
+		//{
+		//	/*ctransport_mgr::STREAM_URL_MAP::iterator iter =   g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
+		//	if (iter != g_transport_mgr.m_all_stream_url_map.end())
+		//	{
+		//		iter->second->unregister_consumer(transport_ptr);
+		//		transport_ptr->register_producer(iter->second);
+		//	}*/
 
 
-			g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/]->destroy();
-			delete g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/];
-			g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/] = transport_ptr;
-			WARNING_EX_LOG("insert failed url = %s failed !!!", media_stream_url.c_str());
-		}
+		//	g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/]->destroy();
+		//	delete g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/];
+		//	g_transport_mgr.m_all_stream_url_map[media_stream_url/*roomname + "/" + peerid*/] = transport_ptr;
+		//	WARNING_EX_LOG("insert failed url = %s failed !!!", media_stream_url.c_str());
+		//}
 
-	 	ctransport_mgr::CONSUMER_MAP::iterator iter =  g_transport_mgr.m_all_consumer_map.find(media_stream_url);
-		//ctransport_mgr::STREAM_URL_MAP::iterator iter = g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
-		if (iter != g_transport_mgr.m_all_consumer_map.end())
-		{
-			for (crtc_transport* consumer : iter->second)
-			{
-				consumer->register_producer(transport_ptr);
-				transport_ptr->register_consumer(consumer);
-			}
-			//iter->second->register_consumer(transport_ptr);
-			//transport_ptr->register_producer(iter->second);
-		}
+	 //	ctransport_mgr::CONSUMER_MAP::iterator iter =  g_transport_mgr.m_all_consumer_map.find(media_stream_url);
+		////ctransport_mgr::STREAM_URL_MAP::iterator iter = g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
+		//if (iter != g_transport_mgr.m_all_consumer_map.end())
+		//{
+		//	for (crtc_transport* consumer : iter->second)
+		//	{
+		//		consumer->register_producer(transport_ptr);
+		//		transport_ptr->register_consumer(consumer);
+		//	}
+		//	//iter->second->register_consumer(transport_ptr);
+		//	//transport_ptr->register_producer(iter->second);
+		//}
 
 		std::ostringstream    sdp;
 		rtc_local_sdp.encode(sdp);
@@ -1012,37 +1014,37 @@ namespace chen {
 		return true;
 		//return false;
 	}
-	int32 capi_rtc_publish::_serve_client(crtc_user_config * ruc)
-	{
+	//int32 capi_rtc_publish::_serve_client(crtc_user_config * ruc)
+	//{
 
-		int32 err = 0;
-		if ((err = _check_remote_sdp(ruc->m_remote_sdp)) != 0) 
-		{
-			WARNING_EX_LOG("remote sdp check failed");
-			return err;
-			//return error_wrap(err, "remote sdp check failed");
-		}
+	//	int32 err = 0;
+	//	if ((err = _check_remote_sdp(ruc->m_remote_sdp)) != 0) 
+	//	{
+	//		WARNING_EX_LOG("remote sdp check failed");
+	//		return err;
+	//		//return error_wrap(err, "remote sdp check failed");
+	//	}
 
-		crtc_sdp local_sdp;
-
-
-		// TODO: FIXME: move to create_session.
-		// Config for SDP and session.
-		/*
-		a = setup 主要是表示dtls的协商过程中角色的问题，谁是客户端，谁是服务器
-		a = setup : actpass 既可以是客户端，也可以是服务器
-		a = setup : active 客户端
-		a = setup : passive 服务器
-		由客户端先发起client hello
-
-		*/
-		local_sdp.m_session_config.m_dtls_role =  "passive";
-		local_sdp.m_session_config.m_dtls_version = "auto";
+	//	crtc_sdp local_sdp;
 
 
+	//	// TODO: FIXME: move to create_session.
+	//	// Config for SDP and session.
+	//	/*
+	//	a = setup 主要是表示dtls的协商过程中角色的问题，谁是客户端，谁是服务器
+	//	a = setup : actpass 既可以是客户端，也可以是服务器
+	//	a = setup : active 客户端
+	//	a = setup : passive 服务器
+	//	由客户端先发起client hello
 
-		return err;
-	}
+	//	*/
+	//	local_sdp.m_session_config.m_dtls_role =  "passive";
+	//	local_sdp.m_session_config.m_dtls_version = "auto";
+
+
+
+	//	return err;
+	//}
 
 	int32 capi_rtc_publish::_check_remote_sdp(const crtc_sdp & remote_sdp)
 	{

@@ -24,6 +24,7 @@ purpose:		_C_VIDEO_PAYLOAD_H_
 #include "cvideo_payload.h"
 #include "crtc_sdp_util.h"
 #include "cshare_proto_error.h"
+#include "clog.h"
 namespace chen {
 	cvideo_payload::~cvideo_payload()
 	{

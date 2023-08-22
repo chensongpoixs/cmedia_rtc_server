@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.2017
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "media_rtc_server", "Server\Server.vcxproj", "{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libuv", "libuv\libuv.vcxproj", "{CC280351-DE53-44E4-A70A-C6D1E4160119}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}.Release|x64.Build.0 = Release|x64
 		{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}.Release|x86.ActiveCfg = Release|Win32
 		{FCB7DF69-2F77-49DC-8094-A76ECD0357BB}.Release|x86.Build.0 = Release|Win32
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Debug|x64.ActiveCfg = Debug|x64
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Debug|x64.Build.0 = Debug|x64
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Debug|x86.ActiveCfg = Debug|Win32
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Debug|x86.Build.0 = Debug|Win32
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Release|x64.ActiveCfg = Release|x64
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Release|x64.Build.0 = Release|x64
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Release|x86.ActiveCfg = Release|Win32
+		{CC280351-DE53-44E4-A70A-C6D1E4160119}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

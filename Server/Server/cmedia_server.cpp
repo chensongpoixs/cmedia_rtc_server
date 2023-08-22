@@ -32,16 +32,16 @@ purpose:		cmedia_server
 #include "ccfg.h"
 #include "crtc_sdp.h"
 #include "cclient_msg_dispatch.h"
-#include "csctp_association_mgr.h"
-#include "cglobal_rtc.h"
-#include "cdtls_certificate.h"
+//#include "csctp_association_mgr.h"
+//#include "cglobal_rtc.h"
+//#include "cdtls_certificate.h"
 #include "cglobal_config.h"
-#include "csrtp_session.h"
-#include "crtc_transport.h"
-#include "ctransport_mgr.h"
+//#include "csrtp_session.h"
+//#include "crtc_transport.h"
+//#include "ctransport_mgr.h"
 #include "cglobal_rtc_port.h"
-#include "crtsp_server.h"
-#include "cglobal_rtsp.h"
+//#include "crtsp_server.h"
+//#include "cglobal_rtsp.h"
 #include "system_wrappers/source/field_trial.h" // webrtc::field_trial
 namespace chen {
 	static std::once_flag globalInitOnce;
@@ -85,10 +85,10 @@ namespace chen {
 		SYSTEM_LOG("global config init OK !!!");
 
 		SYSTEM_LOG("global rtc init ...");
-		if (!g_global_rtc.init())
+		/*if (!g_global_rtc.init())
 		{
 			return false;
-		}
+		}*/
 
 		SYSTEM_LOG("global rtc init OK !!!");
 		if (!g_client_msg_dispatch.init())
@@ -96,10 +96,10 @@ namespace chen {
 			return false;
 		}
 		SYSTEM_LOG("client_msg dispatch init OK !!!");
-		if (!g_msg_dispatch.init())
+		/*if (!g_msg_dispatch.init())
 		{
 			return false;
-		}
+		}*/
 
 		SYSTEM_LOG("uv init ...");
 
@@ -111,16 +111,16 @@ namespace chen {
 
 		SYSTEM_LOG("room mgr init ...");
 
-		if (!g_dtls_certificate.init())
+		/*if (!g_dtls_certificate.init())
 		{
 			return false;
-		}
+		}*/
 		SYSTEM_LOG("srtp init ...");
 
-		if (!csrtp_session::init())
+		/*if (!csrtp_session::init())
 		{
 			return false;
-		}
+		}*/
 		SYSTEM_LOG("srtp init OK !!!");
 
 		std::call_once(globalInitOnce, [] { webrtc::field_trial::InitFieldTrialsFromString(FieldTrials); });
@@ -132,10 +132,10 @@ namespace chen {
 			return false;
 		}
 		SYSTEM_LOG("rtc port init ...");
-		if (!g_global_rtc_port.init())
+		/*if (!g_global_rtc_port.init())
 		{
 			return false;
-		}
+		}*/
 
 		SYSTEM_LOG("websocket wan server  init ...");
 		if (!g_wan_server.init())
@@ -150,12 +150,12 @@ namespace chen {
 
 
 		SYSTEM_LOG("rtsp init ...");
-		g_rtsp_server.init();
+		//g_rtsp_server.init();
 #ifdef AUTH_CONFIG
 		g_rtsp_server.SetAuthConfig("-_-", "admin", "12345");
 #endif
-		init_rtsp_global();
-		g_rtsp_server.startup();
+		//init_rtsp_global();
+		//g_rtsp_server.startup();
 		SYSTEM_LOG("rtsp start OK !!!");
 
 		SYSTEM_LOG("timer init ...");
@@ -163,7 +163,7 @@ namespace chen {
 		{
 			return false;
 		}*/
-		m_server_intaval = new ctimer(this);
+		m_server_intaval = new Timer(this);
 		SYSTEM_LOG("timer startup  ...");
 
 		m_server_intaval->Start(100u);
@@ -176,7 +176,7 @@ namespace chen {
 	bool cmedia_server::Loop()
 	{
 		SYSTEM_LOG("starting libuv loop");
-		g_sctp_association_mgr.CreateChecker();
+		//g_sctp_association_mgr.CreateChecker();
 		//DepLibUV::RunLoop();
 		uv_util::run_loop();
 		SYSTEM_LOG("libuv loop ended");
@@ -229,8 +229,8 @@ namespace chen {
 
 
 		SYSTEM_LOG("rtsp server Destroy ....");
-		g_rtsp_server.shutdown();
-		g_rtsp_server.destroy();
+	//	g_rtsp_server.shutdown();
+	//	g_rtsp_server.destroy();
 		SYSTEM_LOG("rtsp server Destroy OK !!!");
 
 
@@ -243,20 +243,20 @@ namespace chen {
 		SYSTEM_LOG(" cfg  destroy OK !!!");
 		g_cfg.destroy();
 
-		g_msg_dispatch.destroy();
+		//g_msg_dispatch.destroy();
 		SYSTEM_LOG("msg dispath destroy OK !!!");
 
-		csrtp_session::destroy();
+	//	csrtp_session::destroy();
 		SYSTEM_LOG("srtp destroy OK !!!");
 
-		g_global_rtc.destory();
+		//g_global_rtc.destory();
 		SYSTEM_LOG("global rtc destory OK !!!");
 
 		g_global_config.destroy();
 		SYSTEM_LOG("global config destroy OK !!!");
 		 uv_util::destroy();
 
-		g_global_rtc_port.destroy();
+	//	g_global_rtc_port.destroy();
 		SYSTEM_LOG("global rtc port config destroy ok !!!");
 		//1 log
 		LOG::destroy();
@@ -271,7 +271,7 @@ namespace chen {
 		m_stop = true;
 	}
 
-	void cmedia_server::OnTimer(ctimer * timer)
+	void cmedia_server::OnTimer(Timer * timer)
 	{
 		//static const uint32 TICK_TIME = 100;
 		////启动内网并等待初始化完成
@@ -295,7 +295,7 @@ namespace chen {
 
 				g_room_mgr.update(tick_time);
 
-				g_transport_mgr.update(tick_time);
+			//	g_transport_mgr.update(tick_time);
 				//uDelta = time_elapse.get_elapse();
 
 				/*if (uDelta < TICK_TIME)

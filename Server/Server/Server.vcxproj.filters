@@ -22,15 +22,6 @@
     <Filter Include="config">
       <UniqueIdentifier>{5336c143-79d9-427d-8da2-675e266b3f7b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rtc">
-      <UniqueIdentifier>{cb2ccf9d-6215-4b4e-b0c9-b494a70b4801}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sctp">
-      <UniqueIdentifier>{3f2a69c3-bd55-4c79-8dd6-afe1c053b7fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="rtcp">
-      <UniqueIdentifier>{a5b88174-8c4b-4f56-9981-2511f2dcafa4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="codec">
       <UniqueIdentifier>{f97dffcd-ea96-4658-a0f9-ed372197718d}</UniqueIdentifier>
     </Filter>
@@ -115,14 +106,8 @@
     <Filter Include="webrtc\system_wrappers\source">
       <UniqueIdentifier>{05a7f283-f5bb-4af9-97c0-8a7a8e683bb5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="timer">
-      <UniqueIdentifier>{a7829fe6-b6a8-4447-afda-80931e4ca9d1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="uv_util">
       <UniqueIdentifier>{f290d998-3745-4b92-8f65-bfdbb4954baa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="srtp">
-      <UniqueIdentifier>{d4d8a06c-72d9-433e-99c8-557cea608a58}</UniqueIdentifier>
     </Filter>
     <Filter Include="dispatch">
       <UniqueIdentifier>{b6f186fc-a22c-4529-af01-6b6562f70d3b}</UniqueIdentifier>
@@ -139,20 +124,8 @@
     <Filter Include="reply">
       <UniqueIdentifier>{e2db577d-a684-42e1-9a5f-7dd9cf7179a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ortc">
-      <UniqueIdentifier>{e7b62da2-6b54-4dfa-bdda-cb5c87b951a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="rtc_util">
       <UniqueIdentifier>{62a0fabd-1d61-452e-9530-566c52228673}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="stun">
-      <UniqueIdentifier>{17b00e60-1e27-4cb4-8f19-dc9bfcdd9de6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="feedback">
-      <UniqueIdentifier>{7a7258e5-6eaf-47a2-aa7a-528c60028cab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="congestion_controller">
-      <UniqueIdentifier>{32d5fee3-16e1-48f1-b0c4-486997aa85d5}</UniqueIdentifier>
     </Filter>
     <Filter Include="rtc_net">
       <UniqueIdentifier>{3873831c-7ff7-4f2b-b4a3-d67077519f95}</UniqueIdentifier>
@@ -169,9 +142,6 @@
     <Filter Include="rtc_constants">
       <UniqueIdentifier>{290348eb-8d88-44fa-a2ff-dfb233b1acff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="dtls">
-      <UniqueIdentifier>{8fc8ed65-1da2-44db-bba2-a7e11f973a2c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="buffer">
       <UniqueIdentifier>{40d28993-4100-4f60-bf9b-5caf7120cbfb}</UniqueIdentifier>
     </Filter>
@@ -183,18 +153,6 @@
     </Filter>
     <Filter Include="rtp_rtcp">
       <UniqueIdentifier>{5346d05d-a2b4-45f6-a68d-e9488beef75d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="stream">
-      <UniqueIdentifier>{35497ce8-f930-41a4-b061-adbacdaf94c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="video_bitrate">
-      <UniqueIdentifier>{7da62829-2690-4d8b-b531-ea152e061613}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="rtc_stream">
-      <UniqueIdentifier>{708370d5-310b-4976-90b7-628f3ea5b106}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="rtsp">
-      <UniqueIdentifier>{a5ce983a-6cea-4c44-9bc8-4b3c2b98414d}</UniqueIdentifier>
     </Filter>
     <Filter Include="auth">
       <UniqueIdentifier>{deede085-027b-4981-b46e-0001f30b6b3f}</UniqueIdentifier>
@@ -208,29 +166,11 @@
     <Filter Include="rtp_video_header">
       <UniqueIdentifier>{c1903a29-96fe-4f9f-bb33-b6bbdc7d0dbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NewFilter1">
-      <UniqueIdentifier>{5fd8f939-9a2c-41dd-b612-93dc36ca577a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="video_coding\av1">
       <UniqueIdentifier>{9298b4fd-5777-4140-9706-efb38bcd69a4}</UniqueIdentifier>
     </Filter>
     <Filter Include="video_render">
       <UniqueIdentifier>{e47e1093-21c1-4155-aa3a-d848beb53f46}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libuv">
-      <UniqueIdentifier>{5d71fbd9-1d14-4f49-a995-1cf81006dcb1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libuv\include">
-      <UniqueIdentifier>{58a19697-9cf4-42fb-9a1e-ba563c21d004}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libuv\src">
-      <UniqueIdentifier>{5295dad0-6f50-456c-b307-82f1b5f294e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libuv\include\uv">
-      <UniqueIdentifier>{700bf7b3-c259-4271-ab7f-74234b039315}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="libuv\src\win">
-      <UniqueIdentifier>{6c1ca6d1-7376-447c-b97b-e59875cf5af6}</UniqueIdentifier>
     </Filter>
     <Filter Include="usrsctp">
       <UniqueIdentifier>{43748408-04aa-4544-affd-66c652575ba6}</UniqueIdentifier>
@@ -276,6 +216,48 @@
     </Filter>
     <Filter Include="libsrtp\srtp\crypto\replay">
       <UniqueIdentifier>{57132154-f27b-4343-9fff-16f87bc8a537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Channel">
+      <UniqueIdentifier>{a5744547-b5cb-49bc-9f34-c11209a2e21c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="handles">
+      <UniqueIdentifier>{f1f8c90d-25b7-4622-bb88-58f827a4800d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PayloadChannel">
+      <UniqueIdentifier>{4bc30caf-47ff-4676-b9ff-2ea625291351}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewFilter1">
+      <UniqueIdentifier>{05314260-c1d2-476a-ac96-9662bb20b494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTC">
+      <UniqueIdentifier>{ec37481a-bcf4-4bb5-81ac-e94fe2156360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTC\Codecs">
+      <UniqueIdentifier>{2a47b619-161d-4b27-8c41-9b489fc4a26b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTC\RTCP">
+      <UniqueIdentifier>{f1e99254-83e5-4af9-ab51-8ff63f66b42a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTC\RtpDictionaries">
+      <UniqueIdentifier>{18ae9a99-a22b-4b9a-9a5c-4d2971c7c338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RTC\SctpDictionaries">
+      <UniqueIdentifier>{c9e19f0b-3632-43d4-9550-57aebcb41d22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{a70c8d88-88cf-49c1-b2de-17f51be47d24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="nlohmann">
+      <UniqueIdentifier>{76cc62f6-18ec-4e83-a09c-c32e5c1323f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="netstring">
+      <UniqueIdentifier>{6cf8fb44-6cc7-473e-a3e9-ddb8cbb8334d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="netstring\netstring-c">
+      <UniqueIdentifier>{bcd8b308-f885-4f18-b51c-6bb37e1a2871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="getopt">
+      <UniqueIdentifier>{fb309ffe-37cc-469f-9290-92921de59f0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -459,149 +441,14 @@
     <ClCompile Include="libwebrtc\rtc_base\network\sent_packet.cc">
       <Filter>webrtc\rtc_base\network</Filter>
     </ClCompile>
-    <ClCompile Include="rtcp\Bye.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\CompoundPacket.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\Feedback.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPs.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsAfb.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsFir.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsLei.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsPli.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsRemb.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsRpsi.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsSli.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsTst.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackPsVbcm.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackRtp.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackRtpEcn.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackRtpNack.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackRtpSrReq.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackRtpTllei.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackRtpTmmb.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\FeedbackRtpTransport.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\Packet.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\ReceiverReport.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\Sdes.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\SenderReport.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\XR.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\XrDelaySinceLastRr.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="rtcp\XrReceiverReferenceTime.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="H264.cpp">
-      <Filter>codec</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpPacket.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="SeqManager.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="Parameters.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="Media.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtcpFeedback.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtcpParameters.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpCodecMimeType.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpCodecParameters.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpEncodingParameters.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpHeaderExtensionParameters.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpHeaderExtensionUri.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpParameters.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpRtxParameters.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="ctimer.cpp">
-      <Filter>timer</Filter>
-    </ClCompile>
     <ClCompile Include="cuv_util.cpp">
       <Filter>uv_util</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpProbationGenerator.cpp">
-      <Filter>rtp</Filter>
     </ClCompile>
     <ClCompile Include="ccrypto_random.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="csrtp_session.cpp">
-      <Filter>srtp</Filter>
-    </ClCompile>
     <ClCompile Include="cuv_ip.cpp">
-      <Filter>uv_util</Filter>
-    </ClCompile>
-    <ClCompile Include="cudp_socket_handler.cpp">
       <Filter>uv_util</Filter>
     </ClCompile>
     <ClCompile Include="cmsg_dispatch.cpp">
@@ -616,9 +463,6 @@
     <ClCompile Include="ccfg.cpp">
       <Filter>config</Filter>
     </ClCompile>
-    <ClCompile Include="RtpDictionaries.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
     <ClCompile Include="crtc_sdp_handler.cpp">
       <Filter>rtc_sdp</Filter>
     </ClCompile>
@@ -628,35 +472,8 @@
     <ClCompile Include="cwan_handler.cpp">
       <Filter>handler</Filter>
     </ClCompile>
-    <ClCompile Include="cortc.cpp">
-      <Filter>ortc</Filter>
-    </ClCompile>
-    <ClCompile Include="cglobal_rtc.cpp">
-      <Filter>rtc_util</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_util.cpp">
-      <Filter>rtc_util</Filter>
-    </ClCompile>
-    <ClCompile Include="crate_calculator.cpp">
-      <Filter>rtc_util</Filter>
-    </ClCompile>
-    <ClCompile Include="IceServer.cpp">
-      <Filter>stun</Filter>
-    </ClCompile>
-    <ClCompile Include="IceCandidate.cpp">
-      <Filter>stun</Filter>
-    </ClCompile>
-    <ClCompile Include="TransportCongestionControlServer.cpp">
-      <Filter>congestion_controller</Filter>
-    </ClCompile>
-    <ClCompile Include="StunPacket.cpp">
-      <Filter>stun</Filter>
-    </ClCompile>
     <ClCompile Include="cguard_reply.cpp">
       <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="PortManager.cpp">
-      <Filter>rtc_net</Filter>
     </ClCompile>
     <ClCompile Include="h264_profile_level_id.cc">
       <Filter>codec</Filter>
@@ -688,21 +505,6 @@
     <ClCompile Include="capi_rtc_player.cpp">
       <Filter>api_rtc</Filter>
     </ClCompile>
-    <ClCompile Include="capi_rtc_publish.cpp">
-      <Filter>api_rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_user_config.cpp">
-      <Filter>rtc_config</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_connection.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_server_mgr.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_source.cpp">
-      <Filter>media</Filter>
-    </ClCompile>
     <ClCompile Include="crtc_track_description.cpp">
       <Filter>media</Filter>
     </ClCompile>
@@ -724,17 +526,11 @@
     <ClCompile Include="crtc_source_description.cpp">
       <Filter>media</Filter>
     </ClCompile>
-    <ClCompile Include="crtc_consumer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="crtc_ssrc_generator.cpp">
       <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="crtc_constants.cpp">
       <Filter>rtc_constants</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_source_mgr.cpp">
-      <Filter>media</Filter>
     </ClCompile>
     <ClCompile Include="cifaddrs_converter.cc">
       <Filter>net</Filter>
@@ -742,32 +538,8 @@
     <ClCompile Include="cifaddrs_android.cc">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="csrtp_session_test.cpp">
-      <Filter>srtp</Filter>
-    </ClCompile>
-    <ClCompile Include="cdtls.cpp">
-      <Filter>dtls</Filter>
-    </ClCompile>
-    <ClCompile Include="cdtls_test.cpp">
-      <Filter>dtls</Filter>
-    </ClCompile>
-    <ClCompile Include="cdtls_certificate.cpp">
-      <Filter>dtls</Filter>
-    </ClCompile>
-    <ClCompile Include="cdtls_session.cpp">
-      <Filter>dtls</Filter>
-    </ClCompile>
     <ClCompile Include="cstr2digit.cpp">
       <Filter>util</Filter>
-    </ClCompile>
-    <ClCompile Include="csrtp.cpp">
-      <Filter>srtp</Filter>
-    </ClCompile>
-    <ClCompile Include="csrtp_util.cpp">
-      <Filter>srtp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_stun_packet.cpp">
-      <Filter>stun</Filter>
     </ClCompile>
     <ClCompile Include="cbuffer.cpp">
       <Filter>buffer</Filter>
@@ -775,20 +547,8 @@
     <ClCompile Include="ccrc32.cpp">
       <Filter>crc</Filter>
     </ClCompile>
-    <ClCompile Include="crtc_transport.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="ctransport_mgr.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
     <ClCompile Include="csdp_util.cpp">
       <Filter>rtc_sdp</Filter>
-    </ClCompile>
-    <ClCompile Include="ctransport_util.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_dtls.cpp">
-      <Filter>dtls</Filter>
     </ClCompile>
     <ClCompile Include="cglobal_config.cpp">
       <Filter>global_config</Filter>
@@ -796,206 +556,17 @@
     <ClCompile Include="cencoder.cpp">
       <Filter>codec</Filter>
     </ClCompile>
-    <ClCompile Include="crtp_rtcp.cpp">
-      <Filter>rtp_rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_player_stream.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_publisher_stream.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_stream_recv.cpp">
-      <Filter>stream</Filter>
-    </ClCompile>
-    <ClCompile Include="cseq_manager.cpp">
-      <Filter>rtp_rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="Producer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="Consumer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyFrameRequestManager.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="NackGenerator.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_listener.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtc_producer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="crtcp_packet.cpp">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_fb.cpp">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="ctransport_feedback.cc">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="ccommon_header.cc">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="cremote_estimator_proxy.cpp">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_packet.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_header_extension_map.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_header_extensions.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_headers.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtcp_receiver.cpp">
-      <Filter>rtcp</Filter>
-    </ClCompile>
-    <ClCompile Include="cvideo_bitrate_allocation.cpp">
-      <Filter>video_bitrate</Filter>
-    </ClCompile>
-    <ClCompile Include="csender_report.cpp">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="creport_block.cpp">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="ctime_util.cpp">
-      <Filter>feedback</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_header_extension_uri.cpp">
-      <Filter>rtp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_stream.cpp">
-      <Filter>stream</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_stream_send.cpp">
-      <Filter>stream</Filter>
-    </ClCompile>
-    <ClCompile Include="crtx_stream.cpp">
-      <Filter>stream</Filter>
-    </ClCompile>
-    <ClCompile Include="RateCalculator.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleConsumer.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="cconsumer.cpp">
-      <Filter>rtc_stream</Filter>
-    </ClCompile>
-    <ClCompile Include="cproducer.cpp">
-      <Filter>rtc_stream</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStream.cpp">
-      <Filter>rtc_stream</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStreamRecv.cpp">
-      <Filter>rtc_stream</Filter>
-    </ClCompile>
-    <ClCompile Include="RtpStreamSend.cpp">
-      <Filter>rtc_stream</Filter>
-    </ClCompile>
-    <ClCompile Include="RtxStream.cpp">
-      <Filter>rtc_stream</Filter>
-    </ClCompile>
     <ClCompile Include="cglobal_rtc_config.cpp">
       <Filter>rtc_config</Filter>
-    </ClCompile>
-    <ClCompile Include="TransportCongestionControlClient.cpp">
-      <Filter>congestion_controller</Filter>
-    </ClCompile>
-    <ClCompile Include="TrendCalculator.cpp">
-      <Filter>rtc</Filter>
     </ClCompile>
     <ClCompile Include="cglobal_rtc_port.cpp">
       <Filter>global_config</Filter>
     </ClCompile>
-    <ClCompile Include="csctp_association.cpp">
-      <Filter>sctp</Filter>
-    </ClCompile>
-    <ClCompile Include="csctp_association_mgr.cpp">
-      <Filter>sctp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtsp_session.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtsp_server.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="cnet_rtsp_server.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="ctcp_connection_handler.cpp">
-      <Filter>uv_util</Filter>
-    </ClCompile>
-    <ClCompile Include="ctcp_server_handler.cpp">
-      <Filter>uv_util</Filter>
-    </ClCompile>
-    <ClCompile Include="cudp_socket.cpp">
-      <Filter>uv_util</Filter>
-    </ClCompile>
-    <ClCompile Include="ctcp_server.cpp">
-      <Filter>uv_util</Filter>
-    </ClCompile>
-    <ClCompile Include="ctcp_conection.cpp">
-      <Filter>uv_util</Filter>
-    </ClCompile>
-    <ClCompile Include="crtsp_session_mgr.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="cparse_rtsp_request.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtsp_cmd_dispatch.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="cav1.cpp">
-      <Filter>codec</Filter>
-    </ClCompile>
-    <ClCompile Include="crtsp_request.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtsp_response.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
     <ClCompile Include="cbuffer_reader.cpp">
       <Filter>buffer</Filter>
     </ClCompile>
-    <ClCompile Include="cdigest_authentication.cpp">
-      <Filter>auth</Filter>
-    </ClCompile>
-    <ClCompile Include="cmedia_session.cpp">
-      <Filter>media</Filter>
-    </ClCompile>
     <ClCompile Include="cmedia_source.cpp">
       <Filter>media</Filter>
-    </ClCompile>
-    <ClCompile Include="ch264_source.cpp">
-      <Filter>codec</Filter>
-    </ClCompile>
-    <ClCompile Include="cglobal_rtsp.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="ch264_file.cpp">
-      <Filter>codec</Filter>
-    </ClCompile>
-    <ClCompile Include="crtp_connection.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="crtsp.cpp">
-      <Filter>rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="caac_source.cpp">
-      <Filter>codec</Filter>
     </ClCompile>
     <ClCompile Include="cvcm_packet.cpp">
       <Filter>video_coding</Filter>
@@ -1006,17 +577,11 @@
     <ClCompile Include="cpacket_buffer.cpp">
       <Filter>video_coding</Filter>
     </ClCompile>
-    <ClCompile Include="csequence_number.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="cmod_ops.cpp">
       <Filter>util</Filter>
     </ClCompile>
     <ClCompile Include="cvcm_encoded_frame.cpp">
       <Filter>video_coding</Filter>
-    </ClCompile>
-    <ClCompile Include="cvideo_rtp_depacketizer_av1.cpp">
-      <Filter>rtp_rtcp</Filter>
     </ClCompile>
     <ClCompile Include="cbyte_buffer.cpp">
       <Filter>buffer</Filter>
@@ -1026,120 +591,6 @@
     </ClCompile>
     <ClCompile Include="cvideo_renderer.cpp">
       <Filter>video_render</Filter>
-    </ClCompile>
-    <ClCompile Include="ctransport_tuple.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="cice_server.cpp">
-      <Filter>rtc</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\async.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\core.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\detect-wakeup.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\dl.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\error.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\fs.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\fs-event.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\getaddrinfo.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\getnameinfo.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\handle.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\loop-watcher.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\pipe.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\poll.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\process.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\process-stdio.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\signal.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\snprintf.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\stream.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\tcp.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\thread.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\tty.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\udp.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\util.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\winapi.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\win\winsock.c">
-      <Filter>libuv\src\win</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\fs-poll.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\idna.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\inet.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\random.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\strscpy.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\threadpool.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\timer.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\uv-common.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\uv-data-getter-setters.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="libuv\src\version.c">
-      <Filter>libuv\src</Filter>
-    </ClCompile>
-    <ClCompile Include="cselect_scheduler.cpp">
-      <Filter>rtc_net</Filter>
     </ClCompile>
     <ClCompile Include="cnet_session.cpp">
       <Filter>rtc_net</Filter>
@@ -1275,6 +726,335 @@
     </ClCompile>
     <ClCompile Include="libsrtp\srtp\crypto\replay\ut_sim.c">
       <Filter>libsrtp\srtp\crypto\replay</Filter>
+    </ClCompile>
+    <ClCompile Include="Channel\ChannelNotifier.cpp">
+      <Filter>Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="Channel\ChannelRequest.cpp">
+      <Filter>Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="Channel\ChannelSocket.cpp">
+      <Filter>Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="handles\SignalsHandler.cpp">
+      <Filter>handles</Filter>
+    </ClCompile>
+    <ClCompile Include="handles\TcpConnectionHandler.cpp">
+      <Filter>handles</Filter>
+    </ClCompile>
+    <ClCompile Include="handles\TcpServerHandler.cpp">
+      <Filter>handles</Filter>
+    </ClCompile>
+    <ClCompile Include="handles\Timer.cpp">
+      <Filter>handles</Filter>
+    </ClCompile>
+    <ClCompile Include="handles\UdpSocketHandler.cpp">
+      <Filter>handles</Filter>
+    </ClCompile>
+    <ClCompile Include="handles\UnixStreamSocket.cpp">
+      <Filter>handles</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadChannel\Notification.cpp">
+      <Filter>PayloadChannel</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadChannel\PayloadChannelNotifier.cpp">
+      <Filter>PayloadChannel</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadChannel\PayloadChannelRequest.cpp">
+      <Filter>PayloadChannel</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadChannel\PayloadChannelSocket.cpp">
+      <Filter>PayloadChannel</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\ActiveSpeakerObserver.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\AudioLevelObserver.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\Consumer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\DataConsumer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\DataProducer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\DirectTransport.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\DtlsTransport.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\IceCandidate.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\IceServer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\KeyFrameRequestManager.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\NackGenerator.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\PipeConsumer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\PipeTransport.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\PlainTransport.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\PortManager.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\Producer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RateCalculator.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\Router.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpListener.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpObserver.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpPacket.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpProbationGenerator.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpStream.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpStreamRecv.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpStreamSend.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtxStream.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SctpAssociation.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SctpListener.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SenderBandwidthEstimator.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SeqManager.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SimpleConsumer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SimulcastConsumer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SrtpSession.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\StunPacket.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SvcConsumer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\TcpConnection.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\TcpServer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\Transport.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\TransportCongestionControlClient.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\TransportCongestionControlServer.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\TransportTuple.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\TrendCalculator.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\UdpSocket.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\WebRtcTransport.cpp">
+      <Filter>RTC</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\Codecs\H264.cpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\Codecs\VP8.cpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\Codecs\VP9.cpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\Bye.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\CompoundPacket.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\Feedback.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPs.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsAfb.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsFir.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsLei.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsPli.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsRemb.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsRpsi.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsSli.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsTst.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackPsVbcm.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackRtp.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackRtpEcn.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackRtpNack.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackRtpSrReq.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackRtpTllei.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackRtpTmmb.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\FeedbackRtpTransport.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\Packet.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\ReceiverReport.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\Sdes.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\SenderReport.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\XR.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\XrDelaySinceLastRr.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RTCP\XrReceiverReferenceTime.cpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\Media.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\Parameters.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtcpFeedback.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtcpParameters.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtpCodecMimeType.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtpCodecParameters.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtpEncodingParameters.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtpHeaderExtensionParameters.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtpHeaderExtensionUri.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtpParameters.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\RtpDictionaries\RtpRtxParameters.cpp">
+      <Filter>RTC\RtpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="RTC\SctpDictionaries\SctpStreamParameters.cpp">
+      <Filter>RTC\SctpDictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Crypto.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\File.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\IP.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\String.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="DepLibSRTP.cpp" />
+    <ClCompile Include="DepLibUV.cpp" />
+    <ClCompile Include="DepLibWebRTC.cpp" />
+    <ClCompile Include="DepOpenSSL.cpp" />
+    <ClCompile Include="DepUsrSCTP.cpp" />
+    <ClCompile Include="lib.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="media_main.cpp" />
+    <ClCompile Include="MediaSoupErrors.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Worker.cpp" />
+    <ClCompile Include="netstring\netstring-c\netstring.c">
+      <Filter>netstring\netstring-c</Filter>
+    </ClCompile>
+    <ClCompile Include="getopt\getopt.c">
+      <Filter>getopt</Filter>
+    </ClCompile>
+    <ClCompile Include="capi_rtc_publish.cpp">
+      <Filter>api_rtc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1533,136 +1313,13 @@
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h">
       <Filter>webrtc\rtc_base\units</Filter>
     </ClInclude>
-    <ClInclude Include="rtcp\Bye.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\CompoundPacket.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\Feedback.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackItem.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPs.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsAfb.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsFir.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsLei.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsPli.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsRemb.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsRpsi.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsSli.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsTst.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackPsVbcm.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackRtp.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackRtpEcn.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackRtpNack.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackRtpSrReq.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackRtpTllei.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackRtpTmmb.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\FeedbackRtpTransport.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\Packet.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\ReceiverReport.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\Sdes.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\SenderReport.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\XR.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\XrDelaySinceLastRr.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="rtcp\XrReceiverReferenceTime.hpp">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="H264.hpp">
-      <Filter>codec</Filter>
-    </ClInclude>
-    <ClInclude Include="PayloadDescriptorHandler.hpp">
-      <Filter>codec</Filter>
-    </ClInclude>
-    <ClInclude Include="Tools.hpp">
-      <Filter>codec</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpPacket.hpp">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="SeqManager.hpp">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="Parameters.hpp">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpDictionaries.hpp">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpHeaderExtensionIds.hpp">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="ctimer.h">
-      <Filter>timer</Filter>
-    </ClInclude>
     <ClInclude Include="cuv_util.h">
       <Filter>uv_util</Filter>
-    </ClInclude>
-    <ClInclude Include="BweType.hpp">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpProbationGenerator.hpp">
-      <Filter>rtp</Filter>
     </ClInclude>
     <ClInclude Include="ccrypto_random.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="csrtp_session.h">
-      <Filter>srtp</Filter>
-    </ClInclude>
     <ClInclude Include="cuv_ip.h">
-      <Filter>uv_util</Filter>
-    </ClInclude>
-    <ClInclude Include="cudp_socket_handler.h">
       <Filter>uv_util</Filter>
     </ClInclude>
     <ClInclude Include="cmsg_dispatch.h">
@@ -1689,35 +1346,11 @@
     <ClInclude Include="cshare_proto_error.h">
       <Filter>msg</Filter>
     </ClInclude>
-    <ClInclude Include="cortc.h">
-      <Filter>ortc</Filter>
-    </ClInclude>
-    <ClInclude Include="cglobal_rtc.h">
-      <Filter>rtc_util</Filter>
-    </ClInclude>
     <ClInclude Include="crtc_util.h">
       <Filter>rtc_util</Filter>
     </ClInclude>
-    <ClInclude Include="crate_calculator.h">
-      <Filter>rtc_util</Filter>
-    </ClInclude>
-    <ClInclude Include="IceServer.hpp">
-      <Filter>stun</Filter>
-    </ClInclude>
-    <ClInclude Include="IceCandidate.hpp">
-      <Filter>stun</Filter>
-    </ClInclude>
-    <ClInclude Include="TransportCongestionControlServer.hpp">
-      <Filter>congestion_controller</Filter>
-    </ClInclude>
-    <ClInclude Include="StunPacket.hpp">
-      <Filter>stun</Filter>
-    </ClInclude>
     <ClInclude Include="cguard_reply.h">
       <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="PortManager.hpp">
-      <Filter>rtc_net</Filter>
     </ClInclude>
     <ClInclude Include="h264_profile_level_id.h">
       <Filter>codec</Filter>
@@ -1767,18 +1400,6 @@
     <ClInclude Include="capi_rtc_publish.h">
       <Filter>api_rtc</Filter>
     </ClInclude>
-    <ClInclude Include="crtc_user_config.h">
-      <Filter>rtc_config</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_connection.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_server_mgr.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_source.h">
-      <Filter>media</Filter>
-    </ClInclude>
     <ClInclude Include="crtc_track_description.h">
       <Filter>media</Filter>
     </ClInclude>
@@ -1800,17 +1421,11 @@
     <ClInclude Include="crtc_source_description.h">
       <Filter>media</Filter>
     </ClInclude>
-    <ClInclude Include="crtc_consumer.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="crtc_ssrc_generator.h">
       <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="crtc_constants.h">
       <Filter>rtc_constants</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_source_mgr.h">
-      <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="cifaddrs_converter.h">
       <Filter>net</Filter>
@@ -1818,41 +1433,8 @@
     <ClInclude Include="cifaddrs_android.h">
       <Filter>net</Filter>
     </ClInclude>
-    <ClInclude Include="csrtp_session_test.h">
-      <Filter>srtp</Filter>
-    </ClInclude>
-    <ClInclude Include="cdtls.h">
-      <Filter>dtls</Filter>
-    </ClInclude>
-    <ClInclude Include="cdtls_test.h">
-      <Filter>dtls</Filter>
-    </ClInclude>
-    <ClInclude Include="cdtls_certificate.h">
-      <Filter>dtls</Filter>
-    </ClInclude>
-    <ClInclude Include="cdtls_define.h">
-      <Filter>dtls</Filter>
-    </ClInclude>
-    <ClInclude Include="cdtls_session.h">
-      <Filter>dtls</Filter>
-    </ClInclude>
     <ClInclude Include="cstr2digit.h">
       <Filter>util</Filter>
-    </ClInclude>
-    <ClInclude Include="csrtp.h">
-      <Filter>srtp</Filter>
-    </ClInclude>
-    <ClInclude Include="csrtp_util.h">
-      <Filter>srtp</Filter>
-    </ClInclude>
-    <ClInclude Include="csrtp_define.h">
-      <Filter>srtp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_stun_packet.h">
-      <Filter>stun</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_stun_define.h">
-      <Filter>stun</Filter>
     </ClInclude>
     <ClInclude Include="cbuffer.h">
       <Filter>buffer</Filter>
@@ -1860,23 +1442,8 @@
     <ClInclude Include="ccrc32.h">
       <Filter>crc</Filter>
     </ClInclude>
-    <ClInclude Include="crtc_transport.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="ctransport_mgr.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
     <ClInclude Include="csdp_util.h">
       <Filter>rtc_sdp</Filter>
-    </ClInclude>
-    <ClInclude Include="ctransport_util.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_transport_define.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_dtls.h">
-      <Filter>dtls</Filter>
     </ClInclude>
     <ClInclude Include="cglobal_config.h">
       <Filter>global_config</Filter>
@@ -1884,212 +1451,14 @@
     <ClInclude Include="cencoder.h">
       <Filter>codec</Filter>
     </ClInclude>
-    <ClInclude Include="crtp_rtcp.h">
-      <Filter>rtp_rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_rtcp_define.h">
-      <Filter>rtp_rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_player_stream.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_publisher_stream.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_stream_recv.h">
-      <Filter>stream</Filter>
-    </ClInclude>
-    <ClInclude Include="cseq_manager.h">
-      <Filter>rtp_rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="Producer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="Consumer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyFrameRequestManager.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="NackGenerator.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_listener.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="crtc_producer.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="cfunction_view.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="carray_view.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="crtcp_packet.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="buffer.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_fb.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="cbyte_io.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="ctransport_feedback.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="ccommon_header.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="cremote_estimator_proxy.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_packet.h">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_header_extension_map.h">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_header_extensions.h">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_headers.h">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtcp_receiver.h">
-      <Filter>rtcp</Filter>
-    </ClInclude>
-    <ClInclude Include="cvideo_bitrate_allocation.h">
-      <Filter>video_bitrate</Filter>
-    </ClInclude>
-    <ClInclude Include="cvideo_codec_constants.h">
-      <Filter>video_bitrate</Filter>
-    </ClInclude>
-    <ClInclude Include="ccommon_type.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="csender_report.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="creport_block.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="cntp_time.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="ctime_util.h">
-      <Filter>feedback</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_header_extension_uri.h">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_stream.h">
-      <Filter>stream</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_stream_send.h">
-      <Filter>stream</Filter>
-    </ClInclude>
-    <ClInclude Include="crtx_stream.h">
-      <Filter>stream</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_stream_define.h">
-      <Filter>stream</Filter>
-    </ClInclude>
-    <ClInclude Include="RateCalculator.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleConsumer.hpp">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="cconsumer.h">
-      <Filter>rtc_stream</Filter>
-    </ClInclude>
-    <ClInclude Include="cproducer.h">
-      <Filter>rtc_stream</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStream.hpp">
-      <Filter>rtc_stream</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStreamRecv.hpp">
-      <Filter>rtc_stream</Filter>
-    </ClInclude>
-    <ClInclude Include="RtpStreamSend.hpp">
-      <Filter>rtc_stream</Filter>
-    </ClInclude>
-    <ClInclude Include="RtxStream.hpp">
-      <Filter>rtc_stream</Filter>
-    </ClInclude>
     <ClInclude Include="cglobal_rtc_config.h">
       <Filter>rtc_config</Filter>
-    </ClInclude>
-    <ClInclude Include="TransportCongestionControlClient.hpp">
-      <Filter>congestion_controller</Filter>
-    </ClInclude>
-    <ClInclude Include="TrendCalculator.hpp">
-      <Filter>rtc</Filter>
     </ClInclude>
     <ClInclude Include="cglobal_rtc_port.h">
       <Filter>global_config</Filter>
     </ClInclude>
-    <ClInclude Include="csctp_association.h">
-      <Filter>sctp</Filter>
-    </ClInclude>
-    <ClInclude Include="csctp_association_mgr.h">
-      <Filter>sctp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp_session.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp_define.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp_server.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="cnet_rtsp_server.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="ctcp_connection_handler.h">
-      <Filter>uv_util</Filter>
-    </ClInclude>
-    <ClInclude Include="ctcp_server_handler.h">
-      <Filter>uv_util</Filter>
-    </ClInclude>
-    <ClInclude Include="cudp_socket.h">
-      <Filter>uv_util</Filter>
-    </ClInclude>
-    <ClInclude Include="ctcp_server.h">
-      <Filter>uv_util</Filter>
-    </ClInclude>
-    <ClInclude Include="ctcp_conection.h">
-      <Filter>uv_util</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp_session_mgr.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="cparse_rtsp_request.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp_cmd_dispatch.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="cav1.h">
-      <Filter>codec</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp_request.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp_response.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
     <ClInclude Include="cbuffer_reader.h">
       <Filter>buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="cdigest_authentication.h">
-      <Filter>auth</Filter>
     </ClInclude>
     <ClInclude Include="cmd5.h">
       <Filter>util</Filter>
@@ -2097,35 +1466,11 @@
     <ClInclude Include="cmedia_type.h">
       <Filter>media</Filter>
     </ClInclude>
-    <ClInclude Include="cmedia_session.h">
-      <Filter>media</Filter>
-    </ClInclude>
     <ClInclude Include="cmedia_source.h">
       <Filter>media</Filter>
     </ClInclude>
     <ClInclude Include="cring_buffer.h">
       <Filter>buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="ch264_source.h">
-      <Filter>codec</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp.h">
-      <Filter>rtp</Filter>
-    </ClInclude>
-    <ClInclude Include="cglobal_rtsp.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="ch264_file.h">
-      <Filter>codec</Filter>
-    </ClInclude>
-    <ClInclude Include="crtp_connection.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="crtsp.h">
-      <Filter>rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="caac_source.h">
-      <Filter>codec</Filter>
     </ClInclude>
     <ClInclude Include="capi_rtc_type.h">
       <Filter>api_rtc</Filter>
@@ -2138,9 +1483,6 @@
     </ClInclude>
     <ClInclude Include="cpacket_buffer.h">
       <Filter>video_coding</Filter>
-    </ClInclude>
-    <ClInclude Include="csequence_number.h">
-      <Filter>util</Filter>
     </ClInclude>
     <ClInclude Include="cmod_ops.h">
       <Filter>util</Filter>
@@ -2159,69 +1501,6 @@
     </ClInclude>
     <ClInclude Include="cvideo_renderer.h">
       <Filter>video_render</Filter>
-    </ClInclude>
-    <ClInclude Include="ctransport_tuple.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="cice_server.h">
-      <Filter>rtc</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\include\uv.h">
-      <Filter>libuv\include</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\include\uv\errno.h">
-      <Filter>libuv\include\uv</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\include\uv\threadpool.h">
-      <Filter>libuv\include\uv</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\include\uv\tree.h">
-      <Filter>libuv\include\uv</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\include\uv\version.h">
-      <Filter>libuv\include\uv</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\include\uv\win.h">
-      <Filter>libuv\include\uv</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\win\atomicops-inl.h">
-      <Filter>libuv\src\win</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\win\handle-inl.h">
-      <Filter>libuv\src\win</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\win\internal.h">
-      <Filter>libuv\src\win</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\win\req-inl.h">
-      <Filter>libuv\src\win</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\win\stream-inl.h">
-      <Filter>libuv\src\win</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\win\winapi.h">
-      <Filter>libuv\src\win</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\win\winsock.h">
-      <Filter>libuv\src\win</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\heap-inl.h">
-      <Filter>libuv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\idna.h">
-      <Filter>libuv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\queue.h">
-      <Filter>libuv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\strscpy.h">
-      <Filter>libuv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="libuv\src\uv-common.h">
-      <Filter>libuv\src</Filter>
-    </ClInclude>
-    <ClInclude Include="cselect_scheduler.h">
-      <Filter>rtc_net</Filter>
     </ClInclude>
     <ClInclude Include="cnet_session.h">
       <Filter>rtc_net</Filter>
@@ -2427,11 +1706,315 @@
     <ClInclude Include="libsrtp\srtp\crypto\include\stat.h">
       <Filter>libsrtp\srtp\crypto\include</Filter>
     </ClInclude>
+    <ClInclude Include="Channel\ChannelNotifier.hpp">
+      <Filter>Channel</Filter>
+    </ClInclude>
+    <ClInclude Include="Channel\ChannelRequest.hpp">
+      <Filter>Channel</Filter>
+    </ClInclude>
+    <ClInclude Include="Channel\ChannelSocket.hpp">
+      <Filter>Channel</Filter>
+    </ClInclude>
+    <ClInclude Include="handles\SignalsHandler.hpp">
+      <Filter>handles</Filter>
+    </ClInclude>
+    <ClInclude Include="handles\TcpConnectionHandler.hpp">
+      <Filter>handles</Filter>
+    </ClInclude>
+    <ClInclude Include="handles\TcpServerHandler.hpp">
+      <Filter>handles</Filter>
+    </ClInclude>
+    <ClInclude Include="handles\Timer.hpp">
+      <Filter>handles</Filter>
+    </ClInclude>
+    <ClInclude Include="handles\UdpSocketHandler.hpp">
+      <Filter>handles</Filter>
+    </ClInclude>
+    <ClInclude Include="handles\UnixStreamSocket.hpp">
+      <Filter>handles</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadChannel\Notification.hpp">
+      <Filter>PayloadChannel</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadChannel\PayloadChannelNotifier.hpp">
+      <Filter>PayloadChannel</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadChannel\PayloadChannelRequest.hpp">
+      <Filter>PayloadChannel</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadChannel\PayloadChannelSocket.hpp">
+      <Filter>PayloadChannel</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\ActiveSpeakerObserver.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\AudioLevelObserver.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\BweType.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Consumer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\DataConsumer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\DataProducer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\DirectTransport.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\DtlsTransport.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\IceCandidate.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\IceServer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\KeyFrameRequestManager.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\NackGenerator.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Parameters.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\PipeConsumer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\PipeTransport.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\PlainTransport.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\PortManager.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Producer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RateCalculator.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Router.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpDictionaries.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpHeaderExtensionIds.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpListener.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpObserver.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpPacket.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpProbationGenerator.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpStream.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpStreamRecv.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtpStreamSend.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RtxStream.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SctpAssociation.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SctpDictionaries.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SctpListener.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SenderBandwidthEstimator.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SeqManager.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SimpleConsumer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SimulcastConsumer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SrtpSession.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\StunPacket.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\SvcConsumer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\TcpConnection.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\TcpServer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Transport.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\TransportCongestionControlClient.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\TransportCongestionControlServer.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\TransportTuple.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\TrendCalculator.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\UdpSocket.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\WebRtcTransport.hpp">
+      <Filter>RTC</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Codecs\H264.hpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Codecs\PayloadDescriptorHandler.hpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Codecs\Tools.hpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Codecs\VP8.hpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\Codecs\VP9.hpp">
+      <Filter>RTC\Codecs</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\Bye.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\CompoundPacket.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\Feedback.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackItem.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPs.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsAfb.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsFir.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsLei.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsPli.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsRemb.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsRpsi.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsSli.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsTst.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackPsVbcm.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackRtp.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackRtpEcn.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackRtpNack.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackRtpSrReq.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackRtpTllei.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackRtpTmmb.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\FeedbackRtpTransport.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\Packet.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\ReceiverReport.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\Sdes.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\SenderReport.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\XR.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\XrDelaySinceLastRr.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="RTC\RTCP\XrReceiverReferenceTime.hpp">
+      <Filter>RTC\RTCP</Filter>
+    </ClInclude>
+    <ClInclude Include="common.hpp" />
+    <ClInclude Include="DepLibSRTP.hpp" />
+    <ClInclude Include="DepLibUV.hpp" />
+    <ClInclude Include="DepLibWebRTC.hpp" />
+    <ClInclude Include="DepOpenSSL.hpp" />
+    <ClInclude Include="DepUsrSCTP.hpp" />
+    <ClInclude Include="lib.hpp" />
+    <ClInclude Include="Logger.hpp" />
+    <ClInclude Include="LogLevel.hpp" />
+    <ClInclude Include="MediaSoupErrors.hpp" />
+    <ClInclude Include="Settings.hpp" />
+    <ClInclude Include="Utils.hpp" />
+    <ClInclude Include="Worker.hpp" />
+    <ClInclude Include="nlohmann\json.hpp">
+      <Filter>nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="netstring\netstring-c\netstring.h">
+      <Filter>netstring\netstring-c</Filter>
+    </ClInclude>
+    <ClInclude Include="getopt\getopt.h">
+      <Filter>getopt</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="rtsp_play.sdp">
-      <Filter>rtsp</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -58,7 +58,7 @@ namespace chen {
 	protected:
 	private:
 
-		int32 _serve_client(crtc_user_config * ruc);
+		//int32 _serve_client(crtc_user_config * ruc);
 
 		int32 _check_remote_sdp(const crtc_sdp & remote_sdp);
 	};

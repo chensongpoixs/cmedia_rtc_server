@@ -32,11 +32,11 @@ purpose:	网络数据的收发
 #include "cclient_msg_dispatch.h"
 #include "cmsg_dispatch.h"
 #include "cshare_proto_error.h"
-#include "cglobal_rtc.h"
+//#include "cglobal_rtc.h"
 #include "capi_rtc_publish.h"
 #include "cglobal_rtc_config.h"
 #include "capi_rtc_player.h"
-#include "ctransport_mgr.h"
+//#include "ctransport_mgr.h"
 namespace chen {
 
 	void cwan_session::handler_msg(uint64_t session_id, const void* p, uint32 size)
@@ -151,7 +151,7 @@ namespace chen {
 
 		NORMAL_EX_LOG("%s Login OK!!", m_user_name.c_str());
 		send_msg(S2C_Login, EShareProtoOk, reply);
-		 send_msg(S2C_RtpCapabilitiesUpdate, 0, g_global_rtc.all_rtp_capabilities());
+		// send_msg(S2C_RtpCapabilitiesUpdate, 0, g_global_rtc.all_rtp_capabilities());
 		return true;
 	}
 
@@ -321,22 +321,22 @@ namespace chen {
 				return true;
 			}
 			std::string local_sdp;
-			auto iter = g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
-			if (iter == g_transport_mgr.m_all_stream_url_map.end())
-			{
-				publisher.do_serve_client(publish_message/*sdp, roomname, peerid*/, local_sdp);
-				reply["sdp"] = local_sdp;
-				reply["type"] = "answer";
-				//if (m_master)
-				{
-					m_room_name = publish_message.m_room_name; //roomname;
-					m_user_name = publish_message.m_peer_id;// //peerid;
-					m_master = true;
-					g_room_mgr.m_master[m_room_name] = m_session_id;
-				}
-				send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
-			}
-			else
+			//auto iter = g_transport_mgr.m_all_stream_url_map.find(media_stream_url);
+			//if (iter == g_transport_mgr.m_all_stream_url_map.end())
+			//{
+			//	publisher.do_serve_client(publish_message/*sdp, roomname, peerid*/, local_sdp);
+			//	reply["sdp"] = local_sdp;
+			//	reply["type"] = "answer";
+			//	//if (m_master)
+			//	{
+			//		m_room_name = publish_message.m_room_name; //roomname;
+			//		m_user_name = publish_message.m_peer_id;// //peerid;
+			//		m_master = true;
+			//		g_room_mgr.m_master[m_room_name] = m_session_id;
+			//	}
+			//	send_msg(S2C_rtc_publisher, EShareProtoOk, reply);
+			//}
+			//else
 			{
 				send_msg(S2C_rtc_publisher, EShareRtcCreateMediaChannel, reply);
 			}
@@ -449,14 +449,14 @@ namespace chen {
 			std::string roomname = value["data"]["roomname"].asCString();
 			std::string video_peerid = value["data"]["video_peerid"].asCString();
 			 
-			auto iter  = g_transport_mgr.m_all_stream_url_map.find(roomname + "/" + video_peerid);
-		 
+			/*auto iter  = g_transport_mgr.m_all_stream_url_map.find(roomname + "/" + video_peerid);
+
 			if (iter == g_transport_mgr.m_all_stream_url_map.end())
 			{
 				send_msg(S2C_rtc_requestframe, EShareRtcRequestFrame, reply);
 				return false;
 			}
-			iter->second ->request_key_frame();
+			iter->second ->request_key_frame();*/
 			send_msg(S2C_rtc_requestframe, EShareProtoOk, reply);
 			//send_msg(S2C_WebrtcMessage, EShareProtoData, reply);
 		}

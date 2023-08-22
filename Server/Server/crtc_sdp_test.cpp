@@ -23,9 +23,13 @@ purpose:		crtc_sdp_test
 ************************************************************************************************/
 
 #include "crtc_sdp.h"
-#include "crtc_transport.h"
-#include "cdtls_certificate.h"
+//#include "crtc_transport.h"
+//#include "cdtls_certificate.h"
 #include "capi_rtc_publish.h"
+#include <ostream>
+//#include <ifstream>
+#include <filesystem>
+
 namespace chen {
 	namespace test {
 
@@ -50,27 +54,27 @@ namespace chen {
 			//chen::int32 ret = rtc_sdp.parse(offer_sdp);
 			std::string roomname = "chensong";
 			std::string peerid = "chensong";
-			std::ifstream  input("../bin/sdp/test_offer.sdp");
-			if (!input)
-			{
-				// ERROR_EX_LOG("open config file fail file = %s", file_name);
-				return false;
-			}
-			std::string line;
-			std::string remote;
-			while (getline(input, line))
-			{
-				remote += line + "\r\n";
-				//if (_parser_line(line, key, value))
-				//{
-				   // _insert_data(key, value);
-				   // //m_configs[1].m_data = value; // 保存到map容器中的方法。
-				//}
-			}
-			if (input)
-			{
-				input.close();
-			}
+			//std::ifstream  input("../bin/sdp/test_offer.sdp");
+			//if (!input)
+			//{
+			//	// ERROR_EX_LOG("open config file fail file = %s", file_name);
+			//	return false;
+			//}
+			//std::string line;
+			//std::string remote;
+			//while (getline(input, line))
+			//{
+			//	remote += line + "\r\n";
+			//	//if (_parser_line(line, key, value))
+			//	//{
+			//	   // _insert_data(key, value);
+			//	   // //m_configs[1].m_data = value; // 保存到map容器中的方法。
+			//	//}
+			//}
+			//if (input)
+			//{
+			//	input.close();
+			//}
 
 		/*	FILE * out_file_ptr = fopen("./webrtc_offer555.sdp", "wb+");
 			fprintf(out_file_ptr, "%s\n===================================\n", offer_sdp.c_str());

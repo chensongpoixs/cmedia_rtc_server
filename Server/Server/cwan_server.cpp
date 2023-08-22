@@ -24,7 +24,7 @@ purpose:		wan_server
 #include "cwan_server.h"
 #include "clog.h"
 #include "ccfg.h"
-#include "cglobal_rtc.h"
+//#include "cglobal_rtc.h"
 #include "cmsg_base_id.h"
 
 namespace chen {
