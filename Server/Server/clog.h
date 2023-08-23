@@ -136,12 +136,12 @@ namespace chen {
 
 
 //标准log 有时间前缀
-#define LOG_SYSTEM LOG(ELogLevel_System)
-#define LOG_FATAL  LOG(ELogLevel_Fatal, FUNCTION, __LINE__)
-#define LOG_ERROR  LOG(ELogLevel_Error, FUNCTION, __LINE__)
-#define LOG_WARN   LOG(ELogLevel_Warn, FUNCTION, __LINE__)
-#define LOG_INFO   LOG(ELogLevel_Info)
-#define LOG_DEBUG  LOG(ELogLevel_Debug)
+//#define LOG_SYSTEM LOG(ELogLevel_System)
+//#define LOG_FATAL  LOG(ELogLevel_Fatal, FUNCTION, __LINE__)
+//#define LOG_ERROR  LOG(ELogLevel_Error, FUNCTION, __LINE__)
+//#define LOG_WARN   LOG(ELogLevel_Warn, FUNCTION, __LINE__)
+//#define LOG_INFO   LOG(ELogLevel_Info)
+//#define LOG_DEBUG  LOG(ELogLevel_Debug)
 
 #define VAR_LOG LOG::var_log
 
