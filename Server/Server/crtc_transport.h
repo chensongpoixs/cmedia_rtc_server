@@ -91,9 +91,11 @@ namespace chen {
 	struct crtc_room_master
 	{
 		std::string m_room_name;
+		std::string m_cur_user;
 		std::string m_user_name;
 		crtc_room_master () 
 			: m_room_name("")
+			, m_cur_user("")
 			, m_user_name(""){}
 	};
 

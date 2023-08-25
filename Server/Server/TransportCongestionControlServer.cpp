@@ -293,7 +293,7 @@ namespace RTC
 
 			RTC::RTCP::FeedbackPsRembPacket packet(0u, 0u);
 
-			packet.SetBitrate(this->maxIncomingBitrate);
+			packet.SetBitrate(this->maxIncomingBitrate  );
 			packet.Serialize(RTC::RTCP::Buffer);
 
 			// Notify the listener.

@@ -1105,6 +1105,9 @@
     <ClCompile Include="crtc_udp_socket_handler.cpp">
       <Filter>rtc_net</Filter>
     </ClCompile>
+    <ClCompile Include="clibuv_aysnc_thread.c">
+      <Filter>uv_util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">

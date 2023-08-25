@@ -85,7 +85,7 @@ namespace chen {
 			//audio_track_desc->m_msid_tracker = c_rand.rand_str(36);;
 			//audio_track_desc->m_mid = "0";
 			uint32_t audio_ssrc = rtc_ssrc_info_ptr->m_audio_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
-			audio_track_desc->m_ssrc = audio_ssrc;
+			audio_track_desc->m_ssrc = c_rtc_ssrc_generator.generate_ssrc(); ;// audio_ssrc;
 			audio_track_desc->m_direction = "sendonly";
 
 			audio_track_desc->m_media_ptr = new caudio_payload(kAudioPayloadType, "opus", kAudioSamplerate, kAudioChannel);
@@ -100,7 +100,7 @@ namespace chen {
 			video_track_desc->m_id = "video-" + c_rand.rand_str(8);
 			video_track_desc->m_msid = planname;// c_rand.rand_str(36);
 			//video_track_desc->m_mid = "1";
-			uint32_t video_ssrc = rtc_ssrc_info_ptr->m_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
+			uint32_t video_ssrc = c_rtc_ssrc_generator.generate_ssrc(); ;// rtc_ssrc_info_ptr->m_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
 			video_track_desc->m_ssrc = video_ssrc;
 			video_track_desc->m_direction = "sendonly";
 
@@ -120,7 +120,7 @@ namespace chen {
 			}
 			crtx_payload_des *rtx_video_payload = new crtx_payload_des(kRtxVideoPayloadType, kVideoPayloadType);
 			video_track_desc->m_rtx_ptr = rtx_video_payload;
-			video_track_desc->m_rtx_ssrc = rtc_ssrc_info_ptr->m_rtx_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
+			video_track_desc->m_rtx_ssrc = c_rtc_ssrc_generator.generate_ssrc();// rtc_ssrc_info_ptr->m_rtx_video_ssrc;// c_rtc_ssrc_generator.generate_ssrc();
 		}
 		///////////////////////////////////////////
 
@@ -200,6 +200,7 @@ namespace chen {
 		crtc_room_master master;
 		master.m_room_name = player_message.m_room_name;
 		master.m_user_name = player_message.m_video_peer_id;
+		master.m_cur_user = player_message.m_peer_id;
 		crtc_transport * transport_ptr = new crtc_transport(master);
 		// We allows to mock the eip of server.
 		if (true)

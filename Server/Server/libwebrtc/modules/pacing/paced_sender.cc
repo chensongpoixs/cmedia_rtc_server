@@ -69,7 +69,7 @@ void PacedSender::CreateProbeCluster(int bitrate_bps, int cluster_id) {
   // TODO: REMOVE
    DEBUG_EX_LOG("---- bitrate_bps:%d, cluster_id:%d", bitrate_bps, cluster_id);
 
-  prober_.CreateProbeCluster(bitrate_bps, static_cast<uint64_t>(uv_hrtime() / 1000000u), cluster_id);
+  prober_.CreateProbeCluster(bitrate_bps, static_cast<uint64_t>(uv_util::GetTimeMsInt64()), cluster_id);
 }
 
 void PacedSender::Pause() {
@@ -148,7 +148,7 @@ int64_t PacedSender::TimeUntilNextProcess() {
     return std::max<int64_t>(kPausedProcessIntervalMs - elapsed_time_ms, 0);
 
   if (prober_.IsProbing()) {
-    int64_t ret = prober_.TimeUntilNextProbe(static_cast<uint64_t>(uv_hrtime() / 1000000u));
+    int64_t ret = prober_.TimeUntilNextProbe(static_cast<uint64_t>(uv_util::GetTimeMsInt64()));
     if (ret > 0 || (ret == 0 && !probing_send_failure_))
       return ret;
   }

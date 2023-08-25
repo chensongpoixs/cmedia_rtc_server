@@ -219,18 +219,18 @@ namespace chen {
 				params.params.type = EMediaAudio/*stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_type*/;
 				params.params.subtype = EDataOpus/*stream_desc.m_audio_track_desc_ptr->m_media_ptr->m_name*/;
 				//if (stream_desc.m_audio_track_desc_ptr-)
-				/*if (rtc_ssrc_info_ptr)
+				if (rtc_ssrc_info_ptr)
 				{
-					if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc)).second)
+					if (!m_server_ssrc_map.insert(std::make_pair(rtc_ssrc_info_ptr->m_audio_ssrc, params.params.ssrc)).second)
 					{
 						WARNING_EX_LOG("audio insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_audio_ssrc);
 					}
-				}*/
+				}
 
 				crtc_consumer * consumer_ptr = new crtc_consumer(this, "audio", params);
 				if (consumer_ptr) 
 				{
-					if (!m_all_rtp_listener.add_consumer(stream_desc.m_audio_track_desc_ptr->m_ssrc, consumer_ptr))
+					if (!m_all_rtp_listener.add_consumer(stream_desc.m_audio_track_desc_ptr->m_ssrc/*stream_desc.m_audio_track_desc_ptr->m_ssrc*/, consumer_ptr))
 					{
 						WARNING_EX_LOG("add consumer_ptr audio failed (ssrc = %u)", stream_desc.m_audio_track_desc_ptr->m_ssrc);
 					}
@@ -258,9 +258,9 @@ namespace chen {
 						params.params.rtx_ssrc = rtc_track->m_rtx_ssrc;
 						if (rtc_ssrc_info_ptr)
 						{
-							if (!m_server_ssrc_map.insert(std::make_pair(params.params.ssrc, rtc_ssrc_info_ptr->m_video_ssrc)).second)
+							if (!m_server_ssrc_map.insert(std::make_pair(rtc_ssrc_info_ptr->m_rtx_video_ssrc, params.params.rtx_ssrc)).second)
 							{
-								WARNING_EX_LOG("video rtx  insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_rtx_video_ssrc);
+								WARNING_EX_LOG("video rtx  insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.rtx_ssrc, rtc_ssrc_info_ptr->m_rtx_video_ssrc);
 							}
 						}
 						consumer_ptr = new crtc_consumer(this, "video", params );;
@@ -280,17 +280,13 @@ namespace chen {
 					{
 						consumer_ptr = new crtc_consumer(this, "video", params );;
 					}
-
-					if (consumer_ptr)
+					if (!m_server_ssrc_map.insert(std::make_pair(rtc_ssrc_info_ptr->m_video_ssrc, params.params.ssrc)).second)
 					{
-						if (!m_all_rtp_listener.add_consumer(rtc_track->m_ssrc, consumer_ptr))
-						{
-							WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_ssrc);
-						}
+						WARNING_EX_LOG("video rtx  insert server ssrc table failed !!! (client ssrc = %u)(server ssrc= %u)", params.params.ssrc, rtc_ssrc_info_ptr->m_rtx_video_ssrc);
 					}
-					else
+					if (!m_all_rtp_listener.add_consumer(rtc_track->m_ssrc, consumer_ptr))
 					{
-						WARNING_EX_LOG("alloc failed !!!");
+						WARNING_EX_LOG("add producer video failed (ssrc = %u)", rtc_track->m_ssrc); 
 					}
 					
 				}
@@ -745,7 +741,7 @@ namespace chen {
 	void crtc_transport::OnConsumerRetransmitRtpPacket(crtc_consumer * consumer, RTC::RtpPacket * packet)
 	{
 		// Update abs-send-time if present.
-		//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+		packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 
 		// Update transport wide sequence number if present.
 		// clang-format off
@@ -849,7 +845,7 @@ namespace chen {
 		}*/
 		if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
-			//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+			
 			//{
 			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
 			//	{
@@ -868,13 +864,13 @@ namespace chen {
 			//	}
 			//}
 			//
-			//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+			packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 			 
 			if (len != 512 && !m_srtp_send_session_ptr->EncryptRtp( &data,  &len))
 			{
-				WARNING_EX_LOG("rtp encrypt rtp failed !!!");
+				WARNING_EX_LOG("[url = %s/%s][seq = %u]rtp encrypt rtp failed !!!", m_rtc_master.m_room_name.c_str(), m_rtc_master.m_cur_user.c_str(), packet->GetSequenceNumber());
 				return;
 			}
 			//NORMAL_EX_LOG("rtp data size = %u", len);
@@ -909,7 +905,7 @@ namespace chen {
 			//	}
 			//}
 			//
-			//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+			packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
 
@@ -1111,13 +1107,21 @@ namespace chen {
 			//WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
 			return;
 		}
+		int32 ssrc = packet->GetSsrc();
+		packet->SetSsrc(m_server_ssrc_map[packet->GetSsrc()]);
 		crtc_consumer * consumer_ptr =  m_all_rtp_listener.get_consumer(packet);
 		if (!consumer_ptr)
 		{
 			WARNING_EX_LOG("not find consumer ssrc = %u", packet->GetSsrc());
 			return;
 		}
+		packet->SetMidExtensionId(m_rtp_header_extension_ids.mid);
+		packet->SetRidExtensionId(m_rtp_header_extension_ids.rid);
+		packet->SetRepairedRidExtensionId(m_rtp_header_extension_ids.rrid);
+		packet->SetAbsSendTimeExtensionId(m_rtp_header_extension_ids.absSendTime);
+		packet->SetTransportWideCc01ExtensionId(m_rtp_header_extension_ids.transportWideCc01);
 		consumer_ptr->send_rtp_packet(packet);
+		packet->SetSsrc(ssrc);
 	}
 	void crtc_transport::send_rtcp_packet(RTC::RTCP::Packet * packet)
 	{
@@ -1327,7 +1331,7 @@ namespace chen {
 			//NORMAL_EX_LOG("IsRtcp>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			 
 			//OnRtcpDataReceived(tuple, data, len);
-			//_on_rtcp_data_received(tuple, data, len );
+			_on_rtcp_data_received(tuple, data, len );
 			/*cur_time_ms = std::chrono::steady_clock::now();
 			dur = cur_time_ms - pre_time;
 			ms = std::chrono::duration_cast<std::chrono::microseconds>(dur);
@@ -1345,13 +1349,13 @@ namespace chen {
 			
 			//return;
 			_on_rtp_data_received(tuple, data, len);
-			/*cur_time_ms = std::chrono::steady_clock::now();
-			dur = cur_time_ms - pre_time;
-			ms = std::chrono::duration_cast<std::chrono::nanoseconds>(dur);
-			if (ms.count() > 20)
-			{
-				NORMAL_EX_LOG("udp rtp recv packet [nanoseconds = %" PRIi64 "]", ms.count());
-			}*/
+			// cur_time_ms = std::chrono::steady_clock::now();
+			//dur = cur_time_ms - pre_time;
+			//ms = std::chrono::duration_cast<std::chrono::nanoseconds>(dur);
+			////if (ms.count() > 20)
+			//{
+			//	NORMAL_EX_LOG("udp rtp recv packet [nanoseconds = %" PRIi64 "]", ms.count());
+			//} 
 		}
 		// Check if it's DTLS.
 		else if (RTC::DtlsTransport::IsDtls(data, len))
@@ -1548,7 +1552,7 @@ namespace chen {
 	void crtc_transport::OnTransportCongestionControlClientSendRtpPacket(RTC::TransportCongestionControlClient * tccClient, RTC::RtpPacket * packet, const webrtc::PacedPacketInfo & pacingInfo)
 	{
 		// Update abs-send-time if present.
-		//packet->UpdateAbsSendTime(uv_util::GetTimeMs());
+		packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 
 		// Update transport wide sequence number if present.
 		// clang-format off
@@ -1997,14 +2001,14 @@ namespace chen {
 			}
 			pre_time = cur_time_ms;
 #endif 
-#if 0
+#if 1
 			if (packet->GetPayloadType() == 106)
 			{
 				//NORMAL_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
 				static uint64 seq = packet->GetSequenceNumber();
 				if (seq != packet->GetSequenceNumber())
 				{
-					WARNING_EX_LOG("[payload_type = %u][seq = %u]", packet->GetPayloadType(), packet->GetSequenceNumber());
+					WARNING_EX_LOG("[payload_type = %u][pre seq = %u][seq = %u]", packet->GetPayloadType(), seq, packet->GetSequenceNumber());
 				}
 				seq = packet->GetSequenceNumber() + 1;
 			}
@@ -2027,6 +2031,7 @@ namespace chen {
 			{
 				m_tcc_server->IncomingPacket(nowMs, packet);
 			}
+			//return;
 			//NORMAL_EX_LOG("[payload_type = %u]", packet->GetPayloadType());
 
 			crtc_producer * producer_ptr = m_all_rtp_listener.get_producer(packet );
@@ -2899,6 +2904,10 @@ namespace chen {
 		// RTCP timer.
 		if (timer == m_timer_ptr)
 		{
+			/*if (m_rtc_client_type == ERtcClientPublisher)
+			{
+				request_key_frame();
+			}*/
 			auto interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
 			uint64_t nowMs = uv_util::GetTimeMs();
 		//	m_remote_estimator.send_periodic_Feedbacks();
