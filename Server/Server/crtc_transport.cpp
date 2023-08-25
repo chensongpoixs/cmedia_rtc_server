@@ -819,7 +819,7 @@ namespace chen {
 			WARNING_EX_LOG("");
 			return  ;
 		}*/
-		if (/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
+		//if (/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			if (m_srtp_send_session_ptr->EncryptRtp((const uint8_t**)&data, (size_t *)&size))
 			{
@@ -843,7 +843,7 @@ namespace chen {
 			WARNING_EX_LOG("");
 			return;
 		}*/
-		if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
+		//if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			
 			//{
@@ -867,16 +867,20 @@ namespace chen {
 			packet->UpdateAbsSendTime(uv_util::GetTimeMs());
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
-			 
-			if (len != 512 && !m_srtp_send_session_ptr->EncryptRtp( &data,  &len))
-			{
-				WARNING_EX_LOG("[url = %s/%s][seq = %u]rtp encrypt rtp failed !!!", m_rtc_master.m_room_name.c_str(), m_rtc_master.m_cur_user.c_str(), packet->GetSequenceNumber());
+			if (len != 512)
+			{ 
+				 
+
+				if (!m_srtp_send_session_ptr->EncryptRtp(&data, &len))
+				{
+					WARNING_EX_LOG("[url = %s/%s][seq = %u]rtp encrypt rtp failed !!!", m_rtc_master.m_room_name.c_str(), m_rtc_master.m_cur_user.c_str(), packet->GetSequenceNumber());
 				return;
+				}
+				//NORMAL_EX_LOG("rtp data size = %u", len);
+				//m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
+				//m_tcp_connection_ptr->Send(data, len,  NULL);
+				m_ice_server_ptr->GetSelectedTuple()->Send(data, len); 
 			}
-			//NORMAL_EX_LOG("rtp data size = %u", len);
-			//m_current_socket_ptr->Send( data, len, &m_remote_addr, NULL);
-			//m_tcp_connection_ptr->Send(data, len,  NULL);
-			m_ice_server_ptr->GetSelectedTuple()->Send(data, len);
 		}
 	}
 	void crtc_transport::send_rtp_packet(RTC::RtpPacket * packet, cudp_socket_handler::onSendCallback * cb)
@@ -885,7 +889,7 @@ namespace chen {
 		{
 			return;
 		}
-		if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
+		//if (m_ice_server_ptr && /*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			//{
 			//	for (const cmedia_desc& media : m_local_sdp.m_media_descs)
@@ -929,14 +933,14 @@ namespace chen {
 				delete cb;
 			}
 		}
-		else
+		/*else
 		{
 			if (cb)
 			{
 				(*cb)(false);
 				delete cb;
 			}
-		}
+		}*/
 	}
 	void crtc_transport::send_rtp_audio_data(RTC::RtpPacket * packet)
 	{
@@ -1035,7 +1039,7 @@ namespace chen {
 		{
 			return false;
 		}
-		if (m_ice_server_ptr&&/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
+		//if (m_ice_server_ptr&&/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			if (!m_srtp_send_session_ptr->EncryptRtcp(&data, &len))
 			{
@@ -1056,7 +1060,7 @@ namespace chen {
 		{
 			return;
 		}
-		if (m_ice_server_ptr&&/*m_tcp_connection_ptr && */m_srtp_send_session_ptr)
+		//if (m_ice_server_ptr&&/*m_tcp_connection_ptr && */m_srtp_send_session_ptr)
 		{
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
@@ -1131,7 +1135,7 @@ namespace chen {
 			WARNING_EX_LOG("DTLS not connected, cannot send SCTP data");
 			return;
 		}
-		if (/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
+	//	if (/*m_tcp_connection_ptr &&*/ m_srtp_send_session_ptr)
 		{
 			const uint8_t* data = packet->GetData();
 			size_t len = packet->GetSize();
@@ -2810,7 +2814,7 @@ namespace chen {
 	{
 		for (crtc_transport * rtc : m_consumer_transports)
 		{
-			if (rtc->IsConnected())
+			//if (rtc->IsConnected())
 			{
 				rtc->send_consumer(packet);
 			}

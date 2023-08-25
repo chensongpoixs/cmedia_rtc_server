@@ -73,6 +73,7 @@ namespace chen {
 		crtp_stream_send *					m_rtp_stream_send_ptr;
 
 		bool								m_sync_required;
+		bool								m_keyFrameSupported;
 
 		RTC::SeqManager<uint16>				m_rtp_seq_manager;
 		uint32								m_last_rtcp_send_time;

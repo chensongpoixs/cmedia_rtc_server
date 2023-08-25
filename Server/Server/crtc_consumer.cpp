@@ -35,13 +35,16 @@ namespace chen {
 		,m_rtp_params(params)
 			, m_rtp_stream_send_ptr(NULL)
 			, m_sync_required(true)
-			, m_rtp_seq_manager()
+			,m_keyFrameSupported(false)
+		, m_rtp_seq_manager()
+		
 	{
 		m_rtp_stream_send_ptr = new crtp_stream_send(this, m_rtp_params.params);
 		if (m_rtp_params.params.rtx_ssrc)
 		{
 			m_rtp_stream_send_ptr->set_rtx(m_rtp_params.params.rtx_payload_type, m_rtp_params.params.rtx_ssrc);
 		}
+		m_keyFrameSupported = m_rtp_params.params.type == EMediaVideo;
 	}
 	 
 	crtc_consumer::~crtc_consumer()
@@ -68,10 +71,12 @@ namespace chen {
 		std::chrono::microseconds ms;
 #endif 
 		uint8_t payload_type  = packet->GetPayloadType();
-		if (m_sync_required && m_rtp_params.params.type == EMediaVideo && !packet->IsKeyFrame())
-		{
+		if (m_sync_required && m_keyFrameSupported && !packet->IsKeyFrame())
+		{ 
 			WARNING_EX_LOG("keyframe ---> return");
-			//return;
+			//return; 
+			//WARNING_EX_LOG("keyframe ---> return");
+			return; 
 		}
 		// Whether this is the first packet after re-sync.
 		bool isSyncPacket = m_sync_required;
@@ -164,6 +169,7 @@ namespace chen {
 		// Restore packet fields.
 		packet->SetSsrc(origSsrc);
 		packet->SetSequenceNumber(origSeq);
+		packet->SetPayloadType(payload_type);
 	}
 
 	void crtc_consumer::receive_nack(RTC::RTCP::FeedbackRtpNackPacket * nackPacket)

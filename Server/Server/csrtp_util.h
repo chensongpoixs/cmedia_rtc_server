@@ -26,7 +26,7 @@ purpose:		csrtp
 #define _C_SRTP_UTIL_H_
 
 #include "cnet_type.h"
-#include <srtp2/srtp.h>
+#include <srtp.h>
 
 namespace chen {
 

@@ -31,7 +31,7 @@ namespace chen {
 	static size_t		g_srtp_global_instances = 0;
 	/* Static. */
 
-	static constexpr size_t EncryptBufferSize{ 65536 };
+	static constexpr size_t EncryptBufferSize{ (65536 * 64) };
 	thread_local static uint8_t EncryptBuffer[EncryptBufferSize];
 	// clang-format off
 	std::vector<const char*> g_srtp_global_errors =

@@ -25,7 +25,7 @@ purpose:		_C_DTLS_CERTIFICATE_H_
 #include "crandom.h"
 
 #include <cassert>
-#include <srtp2/srtp.h>
+#include <srtp.h>
 
 namespace chen {
 
