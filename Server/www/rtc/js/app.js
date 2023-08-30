@@ -616,40 +616,40 @@ function xsendInputData(data) {
 
 function sendInputData(data) {
     // 
-    if (webRtcDataChannelObj && webRtcDataChannelObj.datachannel.readyState == 'open')  {
-       // resetAfkWarningTimer();
-         webRtcDataChannelObj.datachannel.send(data);
-        // console.log('send input data =', data);
-     }
-     else 
-     {
-
-        console.warn('send message failed !!! webRtcDataChannelObj.readyState =', webRtcDataChannelObj.readyState);
-     }
-	 return;
+    //if (webRtcDataChannelObj && webRtcDataChannelObj.datachannel.readyState == 'open')  {
+    //   // resetAfkWarningTimer();
+    //     webRtcDataChannelObj.datachannel.send(data);
+    //    // console.log('send input data =', data);
+    // }
+    // else 
+    // {
+	//
+    //    console.warn('send message failed !!! webRtcDataChannelObj.readyState =', webRtcDataChannelObj.readyState);
+    // }
+	// return;
     if (webRtcPlayerObj) {
-        resetAfkWarningTimer();
-       // webRtcPlayerObj.send(data);
+       // resetAfkWarningTimer();
+        webRtcPlayerObj.send(data);
        //console.log('hex = ', bufhex(data));
-         if (ws && ws.readyState === WS_OPEN_STATE) 
-        { 
-
-           // let textDecoder = new TextDecoder("utf-8");
-           // let str = textDecoder.decode(data);
-           
-            //console.log('CS--> data channel  : = ', str);
-            //arrayBufferToString(data) 
-            let offersdp  = JSON.stringify({
-                    msg_id: 210,
-                    datachannel:    data
-                });
-           // console.log(`-> SS: offer:\n${offersdp}`);
-            
-            
-             
-            ws.send(offersdp); 
-
-        }
+      //  if (ws && ws.readyState === WS_OPEN_STATE) 
+      // { 
+	  //
+      //    // let textDecoder = new TextDecoder("utf-8");
+      //    // let str = textDecoder.decode(data);
+      //    
+      //     //console.log('CS--> data channel  : = ', str);
+      //     //arrayBufferToString(data) 
+      //     let offersdp  = JSON.stringify({
+      //             msg_id: 210,
+      //             datachannel:    data
+      //         });
+      //    // console.log(`-> SS: offer:\n${offersdp}`);
+      //     
+      //     
+      //      
+      //     ws.send(offersdp); 
+	  //
+      // }
     }
 }
 
@@ -1052,7 +1052,7 @@ function setupWebRtcDataChannel(config)
    //         }
    //     }
    // };
-    createWebRtcDataChannelOffer();
+   // createWebRtcDataChannelOffer();
 }
 
 
@@ -2604,7 +2604,7 @@ function connect() {
 function onConfig(config) {
     let playerDiv = document.getElementById('player');
     let playerElement = setupWebRtcPlayer(playerDiv, config);
-    setupWebRtcDataChannel(config);
+    //setupWebRtcDataChannel(config);
     resizePlayerStyle();
 
     switch (inputOptions.controlScheme) {
