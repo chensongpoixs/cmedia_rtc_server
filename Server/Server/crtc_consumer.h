@@ -62,6 +62,7 @@ namespace chen {
 		void OnRtpStreamRetransmitRtpPacket(crtp_stream* stream, RTC::RtpPacket* packet);
 
 		void  request_key_frame();
+		uint32 GetTransmissionRate(uint64 nowMs);
 
 		uint32  get_desired_bitrate() const;
 	protected:

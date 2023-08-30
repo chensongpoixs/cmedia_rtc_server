@@ -317,7 +317,7 @@ namespace chen {
 
 	void crtc_producer::get_rtcp(RTC::RTCP::CompoundPacket * packet, uint64_t nowMs)
 	{
-		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 50u)
+		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 1000u)
 		{
 			return;
 		}

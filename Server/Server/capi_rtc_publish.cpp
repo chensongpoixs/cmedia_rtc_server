@@ -668,7 +668,7 @@ namespace chen {
 						cvideo_payload * video_payload = new cvideo_payload(/*kVideoPayloadType*/payload.m_payload_type, payload.m_encoding_name, payload.m_clock_rate);
 						//SrsVideoPayload* video_payload = new SrsVideoPayload(payload.payload_type_, payload.encoding_name_, payload.clock_rate_);
 						video_payload->set_h264_param_desc(payload.m_format_specific_param);
-						video_payload->set_bitrate_param_desc("x-google-max-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcMaxBitrate)) + ";x-google-min-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcMinBitrate)) + ";x-google-start-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcStartBitrate)));
+						video_payload->set_bitrate_param_desc("x-google-max-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcMaxBitrate)/1000u) + ";x-google-min-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcMinBitrate) / 1000u) + ";x-google-start-bitrate=" + std::to_string(g_cfg.get_uint32(ECI_RtcStartBitrate) / 1000u));
 
 						// Set the codec parameter for H.264, to make Unity happy.
 						video_payload->m_h264_param = h264_param;

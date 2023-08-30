@@ -13,7 +13,7 @@ let initMethod = typeof kbEvent.initKeyboardEvent !== 'undefined' ? "initKeyboar
 let webRtcPlayerObj = null;
 let webRtcDataChannelObj = null;
 let print_stats = false;
-let print_inputs = false;
+let print_inputs = true;
 let connect_on_load = true;
 
 
@@ -619,7 +619,7 @@ function sendInputData(data) {
     if (webRtcDataChannelObj && webRtcDataChannelObj.datachannel.readyState == 'open')  {
        // resetAfkWarningTimer();
          webRtcDataChannelObj.datachannel.send(data);
-         console.log('send input data =', data);
+        // console.log('send input data =', data);
      }
      else 
      {
@@ -1842,9 +1842,9 @@ function emitMouseMove(x, y, deltaX, deltaY) {
         console.log(`x: ${x}, y:${y}, dX: ${deltaX}, dY: ${deltaY}`);
     }
     let coord = normalizeAndQuantizeUnsigned(x, y);
-	if (print_inputs) {
-        console.log(`x: ${coord.x}, y:${coord.y}, dX: ${deltaX}, dY: ${deltaY}`);
-    }
+	//if (print_inputs) {
+      //  console.log(`x: ${coord.x}, y:${coord.y}, dX: ${deltaX}, dY: ${deltaY}`);
+    //}
     let delta = normalizeAndQuantizeSigned(deltaX, deltaY);
     let Data = new DataView(new ArrayBuffer(9));
     Data.setUint8(0, MessageType.MouseMove);

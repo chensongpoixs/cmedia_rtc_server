@@ -49,6 +49,7 @@ purpose:		crtc_transport
 #include <unordered_map>
 #include "cglobal_rtc_port.h"
 #include "cice_server.h"
+#include "rtcp/ReceiverReport.hpp"
 #include "cglobal_config.h"
  
 namespace chen {
@@ -1259,7 +1260,7 @@ namespace chen {
 		if (!m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
 		{
 			m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
-			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate));
+			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate)  );
 			//m_tcc_server->TransportConnected();
 		}
 		if (!m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
@@ -2858,7 +2859,7 @@ namespace chen {
 		if (m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
 		{
 		//	m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
-			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate));
+			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate)  );
 			m_tcc_server->TransportConnected();
 		}
 		if (m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
@@ -2883,7 +2884,7 @@ namespace chen {
 		if (m_tcc_server && ERtcClientPublisher == m_rtc_client_type)
 		{
 			//	m_tcc_server = new RTC::TransportCongestionControlServer(this, RTC::BweType::TRANSPORT_CC, RTC::MtuSize);
-			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate));
+			m_tcc_server->SetMaxIncomingBitrate(g_cfg.get_uint32(ECI_RtcMaxBitrate) );
 			m_tcc_server->TransportDisconnected();
 		}
 		if (m_tcc_client && ERtcClientPlayer == m_rtc_client_type)
@@ -2912,41 +2913,61 @@ namespace chen {
 			{
 				request_key_frame();
 			}*/
-			auto interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
+			uint64_t interval = static_cast<uint64_t>(RTC::RTCP::MaxVideoIntervalMs);
 			uint64_t nowMs = uv_util::GetTimeMs();
 		//	m_remote_estimator.send_periodic_Feedbacks();
 			//SendRtcp(nowMs);
 			if (true)
 			{
 				std::unique_ptr<RTC::RTCP::CompoundPacket> packet{ nullptr };
-
-				for (std::pair<const uint32, crtc_consumer*> & p : m_all_rtp_listener.m_ssrc_consumer_table)
+				if (!m_all_rtp_listener.m_ssrc_consumer_table.empty()) 
 				{
-					// Reset the Compound packet.
-					packet.reset(new RTC::RTCP::CompoundPacket());
-					p.second->get_rtcp(packet.get(), nowMs);
-
-					// Send the RTCP compound packet if there is a sender report.
-					if (packet->HasSenderReport())
+					uint32 rate = 0;
+					for (std::pair<const uint32, crtc_consumer*> & p : m_all_rtp_listener.m_ssrc_consumer_table)
 					{
-						packet->Serialize(RTC::RTCP::Buffer);
-						send_rtcp_compound_packet(packet.get());
-						//SendRtcpCompoundPacket(packet.get());
+						if (!p.second)
+						{
+							continue;
+						}
+
+						// Reset the Compound packet.
+						packet.reset(new RTC::RTCP::CompoundPacket());
+						p.second->get_rtcp(packet.get(), nowMs);
+						rate += p.second->GetTransmissionRate(nowMs) / 1000u;
+						// Send the RTCP compound packet if there is a sender report.
+						if (packet->HasSenderReport())
+						{
+							packet->Serialize(RTC::RTCP::Buffer);
+							send_rtcp_compound_packet(packet.get());
+							//SendRtcpCompoundPacket(packet.get());
+						}
 					}
+					// Calculate bandwidth: 360 / transmission bandwidth in kbit/s.
+					if (rate != 0u)
+					{
+						interval = 360000 / rate;
+					}
+
+					if (interval > RTC::RTCP::MaxVideoIntervalMs)
+					{
+						interval = RTC::RTCP::MaxVideoIntervalMs;
+					}
+					//NORMAL_EX_LOG("[rtcp interval = %u]", interval);
 				}
 				// Reset the Compound packet.
 				packet.reset(new RTC::RTCP::CompoundPacket());
 				for (std::pair<const uint32, crtc_producer*> & p : m_all_rtp_listener.m_ssrcTable)
 				{
 					// Reset the Compound packet.
-					packet.reset(new RTC::RTCP::CompoundPacket());
+					
 					p.second->get_rtcp(packet.get(), nowMs);
 
-					// Send the RTCP compound packet if there is a sender report.
-					if (packet->HasSenderReport())
+					// One more RR would exceed the MTU, send the compound packet now.
+					if (packet->GetSize() + sizeof(RTC::RTCP::ReceiverReport::Header) > RTC::MtuSize)
 					{
 						packet->Serialize(RTC::RTCP::Buffer);
 						send_rtcp_compound_packet(packet.get());
+						packet.reset(new RTC::RTCP::CompoundPacket());
 						//SendRtcpCompoundPacket(packet.get());
 					}
 				}
@@ -2977,7 +2998,7 @@ namespace chen {
 			//	if (interval > RTC::RTCP::MaxVideoIntervalMs)
 			//		interval = RTC::RTCP::MaxVideoIntervalMs;
 			//}
-			interval = RTC::RTCP::MaxVideoIntervalMs;
+			//interval = RTC::RTCP::MaxVideoIntervalMs;
 			/*
 			 * The interval between RTCP packets is varied randomly over the range
 			 * [0.5,1.5] times the calculated interval to avoid unintended synchronization

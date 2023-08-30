@@ -108,6 +108,24 @@ namespace chen {
 	}
 	void crtp_stream::reset_score(uint8 score, bool notify)
 	{
+		this->m_scores.clear();
+
+		if (this->m_score != score)
+		{
+			auto previousScore = this->m_score;
+
+			this->m_score = score;
+
+			// If previous score was 0 (and new one is not 0) then update activeSinceMs.
+			if (previousScore == 0u)
+			{
+				this->m_active_since_ms = uv_util::GetTimeMs();
+			}
+
+			// Notify the listener.
+			//if (notify)
+				//this->listener->OnRtpStreamScore(this, score, previousScore);
+		}
 	}
 	bool crtp_stream::update_seq(RTC::RtpPacket * packet)
 	{

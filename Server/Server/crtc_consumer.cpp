@@ -216,7 +216,7 @@ namespace chen {
 		////DEBUG_EX_LOG("");
 		//MS_ASSERT(rtpStream == this->rtpStream, "RTP stream does not match");
 
-		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 1000)
+		if (static_cast<float>((nowMs - this->m_last_rtcp_send_time) * 1.15) < 1000u)
 			return;
 
 		auto* report = m_rtp_stream_send_ptr->get_rtcp_sender_report(nowMs);
@@ -244,7 +244,7 @@ namespace chen {
 
 	void crtc_consumer::request_key_frame()
 	{
-		if (m_kind != "video")
+		if (/*m_kind != "video"*/ m_rtp_params.params.type != EMediaVideo)
 		{
 			return;
 		}
@@ -254,9 +254,18 @@ namespace chen {
 		}
 	}
 
+	uint32 crtc_consumer::GetTransmissionRate(uint64 nowMs)
+	{
+		if (!m_rtp_stream_send_ptr)
+		{
+			return 0u;
+		}
+		return m_rtp_stream_send_ptr->get_bitrate(nowMs);
+	}
+
 	uint32 crtc_consumer::get_desired_bitrate() const
 	{
-		if (m_kind != "video")
+		if (/*m_kind != "video"*/ m_rtp_params.params.type != EMediaVideo)
 		{
 			return 0u;
 		}
@@ -266,7 +275,7 @@ namespace chen {
 		// If consumer.rtpParameters.encodings[0].maxBitrate was given and it's
 		// greater than computed one, then use it.
 		//auto maxBitrate = this->rtpParameters.encodings[0].maxBitrate;
-		static const uint32 maxBitrate = g_cfg.get_uint32(ECI_RtcMaxBitrate);
+		static const uint32 maxBitrate = g_cfg.get_uint32(ECI_RtcMaxBitrate)  ;
 		if (maxBitrate > desiredBitrate)
 		{
 			desiredBitrate = maxBitrate;
