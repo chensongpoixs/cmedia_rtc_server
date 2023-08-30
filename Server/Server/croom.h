@@ -61,7 +61,7 @@ namespace chen
 
 		bool join_userinfo(uint64 sesssion_id, const std::string & username);
 
-
+		uint32 get_userssize() const { return m_userinfo_map.size(); }
 
 		bool leave_userinfo(uint64 session_id );
 

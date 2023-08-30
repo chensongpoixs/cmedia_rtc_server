@@ -99,4 +99,14 @@ namespace chen {
 		return false;
 	}
 
+	bool croom_mgr::room_total_user(const std::string & room_name)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(room_name);
+		if (iter != m_room_map.end())
+		{
+			return iter->second.get_userssize() < 2;
+		}
+		return true;
+	}
+
 }

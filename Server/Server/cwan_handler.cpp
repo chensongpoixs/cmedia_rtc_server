@@ -129,6 +129,15 @@ namespace chen {
 			send_msg(S2C_Login, EShareProtoRoomName, reply);
 			return false;
 		}
+		
+		if (!g_room_mgr.room_total_user(value["data"]["room_name"].asCString()))
+		{
+			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
+			);
+			send_msg(S2C_Login, EShareLoginP2p, reply);
+			close();
+			return false;
+		}
 		m_user_name = value["data"]["user_name"].asCString();
 		m_room_name = value["data"]["room_name"].asCString();
 		if (!g_room_mgr.join_room(m_session_id, m_room_name, m_user_name))
@@ -169,6 +178,10 @@ namespace chen {
 
 	bool	cwan_session::handler_webrtc_message(Json::Value& value)
 	{
+		if (m_room_name.empty())
+		{
+			return false;
+		}
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{
@@ -269,7 +282,10 @@ namespace chen {
 	}
 	bool cwan_session::handler_rtc_publisher(Json::Value & value)
 	{
-
+		if (m_room_name.empty())
+		{
+			return false;
+		}
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{
@@ -348,6 +364,10 @@ namespace chen {
 
 	bool cwan_session::handler_rtc_player(Json::Value & value)
 	{
+		if (m_room_name.empty())
+		{
+			return false;
+		}
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{
@@ -420,6 +440,10 @@ namespace chen {
 	}
 	bool cwan_session::handler_rtc_request_frame(Json::Value & value)
 	{
+		if (m_room_name.empty())
+		{
+			return false;
+		}
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{

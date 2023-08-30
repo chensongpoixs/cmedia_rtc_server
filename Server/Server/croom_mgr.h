@@ -67,6 +67,10 @@ namespace chen {
 
 
 
+		bool room_total_user(const std::string & room_name);
+
+
+
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		croom_mgr(const croom_mgr&);
