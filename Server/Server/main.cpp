@@ -682,7 +682,8 @@ int test_http_main() {
 
 	// GET-example for the path /match/[number], responds with the matched string in path (number)
 	// For instance a request GET /match/123 will receive: 123
-	server.resource["^/match/([0-9]+)$"]["GET"] = [](shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request) {
+	server.resource["^/match/([a-zA-Z0-9_]+)$"]["GET"] = [](shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request) 
+	{
 		response->write(request->path_match[1].str());
 	};
 

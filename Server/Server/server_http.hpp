@@ -21,9 +21,9 @@ namespace SimpleWeb {
 }
 #else
 #include <regex>
-namespace SimpleWeb {
-  namespace regex = std;
-}
+//namespace SimpleWeb {
+//  //namespace regex = std;
+//}
 #endif
 
 namespace SimpleWeb {
@@ -241,7 +241,7 @@ namespace SimpleWeb {
       CaseInsensitiveMultimap header;
 
       /// The result of the resource regular expression match of the request path.
-      regex::smatch path_match;
+      std::smatch path_match;
 
       /// The time point when the request header was fully read.
       std::chrono::system_clock::time_point header_read_time;
@@ -384,12 +384,12 @@ namespace SimpleWeb {
     Config config;
 
   private:
-    class regex_orderable : public regex::regex {
+    class regex_orderable : public std::regex {
     public:
       std::string str;
 
-      regex_orderable(const char *regex_cstr) : regex::regex(regex_cstr), str(regex_cstr) {}
-      regex_orderable(std::string regex_str_) : regex::regex(regex_str_), str(std::move(regex_str_)) {}
+      regex_orderable(const char *regex_cstr) : std::regex(regex_cstr), str(regex_cstr) {}
+      regex_orderable(std::string regex_str_) : std::regex(regex_str_), str(std::move(regex_str_)) {}
       bool operator<(const regex_orderable &rhs) const noexcept {
         return str < rhs.str;
       }
@@ -750,8 +750,8 @@ namespace SimpleWeb {
       for(auto &regex_method : resource) {
         auto it = regex_method.second.find(session->request->method);
         if(it != regex_method.second.end()) {
-          regex::smatch sm_res;
-          if(regex::regex_match(session->request->path, sm_res, regex_method.first)) {
+          std::smatch sm_res;
+          if(std::regex_match(session->request->path, sm_res, regex_method.first)) {
             session->request->path_match = std::move(sm_res);
             write(session, it->second);
             return;
