@@ -189,7 +189,6 @@
     <ClCompile Include="cifaddrs_android.cc" />
     <ClCompile Include="cifaddrs_converter.cc" />
     <ClCompile Include="cip_address.cpp" />
-    <ClCompile Include="clibuv_aysnc_thread.c" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_desc.cpp" />

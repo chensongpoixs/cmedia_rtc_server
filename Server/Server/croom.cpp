@@ -129,7 +129,7 @@ namespace chen {
 				reply["data"] = value;
 				Json::StyledWriter swriter;
 				std::string str = swriter.write(reply);
-				NORMAL_EX_LOG("[join room = %s][username = %s][message = %s]", m_room_name.c_str(), pi.second.username.c_str(), str.c_str());
+				NORMAL_EX_LOG("[sesson_id = %u][join room = %s][username = %s][message = %s]", pi.first, m_room_name.c_str(), pi.second.username.c_str(), str.c_str());
 				//g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length());
 				g_wan_server.send_msg(pi.first, msg_id, str.c_str(), str.length());
 			}
