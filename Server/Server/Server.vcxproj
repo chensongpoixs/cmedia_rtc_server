@@ -77,14 +77,14 @@
     <IncludePath>$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(C_INCLUDE)\protobuf\lib\x64\debug;$(C_INCLUDE)\libsrtp2\lib\x64\debug;$(C_INCLUDE)\abseil-cpp\lib\x64\debug;$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\openssl_1.1.0\lib\x64\debug;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)1</TargetName>
+    <TargetName>$(ProjectName)12</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <IncludePath>$(C_INCLUDE)\libyuv\include;$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtpff2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\libfffffffuv\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplifffb\include;$(C_INCLUDE)\libdav1d\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(C_INCLUDE)\libyuv\lib\x64\release;$(C_INCLUDE)\protobuf\lib\x64\release;$(C_INCLUDE)\libsrtffp2\lib\x64\release;$(C_INCLUDE)\abseil-cpp\lib\x64\release;$(C_INCLUDE)\json\lib\x64\release;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuvfffffffffff\lib\x64\Release;$(C_INCLUDE)\openssl_1.1.0\lib\x64\release;$(C_INCLUDE)\usrsctplffib\lib\x64\Release;$(C_INCLUDE)\libdav1d\lib\x64\release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)33</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -305,6 +305,7 @@
     <ClCompile Include="cwin32.cpp" />
     <ClCompile Include="H264.cpp" />
     <ClCompile Include="h264_profile_level_id.cc" />
+    <ClCompile Include="http_examples.cpp" />
     <ClCompile Include="IceCandidate.cpp" />
     <ClCompile Include="IceServer.cpp" />
     <ClCompile Include="KeyFrameRequestManager.cpp" />
@@ -487,6 +488,7 @@
     <ClCompile Include="usrsctp\usrsctplib\user_socket.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="asio_compatibility.hpp" />
     <ClInclude Include="buffer.h" />
     <ClInclude Include="BweType.hpp" />
     <ClInclude Include="caac_source.h" />
@@ -617,6 +619,7 @@
     <ClInclude Include="crtsp_session_mgr.h" />
     <ClInclude Include="crtx_paylod_des.h" />
     <ClInclude Include="crtx_stream.h" />
+    <ClInclude Include="crypto.hpp" />
     <ClInclude Include="csctp_association.h" />
     <ClInclude Include="csctp_association_mgr.h" />
     <ClInclude Include="csdp_util.h" />
@@ -783,6 +786,7 @@
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h" />
     <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h" />
     <ClInclude Include="cnetwork_constants.h" />
+    <ClInclude Include="mutex.hpp" />
     <ClInclude Include="NackGenerator.hpp" />
     <ClInclude Include="Parameters.hpp" />
     <ClInclude Include="PayloadDescriptorHandler.hpp" />
@@ -826,7 +830,9 @@
     <ClInclude Include="RtpStreamSend.hpp" />
     <ClInclude Include="RtxStream.hpp" />
     <ClInclude Include="SeqManager.hpp" />
+    <ClInclude Include="server_http.hpp" />
     <ClInclude Include="SimpleConsumer.hpp" />
+    <ClInclude Include="status_code.hpp" />
     <ClInclude Include="StunPacket.hpp" />
     <ClInclude Include="Tools.hpp" />
     <ClInclude Include="TransportCongestionControlClient.hpp" />
@@ -870,6 +876,7 @@
     <ClInclude Include="usrsctp\usrsctplib\user_socketvar.h" />
     <ClInclude Include="usrsctp\usrsctplib\user_uma.h" />
     <ClInclude Include="usrsctp\usrsctplib\usrsctp.h" />
+    <ClInclude Include="utility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
