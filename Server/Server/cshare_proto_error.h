@@ -50,6 +50,8 @@ namespace chen {
 		EShareRtcCreateMediaChannel,
 		EShareRtcCreateMediaSsrcInfo,
 		EShareLoginP2p,
+		EShareLoginRoomUsername,
+		EShareLoginRoomType,
 	};
 }
 

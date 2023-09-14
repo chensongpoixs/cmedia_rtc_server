@@ -130,17 +130,31 @@ namespace chen {
 			return false;
 		}
 		
-		if (!g_room_mgr.room_total_user(value["data"]["room_name"].asCString()))
+		if (g_room_mgr.room_has_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
 		{
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
 			);
-			send_msg(S2C_Login, EShareLoginP2p, reply);
+			send_msg(S2C_Login, EShareLoginRoomUsername, reply);
 			close();
 			return false;
 		}
+		uint32 type = 0;
+		if (value["data"].isMember("type") && value["data"]["type"].isInt64())
+		{
+			type = value["data"]["type"].asInt64() > 0 ? 1 : 0;
+		}
+		/*if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
+		{
+			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
+			);
+			send_msg(S2C_Login, EShareLoginRoomType, reply);
+			close();
+			return false;
+		}*/
+		
 		m_user_name = value["data"]["user_name"].asCString();
 		m_room_name = value["data"]["room_name"].asCString();
-		if (!g_room_mgr.join_room(m_session_id, m_room_name, m_user_name))
+		if (!g_room_mgr.join_room(m_session_id, m_room_name, m_user_name, type))
 		{
 			//EShareProtoCreateRoomFailed
 			WARNING_EX_LOG("[session_id = %llu] create roomname failed   !!! ", m_session_id );
@@ -161,6 +175,7 @@ namespace chen {
 		NORMAL_EX_LOG("%s Login OK!!", m_user_name.c_str());
 		send_msg(S2C_Login, EShareProtoOk, reply);
 		 send_msg(S2C_RtpCapabilitiesUpdate, 0, g_global_rtc.all_rtp_capabilities());
+		 g_room_mgr.build_client_p2p(m_room_name);
 		return true;
 	}
 

@@ -306,6 +306,8 @@
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
     <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="cweb_http_api_mgr.cpp" />
+    <ClCompile Include="cweb_http_api_proxy.cpp" />
     <ClCompile Include="cwin32.cpp" />
     <ClCompile Include="H264.cpp" />
     <ClCompile Include="h264_profile_level_id.cc" />
@@ -681,6 +683,9 @@
     <ClInclude Include="cwebsocket_msg_queue.h" />
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="cweb_http_api_interface.h" />
+    <ClInclude Include="cweb_http_api_mgr.h" />
+    <ClInclude Include="cweb_http_api_proxy.h" />
     <ClInclude Include="cwin32.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="H264.hpp" />

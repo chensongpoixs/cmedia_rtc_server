@@ -24,7 +24,7 @@ namespace chen {
 	}
 	bool chttp_queue_mgr::init()
 	{
-
+		return true;
 	}
 	void chttp_queue_mgr::update()
 	{

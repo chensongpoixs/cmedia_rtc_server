@@ -23,6 +23,7 @@ purpose:	Location
 //#include "cthread_pool_mgr.h"
 //#include "cdecode_interface.h"
 //#include "Export.h"
+#include "chttp_queue_mgr.h"
 namespace chen
 {
 
@@ -434,44 +435,34 @@ namespace chen
 	
 
 #define BEGIN_PROXY_MAP(c)														\
-    class DSPDECODERPROXY_API c##Proxy {															\
-	typedef c##Interface		C;												\
+    class c##_proxy {															\
+	typedef c##_interface		C;												\
 	public:																		\
-		c##Proxy(){}															\
-		~c##Proxy(){}															\
+		c##_proxy(){}															\
+		~c##_proxy(){}															\
 	public:
 
 
-#define PROXY_WORKER_METHOD1(r, method, t1)												\
-  r method(t1 a1)  {																	\
-	CHEN_PROXY_WORK_START_TIME															\
-	GET_OBJECT_THREAD(a1)																\
-     MethodCall0<C, r> call(object->m_object , &C::method);								\
+
+#define PROXY_WORKER_METHOD0(r, method)												\
+  r method()  {																	\
+     MethodCall0<C, r> call(&g_web_http_api_mgr , &C::method);								\
 	r r1 = call.Marshal(CHEN_FROM_HERE, &g_http_queue_mgr);												\
-	CHEN_PROXY_WORK_END_TIME_MS																			\
 	return 	r1;																							\
    }
    
    
-#define PROXY_WORKER_METHOD2(r, method, t1, t2)											\
-  r method(t1 a1, t2 a2)  {																\
-  	CHEN_PROXY_WORK_START_TIME															\
-	GET_OBJECT_THREAD(a1)																\
-    MethodCall1<C, r, t2> call(object->m_object , &C::method,  							\
-                                   std::move(a2));										\
+#define PROXY_WORKER_METHOD1(r, method, t1 )											\
+  r method(t1 a1 )  {																\
+    MethodCall1<C, r, t1> call(&g_web_http_api_mgr , &C::method, std::move(a1));        \
 	r r1 = call.Marshal(CHEN_FROM_HERE, &g_http_queue_mgr);												\
-	CHEN_PROXY_WORK_END_TIME_MS																			\
 	return 	r1;																							\
   }
 
-#define PROXY_WORKER_METHOD3(r, method, t1, t2, t3)										\
-  r method(t1 a1, t2 a2, t3 a3)  {														\
-  	CHEN_PROXY_WORK_START_TIME															\
-		GET_OBJECT_THREAD(a1)															\
-    MethodCall2<C, r, t2, t3> call(object->m_object , &C::method,  \
-                                       std::move(a2), std::move(a3));					\
+#define PROXY_WORKER_METHOD2(r, method, t1, t2 )										\
+  r method(t1 a1, t2 a2 )  {														\
+    MethodCall2<C, r, t1, t2> call(&g_web_http_api_mgr , &C::method,  std::move(a1), std::move(a2));					\
 	r r1 = call.Marshal(CHEN_FROM_HERE, &g_http_queue_mgr);												\
-	CHEN_PROXY_WORK_END_TIME_MS																			\
 	return 	r1;																							\
   }
 

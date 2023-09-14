@@ -72,6 +72,13 @@ namespace chen {
 		set_uint32(ECI_RtspWanPort, "rtsp_wan_port", 554);
 		set_string(ECI_RtspTestH264File, "rtsp_test_h264_file", "test.h264");
 		set_uint32(ECI_RtspTestH264Frame, "rtsp_test_h264_frame", 25);
+
+		//		ECI_WebHttpWanIp,
+		//ECI_WebHttpWanPort,
+		set_string(ECI_WebHttpWanIp, "web_http_wan_ip", "0.0.0.0");
+		set_uint32(ECI_WebHttpWanPort, "web_http_wan_port", 9100);
+
+
 		//é…ç½®è¡¨çš„å€¼
 		load_cfg_file();
 

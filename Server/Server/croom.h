@@ -36,13 +36,15 @@ namespace chen
 	{
 		uint64      session_id;
 		std::string username;
+		uint32		m_type;
 		std::unordered_map<std::string, cwebrtc_transport*>     producers;
 		std::unordered_map<std::string, cwebrtc_transport*>     consumers;
 		cuser_info()
 			: session_id(0)
 			, username("")
 			, producers()
-			, consumers() {}
+			, consumers()
+			, m_type(0){}
 	};
 	class croom
 	{
@@ -59,7 +61,7 @@ namespace chen
 
 		bool init(const std::string & room_name);
 
-		bool join_userinfo(uint64 sesssion_id, const std::string & username);
+		bool join_userinfo(uint64 sesssion_id, const std::string & username, uint32 type);
 
 		uint32 get_userssize() const { return m_userinfo_map.size(); }
 
@@ -70,6 +72,14 @@ namespace chen
 
 		bool webrtc_message(uint64 session_id, Json::Value& value);
 
+		void build_user_info(std::vector<cuser_info> & infos);
+
+		bool has_type(uint32 type);
+
+		bool has_username(const std::string & user_name);
+
+
+		void build_client_p2p();
 	private:
 
 		// 房间中广播消息

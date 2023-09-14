@@ -43,7 +43,7 @@ namespace chen {
 		m_room_name = room_name;
 		return true;
 	}
-	bool croom::join_userinfo(uint64 session_id, const std::string & username)
+	bool croom::join_userinfo(uint64 session_id, const std::string & username, uint32 type)
 	{
 		Json::Value reply;
 		reply["username"] = username;
@@ -59,6 +59,7 @@ namespace chen {
 		cuser_info userinfo;
 		userinfo.session_id = session_id;
 		userinfo.username = username;
+		userinfo.m_type = type;
 		if (!m_userinfo_map.insert(std::make_pair(session_id, userinfo)).second)
 		{
 			ERROR_EX_LOG("[room_name = %s][session_id = %u][ user_name = %s] insert failed !!!", m_room_name.c_str(), session_id, username.c_str());
@@ -144,5 +145,49 @@ namespace chen {
 			return NULL;
 		}
 		return &iter->second;
+	}
+
+	void croom::build_user_info(std::vector<cuser_info> & infos)
+	{
+		for (const std::pair<uint64, cuser_info> & pi : m_userinfo_map)
+		{
+			cuser_info info;
+			info.username = pi.second.username;
+			info.m_type = pi.second.m_type;
+
+			infos.push_back(info);
+		}
+	}
+	bool croom::has_type(uint32 type)
+	{
+		for (const std::pair<uint64, cuser_info>& pi : m_userinfo_map)
+		{
+
+			if (type == pi.second.m_type)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool croom::has_username(const std::string & user_name)
+	{
+		for (const std::pair<uint64, cuser_info> & pi : m_userinfo_map)
+		{
+			 
+			if (user_name == pi.second.username)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	void croom::build_client_p2p()
+	{
+		if (m_userinfo_map.size() > 1)
+		{
+			Json::Value value;
+			_broadcast_message(0, S2C_RtpP2pUpdate, value);
+		}
 	}
 }

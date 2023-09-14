@@ -1297,6 +1297,12 @@
     <ClCompile Include="chttp_queue_mgr.cpp">
       <Filter>proxy</Filter>
     </ClCompile>
+    <ClCompile Include="cweb_http_api_proxy.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="cweb_http_api_mgr.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cnet_type.h">
@@ -2486,6 +2492,15 @@
     </ClInclude>
     <ClInclude Include="chttp_queue_mgr.h">
       <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cweb_http_api_proxy.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cweb_http_api_interface.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cweb_http_api_mgr.h">
+      <Filter>http</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
