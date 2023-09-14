@@ -1149,10 +1149,7 @@
     </ClCompile>
     <ClCompile Include="crtc_udp_socket_handler.cpp">
       <Filter>rtc_net</Filter>
-    </ClCompile> 
-    <ClCompile Include="clibuv_aysnc_thread.c">
-      <Filter>uv_util</Filter> 
-	  </ClCompile>
+    </ClCompile>
     <ClCompile Include="usrsctp\usrsctplib\user_environment.c">
       <Filter>usrsctp\usrsctplib</Filter>
     </ClCompile>
@@ -1277,7 +1274,7 @@
       <Filter>libsrtp\srtp\crypto\replay</Filter>
     </ClCompile>
     <ClCompile Include="libsrtp\srtp\crypto\replay\ut_sim.c">
-      <Filter>libsrtp\srtp\crypto\replay</Filter> 
+      <Filter>libsrtp\srtp\crypto\replay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
