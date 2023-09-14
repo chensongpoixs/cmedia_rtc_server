@@ -280,6 +280,9 @@
     <Filter Include="http">
       <UniqueIdentifier>{a17755b0-763a-4f05-a842-80c62c46af16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="proxy">
+      <UniqueIdentifier>{8c5723cf-3448-444c-9e8d-4e983f2eb080}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -1281,6 +1284,18 @@
     </ClCompile>
     <ClCompile Include="http_examples.cpp">
       <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="cproxy.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="cmessage_handler.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="clocation.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="chttp_queue_mgr.cpp">
+      <Filter>proxy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2450,6 +2465,27 @@
     </ClInclude>
     <ClInclude Include="utility.hpp">
       <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="cproxy.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cmessage_handler.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cconstructor_magic.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="clocation.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cstringize_macros.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="chttp_queue_mgr.h">
+      <Filter>proxy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

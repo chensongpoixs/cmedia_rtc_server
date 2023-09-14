@@ -185,16 +185,19 @@
     <ClCompile Include="cguard_reply.cpp" />
     <ClCompile Include="ch264_file.cpp" />
     <ClCompile Include="ch264_source.cpp" />
+    <ClCompile Include="chttp_queue_mgr.cpp" />
     <ClCompile Include="cice_server.cpp" />
     <ClCompile Include="cifaddrs_android.cc" />
     <ClCompile Include="cifaddrs_converter.cc" />
     <ClCompile Include="cip_address.cpp" />
+    <ClCompile Include="clocation.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="cmedia_session.cpp" />
     <ClCompile Include="cmedia_source.cpp" />
+    <ClCompile Include="cmessage_handler.cpp" />
     <ClCompile Include="cmod_ops.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnetwork.cpp" />
@@ -206,6 +209,7 @@
     <ClCompile Include="cpacket_buffer.cpp" />
     <ClCompile Include="cparse_rtsp_request.cpp" />
     <ClCompile Include="cproducer.cpp" />
+    <ClCompile Include="cproxy.cpp" />
     <ClCompile Include="cremote_estimator_proxy.cpp" />
     <ClCompile Include="creport_block.cpp" />
     <ClCompile Include="crtcp_packet.cpp" />
@@ -511,6 +515,7 @@
     <ClInclude Include="ccommon_header.h" />
     <ClInclude Include="ccommon_type.h" />
     <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cconstructor_magic.h" />
     <ClInclude Include="cconsumer.h" />
     <ClInclude Include="ccrc32.h" />
     <ClInclude Include="ccrypto_random.h" />
@@ -532,10 +537,12 @@
     <ClInclude Include="cguard_reply.h" />
     <ClInclude Include="ch264_file.h" />
     <ClInclude Include="ch264_source.h" />
+    <ClInclude Include="chttp_queue_mgr.h" />
     <ClInclude Include="cice_server.h" />
     <ClInclude Include="cifaddrs_android.h" />
     <ClInclude Include="cifaddrs_converter.h" />
     <ClInclude Include="cip_address.h" />
+    <ClInclude Include="clocation.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
@@ -546,6 +553,7 @@
     <ClInclude Include="cmedia_session.h" />
     <ClInclude Include="cmedia_source.h" />
     <ClInclude Include="cmedia_type.h" />
+    <ClInclude Include="cmessage_handler.h" />
     <ClInclude Include="cmod_ops.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
@@ -561,6 +569,7 @@
     <ClInclude Include="cpacket_buffer.h" />
     <ClInclude Include="cparse_rtsp_request.h" />
     <ClInclude Include="cproducer.h" />
+    <ClInclude Include="cproxy.h" />
     <ClInclude Include="cremote_estimator_proxy.h" />
     <ClInclude Include="creport_block.h" />
     <ClInclude Include="cring_buffer.h" />
@@ -635,6 +644,7 @@
     <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="csrtp_util.h" />
     <ClInclude Include="cstr2digit.h" />
+    <ClInclude Include="cstringize_macros.h" />
     <ClInclude Include="ctcp_conection.h" />
     <ClInclude Include="ctcp_connection_handler.h" />
     <ClInclude Include="ctcp_server.h" />
@@ -672,6 +682,7 @@
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
     <ClInclude Include="cwin32.h" />
+    <ClInclude Include="event.h" />
     <ClInclude Include="H264.hpp" />
     <ClInclude Include="h264_profile_level_id.h" />
     <ClInclude Include="IceCandidate.hpp" />

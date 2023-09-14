@@ -87,6 +87,7 @@ namespace chen {
 		cmutex			m_lock;
 		MessageList		m_list; 
 	};
+	extern chttp_queue_mgr g_http_queue_mgr;
 }
 
 #endif // _C_HTTP_QUEUE_MGR_H_
