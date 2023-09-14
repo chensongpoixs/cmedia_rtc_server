@@ -76,7 +76,7 @@ namespace chen {
 		{
 			reply["username"] = iter->second.username;
 			_broadcast_message(session_id, S2C_LevalRoomUpdate, reply);
-			//WARNING_EX_LOG("[room_name = %s][session_id = %u][old user_name = %s][new username = %s]", m_room_name.c_str(), session_id, iter->second.username.c_str(), username.c_str());
+			WARNING_EX_LOG("[room_name = %s][session_id = %u][old user_name = %s][new username = %s]", m_room_name.c_str(), session_id, iter->second.username.c_str(), iter->second.username.c_str());
 			m_userinfo_map.erase(iter);
 			return true;
 		}

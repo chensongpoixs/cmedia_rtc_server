@@ -30,9 +30,12 @@ Copyright boost
 #include <unordered_map>
 #include <vector>
 #include <json/json.h>
+#include "croom.h"
 namespace chen {
 	class croom;
 	struct cuser_info;
+	
+
 	class croom_mgr 
 	{
 	private:
@@ -74,6 +77,7 @@ namespace chen {
 
 		bool get_room_info(const std ::string & room_name, std::vector<cuser_info> & infos);
 
+		void build_all_room_info(std::vector< croom_info>& room_infos);
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		croom_mgr(const croom_mgr&);

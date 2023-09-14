@@ -136,4 +136,16 @@ namespace chen {
 		}
 	}
 
+
+	void croom_mgr::build_all_room_info(std::vector< croom_info>& room_infos)
+	{
+
+		for (  std::pair<const   std::string,    croom> &pi: m_room_map)
+		{
+			croom_info room_info;
+			room_info.room_name = pi.first;
+			pi.second.build_user_info(room_info.infos);
+			room_infos.push_back(room_info);
+		}
+	}
 }

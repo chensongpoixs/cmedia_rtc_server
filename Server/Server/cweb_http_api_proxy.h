@@ -22,7 +22,7 @@ purpose:	Location
 #include <vector>
 namespace chen {
 	BEGIN_PROXY_MAP(cweb_http_api) 
-		PROXY_WORKER_METHOD0(uint32_t, get_all_room);
+		PROXY_WORKER_METHOD0(std::vector< croom_info>, get_all_room);
 
 		PROXY_WORKER_METHOD1(std::vector< chen::cuser_info>, get_room_info, const std::string &  )
 	END_PROXY_MAP()

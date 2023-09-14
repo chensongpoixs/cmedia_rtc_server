@@ -51,7 +51,7 @@ namespace chen {
 
 		void startup();
 	public:
-		virtual uint32_t   get_all_room();
+		virtual std::vector< croom_info>   get_all_room();
 		virtual std::vector< chen::cuser_info>   get_room_info(const std::string& room_name );
 	private:
 		void _pthread_work();

@@ -46,6 +46,13 @@ namespace chen
 			, consumers()
 			, m_type(0){}
 	};
+
+	struct croom_info
+	{
+		std::string  room_name;
+		std::vector< cuser_info> infos;
+		croom_info() : room_name(), infos() {}
+	};
 	class croom
 	{
 	public:

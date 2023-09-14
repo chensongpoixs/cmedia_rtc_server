@@ -16,11 +16,12 @@ purpose:	Location
 #include <utility>
 #include <vector>
 #include "croom.h"
+#include "croom_mgr.h"
 namespace chen {
 	class cweb_http_api_interface
 	{
 	public:
-		virtual uint32_t   get_all_room() = 0;
+		virtual std::vector< croom_info>   get_all_room() = 0;
 		virtual std::vector< chen::cuser_info>   get_room_info(const std::string& room_name ) = 0;
 
 

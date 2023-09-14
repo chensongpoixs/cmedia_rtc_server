@@ -26,6 +26,33 @@ namespace chen {
 		m_server.resource["^/rooms$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
 		{
 			std::cout << "http thread id  :" << std::this_thread::get_id() << std::endl;
+			std::vector<croom_info> room_infos = g_web_http_api_proxy.get_all_room();
+
+			//if (infos.)
+			Json::Value value;
+			//Json::arrayValue Array_Value;
+			//Json::Value Array_Value;
+			//value["room_name"] = request->path_match[1].str();
+			for (size_t i = 0; i < room_infos.size(); ++i)
+			{
+
+				Json::Value room_item;
+				room_item["room_name"] = room_infos[i].room_name;
+
+				for (size_t j = 0; j < room_infos [i].infos.size(); ++j)
+				{
+					Json::Value  item;
+					item["user_name"] = room_infos[i].infos[j].username;
+					item["type"] = room_infos [i].infos[j].m_type;
+					room_item["user_infos"].append(item);
+				}
+				value["room_infos"].append(room_item);
+			}
+			// = Array_Value;
+			Json::StyledWriter swriter;
+			std::string str = swriter.write(value);
+			//g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length());
+			response->write(str);
 			//g_web_http_api_proxy.g(request->path_match[1].str());
 			//response->write(request->path_match[1].str());
 		};
@@ -184,11 +211,13 @@ namespace chen {
 
 
 	}
-	uint32_t   cweb_http_api_mgr::get_all_room()
+	std::vector< croom_info>   cweb_http_api_mgr::get_all_room()
 	{
 
 		std::cout << "work thread id :" << std::this_thread::get_id() <<std::endl;
-		return 0;
+		std::vector< croom_info>  room_infos;
+			g_room_mgr.build_all_room_info(room_infos);
+		return room_infos;
 	}
 	std::vector< chen::cuser_info>   cweb_http_api_mgr::get_room_info(const std::string& room_name )
 	{

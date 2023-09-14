@@ -132,7 +132,7 @@ namespace chen {
 		
 		if (g_room_mgr.room_has_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
 		{
-			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
+			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
 			);
 			send_msg(S2C_Login, EShareLoginRoomUsername, reply);
 			close();
@@ -143,14 +143,14 @@ namespace chen {
 		{
 			type = value["data"]["type"].asInt64() > 0 ? 1 : 0;
 		}
-		/*if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
+		if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
 		{
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
 			);
 			send_msg(S2C_Login, EShareLoginRoomType, reply);
 			close();
 			return false;
-		}*/
+		}
 		
 		m_user_name = value["data"]["user_name"].asCString();
 		m_room_name = value["data"]["room_name"].asCString();
