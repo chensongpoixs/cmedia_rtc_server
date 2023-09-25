@@ -24,7 +24,9 @@ namespace chen {
 		virtual std::vector< croom_info>   get_all_room() = 0;
 		virtual std::vector< chen::cuser_info>   get_room_info(const std::string& room_name ) = 0;
 
-
+		virtual uint32_t  kick_room_username(const std::string& room_name, const std::string & user_name) = 0;
+		virtual uint32_t  add_while_room_username(const std::string& room_name, const std::string & user_name) = 0;
+		virtual uint32_t  delete_while_room_username(const std::string& room_name, const std::string & user_name) = 0;
 		virtual ~cweb_http_api_interface() {}
 	};
 }

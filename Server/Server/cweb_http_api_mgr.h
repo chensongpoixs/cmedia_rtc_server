@@ -35,6 +35,14 @@ purpose:	Location
 
 namespace chen {
 
+
+	enum CWebHttpApiCodc
+	{
+
+
+	};
+
+
 	class cweb_http_api_mgr : public cweb_http_api_interface
 	{
 	public:
@@ -53,6 +61,9 @@ namespace chen {
 	public:
 		virtual std::vector< croom_info>   get_all_room();
 		virtual std::vector< chen::cuser_info>   get_room_info(const std::string& room_name );
+		virtual uint32_t  kick_room_username(const std::string& room_name, const std::string & user_name);
+		virtual uint32_t  add_while_room_username(const std::string& room_name, const std::string & user_name);
+		virtual uint32_t  delete_while_room_username(const std::string& room_name, const std::string & user_name);
 	private:
 		void _pthread_work();
 	private:

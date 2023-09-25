@@ -44,8 +44,21 @@ namespace chen {
 					Json::Value  item;
 					item["user_name"] = room_infos[i].infos[j].username;
 					item["type"] = room_infos [i].infos[j].m_type;
+					item["ip"] = room_infos[i].infos[j].m_remote_ip;
+					item["port"] = room_infos[i].infos[j].m_remote_port;
 					room_item["user_infos"].append(item);
 				}
+				
+				Json::Value  while_item;
+				for (const std::string & user_ : room_infos[i].m_while_list)
+				{
+					while_item.append(user_);
+					/*item[""] = infos[i].username;
+
+					item["type"] = infos[i].m_type;
+					item["ip"] = infos[i].m_remote_ip;*/
+				}
+				room_item["while_user"].append(while_item);
 				value["room_infos"].append(room_item);
 			}
 			// = Array_Value;
@@ -58,7 +71,7 @@ namespace chen {
 		};
 		// GET-example for the path /match/[number], responds with the matched string in path (number)
 	// For instance a request GET /match/123 will receive: 123
-		m_server.resource["^/roomId/([a-zA-Z0-9_]+)$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
+		m_server.resource["^/roomId/([a-zA-Z0-9_-]+)$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
 		{
 			std::cout << "http thread id  :" << std::this_thread::get_id() << std::endl;
 			std::vector< chen::cuser_info> infos =  g_web_http_api_proxy.get_room_info(request->path_match[1].str());
@@ -72,9 +85,105 @@ namespace chen {
 			{
 				Json::Value  item;
 				item["user_name"] = infos[i].username;
+
 				item["type"] = infos[i].m_type ;
+				item["ip"] = infos[i].m_remote_ip;
+				item["port"] = infos[i].m_remote_port;
 				value["user_infos"].append(item);
+				//Json::Value  while_item;
+				//for (const std::string & user_ :  infos.m_while_list)
+				//{
+				//	while_item.append(user_);
+				//	/*item[""] = infos[i].username;
+
+				//	item["type"] = infos[i].m_type;
+				//	item["ip"] = infos[i].m_remote_ip;*/
+				//}
+				//value["while_user"].append(while_item);
 			}
+			 
+			// = Array_Value;
+			Json::StyledWriter swriter;
+			std::string str = swriter.write(value);
+			//g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length());
+			response->write(str);
+		};
+		// Kick out
+		m_server.resource["^/kickout/roomId/([a-zA-Z0-9_.@-]+)/username/([a-zA-Z0-9_.@-]+)$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
+		{
+			std::cout << "http thread id  :" << std::this_thread::get_id() << std::endl;
+			//std::vector< chen::cuser_info> infos = g_web_http_api_proxy.get_room_info(request->path_match[1].str());
+			std::cout << "room_name = " << request->path_match[1] << ", username = " << request->path_match[2];
+			//if (infos.)
+			Json::Value value;
+			value["result"] = g_web_http_api_proxy.kick_room_username(request->path_match[1], request->path_match[2]);
+			//Json::arrayValue Array_Value;
+			//Json::Value Array_Value;
+			//value["room_name"] = request->path_match[1].str();
+			/*for (size_t i = 0; i < infos.size(); ++i)
+			{
+				Json::Value  item;
+				item["user_name"] = infos[i].username;
+				item["type"] = infos[i].m_type;
+				item["ip"] = infos[i].m_remote_ip;
+				item["port"] = infos[i].m_remote_port;
+				value["user_infos"].append(item);
+			}*/
+			// = Array_Value;
+			Json::StyledWriter swriter;
+			std::string str = swriter.write(value);
+			//g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length());
+			response->write(str);
+		};
+
+
+		m_server.resource["^/add_while/roomId/([a-zA-Z0-9_.@-]+)/username/([a-zA-Z0-9_.@-]+)$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
+		{
+			std::cout << "http thread id  :" << std::this_thread::get_id() << std::endl;
+			//std::vector< chen::cuser_info> infos = g_web_http_api_proxy.get_room_info(request->path_match[1].str());
+			std::cout << "room_name = " << request->path_match[1] << ", username = " << request->path_match[2];
+			//if (infos.)
+			Json::Value value;
+			value["result"] = g_web_http_api_proxy.add_while_room_username(request->path_match[1], request->path_match[2]);
+			//Json::arrayValue Array_Value;
+			//Json::Value Array_Value;
+			//value["room_name"] = request->path_match[1].str();
+			/*for (size_t i = 0; i < infos.size(); ++i)
+			{
+				Json::Value  item;
+				item["user_name"] = infos[i].username;
+				item["type"] = infos[i].m_type;
+				item["ip"] = infos[i].m_remote_ip;
+				item["port"] = infos[i].m_remote_port;
+				value["user_infos"].append(item);
+			}*/
+			// = Array_Value;
+			Json::StyledWriter swriter;
+			std::string str = swriter.write(value);
+			//g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length());
+			response->write(str);
+		};
+
+		m_server.resource["^/delete_while/roomId/([a-zA-Z0-9_.@-]+)/username/([a-zA-Z0-9_.@-]+)$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
+		{
+			std::cout << "http thread id  :" << std::this_thread::get_id() << std::endl;
+			//std::vector< chen::cuser_info> infos = g_web_http_api_proxy.get_room_info(request->path_match[1].str());
+			std::cout << "room_name = " << request->path_match[1] << ", username = " << request->path_match[2];
+			//if (infos.)
+			Json::Value value;
+			value["result"] = g_web_http_api_proxy.delete_while_room_username(request->path_match[1], request->path_match[2]);
+			//Json::arrayValue Array_Value;
+			//Json::Value Array_Value;
+			//value["room_name"] = request->path_match[1].str();
+			/*for (size_t i = 0; i < infos.size(); ++i)
+			{
+				Json::Value  item;
+				item["user_name"] = infos[i].username;
+				item["type"] = infos[i].m_type;
+				item["ip"] = infos[i].m_remote_ip;
+				item["port"] = infos[i].m_remote_port;
+				value["user_infos"].append(item);
+			}*/
 			// = Array_Value;
 			Json::StyledWriter swriter;
 			std::string str = swriter.write(value);
@@ -228,4 +337,17 @@ namespace chen {
 		std::cout << room_name << std::endl;
 		return infos;
 	}
+	uint32_t cweb_http_api_mgr::kick_room_username(const std::string & room_name, const std::string & user_name)
+	{
+		return g_room_mgr.kick_room_username(room_name, user_name);
+	}
+
+	  uint32_t  cweb_http_api_mgr::add_while_room_username(const std::string& room_name, const std::string & user_name)
+	  {
+		  return g_room_mgr.add_white_room_username(room_name, user_name);
+	  }
+	  uint32_t  cweb_http_api_mgr::delete_while_room_username(const std::string& room_name, const std::string & user_name)
+	  {
+		  return g_room_mgr.delete_white_room_username(room_name, user_name);
+	  }
 }

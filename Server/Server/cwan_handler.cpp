@@ -129,13 +129,20 @@ namespace chen {
 			send_msg(S2C_Login, EShareProtoRoomName, reply);
 			return false;
 		}
-		
+		if (g_room_mgr.room_has_while_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
+		{
+			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
+			);
+			send_msg(S2C_Login, EShareLoginWhileList, reply);
+			//close();
+			return false;
+		}
 		if (g_room_mgr.room_has_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
 		{
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
 			);
 			send_msg(S2C_Login, EShareLoginRoomUsername, reply);
-			close();
+		//	close();
 			return false;
 		}
 		uint32 type = 0;
@@ -148,13 +155,20 @@ namespace chen {
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
 			);
 			send_msg(S2C_Login, EShareLoginRoomType, reply);
-			close();
+			//close();
 			return false;
 		}
 		
 		m_user_name = value["data"]["user_name"].asCString();
 		m_room_name = value["data"]["room_name"].asCString();
-		if (!g_room_mgr.join_room(m_session_id, m_room_name, m_user_name, type))
+		cuser_info user_info;
+		user_info.session_id = m_session_id;
+		user_info.username = m_user_name;
+		user_info.m_type = type;
+		user_info.m_remote_ip = m_remote_ip;
+		user_info.m_remote_port = m_remote_port;
+
+		if (!g_room_mgr.join_room(  m_room_name, user_info))
 		{
 			//EShareProtoCreateRoomFailed
 			WARNING_EX_LOG("[session_id = %llu] create roomname failed   !!! ", m_session_id );

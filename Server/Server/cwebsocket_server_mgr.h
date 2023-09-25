@@ -36,7 +36,7 @@ namespace chen {
 
 	public:
 		//连接回调
-		typedef std::function<void(uint64_t session_id,   const char* buf)>				cconnect_cb;
+		typedef std::function<void(uint64_t session_id,   const char* ip, uint16_t port)>				cconnect_cb;
 		//断开连接回调
 		typedef std::function<void(uint64_t session_id)> 								cdisconnect_cb;
 		//新消息回调

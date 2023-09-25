@@ -50,7 +50,7 @@ namespace chen {
 		explicit cwan_session();
 		~cwan_session();
 	public:
-		bool init();
+		bool init(const char * ip, uint16_t port);
 		void destroy();
 	public:
 		void update(uint32 uDeltaTime);
@@ -117,7 +117,8 @@ namespace chen {
 	//	M_MSG_MAP				m_msg_map;
 		Json::Reader							m_json_reader;					// json解析
 		Json::Value								m_json_response;
-
+		std::string								m_remote_ip;
+		uint16								m_remote_port;
 		//crtc_sdp								m_rtc_sdp;
 
 	};

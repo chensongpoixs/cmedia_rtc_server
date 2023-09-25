@@ -25,6 +25,10 @@ namespace chen {
 		PROXY_WORKER_METHOD0(std::vector< croom_info>, get_all_room);
 
 		PROXY_WORKER_METHOD1(std::vector< chen::cuser_info>, get_room_info, const std::string &  )
+		//virtual uint32_t  kick_room_username(const std::string& room_name, const std::string & user_name)
+		PROXY_WORKER_METHOD2(uint32_t, kick_room_username, const std::string &, const std::string &)
+			PROXY_WORKER_METHOD2(uint32_t, add_while_room_username, const std::string &, const std::string &)
+			PROXY_WORKER_METHOD2(uint32_t, delete_while_room_username, const std::string &, const std::string &)
 	END_PROXY_MAP()
 
 

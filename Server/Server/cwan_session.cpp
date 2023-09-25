@@ -39,6 +39,8 @@ namespace chen {
 		, m_room_name("")
 		, m_user_name("")
 		, m_client_connect_type(EClientConnectNone)
+		, m_remote_ip("")
+		, m_remote_port(0)
 	{
 		
 	}
@@ -47,10 +49,12 @@ namespace chen {
 		//WARNING_EX_LOG("");
 		 
 	}
-	bool cwan_session::init()
+	bool cwan_session::init(const char * ip, uint16_t port)
 	{
 		//WARNING_EX_LOG("");
 			m_client_connect_type = EClientConnectNone;
+			m_remote_ip = ip;
+			m_remote_port = port;
 			return true;
 	}
 	void cwan_session::destroy()
@@ -83,7 +87,7 @@ namespace chen {
 	{
 		m_client_connect_type = EClientConnected;
 	}
-
+	
 	void cwan_session::disconnect()
 	{
 		m_client_connect_type = EClientConnectNone;
@@ -93,8 +97,9 @@ namespace chen {
 			g_room_mgr.m_master[m_room_name] = 0;
 		}
 		m_master = false;
-
-
+		NORMAL_EX_LOG("session_id = %u, [ip = %s][port = %u]", m_session_id, m_remote_ip.c_str(), m_remote_port);
+		m_remote_ip = "";
+		m_remote_port = 0;
 		// 退出房间
 		for (const std::string & room_name : m_room_list)
 		{

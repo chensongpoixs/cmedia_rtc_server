@@ -136,7 +136,7 @@ namespace chen{
 			if (msg_ptr->get_msg_id() == EMIR_Connect)
 			{
 				//cmsg_connect* p = (cmsg_connect*)msg_ptr->get_buf();
-				m_connect_callback(msg_ptr->get_session_id(), NULL);
+				m_connect_callback(msg_ptr->get_session_id(), msg_ptr->get_remote_ip().c_str(), msg_ptr->get_remote_port());
 			}
 			else if (msg_ptr->get_msg_id() == EMIR_Disconnect)
 			{
@@ -264,6 +264,9 @@ namespace chen{
 		}
 		else
 		{
+
+			std::string sClientIp = m_socket.remote_endpoint().address().to_string();
+			uint16 uiClientPort = m_socket.remote_endpoint().port();
 			// Create the session and run it
 			cwebsocket_session* session_ptr = new cwebsocket_session(this, m_client_seeesion, std::move(m_socket));
 			 clock_guard lock(m_session_mutex);
@@ -278,16 +281,22 @@ namespace chen{
 			 }
 			 if (session_ptr)
 			 {
-				 session_ptr->run();
-
 				 cwebsocket_msg * msg_ptr = new cwebsocket_msg();
 				 if (msg_ptr)
 				 {
+
 					 msg_ptr->set_msg_id(EMIR_Connect);
+					 msg_ptr->set_remote_ip(sClientIp.c_str());
+					 msg_ptr->set_remote_port(uiClientPort);
 					 msg_ptr->set_session_id(m_client_seeesion);
 					 msg_push(msg_ptr);
 					 ++m_client_seeesion;
+
 				 }
+				 session_ptr->run();
+				 
+
+				 
 
 			 }
 
@@ -314,7 +323,7 @@ namespace chen{
 		msg_ptr->set_session_id(session_ptr->get_session_id());
 		msg_push(msg_ptr);
 		uint64_t session_id = session_ptr->get_session_id();
-		delete session_ptr;
+		//delete session_ptr;
 		//session_ptr = NULL;
 		{
 			clock_guard lock(m_session_mutex);
