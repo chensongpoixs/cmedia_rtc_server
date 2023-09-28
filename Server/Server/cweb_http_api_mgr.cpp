@@ -23,6 +23,14 @@ namespace chen {
 	bool cweb_http_api_mgr::init()
 	{
 		m_server.config.port = g_cfg.get_uint32(ECI_WebHttpWanPort);
+		//m_server.resource["^/api_doc$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
+		//{
+		//	Json::StyledWriter swriter;
+		//	std::string str = swriter.write(value);
+		//	//g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length());
+		//	response->write(str);
+		//
+		//};
 		m_server.resource["^/rooms$"]["GET"] = [](std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Response> response, std::shared_ptr<SimpleWeb::Server<SimpleWeb::HTTP>::Request> request)
 		{
 			std::cout << "http thread id  :" << std::this_thread::get_id() << std::endl;

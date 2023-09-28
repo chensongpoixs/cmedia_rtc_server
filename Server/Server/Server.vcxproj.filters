@@ -208,9 +208,6 @@
     <Filter Include="rtp_video_header">
       <UniqueIdentifier>{c1903a29-96fe-4f9f-bb33-b6bbdc7d0dbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NewFilter1">
-      <UniqueIdentifier>{5fd8f939-9a2c-41dd-b612-93dc36ca577a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="video_coding\av1">
       <UniqueIdentifier>{9298b4fd-5777-4140-9706-efb38bcd69a4}</UniqueIdentifier>
     </Filter>

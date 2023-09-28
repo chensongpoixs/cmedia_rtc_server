@@ -129,6 +129,7 @@ namespace chen {
 			send_msg(S2C_Login, EShareProtoRoomName, reply);
 			return false;
 		}
+#if 0
 		if (g_room_mgr.room_has_while_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
 		{
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
@@ -142,14 +143,16 @@ namespace chen {
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
 			);
 			send_msg(S2C_Login, EShareLoginRoomUsername, reply);
-		//	close();
+			//	close();
 			return false;
 		}
+#endif
 		uint32 type = 0;
 		if (value["data"].isMember("type") && value["data"]["type"].isInt64())
 		{
 			type = value["data"]["type"].asInt64() > 0 ? 1 : 0;
 		}
+#if 0
 		if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
 		{
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
@@ -158,6 +161,7 @@ namespace chen {
 			//close();
 			return false;
 		}
+#endif
 		
 		m_user_name = value["data"]["user_name"].asCString();
 		m_room_name = value["data"]["room_name"].asCString();
@@ -207,10 +211,14 @@ namespace chen {
 
 	bool	cwan_session::handler_webrtc_message(Json::Value& value)
 	{
+#if 0
+
 		if (m_room_name.empty())
 		{
 			return false;
 		}
+
+#endif
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{
@@ -311,10 +319,12 @@ namespace chen {
 	}
 	bool cwan_session::handler_rtc_publisher(Json::Value & value)
 	{
+#if 0
 		if (m_room_name.empty())
 		{
 			return false;
 		}
+#endif 
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{
@@ -393,10 +403,13 @@ namespace chen {
 
 	bool cwan_session::handler_rtc_player(Json::Value & value)
 	{
+#if 0
 		if (m_room_name.empty())
 		{
 			return false;
 		}
+#endif 
+
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{
@@ -469,10 +482,12 @@ namespace chen {
 	}
 	bool cwan_session::handler_rtc_request_frame(Json::Value & value)
 	{
+#if 0
 		if (m_room_name.empty())
 		{
 			return false;
 		}
+#endif 
 		Json::Value reply;
 		if (!value.isMember("data") || !value["data"].isObject())
 		{

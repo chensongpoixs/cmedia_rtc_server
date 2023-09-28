@@ -316,7 +316,7 @@ namespace chen{
 		{
 			WARNING_EX_LOG(" alloc failed !!!!");
 			clock_guard lock(m_session_mutex);
-			m_session_map.erase(session_id);
+			m_session_map.erase(session_ptr->get_session_id());
 			delete session_ptr;
 			session_ptr = NULL;
 			return;

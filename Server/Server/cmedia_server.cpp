@@ -64,8 +64,11 @@ namespace chen {
 	bool cmedia_server::init(const char* log_path, const char* config_file)
 	{
 
-
-		
+		printf("LOG init ...");
+		if (!LOG::init("./log", "media_rtc_server"))
+		{
+			return false;
+		}
 		if (!g_cfg.init(config_file))
 		{
 			return false;

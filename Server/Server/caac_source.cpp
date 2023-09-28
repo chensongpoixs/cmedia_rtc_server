@@ -22,6 +22,7 @@ purpose:		_C_DTLS_ _H_
 
 ************************************************************************************************/
 #include "caac_source.h"
+#define _CRT_SECURE_NO_WARNINGS
 namespace chen {
 	static uint32_t AACSampleRate[16] =
 	{
