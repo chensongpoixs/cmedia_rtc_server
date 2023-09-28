@@ -49,6 +49,11 @@ namespace chen {
 		EShareRtcRequestFrame,
 		EShareRtcCreateMediaChannel,
 		EShareRtcCreateMediaSsrcInfo,
+		EShareLoginP2p,
+		EShareLoginRoomUsername, //322 重复登录用户已经登录了
+		
+		EShareLoginRoomType,
+		EShareLoginWhileList,
 	};
 }
 

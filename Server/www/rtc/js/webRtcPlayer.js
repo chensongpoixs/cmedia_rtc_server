@@ -137,7 +137,9 @@
                     self.onVideoInitialised();
                 }
             }, true);
-			
+			video.addEventListener('contextmenu', function( e ) {
+                e.preventDefault()
+            })
 			// Check if request video frame callback is supported
 			if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
 				// The API is supported! 
@@ -507,7 +509,7 @@
             setupTracksToSendAsync(self.pcClient).finally(function()
             {
                 setupPeerConnection(self.pcClient);
-              //  self.dcClient = setupDataChannel(self.pcClient, 'rtc', self.dataChannelOptions);
+               self.dcClient = setupDataChannel(self.pcClient, 'rtc', self.dataChannelOptions);
                 handleCreateOffer(self.pcClient);
             });
             

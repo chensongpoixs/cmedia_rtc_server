@@ -277,6 +277,12 @@
     <Filter Include="libsrtp\srtp\crypto\replay">
       <UniqueIdentifier>{57132154-f27b-4343-9fff-16f87bc8a537}</UniqueIdentifier>
     </Filter>
+    <Filter Include="http">
+      <UniqueIdentifier>{a17755b0-763a-4f05-a842-80c62c46af16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="proxy">
+      <UniqueIdentifier>{8c5723cf-3448-444c-9e8d-4e983f2eb080}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -1275,6 +1281,27 @@
     </ClCompile>
     <ClCompile Include="libsrtp\srtp\crypto\replay\ut_sim.c">
       <Filter>libsrtp\srtp\crypto\replay</Filter>
+    </ClCompile>
+    <ClCompile Include="http_examples.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="cproxy.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="cmessage_handler.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="clocation.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="chttp_queue_mgr.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="cweb_http_api_proxy.cpp">
+      <Filter>proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="cweb_http_api_mgr.cpp">
+      <Filter>http</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2426,6 +2453,54 @@
     </ClInclude>
     <ClInclude Include="libsrtp\srtp\crypto\include\stat.h">
       <Filter>libsrtp\srtp\crypto\include</Filter>
+    </ClInclude>
+    <ClInclude Include="asio_compatibility.hpp">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="crypto.hpp">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="mutex.hpp">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="server_http.hpp">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="status_code.hpp">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.hpp">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="cproxy.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cmessage_handler.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cconstructor_magic.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="clocation.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cstringize_macros.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="chttp_queue_mgr.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cweb_http_api_proxy.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cweb_http_api_interface.h">
+      <Filter>proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="cweb_http_api_mgr.h">
+      <Filter>http</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

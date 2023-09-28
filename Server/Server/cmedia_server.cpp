@@ -43,6 +43,8 @@ purpose:		cmedia_server
 #include "crtsp_server.h"
 #include "cglobal_rtsp.h"
 #include "system_wrappers/source/field_trial.h" // webrtc::field_trial
+#include "chttp_queue_mgr.h"
+#include "cweb_http_api_mgr.h"
 namespace chen {
 	static std::once_flag globalInitOnce;
 	static  const  char FieldTrials[] = "WebRTC-Bwe-AlrLimitedBackoff/Enabled/";
@@ -63,11 +65,7 @@ namespace chen {
 	{
 
 
-		printf("LOG init ...");
-		if (!LOG::init(log_path, "media_rtc_server"))
-		{
-			return false;
-		}
+		
 		if (!g_cfg.init(config_file))
 		{
 			return false;
@@ -150,12 +148,12 @@ namespace chen {
 
 
 		SYSTEM_LOG("rtsp init ...");
-		g_rtsp_server.init();
+		//g_rtsp_server.init();
 #ifdef AUTH_CONFIG
 		g_rtsp_server.SetAuthConfig("-_-", "admin", "12345");
 #endif
-		init_rtsp_global();
-		g_rtsp_server.startup();
+		//init_rtsp_global();
+		//g_rtsp_server.startup();
 		SYSTEM_LOG("rtsp start OK !!!");
 
 		SYSTEM_LOG("timer init ...");
@@ -163,6 +161,15 @@ namespace chen {
 		{
 			return false;
 		}*/
+
+		SYSTEM_LOG("Web Http Server API init ...");
+		if (!g_web_http_api_mgr.init())
+		{
+			return false;
+		}
+		SYSTEM_LOG("Web Http Server API startup ...");
+		g_web_http_api_mgr.startup();
+		SYSTEM_LOG("Web Http Server API startup OK ...");
 		m_server_intaval = new ctimer(this);
 		SYSTEM_LOG("timer startup  ...");
 
@@ -257,6 +264,7 @@ namespace chen {
 		 uv_util::destroy();
 
 		g_global_rtc_port.destroy();
+		g_web_http_api_mgr.destroy();
 		SYSTEM_LOG("global rtc port config destroy ok !!!");
 		//1 log
 		LOG::destroy();
@@ -294,10 +302,10 @@ namespace chen {
 
 
 				g_room_mgr.update(tick_time);
-
+				
 				g_transport_mgr.update(tick_time);
 				//uDelta = time_elapse.get_elapse();
-
+				g_http_queue_mgr.update();
 				/*if (uDelta < TICK_TIME)
 				{
 					std::this_thread::sleep_for(std::chrono::milliseconds(TICK_TIME - uDelta));

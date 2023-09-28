@@ -36,13 +36,29 @@ namespace chen
 	{
 		uint64      session_id;
 		std::string username;
+		uint32		m_type;
+		std::string m_remote_ip;
+		uint16		m_remote_port;
+		
 		std::unordered_map<std::string, cwebrtc_transport*>     producers;
 		std::unordered_map<std::string, cwebrtc_transport*>     consumers;
 		cuser_info()
 			: session_id(0)
 			, username("")
 			, producers()
-			, consumers() {}
+			, consumers()
+			, m_type(0)
+			, m_remote_ip("")
+			, m_remote_port(0)
+			{}
+	};
+
+	struct croom_info
+	{
+		std::string  room_name;
+		std::vector< cuser_info> infos;
+		std::set<std::string > m_while_list;
+		croom_info() : room_name(), infos(), m_while_list() {}
 	};
 	class croom
 	{
@@ -59,9 +75,10 @@ namespace chen
 
 		bool init(const std::string & room_name);
 
-		bool join_userinfo(uint64 sesssion_id, const std::string & username);
+		bool join_userinfo(uint64 sesssion_id, const std::string & username, uint32 type);
+		bool join_userinfo(const cuser_info& user_info);
 
-
+		uint32 get_userssize() const { return m_userinfo_map.size(); }
 
 		bool leave_userinfo(uint64 session_id );
 
@@ -70,6 +87,19 @@ namespace chen
 
 		bool webrtc_message(uint64 session_id, Json::Value& value);
 
+		void build_user_info(std::vector<cuser_info> & infos);
+		void build_while_user(croom_info &room_info);
+		bool has_type(uint32 type);
+
+		bool has_username(const std::string & user_name);
+		bool has_while_user(const std::string &user_name);
+
+		void build_client_p2p();
+
+
+		uint32 kick_username(const std::string & username);
+		uint32 add_while_username(const std::string & username);
+		uint32 delete_while_username(const std::string & username);
 	private:
 
 		// 房间中广播消息
@@ -86,6 +116,7 @@ namespace chen
 		std::string					m_room_name;
 		//uint64						m_room_id;
 		CUSERINFO_MAP               m_userinfo_map;
+		std::set<std::string>		m_while_list_username;
 	};
 }
 

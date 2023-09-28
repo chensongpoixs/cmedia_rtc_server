@@ -28,9 +28,14 @@ Copyright boost
 #include "cnet_type.h"
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <json/json.h>
+#include "croom.h"
 namespace chen {
 	class croom;
+	struct cuser_info;
+	
+
 	class croom_mgr 
 	{
 	private:
@@ -56,8 +61,8 @@ namespace chen {
 
 	public:
 		// join room
-		bool join_room(uint64 session_id, const std::string & room_name , const std::string & user_name);
-
+		bool join_room(uint64 session_id, const std::string & room_name , const std::string & user_name, uint32 type);
+		bool join_room(const std::string & room_name, const cuser_info& user_info);
 
 		// leve room
 
@@ -66,7 +71,19 @@ namespace chen {
 		bool webrtc_message(const std::string &room_name, uint64  session_id, Json::Value & value);
 
 
+		void build_client_p2p(const std::string & room_name);
+		bool room_user_type(const std::string & room_name, uint32 type);
+		bool room_has_username(const std ::string & room_name, const std::string & user_name);
+		bool room_has_while_username(const std::string & room_name, const std::string & user_name);
 
+		bool get_room_info(const std ::string & room_name, std::vector<cuser_info> & infos);
+
+		void build_all_room_info(std::vector< croom_info>& room_infos);
+
+
+		uint32_t kick_room_username(const std ::string & roomname, const std ::string & username);
+		uint32_t add_white_room_username(const std::string & roomname, const std::string & username);
+		uint32_t delete_white_room_username(const std::string & roomname, const std::string & username);
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		croom_mgr(const croom_mgr&);

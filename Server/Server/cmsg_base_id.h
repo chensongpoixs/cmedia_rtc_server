@@ -59,6 +59,7 @@ namespace chen {
 		S2C_LevalRoomUpdate,
 
 		S2C_RtpCapabilitiesUpdate,
+		S2C_RtpP2pUpdate,
 		//S2C_CreateAnswarUpdate,
 		//S2C_CandidateUpdate,
 

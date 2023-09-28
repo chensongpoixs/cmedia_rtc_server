@@ -46,7 +46,7 @@ namespace chen {
 		void update(uint32 uDeltaTime);
 		void shutdown();
 	public:
-		void on_connect(uint64_t session_id,  const char* buf);
+		void on_connect(uint64_t session_id,  const char* ip, uint16_t port);
 		void on_msg_receive(uint64_t session_id,   const void* p, uint32 size);
 		void on_disconnect(uint64_t session_id);
 	public:

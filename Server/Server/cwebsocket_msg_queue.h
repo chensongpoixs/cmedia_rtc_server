@@ -34,6 +34,8 @@ namespace chen {
 			, m_msg_id(0)
 			, m_buffer_ptr(NULL)
 			, m_data_size(0)
+			, m_remote_ip("")
+			, m_remote_port(0)
 		{}
 		~cwebsocket_msg(){}
 	public:
@@ -46,6 +48,10 @@ namespace chen {
 		void set_buffer(unsigned char  * buffer, uint32_t data_size);
 		unsigned char  *   get_buffer() const { return m_buffer_ptr; }
 		uint32_t    get_data_size()   { return m_data_size; }
+		void set_remote_ip(const char * ip) { m_remote_ip = ip; }
+		const std::string &get_remote_ip() const { return m_remote_ip; }
+		void set_remote_port(uint16_t port) { m_remote_port = port; }
+		uint16_t get_remote_port() const { return m_remote_port; }
 		void free();
 	private:
 		cwebsocket_msg(const cwebsocket_msg&);
@@ -57,6 +63,8 @@ namespace chen {
 		uint16_t							m_msg_id;
 		unsigned char  * 							m_buffer_ptr;
 		uint32_t						m_data_size;
+		std::string						m_remote_ip;
+		uint16_t							m_remote_port;
 	};
 	 
 	class cwebsocket_msg_queue

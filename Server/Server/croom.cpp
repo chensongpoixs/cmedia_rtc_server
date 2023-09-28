@@ -43,7 +43,7 @@ namespace chen {
 		m_room_name = room_name;
 		return true;
 	}
-	bool croom::join_userinfo(uint64 session_id, const std::string & username)
+	bool croom::join_userinfo(uint64 session_id, const std::string & username, uint32 type)
 	{
 		Json::Value reply;
 		reply["username"] = username;
@@ -59,12 +59,37 @@ namespace chen {
 		cuser_info userinfo;
 		userinfo.session_id = session_id;
 		userinfo.username = username;
+		userinfo.m_type = type;
 		if (!m_userinfo_map.insert(std::make_pair(session_id, userinfo)).second)
 		{
 			ERROR_EX_LOG("[room_name = %s][session_id = %u][ user_name = %s] insert failed !!!", m_room_name.c_str(), session_id, username.c_str());
 			return false;
 		}
 			return true;
+	}
+	bool croom::join_userinfo(const cuser_info& user_info)
+	{
+		Json::Value reply;
+		reply["username"] = user_info.username;
+		_broadcast_message(user_info.session_id, S2C_JoinRoomUpdate, reply);
+		CUSERINFO_MAP::iterator iter = m_userinfo_map.find(user_info.session_id);
+		if (iter != m_userinfo_map.end())
+		{
+			WARNING_EX_LOG("[room_name = %s][session_id = %u][old user_name = %s][new username = %s]", m_room_name.c_str(), user_info.session_id, iter->second.username.c_str(), user_info.username.c_str());
+			iter->second.username = user_info.username;
+			return true;
+		}
+
+		/*cuser_info userinfo;
+		userinfo.session_id = session_id;
+		userinfo.username = username;
+		userinfo.m_type = type;*/
+		if (!m_userinfo_map.insert(std::make_pair(user_info.session_id, user_info)).second)
+		{
+			ERROR_EX_LOG("[room_name = %s][session_id = %u][ user_name = %s] insert failed !!!", m_room_name.c_str(), user_info.session_id, user_info.username.c_str());
+			return false;
+		}
+		return true;
 	}
 	bool croom::leave_userinfo(uint64 session_id)
 	{
@@ -75,7 +100,7 @@ namespace chen {
 		{
 			reply["username"] = iter->second.username;
 			_broadcast_message(session_id, S2C_LevalRoomUpdate, reply);
-			//WARNING_EX_LOG("[room_name = %s][session_id = %u][old user_name = %s][new username = %s]", m_room_name.c_str(), session_id, iter->second.username.c_str(), username.c_str());
+			WARNING_EX_LOG("[room_name = %s][session_id = %u][old user_name = %s][new username = %s]", m_room_name.c_str(), session_id, iter->second.username.c_str(), iter->second.username.c_str());
 			m_userinfo_map.erase(iter);
 			return true;
 		}
@@ -129,7 +154,7 @@ namespace chen {
 				reply["data"] = value;
 				Json::StyledWriter swriter;
 				std::string str = swriter.write(reply);
-				NORMAL_EX_LOG("[join room = %s][username = %s][message = %s]", m_room_name.c_str(), pi.second.username.c_str(), str.c_str());
+				NORMAL_EX_LOG("[sesson_id = %u][join room = %s][username = %s][message = %s]", pi.first, m_room_name.c_str(), pi.second.username.c_str(), str.c_str());
 				//g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length());
 				g_wan_server.send_msg(pi.first, msg_id, str.c_str(), str.length());
 			}
@@ -144,5 +169,113 @@ namespace chen {
 			return NULL;
 		}
 		return &iter->second;
+	}
+
+	void croom::build_user_info(std::vector<cuser_info> & infos)
+	{
+		for (const std::pair<uint64, cuser_info> & pi : m_userinfo_map)
+		{
+			/*cuser_info info;
+			info.username = pi.second.username;
+			info.m_type = pi.second.m_type;*/
+
+			infos.push_back(pi.second);
+		}
+	}
+	void croom::build_while_user(croom_info &room_info)
+	{
+		room_info.m_while_list = m_while_list_username;
+		//for (const std::pair<uint64, cuser_info> & pi : m_userinfo_map)
+		//{
+		//	/*cuser_info info;
+		//	info.username = pi.second.username;
+		//	info.m_type = pi.second.m_type;*/
+
+		//	infos.push_back(pi.second);
+		//}
+	}
+	bool croom::has_type(uint32 type)
+	{
+		for (const std::pair<uint64, cuser_info>& pi : m_userinfo_map)
+		{
+
+			if (type == pi.second.m_type)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool croom::has_username(const std::string & user_name)
+	{
+		
+		for (const std::pair<uint64, cuser_info> & pi : m_userinfo_map)
+		{
+			 
+			if (user_name == pi.second.username)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	bool croom::has_while_user(const std::string &user_name)
+	{
+		auto iter = m_while_list_username.find(user_name);
+		if (iter != m_while_list_username.end())
+		{
+			return true;
+		}
+		return false;
+	}
+	void croom::build_client_p2p()
+	{
+		if (m_userinfo_map.size() > 1)
+		{
+			Json::Value value;
+			_broadcast_message(0, S2C_RtpP2pUpdate, value);
+		}
+	}
+	uint32 croom::kick_username(const std::string & username)
+	{
+		for (const std::pair<uint64, cuser_info> & pi : m_userinfo_map)
+		{
+			/*cuser_info info;
+			info.username = pi.second.username;
+			info.m_type = pi.second.m_type;*/
+			if (pi.second.username == username)
+			{
+				g_wan_server.close(pi.second.session_id);
+				return 0;
+			}
+
+			//infos.push_back(pi.second);
+		}
+		return 501;//
+	}
+	uint32 croom::add_while_username(const std::string & username)
+	{
+		m_while_list_username.insert(username);
+		for (const std::pair<uint64, cuser_info> & pi : m_userinfo_map)
+		{
+			/*cuser_info info;
+			info.username = pi.second.username;
+			info.m_type = pi.second.m_type;*/
+			if (pi.second.username == username)
+			{
+				g_wan_server.close(pi.second.session_id);
+				return 0;
+			}
+
+			//infos.push_back(pi.second);
+		}
+		return 0;
+	}
+	uint32 croom::delete_while_username(const std::string & username)
+	{
+		m_while_list_username.erase(username);
+		 
+		return 0;
 	}
 }

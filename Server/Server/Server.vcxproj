@@ -77,7 +77,7 @@
     <IncludePath>$(C_INCLUDE)\protobuf\include;$(C_INCLUDE)\libsrtp2\include;$(C_INCLUDE)\abseil-cpp\include;$(C_INCLUDE)\json\include;$(C_INCLUDE)\libuv\include;$(C_INCLUDE)\boost_1_66_0\include;$(C_INCLUDE)\openssl_1.1.0\include;$(C_INCLUDE)\usrsctplib\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(C_INCLUDE)\protobuf\lib\x64\debug;$(C_INCLUDE)\libsrtp2\lib\x64\debug;$(C_INCLUDE)\abseil-cpp\lib\x64\debug;$(C_INCLUDE)\json\lib\x64\debug;$(C_INCLUDE)\openssl_1.1.0\lib\x64\debug;$(C_INCLUDE)\boost_1_66_0\lib;$(C_INCLUDE)\libuv\lib\x64\Debug;$(C_INCLUDE)\usrsctplib\lib\x64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)1</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>..\vsout\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
@@ -185,17 +185,19 @@
     <ClCompile Include="cguard_reply.cpp" />
     <ClCompile Include="ch264_file.cpp" />
     <ClCompile Include="ch264_source.cpp" />
+    <ClCompile Include="chttp_queue_mgr.cpp" />
     <ClCompile Include="cice_server.cpp" />
     <ClCompile Include="cifaddrs_android.cc" />
     <ClCompile Include="cifaddrs_converter.cc" />
     <ClCompile Include="cip_address.cpp" />
-    <ClCompile Include="clibuv_aysnc_thread.c" />
+    <ClCompile Include="clocation.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
     <ClCompile Include="cmedia_desc.cpp" />
     <ClCompile Include="cmedia_server.cpp" />
     <ClCompile Include="cmedia_session.cpp" />
     <ClCompile Include="cmedia_source.cpp" />
+    <ClCompile Include="cmessage_handler.cpp" />
     <ClCompile Include="cmod_ops.cpp" />
     <ClCompile Include="cmsg_dispatch.cpp" />
     <ClCompile Include="cnetwork.cpp" />
@@ -207,6 +209,7 @@
     <ClCompile Include="cpacket_buffer.cpp" />
     <ClCompile Include="cparse_rtsp_request.cpp" />
     <ClCompile Include="cproducer.cpp" />
+    <ClCompile Include="cproxy.cpp" />
     <ClCompile Include="cremote_estimator_proxy.cpp" />
     <ClCompile Include="creport_block.cpp" />
     <ClCompile Include="crtcp_packet.cpp" />
@@ -303,9 +306,12 @@
     <ClCompile Include="cwebsocket_msg_queue.cpp" />
     <ClCompile Include="cwebsocket_server_mgr.cpp" />
     <ClCompile Include="cwebsocket_session.cpp" />
+    <ClCompile Include="cweb_http_api_mgr.cpp" />
+    <ClCompile Include="cweb_http_api_proxy.cpp" />
     <ClCompile Include="cwin32.cpp" />
     <ClCompile Include="H264.cpp" />
     <ClCompile Include="h264_profile_level_id.cc" />
+    <ClCompile Include="http_examples.cpp" />
     <ClCompile Include="IceCandidate.cpp" />
     <ClCompile Include="IceServer.cpp" />
     <ClCompile Include="KeyFrameRequestManager.cpp" />
@@ -488,6 +494,7 @@
     <ClCompile Include="usrsctp\usrsctplib\user_socket.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="asio_compatibility.hpp" />
     <ClInclude Include="buffer.h" />
     <ClInclude Include="BweType.hpp" />
     <ClInclude Include="caac_source.h" />
@@ -510,6 +517,7 @@
     <ClInclude Include="ccommon_header.h" />
     <ClInclude Include="ccommon_type.h" />
     <ClInclude Include="cconfig.h" />
+    <ClInclude Include="cconstructor_magic.h" />
     <ClInclude Include="cconsumer.h" />
     <ClInclude Include="ccrc32.h" />
     <ClInclude Include="ccrypto_random.h" />
@@ -531,10 +539,12 @@
     <ClInclude Include="cguard_reply.h" />
     <ClInclude Include="ch264_file.h" />
     <ClInclude Include="ch264_source.h" />
+    <ClInclude Include="chttp_queue_mgr.h" />
     <ClInclude Include="cice_server.h" />
     <ClInclude Include="cifaddrs_android.h" />
     <ClInclude Include="cifaddrs_converter.h" />
     <ClInclude Include="cip_address.h" />
+    <ClInclude Include="clocation.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
     <ClInclude Include="clog_define.h" />
@@ -545,6 +555,7 @@
     <ClInclude Include="cmedia_session.h" />
     <ClInclude Include="cmedia_source.h" />
     <ClInclude Include="cmedia_type.h" />
+    <ClInclude Include="cmessage_handler.h" />
     <ClInclude Include="cmod_ops.h" />
     <ClInclude Include="cmsg_base_id.h" />
     <ClInclude Include="cmsg_dispatch.h" />
@@ -560,6 +571,7 @@
     <ClInclude Include="cpacket_buffer.h" />
     <ClInclude Include="cparse_rtsp_request.h" />
     <ClInclude Include="cproducer.h" />
+    <ClInclude Include="cproxy.h" />
     <ClInclude Include="cremote_estimator_proxy.h" />
     <ClInclude Include="creport_block.h" />
     <ClInclude Include="cring_buffer.h" />
@@ -618,6 +630,7 @@
     <ClInclude Include="crtsp_session_mgr.h" />
     <ClInclude Include="crtx_paylod_des.h" />
     <ClInclude Include="crtx_stream.h" />
+    <ClInclude Include="crypto.hpp" />
     <ClInclude Include="csctp_association.h" />
     <ClInclude Include="csctp_association_mgr.h" />
     <ClInclude Include="csdp_util.h" />
@@ -633,6 +646,7 @@
     <ClInclude Include="csrtp_session_test.h" />
     <ClInclude Include="csrtp_util.h" />
     <ClInclude Include="cstr2digit.h" />
+    <ClInclude Include="cstringize_macros.h" />
     <ClInclude Include="ctcp_conection.h" />
     <ClInclude Include="ctcp_connection_handler.h" />
     <ClInclude Include="ctcp_server.h" />
@@ -669,7 +683,11 @@
     <ClInclude Include="cwebsocket_msg_queue.h" />
     <ClInclude Include="cwebsocket_server_mgr.h" />
     <ClInclude Include="cwebsocket_session.h" />
+    <ClInclude Include="cweb_http_api_interface.h" />
+    <ClInclude Include="cweb_http_api_mgr.h" />
+    <ClInclude Include="cweb_http_api_proxy.h" />
     <ClInclude Include="cwin32.h" />
+    <ClInclude Include="event.h" />
     <ClInclude Include="H264.hpp" />
     <ClInclude Include="h264_profile_level_id.h" />
     <ClInclude Include="IceCandidate.hpp" />
@@ -784,6 +802,7 @@
     <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h" />
     <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h" />
     <ClInclude Include="cnetwork_constants.h" />
+    <ClInclude Include="mutex.hpp" />
     <ClInclude Include="NackGenerator.hpp" />
     <ClInclude Include="Parameters.hpp" />
     <ClInclude Include="PayloadDescriptorHandler.hpp" />
@@ -827,7 +846,9 @@
     <ClInclude Include="RtpStreamSend.hpp" />
     <ClInclude Include="RtxStream.hpp" />
     <ClInclude Include="SeqManager.hpp" />
+    <ClInclude Include="server_http.hpp" />
     <ClInclude Include="SimpleConsumer.hpp" />
+    <ClInclude Include="status_code.hpp" />
     <ClInclude Include="StunPacket.hpp" />
     <ClInclude Include="Tools.hpp" />
     <ClInclude Include="TransportCongestionControlClient.hpp" />
@@ -871,6 +892,7 @@
     <ClInclude Include="usrsctp\usrsctplib\user_socketvar.h" />
     <ClInclude Include="usrsctp\usrsctplib\user_uma.h" />
     <ClInclude Include="usrsctp\usrsctplib\usrsctp.h" />
+    <ClInclude Include="utility.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />

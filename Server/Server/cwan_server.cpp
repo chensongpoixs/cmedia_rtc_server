@@ -60,7 +60,7 @@ namespace chen {
 		}
 
 		m_websocket_server_ptr->set_connect_callback(
-			std::bind(&cwan_server::on_connect, this, std::placeholders::_1, std::placeholders::_2)
+			std::bind(&cwan_server::on_connect, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)
 		);
 
 		m_websocket_server_ptr->set_msg_callback(
@@ -151,9 +151,9 @@ namespace chen {
 			m_websocket_server_ptr->shutdown();
 		}
 	}
-	void cwan_server::on_connect(uint64_t session_id,  const char * buf)
+	void cwan_server::on_connect(uint64_t session_id,  const char * ip, uint16_t port)
 	{
-		NORMAL_EX_LOG("[session_id = %u]", session_id);
+		NORMAL_EX_LOG("[session_id = %u][ip = %s][port = %u]", session_id, ip, port);
 		//if (para)
 		/*uint32 index = get_session_index(session_id);
 		if (m_session_ptr[index].is_used())
@@ -178,7 +178,7 @@ namespace chen {
 			m_websocket_server_ptr->close(session_id);
 			return  ;
 		}
-		session_ptr->init();
+		session_ptr->init(ip, port);
 		if (!m_session_map.insert(std::make_pair(session_id, session_ptr)).second)
 		{
 			WARNING_EX_LOG("insert session_id = %u, failed !!!", session_id);

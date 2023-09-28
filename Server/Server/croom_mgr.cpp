@@ -45,7 +45,7 @@ namespace chen {
 	{
 	}
 
-	bool croom_mgr::join_room(uint64 session_id, const std::string & room_name, const std::string & user_name)
+	bool croom_mgr::join_room(uint64 session_id, const std::string & room_name, const std::string & user_name, uint32 type)
 	{
 		CROOM_MAP::iterator iter =  m_room_map.find(room_name);
 		if (iter == m_room_map.end()) 
@@ -64,7 +64,29 @@ namespace chen {
 			return false;
 		}
 		
-		return iter->second.join_userinfo(session_id, user_name);
+		return iter->second.join_userinfo(session_id, user_name, type);
+	}
+
+	bool croom_mgr::join_room(const std::string & room_name, const cuser_info& user_info)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(room_name);
+		if (iter == m_room_map.end())
+		{
+			croom room;
+			room.init(room_name);
+			if (!m_room_map.insert(std::make_pair(room_name, room)).second)
+			{
+				WARNING_EX_LOG("insert [room name = %s] failed !!!", room_name.c_str());
+			}
+			iter = m_room_map.find(room_name);
+		}
+		if (iter == m_room_map.end())
+		{
+			WARNING_EX_LOG("not find [room name = %s] [user_name  = %s]failed !!!", room_name.c_str(), user_info.username.c_str());
+			return false;
+		}
+
+		return iter->second.join_userinfo(user_info);
 	}
 
 	bool croom_mgr::leave_room(uint64 session_id, const std::string & room_name)
@@ -99,4 +121,109 @@ namespace chen {
 		return false;
 	}
 
+	bool croom_mgr::room_user_type(const std::string & room_name, uint32 type)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(room_name);
+		if (iter != m_room_map.end())
+		{
+			return iter->second.has_type(type);
+		}
+		return false;
+	}
+	bool croom_mgr::room_has_username(const std::string & room_name, const std::string & user_name)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(room_name);
+		if (iter != m_room_map.end())
+		{
+			return iter->second.has_username(user_name);
+		}
+		return false;
+	}
+	bool croom_mgr::room_has_while_username(const std::string & room_name, const std::string & user_name)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(room_name);
+		if (iter != m_room_map.end())
+		{
+			return iter->second.has_while_user(user_name);
+		}
+		return false;
+		return true;
+	}
+	bool croom_mgr::get_room_info(const std::string & room_name, std::vector<cuser_info> & infos)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(room_name);
+		if (iter != m_room_map.end())
+		{
+			iter->second.build_user_info(infos);
+		}
+		return true;
+	}
+	
+	void croom_mgr::build_client_p2p(const std::string & room_name)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(room_name);
+		if (iter != m_room_map.end())
+		{
+			iter->second.build_client_p2p() ;
+		}
+	}
+
+
+	void croom_mgr::build_all_room_info(std::vector< croom_info>& room_infos)
+	{
+
+		for (  std::pair<const   std::string,    croom> &pi: m_room_map)
+		{
+			croom_info room_info;
+			room_info.room_name = pi.first;
+			pi.second.build_user_info(room_info.infos);
+			pi.second.build_while_user(room_info);
+			room_infos.push_back(room_info);
+		}
+	}
+	uint32_t croom_mgr::kick_room_username(const std::string & roomname, const std::string & username)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(roomname);
+		if (iter == m_room_map.end())
+		{
+			return 500;// 
+			//iter->second.build_client_p2p();
+		}
+		
+		return iter->second.kick_username(username);
+	}
+	//uint32_t croom_mgr::white_room_username(const std::string & roomname, const std::string & username)
+	//{
+	//	CROOM_MAP::iterator iter = m_room_map.find(roomname);
+	//	if (iter == m_room_map.end())
+	//	{
+	//		return 500;// 
+	//		//iter->second.build_client_p2p();
+	//	}
+
+	//	return iter->second.kick_username(username);
+	//}
+
+	uint32_t croom_mgr::add_white_room_username(const std::string & roomname, const std::string & username)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(roomname);
+		if (iter == m_room_map.end())
+		{
+			return 500;// 
+			//iter->second.build_client_p2p();
+		}
+
+		return iter->second.add_while_username(username);
+	}
+	uint32_t croom_mgr::delete_white_room_username(const std::string & roomname, const std::string & username)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(roomname);
+		if (iter == m_room_map.end())
+		{
+			return 500;// 
+			//iter->second.build_client_p2p();
+		}
+
+		return iter->second.delete_while_username(username);
+	}
 }
