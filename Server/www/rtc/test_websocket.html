@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>My WebSocket</title>
+</head>
+
+<body>
+    Welcome<br />
+    昵称<input id="name" type="text" /></br>
+    指定发送给<input id="to" type="text" /></br>
+    消息<input id="text" type="text" /></br>
+    <div style="display: flex;flex-direction: column;width: 100px;">
+        <button class="connect">Connect</button> 
+        <button class="send">Send</button> 
+        <button class="close">Close</button>
+        <button class="clear">Clear</button>
+    </div>
+    <div id="message">
+            
+    </div>
+</body>
+<script type="text/javascript">
+    var ws = null;
+    window.onload = function(){
+        //注册打开websocket连接按钮
+        var connectBtn = document.querySelector(".connect");
+        connectBtn.onclick = function(e){
+            if(ws){
+                ws.close();
+                ws = null;
+            }
+            var name = document.querySelector("#name").value;
+            // 打开一个websocket, 这里端口号和上面监听的需一致
+            ws = new WebSocket('ws://localhost:3000/connect?name='+name);
+             //websocket连上后，使用send()方法发送数据
+            ws.onopen = function(res) {
+                appendToMsgBox("已连接服务端..."+res.currentTarget.url);
+            }
+            // 服务端发送过来的消息
+            ws.onmessage = function(res) {
+                appendToMsgBox("服务端:"+JSON.stringify(res.data))
+            }
+            // 断开websocket触发
+            ws.onclose = function(res){
+                appendToMsgBox("已断开连接 "+res.currentTarget.url);
+            }
+        }
+        //注册发送消息按钮
+        var sendBtn = document.querySelector(".send");
+        sendBtn.onclick = function(e){
+            if(ws){
+                var name = document.querySelector("#name").value;
+                var toUesr = document.querySelector("#to").value;
+                var txt = document.querySelector("#text").value;
+                var data = {
+                    txt:txt,
+                    toUesr:toUesr,
+                    name:name
+                };
+                ws.send(JSON.stringify(data));
+            }else{
+                appendToMsgBox("服务端未连接.");
+            }
+        }
+        //注册断开websocket按钮
+        var closeBtn = document.querySelector(".close");
+        closeBtn.onclick = function(e){
+            if(ws){
+                ws.close();
+                ws = null;
+            }else{
+                appendToMsgBox("服务端未连接.");
+            }
+        }
+        //注册清除屏幕内容按钮
+        var clearBtn = document.querySelector(".clear");
+        clearBtn.onclick = function(e){
+            document.querySelector("#message").innerHTML = "";
+        }
+    }
+    //将内容显示到屏幕中
+    function appendToMsgBox(msg){
+        var msgBoxDom = document.querySelector("#message");
+        msgBoxDom.innerHTML += new Date().getTime()+"::"+ msg +"</br>";
+    }
+</script>
+
+</html>
