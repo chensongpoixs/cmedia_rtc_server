@@ -315,6 +315,8 @@ namespace chen{
 		if (!msg_ptr)
 		{
 			WARNING_EX_LOG(" alloc failed !!!!");
+			clock_guard lock(m_session_mutex);
+			m_session_map.erase(session_id);
 			delete session_ptr;
 			session_ptr = NULL;
 			return;
@@ -323,12 +325,13 @@ namespace chen{
 		msg_ptr->set_session_id(session_ptr->get_session_id());
 		msg_push(msg_ptr);
 		uint64_t session_id = session_ptr->get_session_id();
-		//delete session_ptr;
-		//session_ptr = NULL;
+		
+		
 		{
 			clock_guard lock(m_session_mutex);
 			m_session_map.erase(session_id);
-			
+			delete session_ptr;
+			 session_ptr = NULL;
 		}
 		/*
 		cnet_msg* msg_ptr = create_msg(EMIR_Disconnect, 0);
