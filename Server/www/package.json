@@ -11,6 +11,7 @@
     "express": "^4.17.3",
     "express-session": "^1.15.6",
     "helmet": "^3.21.3",
+    "http-server": "^14.1.1",
     "log4js": "^6.6.1",
     "nodejs-websocket": "^1.7.2",
     "passport": "^0.4.0",

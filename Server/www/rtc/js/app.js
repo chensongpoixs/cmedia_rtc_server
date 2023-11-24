@@ -2631,5 +2631,5 @@ function load() {
     setupHtmlEvents();
     setupFreezeFrameOverlay();
     registerKeyboardEvents();
-    start();
 }
+    start();
