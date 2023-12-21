@@ -335,7 +335,7 @@ namespace service_ctrl {
 	//	return false;
 	//}
 }  // namespace service_ctrl
-
+#if 0
 //static std::atomic_int desired_exit_code;
 LRESULT CALLBACK
 SessionMonitorWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -509,8 +509,176 @@ int doadmin(int argc, char* argv[])
 	return 1;
 }
 int test_http_main();
+#endif // #if 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ *          Copyright Andrey Semashev 2007 - 2015.
+ * Distributed under the Boost Software License, Version 1.0.
+ *    (See accompanying file LICENSE_1_0.txt or copy at
+ *          http://www.boost.org/LICENSE_1_0.txt)
+ */
+ /*!
+  * \file   main.cpp
+  * \author Andrey Semashev
+  * \date   30.08.2009
+  *
+  * \brief  An example of asynchronous logging with bounded log record queue in multiple threads.
+  */
+
+  // #define BOOST_LOG_DYN_LINK 1
+
+#include <stdexcept>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <functional>
+#include <boost/core/ref.hpp>
+#include <boost/bind/bind.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/barrier.hpp>
+
+#include <boost/log/common.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/attributes.hpp>
+#include <boost/log/sinks.hpp>
+#include <boost/log/sources/logger.hpp>
+#include <boost/log/utility/record_ordering.hpp>
+
+namespace logging = boost::log;
+namespace attrs = boost::log::attributes;
+namespace src = boost::log::sources;
+namespace sinks = boost::log::sinks;
+namespace expr = boost::log::expressions;
+namespace keywords = boost::log::keywords;
+
+using boost::shared_ptr;
+
+enum
+{
+	LOG_RECORDS_TO_WRITE = 10000,
+	THREAD_COUNT = 2
+};
+
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(test_lg, src::logger_mt)
+
+//! This function is executed in multiple threads
+void thread_fun(boost::barrier& bar)
+{
+	// Wait until all threads are created
+	bar.wait();
+
+	// Here we go. First, identify the thread.
+	BOOST_LOG_SCOPED_THREAD_TAG("ThreadID", boost::this_thread::get_id());
+
+	// Now, do some logging
+	for (unsigned int i = 0; i < LOG_RECORDS_TO_WRITE; ++i)
+	{
+		BOOST_LOG(test_lg::get()) << "Log record " << i;
+	}
+}
 
 int main(int argc, char* argv[])
+{
+	try
+	{
+		// Open a rotating text file
+		shared_ptr< std::ostream > strm(new std::ofstream("test.log"));
+		if (!strm->good())
+			throw std::runtime_error("Failed to open a text log file");
+
+		// Create a text file sink
+		typedef sinks::text_ostream_backend backend_t;
+		typedef sinks::asynchronous_sink<
+			backend_t,
+			sinks::bounded_ordering_queue<
+			logging::attribute_value_ordering< unsigned int, std::less< unsigned int > >,
+			128,                        // queue no more than 128 log records
+			sinks::block_on_overflow    // wait until records are processed
+			>
+		> sink_t;
+		shared_ptr< sink_t > sink(new sink_t(
+			boost::make_shared< backend_t >(),
+			// We'll apply record ordering to ensure that records from different threads go sequentially in the file
+			keywords::order = logging::make_attr_ordering< unsigned int >("RecordID", std::less< unsigned int >())));
+
+		sink->locked_backend()->add_stream(strm);
+
+		sink->set_formatter
+		(
+			expr::format("%1%: [%2%] [%3%] - %4%")
+			% expr::attr< unsigned int >("RecordID")
+			% expr::attr< boost::posix_time::ptime >("TimeStamp")
+			% expr::attr< boost::thread::id >("ThreadID")
+			% expr::smessage
+		);
+
+		// Add it to the core
+		logging::core::get()->add_sink(sink);
+
+		// Add some attributes too
+		logging::core::get()->add_global_attribute("TimeStamp", attrs::local_clock());
+		logging::core::get()->add_global_attribute("RecordID", attrs::counter< unsigned int >());
+
+		// Create logging threads
+		boost::barrier bar(THREAD_COUNT);
+		boost::thread_group threads;
+		for (unsigned int i = 0; i < THREAD_COUNT; ++i)
+			threads.create_thread(boost::bind(&thread_fun, boost::ref(bar)));
+
+		// Wait until all action ends
+		threads.join_all();
+
+		// Flush all buffered records
+		sink->stop();
+		sink->flush();
+
+		return 0;
+	}
+	catch (std::exception& e)
+	{
+		std::cout << "FAILURE: " << e.what() << std::endl;
+		return 1;
+	}
+}
+
+
+
+#include <boost/process.hpp>
+
+void test_process()
+{
+	boost::process::environment my_env = boost::this_process::environment();
+	boost::process::ipstream p;
+
+	boost::process::child c(
+		std::string("nvidia-smi -i 0 -q -d UTILIZATION"), my_env,
+		boost::process::std_out > p
+	);
+
+	std::string s;
+	std::getline(p, s);
+
+	c.wait();
+}
+
+
+
+int test_media_main(int argc, char* argv[])
 {
 
 
@@ -547,6 +715,7 @@ int main(int argc, char* argv[])
 #include "server_http.hpp"
 #include <future>
 
+#if 0
 // Added for the json-example
 #define BOOST_SPIRIT_THREADSAFE
 #include <boost/property_tree/json_parser.hpp>
@@ -555,6 +724,9 @@ int main(int argc, char* argv[])
 // Added for the default_resource example
 #include <algorithm>
 #include <boost/filesystem.hpp>
+#endif // if 0
+
+
 #include <fstream>
 #include <vector>
 #ifdef HAVE_OPENSSL
@@ -802,3 +974,44 @@ int main(int argc, char* argv[])
 //	server_thread.join();
 //	return 0;
 //}
+
+//有办法避免错误C2039：“值”：不是"boost::proto“的成员吗？
+
+//在编写项目时，我使用boost::network::uri::encoded()对请求url.But进行编码，我看到了错误"error C2039：“value:不是”boost：：proto“的成员。其中有四个是boost\proto\generate.hpp(239,20);boost\proto\generate.hpp(239,53);boost\proto\generate.hpp(248,20);boost\proto\generate.hpp(248,53).报道的这是我的测试代码：
+//
+//#include <iostream>
+//#include <string>
+//#include "boost/network/uri.hpp"
+//using std::string;
+//string EncodeURL(string str)
+//{
+//	return boost::network::uri::encoded(str);
+//}
+//string DecodeURL(string str)
+//{
+//	return boost::network::uri::decoded(str);
+//}
+//int main()
+//{
+//	EncodeURL("https://test.com/a+a+a.html");
+//	return 0;
+//}
+//复制
+//我使用boost和cpp - netlib安装了vcpkg.My IDE is Visual Studio Professional 2019，操作系统是Windows 10 Professional Workstation x64(Ver.2004)。我想知道如何避免这些错误，或者用另一种方法来编码与UNICODE兼容的URL。
+//Stack Overflow用户
+//回答已采纳
+//发布于 2020 - 05 - 15 03:22 : 57
+//
+//这是一种刺激利巴里的虫子。它可以通过更新boost库到最新版本或编辑boost\proto\generate.hpp来修复。
+//
+//编辑boost\proto\generate.hpp的方法
+//
+//将第95行改为
+//
+//#if BOOST_WORKAROUND(BOOST_MSVC, < 1800)
+//	复制
+//	将项目233改为
+//
+//#if BOOST_WORKAROUND(BOOST_MSVC, < 1800)
+//	复制
+//	这是来自boost libary的按下。

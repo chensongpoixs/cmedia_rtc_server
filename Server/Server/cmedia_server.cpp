@@ -151,16 +151,16 @@ namespace chen {
 
 
 		SYSTEM_LOG("rtsp init ...");
-		//g_rtsp_server.init();
+		g_rtsp_server.init();
 #ifdef AUTH_CONFIG
 		g_rtsp_server.SetAuthConfig("-_-", "admin", "12345");
 #endif
-		//init_rtsp_global();
-		//g_rtsp_server.startup();
+		init_rtsp_global();
+		g_rtsp_server.startup();
 		SYSTEM_LOG("rtsp start OK !!!");
 
-		SYSTEM_LOG("timer init ...");
-		/*if (!ctimer::init())
+		/*SYSTEM_LOG("timer init ...");
+		if (!ctimer::init())
 		{
 			return false;
 		}*/
