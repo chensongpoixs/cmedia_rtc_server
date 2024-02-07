@@ -98,6 +98,7 @@ namespace chen
 
 
 		uint32 kick_username(const std::string & username);
+		uint32 kick_type(uint32 type);
 		uint32 add_while_username(const std::string & username);
 		uint32 delete_while_username(const std::string & username);
 	private:

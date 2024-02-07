@@ -70,8 +70,9 @@ namespace chen {
 		ECI_WebHttpWanIp,
 		ECI_WebHttpWanPort,
 
- 
-
+		// 客户端
+		ECI_P2pMinPort,
+		ECI_P2pMaxPort,
 		ECI_Max,
 	};
 	class ccfg : public cconfig

@@ -512,53 +512,24 @@ int test_http_main();
 
 int main(int argc, char* argv[])
 {
-	//std::thread([]() {
-	//	while (true)
-	//	{
-	//		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	//		g_http_queue_mgr.update();
-	//		//std::this_thread::sleep_for(std:chrono::);
-	//	}
-
-	//	}).detach();
-
-	//test_http_main();
-	//return 0;
-	printf("LOG init ...");
-	if (!LOG::init("./log", "media_rtc_server"))
-	{
-		return false;
-	}
+	 
+	
 	 
 	using namespace chen;
-	// if (doadmin(argc, argv) != 0)
-	//{
-	//	NORMAL_EX_LOG("---");
-	//	std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	//	LOG::destroy();
-	//	return 0;
-	//} 
-	// 
+	 
 		RegisterSignal();
 		const char* config_filename = "media_server.cfg";
-		check_file(config_filename);
-	//	NORMAL_EX_LOG("---");
-		const char* log_path = "./log";
-	/*	if (argc > 2)
+		check_file(config_filename); 
+		const char* log_path = "./log"; 
+		if (argc > 1)
+		{
+			config_filename = argv[1];
+		}
+		if (argc > 2)
 		{
 			log_path = argv[2];
-		}*/
-	//	NORMAL_EX_LOG("---");
-		if (out_file_ptr)
-		{
-			fprintf(out_file_ptr, "[%s][%d] ", __FUNCTION__, __LINE__);
-			fflush(out_file_ptr);
 		}
-		if (out_file_ptr)
-		{
-			fclose(out_file_ptr);
-			out_file_ptr = NULL;
-		}
+	 
 		bool init = chen::g_media_server.init(log_path, config_filename);
 		//NORMAL_EX_LOG("---");
 		//moudle_test();

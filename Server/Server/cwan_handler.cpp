@@ -137,30 +137,32 @@ namespace chen {
 			//close();
 			return false;
 		}
-		if (g_room_mgr.room_has_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
-		{
-			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
-			);
-			send_msg(S2C_Login, EShareLoginRoomUsername, reply);
-		//	close();
-			return false;
-		}
+		//if (g_room_mgr.room_has_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
+		//{
+		//	WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
+		//	);
+		//	send_msg(S2C_Login, EShareLoginRoomUsername, reply);
+		////	close();
+		//	return false;
+		//}
 		uint32 type = 0;
 		if (value["data"].isMember("type") && value["data"]["type"].isInt64())
 		{
 			type = value["data"]["type"].asInt64() > 0 ? 1 : 0;
 		}
-		if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
-		{
-			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
-			);
-			send_msg(S2C_Login, EShareLoginRoomType, reply);
-			//close();
-			return false;
-		}
+		
 		
 		m_user_name = value["data"]["user_name"].asCString();
 		m_room_name = value["data"]["room_name"].asCString();
+		//if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
+		//{
+		//	WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
+		//	);
+		//	send_msg(S2C_Login, EShareLoginRoomType, reply);
+		//	//close();
+		//	return false;
+		//}
+		g_room_mgr.kick_room_type(m_room_name, type);
 		cuser_info user_info;
 		user_info.session_id = m_session_id;
 		user_info.username = m_user_name;

@@ -44,6 +44,7 @@ namespace chen {
 		C2S_RtcDataChannel,
 		S2C_RtcDataChannel,
 		S2C_RtcDataChannelUpdate,
+		S2C_P2pPortUpdate,
 		
 		//C2S_CreateAnswar,
 		//S2C_CreateAnswar,

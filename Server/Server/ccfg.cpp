@@ -78,6 +78,9 @@ namespace chen {
 		set_string(ECI_WebHttpWanIp, "web_http_wan_ip", "0.0.0.0");
 		set_uint32(ECI_WebHttpWanPort, "web_http_wan_port", 9100);
 
+		set_uint32(ECI_P2pMinPort, "p2p_min_port", 30000);
+		set_uint32(ECI_P2pMaxPort, "p2p_max_port", 40000);
+
 
 		//é…ç½®è¡¨çš„å€¼
 		load_cfg_file();

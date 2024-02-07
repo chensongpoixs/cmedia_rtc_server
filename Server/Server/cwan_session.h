@@ -100,6 +100,10 @@ namespace chen {
 
 	public:
 		bool send_msg(uint16 msg_id , int32 error,    Json::Value   data);
+
+
+	private:
+		void _send_p2p_port();
 	private:
 		//cnoncopyable(cnoncopyable&&);
 		cwan_session(const cwan_session&);

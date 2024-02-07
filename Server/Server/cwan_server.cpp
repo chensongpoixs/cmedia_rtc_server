@@ -178,6 +178,7 @@ namespace chen {
 			m_websocket_server_ptr->close(session_id);
 			return  ;
 		}
+		session_ptr->set_session_id(session_id);
 		session_ptr->init(ip, port);
 		if (!m_session_map.insert(std::make_pair(session_id, session_ptr)).second)
 		{

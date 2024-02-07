@@ -26,6 +26,7 @@ purpose:	网络数据的收发
 
 #include "clog.h"
 #include "cmsg_dispatch.h"
+#include "ccfg.h"
 #include <json/json.h>
 #include "cwan_server.h"
 #include "croom_mgr.h"
@@ -55,6 +56,7 @@ namespace chen {
 			m_client_connect_type = EClientConnectNone;
 			m_remote_ip = ip;
 			m_remote_port = port;
+			_send_p2p_port();
 			return true;
 	}
 	void cwan_session::destroy()
@@ -135,6 +137,14 @@ namespace chen {
 		std::string str = swriter.write(value);
 		 g_wan_server.send_msg(m_session_id, msg_id, str.c_str(), str.length() );
 		 return true;
+	}
+
+	void cwan_session::_send_p2p_port()
+	{
+		Json::Value p2p_port;
+		p2p_port["p2p_min_port"] = g_cfg.get_uint32(ECI_P2pMinPort);
+		p2p_port["p2p_max_port"] = g_cfg.get_uint32(ECI_P2pMaxPort);
+		send_msg(S2C_P2pPortUpdate, 0, p2p_port);
 	}
 
 	

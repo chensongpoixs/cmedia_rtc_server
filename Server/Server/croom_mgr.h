@@ -82,6 +82,7 @@ namespace chen {
 
 
 		uint32_t kick_room_username(const std ::string & roomname, const std ::string & username);
+		uint32_t kick_room_type(const std::string& roomname, uint32 type);
 		uint32_t add_white_room_username(const std::string & roomname, const std::string & username);
 		uint32_t delete_white_room_username(const std::string & roomname, const std::string & username);
 	private:
