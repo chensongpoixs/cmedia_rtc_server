@@ -1,11 +1,9 @@
 ﻿/***********************************************************************************************
-created: 		2022-08-10
+created: 		2022-01-20
 
 author:			chensong
 
-purpose:		room_mgr
-
-Copyright boost
+purpose:		assertion macros
 输赢不重要，答案对你们有什么意义才重要。
 
 光阴者，百代之过客也，唯有奋力奔跑，方能生风起时，是时代造英雄，英雄存在于时代。或许世人道你轻狂，可你本就年少啊。 看护好，自己的理想和激情。
@@ -22,80 +20,14 @@ Copyright boost
 沿着自己的回忆，一个个的场景忽闪而过，最后发现，我的本心，在我写代码的时候，会回来。
 安静，淡然，代码就是我的一切，写代码就是我本心回归的最好方式，我还没找到本心猎手，但我相信，顺着这个线索，我一定能顺藤摸瓜，把他揪出来。
 ************************************************************************************************/
-
-#ifndef _C_ROOM_MGR_H_
-#define _C_ROOM_MGR_H_
-#include "cnet_type.h"
-#include <string>
-#include <unordered_map>
-#include <vector>
-#include <json/json.h>
-#include "croom.h"
+#ifndef _C_WINDOW_UTIL_H_
+#define _C_WINDOW_UTIL_H_
+#if defined(_MSC_VER)
+#include <Windows.h>
 namespace chen {
-	class croom;
-	struct cuser_info;
-	
-
-	class croom_mgr 
-	{
-	private:
-		typedef		std::unordered_map<std::string, croom>		CROOM_MAP;
-	public:
-		croom_mgr();
-		~croom_mgr();
-
-
-	public:
-
-
-
-		std::unordered_map<std::string, uint32>   m_master;
-
-
-
-		bool init();
-
-		void update(uint32 uDeltaTime);
-
-		void destory();
-
-	public:
-		// join room
-		bool join_room(uint64 session_id, const std::string & room_name , const std::string & user_name, uint32 type);
-		bool join_room(const std::string & room_name, const cuser_info& user_info);
-
-		// leve room
-
-		bool leave_room(uint64 session_id, const std::string & room_name);
-
-		bool webrtc_message(const std::string &room_name, uint64  session_id, Json::Value & value);
-
-
-		void build_client_p2p(const std::string & room_name);
-		bool room_user_type(const std::string & room_name, uint32 type);
-		bool room_has_username(const std ::string & room_name, const std::string & user_name);
-		bool room_has_while_username(const std::string & room_name, const std::string & user_name);
-
-		bool get_room_info(const std ::string & room_name, std::vector<cuser_info> & infos);
-
-		void build_all_room_info(std::vector< croom_info>& room_infos);
-
-
-		uint32_t kick_room_username(const std ::string & roomname, const std ::string & username);
-		uint32_t kick_room_type(const std::string & roomname, uint32 type);
-		uint32_t add_white_room_username(const std::string & roomname, const std::string & username);
-		uint32_t delete_white_room_username(const std::string & roomname, const std::string & username);
-	private:
-		//cnoncopyable(cnoncopyable&&);
-		croom_mgr(const croom_mgr&);
-		//cnoncopyable &operator =(cnoncopyable &&);
-		croom_mgr& operator=(const croom_mgr&);
-	private:
-
-		CROOM_MAP							m_room_map;
-	};
-
-
-	extern croom_mgr g_room_mgr;
+	HWND FindMainWindow();
+	HWND FindMainWindow(long long id);
+	HWND MainChildPoint(HWND mwnd, POINT pt);
 }
-#endif // _C_ROOM_MGR_H_
+#endif //#if defined(_MSC_VER)
+#endif// _C_WINDOW_UTIL_H_

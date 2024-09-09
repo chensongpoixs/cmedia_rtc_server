@@ -33,6 +33,10 @@ purpose:	网络数据的收发
 #include "crtc_sdp.h"
 namespace chen {
 
+
+#define P2P (1)
+
+
 	enum EClientConnectType
 	{
 		EClientConnectNone = 0,

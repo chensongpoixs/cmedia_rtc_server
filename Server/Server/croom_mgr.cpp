@@ -192,6 +192,17 @@ namespace chen {
 		
 		return iter->second.kick_username(username);
 	}
+	uint32_t croom_mgr::kick_room_type(const std::string& roomname, uint32 type)
+	{
+		CROOM_MAP::iterator iter = m_room_map.find(roomname);
+		if (iter == m_room_map.end())
+		{
+			return 500;// 
+			//iter->second.build_client_p2p();
+		}
+
+		return iter->second.kick_type(type);
+	}
 	//uint32_t croom_mgr::white_room_username(const std::string & roomname, const std::string & username)
 	//{
 	//	CROOM_MAP::iterator iter = m_room_map.find(roomname);

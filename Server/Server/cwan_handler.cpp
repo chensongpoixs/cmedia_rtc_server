@@ -129,7 +129,7 @@ namespace chen {
 			send_msg(S2C_Login, EShareProtoRoomName, reply);
 			return false;
 		}
-#if 0
+#if P2P
 		if (g_room_mgr.room_has_while_username(value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()))
 		{
 			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] [user_name = %s]!!! ", m_session_id, value["data"]["room_name"].asCString(), value["data"]["user_name"].asCString()
@@ -152,19 +152,30 @@ namespace chen {
 		{
 			type = value["data"]["type"].asInt64() > 0 ? 1 : 0;
 		}
-#if 0
-		if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
-		{
-			WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
-			);
-			send_msg(S2C_Login, EShareLoginRoomType, reply);
-			//close();
-			return false;
-		}
-#endif
+
 		
 		m_user_name = value["data"]["user_name"].asCString();
 		m_room_name = value["data"]["room_name"].asCString();
+
+#if P2P
+
+
+
+		//if (g_room_mgr.room_user_type(value["data"]["room_name"].asCString(), type))
+		//{
+		//	WARNING_EX_LOG("[session_id = %llu] total roomname failed  [room_name = %s] !!! ", m_session_id, value["data"]["room_name"].asCString()
+		//	);
+		//	send_msg(S2C_Login, EShareLoginRoomType, reply);
+		//	//close();
+		//	return false;
+		//}
+		if (type != 1)
+		{
+			g_room_mgr.kick_room_type(m_room_name, type);
+		}
+		
+#endif
+
 		cuser_info user_info;
 		user_info.session_id = m_session_id;
 		user_info.username = m_user_name;
@@ -211,7 +222,7 @@ namespace chen {
 
 	bool	cwan_session::handler_webrtc_message(Json::Value& value)
 	{
-#if 0
+#if P2P
 
 		if (m_room_name.empty())
 		{
@@ -319,7 +330,7 @@ namespace chen {
 	}
 	bool cwan_session::handler_rtc_publisher(Json::Value & value)
 	{
-#if 0
+#if P2P
 		if (m_room_name.empty())
 		{
 			return false;
@@ -403,7 +414,7 @@ namespace chen {
 
 	bool cwan_session::handler_rtc_player(Json::Value & value)
 	{
-#if 0
+#if P2P
 		if (m_room_name.empty())
 		{
 			return false;
@@ -482,7 +493,7 @@ namespace chen {
 	}
 	bool cwan_session::handler_rtc_request_frame(Json::Value & value)
 	{
-#if 0
+#if P2P
 		if (m_room_name.empty())
 		{
 			return false;

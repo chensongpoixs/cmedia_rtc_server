@@ -254,6 +254,24 @@ namespace chen {
 		}
 		return 501;//
 	}
+	uint32 croom::kick_type(uint32 type)
+	{
+
+		for (const std::pair<uint64, cuser_info>& pi : m_userinfo_map)
+		{
+			/*cuser_info info;
+			info.username = pi.second.username;
+			info.m_type = pi.second.m_type;*/
+			if (pi.second.m_type == type)
+			{
+				g_wan_server.close(pi.second.session_id);
+				return 0;
+			}
+
+			//infos.push_back(pi.second);
+		}
+		return 501;//
+	}
 	uint32 croom::add_while_username(const std::string & username)
 	{
 		m_while_list_username.insert(username);

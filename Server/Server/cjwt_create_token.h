@@ -40,6 +40,7 @@ namespace chen {
 
 
 		void test_create_token();
+		void test_siample_create_token();
 
 	}
 

@@ -143,6 +143,9 @@ namespace chen {
 #define LOG_INFO   LOG(ELogLevel_Info)
 #define LOG_DEBUG  LOG(ELogLevel_Debug)
 
+
+	 
+
 #define VAR_LOG LOG::var_log
 
 #define NORMAL_LOG(format, ...)		VAR_LOG(ELogLevel_Info, format, ##__VA_ARGS__)
@@ -156,7 +159,7 @@ namespace chen {
 #define WARNING_EX_LOG(format, ...)	WARNING_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
 
 #define ERROR_EX_LOG(format, ...)	ERROR_LOG("[%s][%d]" format, FUNCTION, __LINE__, ##__VA_ARGS__)
-
+	 
 
 #define cassert(expression )  \
 		if (!(expression)) \

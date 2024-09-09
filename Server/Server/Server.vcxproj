@@ -137,7 +137,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>RTP_PACKET_FILE_MCS;RTP_PACKET_MCS=0;SCTP_PROCESS_LEVEL_LOCKS;SCTP_SIMPLE_ALLOCATOR;SCTP_USE_OPENSSL_SHA1;__Userspace__;HAVE_CONFIG_H;HAVE_STDLIB_H;HAVE_STRING_H;HAVE_STDINT_H;HAVE_INTTYPES_H;HAVE_INT8_T;HAVE_INT16_T;HAVE_INT32_T;HAVE_UINT8_T;HAVE_UINT16_T;HAVE_UINT32_T;HAVE_UINT64_T;OPENSSL;GCM;HAVE_WINSOCK2_H;CPU_CISC;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0602;_INTSAFE_H_INCLUDED_;_WINSOCK_DEPRECATED_NO_WARNINGS;_WINDOWS;MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_USE_WINDOWS_H;RTP_PACKET_FILE_MCS;RTP_PACKET_MCS=0;SCTP_PROCESS_LEVEL_LOCKS;SCTP_SIMPLE_ALLOCATOR;SCTP_USE_OPENSSL_SHA1;__Userspace__;HAVE_CONFIG_H;HAVE_STDLIB_H;HAVE_STRING_H;HAVE_STDINT_H;HAVE_INTTYPES_H;HAVE_INT8_T;HAVE_INT16_T;HAVE_INT32_T;HAVE_UINT8_T;HAVE_UINT16_T;HAVE_UINT32_T;HAVE_UINT64_T;OPENSSL;GCM;HAVE_WINSOCK2_H;CPU_CISC;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0602;_INTSAFE_H_INCLUDED_;_WINSOCK_DEPRECATED_NO_WARNINGS;_WINDOWS;MS_LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>libsrtp\srtp\crypto\include;libsrtp\config;libsrtp\include;libsrtp\srtp\include;usrsctp\usrsctplib;usrsctp/usrsctplib;libuv/src/win;libuv/src;libuv/include;libwebrtc;./;rtc_sdp;rtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>
       </LanguageStandard>
@@ -190,6 +190,7 @@
     <ClCompile Include="cifaddrs_android.cc" />
     <ClCompile Include="cifaddrs_converter.cc" />
     <ClCompile Include="cip_address.cpp" />
+    <ClCompile Include="cjwt_create_token.cpp" />
     <ClCompile Include="clocation.cpp" />
     <ClCompile Include="clog.cpp" />
     <ClCompile Include="clog_color.cpp" />
@@ -309,6 +310,7 @@
     <ClCompile Include="cweb_http_api_mgr.cpp" />
     <ClCompile Include="cweb_http_api_proxy.cpp" />
     <ClCompile Include="cwin32.cpp" />
+    <ClCompile Include="cwindow_util.cpp" />
     <ClCompile Include="H264.cpp" />
     <ClCompile Include="h264_profile_level_id.cc" />
     <ClCompile Include="http_examples.cpp" />
@@ -544,6 +546,7 @@
     <ClInclude Include="cifaddrs_android.h" />
     <ClInclude Include="cifaddrs_converter.h" />
     <ClInclude Include="cip_address.h" />
+    <ClInclude Include="cjwt_create_token.h" />
     <ClInclude Include="clocation.h" />
     <ClInclude Include="clog.h" />
     <ClInclude Include="clog_color.h" />
@@ -687,6 +690,7 @@
     <ClInclude Include="cweb_http_api_mgr.h" />
     <ClInclude Include="cweb_http_api_proxy.h" />
     <ClInclude Include="cwin32.h" />
+    <ClInclude Include="cwindow_util.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="H264.hpp" />
     <ClInclude Include="h264_profile_level_id.h" />

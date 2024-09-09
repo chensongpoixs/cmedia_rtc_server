@@ -71,8 +71,8 @@ namespace chen {
 
 		std::string create_token( const std::string& secret_key,  const std::string& payload)
 		{
-			// 构建头部
-			static const char* header = "{\"alg\":\"HS512\"}";
+			// 构建头部// \"typ\":\"JWT\",
+			static const char* header = "{\"typ\":\"JWT\",\"alg\":\"HS256\"}";
 			char buffer[10240] = {0};
 
 			// 计算 Base64 编码后头部的长度
@@ -101,8 +101,9 @@ namespace chen {
 			// 使用 HMAC SHA-512 对待签名字符串进行签名
 			signed char hmac_result[EVP_MAX_MD_SIZE];// = { 0 };
 			unsigned int hmac_len;// = 0;
+			HMAC(EVP_sha256(), secret_key.c_str(), secret_key.length(), (const unsigned char*)buffer, strlen(buffer), (unsigned char*)hmac_result, &hmac_len);
 
-			HMAC(EVP_sha512(), secret_key.c_str(), secret_key.length(), (const unsigned char*)buffer, strlen(buffer), (unsigned char*)hmac_result, &hmac_len);
+			//HMAC(EVP_sha512(), secret_key.c_str(), secret_key.length(), (const unsigned char*)buffer, strlen(buffer), (unsigned char*)hmac_result, &hmac_len);
 
 			// Base64 编码签名结果
 			int signature_len = EVP_ENCODE_LENGTH(hmac_len);
@@ -121,7 +122,19 @@ namespace chen {
 		void test_create_token()
 		{
 			std::string key = "syz.20120328";
-			std::string payload = "{\"syz.20120328\":\"{\\\"userId\\\":18}\",\"sub\":\"syz.20120328\"}";
+			std::string payload = "{\"syz.20120328\":\"{\\\"userId\\\":21}\",\"sub\":\"syz.20120328\"}";
+			std::string token = create_token(key, payload);
+			std::cout << "jwt token = " << token << std::endl;
+		}
+		void test_siample_create_token()
+		{	// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZG1pbiJ9.uPchyky8YSNmaJjxTHPIM_CnS9X8hcjzLp9H55aohag
+			// eyJhbGciOiJIUzUxMiJ9.YWRtaW4.GpUM8DOkNOKFv7U7FGocvzGrJqVRTlVBfTAm5ZcGFLM
+			// eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZG1pbiJ9.57_yU-DN8JUik8E-3Mz-SYyaB-lbuBIfw2eGJw8yPoc
+			// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZG1pbiJ9.uPchyky8YSNmaJjxTHPIM_CnS9X8hcjzLp9H55aohag
+			// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhZG1pbiJ9.uPchyky8YSNmaJjxTHPIM_CnS9X8hcjzLp9H55aohag
+			// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.YWRtaW4.3oX27EpiWv0SXdPCgPRToX4-OvU7u68Y3RguGyI_EyE
+			std::string key = "syz@8015";
+			std::string payload = "{\"aud\":\"admin\"}";
 			std::string token = create_token(key, payload);
 			std::cout << "jwt token = " << token << std::endl;
 		}

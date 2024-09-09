@@ -35,6 +35,7 @@
 #include <thread>
 #include <Windows.h>
 #include "cweb_http_api_proxy.h"
+#include "cwindow_util.h"
 extern "C" {
  
 #ifdef _WIN32
@@ -76,6 +77,209 @@ void test_cassert()
 {
 	cassert((5==9));
 	cassert_desc((5 == 9), "(5 == 9)");
+}
+
+
+#include <boost/process.hpp>
+#include <boost/filesystem.hpp>
+#include <Windows.h>
+
+#define MY_PIPE_BUFFER_SIZE 1024
+
+void StartProcess(/*const char * program, LPCWSTR args*/)
+{
+	//初始化管道
+	HANDLE hPipeRead;
+	HANDLE hPipeWrite;
+	SECURITY_ATTRIBUTES saOutPipe;
+	::ZeroMemory(&saOutPipe, sizeof(saOutPipe));
+	saOutPipe.nLength = sizeof(SECURITY_ATTRIBUTES);
+	saOutPipe.lpSecurityDescriptor = NULL;
+	saOutPipe.bInheritHandle = TRUE;
+	if (CreatePipe(&hPipeRead, &hPipeWrite, &saOutPipe, MY_PIPE_BUFFER_SIZE))
+	{
+		PROCESS_INFORMATION processInfo;
+		::ZeroMemory(&processInfo, sizeof(processInfo));
+		STARTUPINFO startupInfo;
+		::ZeroMemory(&startupInfo, sizeof(startupInfo));
+		startupInfo.cb = sizeof(STARTUPINFO);
+		startupInfo.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
+		startupInfo.hStdOutput = hPipeWrite;
+		startupInfo.hStdError = hPipeWrite;
+		startupInfo.wShowWindow = SW_HIDE;
+		//L"nvidia-smi", L" -i 0 -q -d UTILIZATION"
+		if (::CreateProcess("nvidia-smi.exe", (LPSTR)" -i 0 -q -d UTILIZATION",
+			NULL,  // process security
+			NULL,  // thread security
+			TRUE,  //inheritance
+			0,     //no startup flags
+			NULL,  // no special environment
+			NULL,  //default startup directory
+			&startupInfo,
+			&processInfo))
+		{
+			printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+			if (WAIT_TIMEOUT != WaitForSingleObject(processInfo.hProcess, 3000))
+			{
+				printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+				DWORD dwReadLen = 0;
+				DWORD dwStdLen = 0;
+				if (PeekNamedPipe(hPipeRead, NULL, 0, NULL, &dwReadLen, NULL) && dwReadLen > 0)
+				{
+					printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+					char szPipeOut[MY_PIPE_BUFFER_SIZE] = { 0 };
+					::ZeroMemory(szPipeOut, sizeof(szPipeOut));
+					if (ReadFile(hPipeRead, szPipeOut, dwReadLen, &dwStdLen, NULL))
+					{
+						printf("[szPipeOut = %s][]\n", szPipeOut);
+						// 输出值
+						int k = 0;
+					}
+					int a = 1;
+				}
+			}
+		}
+		if (processInfo.hProcess)
+		{
+			printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+			CloseHandle(processInfo.hProcess);
+		}
+		if (processInfo.hThread)
+		{
+			printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+			CloseHandle(processInfo.hThread);
+		}
+		printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+	}
+	printf("[%s][%d]\n", __FUNCTION__, __LINE__);
+	CloseHandle(hPipeRead);
+	CloseHandle(hPipeWrite);
+}
+
+void test_process()
+{
+	//StartProcess();
+	boost::process::environment my_env = boost::this_process::environment();
+	//boost::process::ipstream p;
+	//
+	//boost::process::child c(
+	//	std::string("nvidia-smi -i 0 -q -d UTILIZATION"), my_env,
+	//	boost::process::std_out > stdout, //forward
+	//	boost::process::std_err.close(), //close
+	//	boost::process::std_in < boost::process::null //null in
+	//);
+	//
+	//std::string s;
+	//std::getline(p, s);
+
+	//c.wait();
+
+
+
+	//
+	//boost::process::system(
+	//	"nvidia-smi -i 0 -q -d UTILIZATION",
+	//	boost::process::std_out > stdout, //forward
+	//	boost::process::std_err.close(), //close
+	//	boost::process::std_in < boost::process::null //null in
+	//);
+	//nvidia-smi  --list-gpus
+	  boost::filesystem::path p = "input.txt";
+	 //std::ostringstream cmd;
+	  std::string outstr;
+	  boost::process::ipstream p2;
+
+	 std::thread reader([  &p2] {
+		 std::string line;
+		 while (std::getline(p2, line))
+			  std::cout << "Received: '" << line << "'" << std::endl;
+			// cmd << line;
+			// outstr += line;
+		 });
+
+	boost::process::child c(
+		"nvidia-smi -i 0 -q -d UTILIZATION",
+		(boost::process::std_out & boost::process::std_err) > p2, //redirect both to one file
+		boost::process::std_in < p //read input from file
+	);
+	
+	c.wait();
+	if (reader.joinable())
+	{
+		reader.join();
+	}
+	printf("[cmd = %s]\n", outstr .c_str());
+
+	//cmd << std::string(p2.begin(), p2.end());
+	//std::cout << p2 << std::endl;
+	//printf("p2 = %s\n", p2);
+	//{
+	//	boost::process::opstream p1;
+	//	boost::process::ipstream p2;
+	//	boost::process::system(
+	//		"nvidia-smi -i 0 -q -d UTILIZATION",
+	//		boost::process::std_out > p2,
+	//		boost::process::std_in < p1
+	//	);
+	//	p1 << "my_text";
+	//	int i = 0;
+	//	p2 >> i;
+
+	//}
+	/*{
+		std::vector<char> in_buf;
+		std::string value = "my_string";
+		boost::asio::io_context io_context;
+		boost::process::async_pipe p1(io_context);
+		boost::process::async_pipe p2(io_context);
+		boost::process::system(
+			"nvidia-smi -i 0 -q -d UTILIZATION",
+			boost::process::std_out > p2,
+			boost::process::std_in < p1,
+			io_context,
+			boost::process::on_exit([&](int exit, const std::error_code& ec_in)
+				{
+					printf("[out = %s]\n", std::string(in_buf.begin(), in_buf.end()).c_str());
+					p1.async_close();
+					p2.async_close();
+				})
+		);
+		
+		boost::asio::async_write(p1, boost::asio::buffer(value), [](const boost::system::error_code&, std::size_t) {});
+		boost::asio::async_read(p2, boost::asio::buffer(in_buf), [](const boost::system::error_code&, std::size_t) {});
+	}*/
+	//{
+	//	boost::asio::io_context io_context;
+	//	std::vector<char> in_buf;
+	//	std::string value = "my_string";
+	//	boost::process::system(
+	//		"nvidia-smi -i 0 -q -d UTILIZATION",
+	//		boost::process::std_out > boost::process::buffer(in_buf),
+	//		boost::process::std_in < boost::process::buffer(value)
+	//	);
+	//
+	//	printf("in_buf = %s\n", std::string(in_buf.begin(), in_buf.end()).c_str());
+	//}
+
+	//{
+	//	boost::asio::io_context io_context;
+	//	std::future<std::vector<char>> in_buf;
+	//	std::future<void> write_fut;
+	//	std::string value = "my_string";
+	//	boost::process::system(
+	//		"nvidia-smi -i 0 -q -d UTILIZATION",
+	//		boost::process::std_out > in_buf,
+	//		boost::process::std_in  < boost::process::buffer(value) > write_fut
+	//	);
+	//
+	//	write_fut.get();
+	//	in_buf.get();
+	//
+	//	//std::cout << in_buf.get() << std::endl;
+	//}
+
+
+
 }
 
 
@@ -576,6 +780,17 @@ enum
 
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(test_lg, src::logger_mt)
 
+
+
+#include <Windows.h>
+#include <tchar.h>
+#include <ShlObj_core.h>
+#include <Shlwapi.h>
+#pragma comment( lib, "ShLwApi.Lib" ) //PathRemoveFileSpecA
+#define ARRAY_SIZE (2048)
+
+
+
 //! This function is executed in multiple threads
 void thread_fun(boost::barrier& bar)
 {
@@ -591,9 +806,415 @@ void thread_fun(boost::barrier& bar)
 		BOOST_LOG(test_lg::get()) << "Log record " << i;
 	}
 }
-
-int main(int argc, char* argv[])
+bool create_virtual_desktop(const std::string& desktop_name, PROCESS_INFORMATION& pinfo)
 {
+	if (desktop_name.size() < 1)
+	{
+		WARNING_EX_LOG("create desktop  [desktop_name= %s] failed !!!", desktop_name.c_str());
+		return false;
+	}
+	pinfo = { 0 };
+	//GetCurrentThreadId();
+	HDESK hDesk = OpenDesktop(desktop_name.c_str(), DF_ALLOWOTHERACCOUNTHOOK, TRUE, GENERIC_ALL);
+
+	if (!hDesk)
+	{
+		SECURITY_ATTRIBUTES sAttribute = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
+		hDesk = ::CreateDesktop((desktop_name.c_str()), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, &sAttribute);
+		if (!hDesk)
+		{
+			ERROR_EX_LOG("create desktop failed !!!");
+			return false;
+		}
+
+		//TODO@chensong 20220723   virtual desktop  mouse keydown 
+		TCHAR szExplorerFile[ARRAY_SIZE] = { 0 };
+
+		GetWindowsDirectory(szExplorerFile, ARRAY_SIZE - 1);
+		_tcscat_s(szExplorerFile, ARRAY_SIZE - 1, _T("\\Explorer.Exe"));
+
+
+		TCHAR szDirectoryName[ARRAY_SIZE] = { 0 };
+		//TCHAR szExplorerFile[ARRAY_SIZE] = { 0 };
+
+		_tcscpy_s(szDirectoryName, _tcslen(szExplorerFile) + 1, szExplorerFile);
+
+		//PathIsExe(szExplorerFile);
+
+
+		PathRemoveFileSpec(szDirectoryName);
+
+		STARTUPINFO sInfo = { 0 };
+		//PROCESS_INFORMATION pInfo = { 0 };
+
+		sInfo.cb = sizeof(sInfo);
+		sInfo.lpDesktop = (LPSTR)desktop_name.c_str();;
+
+		//Lanuching a application into dekstop
+		BOOL bCreateProcessReturn = CreateProcess(szExplorerFile,
+			NULL,
+			NULL,
+			NULL,
+			TRUE,
+			NORMAL_PRIORITY_CLASS,
+			NULL,
+			szDirectoryName,
+			&sInfo,
+			&pinfo);
+		if (bCreateProcessReturn)
+		{
+			CloseHandle(pinfo.hThread);
+			pinfo.hThread = NULL;
+			CloseHandle(pinfo.hProcess);
+			pinfo.hProcess = NULL;
+		}
+		/*TCHAR *pszError = NULL;
+		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), 0, (LPWSTR)&pszError, 0, NULL);
+		OutputDebugString(_T("\n\t\t"));
+		OutputDebugString(pszError);*/
+	}
+	// TODO@chensong 2022-12-26  清理 virtual desktop 资源
+	if (hDesk)
+	{
+		CloseDesktop(hDesk);
+		hDesk = NULL;
+	}
+
+	
+	return true;
+}
+#include <boost/process.hpp>
+#include <boost/process/windows.hpp>
+#include <iostream>
+
+#include <windows.h>
+void _test_boost_process()
+{
+
+	std::string app_path_param = "D:\\Work\\Tools\\yuvplayer.exe";
+	boost::process::system(app_path_param, boost::process::windows::hide);
+}
+void start_rte()
+{
+	PROCESS_INFORMATION  virtual_app;
+	PROCESS_INFORMATION app_info;
+	TCHAR szAppName[ARRAY_SIZE] = { 0 };
+	//Get the application full path, so that it can be launch into the switching desktop.
+	GetModuleFileName(GetModuleHandle(NULL), szAppName, ARRAY_SIZE - 1);
+	ACCESS_MASK desired_access = DESKTOP_CREATEMENU | DESKTOP_CREATEWINDOW |
+		DESKTOP_ENUMERATE | DESKTOP_HOOKCONTROL |
+		DESKTOP_WRITEOBJECTS | DESKTOP_READOBJECTS |
+		DESKTOP_SWITCHDESKTOP | GENERIC_WRITE;
+	std::string new_desktop = std::to_string(::time(NULL));
+	create_virtual_desktop(new_desktop, virtual_app);
+	STARTUPINFO si = { sizeof(si) };
+	//si.lpDesktop = (LPSTR)new_desktop.c_str();
+	si.wShowWindow = SW_HIDE;
+	std::string app_path_param = "D:\\Work\\Tools\\yuvplayer.exe";
+	std::string app_work_path = "D:\\Work\\UE\\builder_V4.5_Release_33_202308280914\\builderexe";
+	bool ret = ::CreateProcess(NULL, LPSTR(app_path_param.c_str()), NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, LPSTR(app_work_path.c_str()), &si, &app_info);
+	if (ret)
+	{
+		// TODO@chensong 2022-07-27  创建线程关闭  -----后期优化 
+		CloseHandle(app_info.hThread);
+		app_info.hThread = NULL;
+		CloseHandle(app_info.hProcess);
+		app_info.hProcess = NULL;
+
+		//process_info.hProcess = virtual_desktop.dwProcessId;
+		//process_info.hThread = virtual_desktop.dwThreadId;
+
+	}
+	else
+	{
+		//close_app_project(process_info.virtual_app);
+	}
+
+}
+
+
+
+
+void find_Rte_main_window()
+{
+	long long pid = 50028;
+	HWND f = chen::FindMainWindow(pid);
+
+}
+BOOL CALLBACK EnumDesktopsProc(LPTSTR lpszDesktop, LPARAM lParam) {
+	// 在这里处理桌面的名字，例如输出到控制台
+	std::wcout << L"Desktop Name: " << lpszDesktop << std::endl;
+	return TRUE;  // 返回 TRUE 继续枚举桌面，返回 FALSE 停止枚举
+}
+
+
+void get_destops()
+{
+	HDESK hDesk = GetThreadDesktop(GetCurrentThreadId());
+
+	// 调用 EnumDesktops 函数，传递回调函数 EnumDesktopsProc
+	EnumDesktops((HWINSTA)hDesk, EnumDesktopsProc, 0);
+}
+#include <openssl/sha.h>
+#include <openssl/hmac.h>
+void hmac_sha512(const unsigned char* key, int key_len, const unsigned char* data, int data_len, unsigned char* result) {
+	HMAC_CTX* ctx = HMAC_CTX_new();
+
+	HMAC_Init_ex(ctx, key, key_len, EVP_sha512(), NULL);
+	HMAC_Update(ctx, data, data_len);
+	HMAC_Final(ctx, result, NULL);
+
+	HMAC_CTX_free(ctx);
+}
+
+
+void rte_token()
+{
+
+	// 示例密钥和消息
+	const char* key = "syz.20120328";
+	const char* data = "18";
+
+	// 将密钥和消息转换为字节数组
+	unsigned char key_bytes[SHA512_CBLOCK];
+	unsigned char data_bytes[SHA512_CBLOCK];
+	unsigned char result[SHA512_DIGEST_LENGTH];
+
+	strncpy((char*)key_bytes, key, SHA512_CBLOCK);
+	strncpy((char*)data_bytes, data, SHA512_CBLOCK);
+
+	// 计算HMAC-SHA512
+	hmac_sha512(key_bytes, strlen((char*)key_bytes), data_bytes, strlen((char*)data_bytes), result);
+	printf("result = %s\n", result);
+	// 输出结果
+	printf("HMAC-SHA512: ");
+	for (int i = 0; i < SHA512_DIGEST_LENGTH; i++) 
+	{
+		printf("%02x", result[i]);
+	}
+	printf("\n");
+}
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <openssl/hmac.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+
+// 使用 HMAC SHA-256 签名 JWT token
+char* create_jwt_token(const char* key, const char* payload) {
+	// 构建头部
+	const char* header = "{\"alg\":\"HS512\", \"typ\": \"JWT\" }";
+
+	// 计算 Base64 编码后头部的长度
+	int header_len = EVP_ENCODE_LENGTH(strlen(header));
+
+	// 计算 Base64 编码后负载的长度
+	int payload_len = EVP_ENCODE_LENGTH(strlen(payload));
+
+	// 分配内存存储 Base64 编码后的头部和负载
+	char* encoded_header = (char*)malloc(header_len);
+	char* encoded_payload = (char*)malloc(payload_len);
+
+	// Base64 编码头部和负载
+	EVP_EncodeBlock((unsigned char*)encoded_header, (const unsigned char*)header, strlen(header));
+	EVP_EncodeBlock((unsigned char*)encoded_payload, (const unsigned char*)payload, strlen(payload));
+
+	// 构建待签名字符串
+	int unsigned_data_len = strlen(encoded_header) + strlen(encoded_payload) + 2; // 加上两个点号
+	char* unsigned_data = (char*)malloc(unsigned_data_len);
+	snprintf(unsigned_data, unsigned_data_len, "%s.%s", encoded_header, encoded_payload);
+
+	// 使用 HMAC SHA-256 对待签名字符串进行签名
+	unsigned char hmac_result[EVP_MAX_MD_SIZE];
+	unsigned int hmac_len;
+
+	HMAC(EVP_sha512(), key, strlen(key), (const unsigned char*)unsigned_data, strlen(unsigned_data), hmac_result, &hmac_len);
+
+	// Base64 编码签名结果
+	int signature_len = EVP_ENCODE_LENGTH(hmac_len);
+	char* encoded_signature = (char*)malloc(signature_len);
+	EVP_EncodeBlock((unsigned char*)encoded_signature, hmac_result, hmac_len);
+
+	// 构建 JWT token
+	int token_len = strlen(encoded_header) + strlen(encoded_payload) + strlen(encoded_signature) + 3; // 加上两个点号和结尾的 null 字符
+	char* jwt_token = (char*)malloc(token_len);
+	snprintf(jwt_token, token_len, "%s.%s.%s", encoded_header, encoded_payload, encoded_signature);
+
+	// 释放分配的内存
+	free(encoded_header);
+	free(encoded_payload);
+	free(unsigned_data);
+	free(encoded_signature);
+
+	return jwt_token;
+}
+
+
+
+
+//java 从最后 删除'='个数  url-unfriendly base64 char u
+int remove_padding(  char *& data, size_t len)
+{
+	int paddingCount = 0;
+	//int encoded_payload_len = strlen(encoded_payload);
+	for (int i = len - 1; i > 0; --i)
+	{
+		if (data[i] == '=')
+		{
+			++paddingCount;
+		}
+		else
+		{
+			break;
+		}
+	}
+	//replace URL-unfriendly Base64 chars to url-friendly ones:
+	for (int i = 0; i < len; ++i)
+	{
+		if (data[i] == '+')
+		{
+			data[i] = '-';
+		}
+		else if (data[i] == '/') 
+		{
+			data[i] = '_';
+		}
+	}
+
+	return len - paddingCount;
+}
+
+// 使用 HMAC SHA-512 签名 JWT token
+char* create_jwt_512_token(const char* key, const char* payload) {
+	// 构建头部
+	const char* header = "{\"alg\":\"HS512\"}";
+
+	// 计算 Base64 编码后头部的长度
+	int header_len = EVP_ENCODE_LENGTH(strlen(header));
+
+	// 计算 Base64 编码后负载的长度
+	int payload_len = 54;// = EVP_ENCODE_LENGTH(strlen(payload));
+
+	// 分配内存存储 Base64 编码后的头部和负载
+	char* encoded_header = (char*)malloc(header_len);
+	char* encoded_payload = (char*)malloc(payload_len);
+
+	// Base64 编码头部和负载
+	EVP_EncodeBlock((unsigned char*)encoded_header, (const unsigned char*)header, strlen(header));
+	EVP_EncodeBlock((unsigned char*)encoded_payload, (const unsigned char*)payload, strlen(payload));
+
+
+	// java 从最后 删除'='个数
+	{
+	
+		/*int paddingCount = 0;
+		int encoded_payload_len = strlen(encoded_payload);
+		for (int i = encoded_payload_len - 1; i > 0; --i)
+		{
+			if (encoded_payload[i] == '=')
+			{
+				++paddingCount;
+			}
+			else
+			{
+				break;
+			}
+		}*/
+	
+	}
+
+
+	// 构建待签名字符串
+	int unsigned_data_len = remove_padding(encoded_header, strlen(encoded_header)) + remove_padding(encoded_payload, strlen(encoded_payload)) + 2 ; // 加上两个点号
+	char* unsigned_data = (char*)malloc(unsigned_data_len);
+	std::string  header_payload(encoded_header, remove_padding(encoded_header, strlen(encoded_header)));
+	header_payload += ".";
+	header_payload += std::string(encoded_payload, remove_padding(encoded_payload, strlen(encoded_payload)));
+	snprintf(unsigned_data, unsigned_data_len, "%s", header_payload.c_str());
+
+	// 使用 HMAC SHA-512 对待签名字符串进行签名
+	signed char hmac_result[EVP_MAX_MD_SIZE];// = { 0 };
+	unsigned int hmac_len;// = 0;
+
+	HMAC(EVP_sha512(), key, strlen(key), (const unsigned char*)unsigned_data, strlen(unsigned_data),(unsigned char*) hmac_result, &hmac_len);
+
+	// Base64 编码签名结果
+	int signature_len = EVP_ENCODE_LENGTH(hmac_len);
+	char* encoded_signature = (char*)malloc(signature_len);
+	EVP_EncodeBlock((unsigned char*)encoded_signature,(unsigned char*) hmac_result, hmac_len);
+
+	// 构建 JWT token
+	int token_len = remove_padding(encoded_header, strlen(encoded_header)) + remove_padding(encoded_payload, strlen(encoded_payload)) + remove_padding(encoded_signature,  strlen(encoded_signature)) + 3; // 加上两个点号和结尾的 null 字符
+	char* jwt_token = (char*)malloc(token_len);
+	snprintf(jwt_token, token_len, "%s.%s", header_payload.c_str(), encoded_signature);
+
+	// 释放分配的内存
+	free(encoded_header);
+	free(encoded_payload);
+	free(unsigned_data);
+	free(encoded_signature);
+
+	return jwt_token;
+}
+
+
+int rte_token_main() {
+	const char* secret_key = "syz.20120328";
+	/*
+	
+	{ "syz.20120328": "{\"userId\":18}","sub": "syz.20120328"}
+	*/
+	Json::Value userid;
+	userid["userId"] = 18;
+	Json::Value value;
+	
+	value["sub"] = "syz.20120328";
+	value["syz.20120328"] = "{\"userId\":18}";
+	Json::StyledWriter swriter;
+	swriter.write(value);
+	std::string str = swriter.write(value);
+
+	 std::string payload = "{ \
+		\"syz.20120328\": \"{\"userId\":18}\",  \
+		\"sub\": \"syz.20120328\" \
+     }";
+	 std::string fff = "{\"syz.20120328\":\"{\\\"userId\\\":18}\",\"sub\":\"syz.20120328\"}";
+	printf("payload = %s\n", fff.c_str() );
+	/*const char* payload = "{
+		"syz.20120328": "{\"userId\":18}",
+		"sub" : "syz.20120328"
+}";*/
+
+	char* jwt_token = create_jwt_512_token(secret_key, fff.c_str());
+
+	printf("JWT Token: %s\n", jwt_token);
+
+	// 释放分配的内存
+	free(jwt_token);
+
+	return 0;
+}
+#include "cjwt_create_token.h"
+int fffjwt_test_main(int argc, char* argv[])
+{
+	/*boost::process::environment my_env = boost::this_process::environment();
+
+	my_env["PATH"] += "/foo";
+	return 0;
+	_test_boost_process();
+	return 0;*/
+	//get_destops();
+	//find_Rte_main_window();
+	//start_rte();
+	//rte_token();
+	//rte_token_main();
+
+	chen::jwt::test_create_token();
+
+	return 0;
+	test_process();
+	return 0;
 	try
 	{
 		// Open a rotating text file
@@ -658,33 +1279,21 @@ int main(int argc, char* argv[])
 
 
 
-#include <boost/process.hpp>
-
-void test_process()
-{
-	boost::process::environment my_env = boost::this_process::environment();
-	boost::process::ipstream p;
-
-	boost::process::child c(
-		std::string("nvidia-smi -i 0 -q -d UTILIZATION"), my_env,
-		boost::process::std_out > p
-	);
-
-	std::string s;
-	std::getline(p, s);
-
-	c.wait();
-}
 
 
 
-int test_media_main(int argc, char* argv[])
+int  main(int argc, char* argv[])
 {
 
-
+	chen::jwt::test_siample_create_token();
+	return 0;
 	RegisterSignal();
 	const char* config_filename = "media_server.cfg";
 	const char* log_path = "./log";
+	if (argc > 1)
+	{
+		config_filename = argv[1];
+	}
 	if (argc > 2)
 	{
 		log_path = argv[2];

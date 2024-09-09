@@ -34,6 +34,7 @@ let responseEventListeners = new Map();
 
 let freezeFrameOverlay = null;
 let shouldShowPlayOverlay = true;
+let is_answer = false;
 // A freeze frame is a still JPEG image shown instead of the video.
 let freezeFrame = {
 	receiving: false,
@@ -2505,6 +2506,29 @@ function connect() {
         {
 			
         } 
+		else if (msg.msg_id == 504 )
+		{//
+			let playerDiv = document.getElementById('player');
+			if (webRtcPlayerObj) {
+				playerDiv.removeChild(webRtcPlayerObj.video);
+				webRtcPlayerObj.close();
+				webRtcPlayerObj = undefined;
+			}
+			if (webRtcDataChannelObj)
+			{
+				webRtcDataChannelObj.close();
+				webRtcDataChannelObj = null;
+			}
+		   // if (webRtcDataChannelObj)
+			{
+			 //   webRtcDataChannelObj.close();
+			   // webRtcDataChannelObj = undefined;
+			}
+
+			onConfig('');
+			is_answer = false;
+			
+		}
 		else if (msg.msg_id === 500)
 		{
 			if (msg.data.type === 'answer')
@@ -2512,7 +2536,12 @@ function connect() {
 				var answerDesc = new RTCSessionDescription({type: 'answer', sdp: msg.data.sdp});
                 if (msg.data.rtc_type === 0)
                 {
-                    onWebRtcAnswer(answerDesc);
+					//if (!is_answer)
+					{
+						
+					onWebRtcAnswer(answerDesc);
+					is_answer = true;
+					}
                 }
 				else
                 {
@@ -2596,7 +2625,7 @@ function connect() {
 			
 			 
             ws.send(offersdp);
-		onConfig('');
+		
 	}
 }
 

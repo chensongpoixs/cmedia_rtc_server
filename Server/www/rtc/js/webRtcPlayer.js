@@ -49,8 +49,8 @@
         };
 
         // See https://www.w3.org/TR/webrtc/#dom-rtcdatachannelinit for values (this is needed for Firefox to be consistent with Chrome.)
-        this.dataChannelOptions = {ordered: true};
-
+          this.dataChannelOptions = {ordered: false, negotiated:false, maxPacketLifeTime: 50, protocol: 'udp'};
+		//  maxPacketLifeTime: 50, maxRetransmits: 0,
         // This is useful if the video/audio needs to autoplay (without user input) as browsers do not allow autoplay non-muted of sound sources without user interaction.
         this.startVideoMuted =  true; //typeof parOptions.startVideoMuted !== 'undefined' ? parOptions.startVideoMuted : false;
         this.autoPlayAudio = true; //typeof parOptions.autoPlayAudio !== 'undefined' ? parOptions.autoPlayAudio : true;

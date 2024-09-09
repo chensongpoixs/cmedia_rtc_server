@@ -280,6 +280,9 @@
     <Filter Include="proxy">
       <UniqueIdentifier>{8c5723cf-3448-444c-9e8d-4e983f2eb080}</UniqueIdentifier>
     </Filter>
+    <Filter Include="jwt_token">
+      <UniqueIdentifier>{5805aa7c-827f-4294-85c0-df1b2615bb7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cnet_type.cpp">
@@ -1299,6 +1302,12 @@
     </ClCompile>
     <ClCompile Include="cweb_http_api_mgr.cpp">
       <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="cwindow_util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cjwt_create_token.cpp">
+      <Filter>jwt_token</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2498,6 +2507,12 @@
     </ClInclude>
     <ClInclude Include="cweb_http_api_mgr.h">
       <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="cwindow_util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="cjwt_create_token.h">
+      <Filter>jwt_token</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
