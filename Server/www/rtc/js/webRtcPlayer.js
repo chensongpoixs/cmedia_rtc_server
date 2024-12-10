@@ -49,8 +49,8 @@
         };
 
         // See https://www.w3.org/TR/webrtc/#dom-rtcdatachannelinit for values (this is needed for Firefox to be consistent with Chrome.)
-          this.dataChannelOptions = {ordered: false, negotiated:false, maxPacketLifeTime: 50, protocol: 'udp'};
-		//  maxPacketLifeTime: 50, maxRetransmits: 0,
+        this.dataChannelOptions = {ordered: true};
+
         // This is useful if the video/audio needs to autoplay (without user input) as browsers do not allow autoplay non-muted of sound sources without user interaction.
         this.startVideoMuted =  true; //typeof parOptions.startVideoMuted !== 'undefined' ? parOptions.startVideoMuted : false;
         this.autoPlayAudio = true; //typeof parOptions.autoPlayAudio !== 'undefined' ? parOptions.autoPlayAudio : true;
@@ -137,9 +137,7 @@
                     self.onVideoInitialised();
                 }
             }, true);
-			video.addEventListener('contextmenu', function( e ) {
-                e.preventDefault()
-            })
+			
 			// Check if request video frame callback is supported
 			if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
 				// The API is supported! 
@@ -272,7 +270,7 @@
         onicecandidate = function (e) {
 			console.log('ICE candidate', e)
 			if (e.candidate && e.candidate.candidate) {
-                self.onWebRtcCandidate(0, e.candidate);
+                self.onWebRtcCandidate(e.candidate);
             }
         };
 
@@ -285,8 +283,7 @@
                 // Set our munged SDP on the local peer connection so it is "set" and will be send across
             	pc.setLocalDescription(offer);
             	if (self.onWebRtcOffer) {
-                    console.log('rtctype == 0-');
-            		self.onWebRtcOffer(0, offer);
+            		self.onWebRtcOffer(offer);
                 }
             },
             function () { console.warn("Couldn't create offer") });
@@ -465,13 +462,6 @@
         //This is currently not used but would be called externally from this class
         this.handleCandidateFromServer = function(iceCandidate) {
             console.log("ICE candidate: ", iceCandidate);
-			
-			//?????Candidate??
-			// var candidate = new RTCIceCandidate({
-			//	 sdpMLineIndex :data.label,
-			//	 candidate:data.candidate
-			// });
-			//
             let candidate = new RTCIceCandidate(iceCandidate);
             self.pcClient.addIceCandidate(candidate).then(_=>{
                 console.log('ICE candidate successfully added');
@@ -485,31 +475,12 @@
                 self.pcClient.close();
                 self.pcClient = null;
             }
-			var pcConfig = {
-	'iceServer' : [{
-		//TURN?????
-		'urls': 'stun:stun.l.google.com:19302'
-		// TURN??????
-		//'username': 'xxx',
-		//TURN?????
-		//'credential': "xxx"
-	}],
-	// ????relay?????? turn ?? ?? ^_^
-	"iceTransportPolicy": "all",
-	//"iceTransportPolicy": "relay",
-	// ?????????
-	"bundlePolicy": "max-bundle",
-	// ???rtcp?rtp? ????Candidate ???????? ^_^
-	"rtcpMuxPolicy": "require",
-	"iceCandiatePoolSize": "0"
-};
-
-            self.pcClient = new RTCPeerConnection(   /*self.cfg*/);
+            self.pcClient = new RTCPeerConnection(null /*self.cfg*/);
 
             setupTracksToSendAsync(self.pcClient).finally(function()
             {
                 setupPeerConnection(self.pcClient);
-               self.dcClient = setupDataChannel(self.pcClient, 'rtc', self.dataChannelOptions);
+                self.dcClient = setupDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
                 handleCreateOffer(self.pcClient);
             });
             
@@ -547,7 +518,7 @@
 		{
 		//	console.log('---------------> self.dcClient.readyState = ', self.dcClient.readyState);
             if(self.dcClient && self.dcClient.readyState == 'open'){
-                console.log('Sending data on dataconnection', self.dcClient)
+                //console.log('Sending data on dataconnection', self.dcClient)
                 self.dcClient.send(data);
             }
         };

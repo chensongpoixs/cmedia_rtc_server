@@ -95,7 +95,7 @@ namespace chen {
 #define SET_POINT() POINT pt; pt.x = g_width; pt.y = g_height;
 
 #if defined(_MSC_VER)
-#define WINDOW_MAIN()		HWND mwin = FindMainWindow()
+#define WINDOW_MAIN()		HWND mwin = FindMainWindow(16620)
 #define WINDOW_CHILD()	HWND childwin = MainChildPoint(mwin, pt)
 #define WINDOW_BNTTON_DOWN(v)  uint32 active_type = WM_LBUTTONDOWN;					 \
 	switch (vec.button)																 \

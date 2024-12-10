@@ -458,6 +458,7 @@ namespace chen {
 				uint32 msg_id = response["msg_id"].get<uint32>();
 				if (msg_id == 1073)
 				{
+					
 					m_rtc_publisher_ptr->set_remoter_description(response["data"]["sdp"]);
 				}
 				//EMsgBaseID msg_id = response[WEBSOCKET_PROBUFFER_MSG_ID];

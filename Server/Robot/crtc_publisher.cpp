@@ -53,8 +53,8 @@ namespace chen {
 		}
 		virtual void OnSuccess() { RTC_LOG(INFO) << __FUNCTION__; }
 		virtual void OnFailure(webrtc::RTCError error) {
-			RTC_LOG(INFO) << __FUNCTION__ << " " << ToString(error.type()) << ": "
-				<< error.message();
+			/*RTC_LOG(INFO) << __FUNCTION__ << " " << ToString(error.type()) << ": "
+				<< error.message();*/
 		}
 	};
 	//const char kAudioLabel[] = "";
@@ -103,8 +103,8 @@ namespace chen {
 			nullptr /* default_adm */,
 			webrtc::CreateBuiltinAudioEncoderFactory(),
 			webrtc::CreateBuiltinAudioDecoderFactory(),
-	//CreateBuiltinExternalVideoEncoderFactory(),
-			webrtc::CreateBuiltinVideoEncoderFactory(),
+	CreateBuiltinExternalVideoEncoderFactory(),
+	//		webrtc::CreateBuiltinVideoEncoderFactory(),
 			webrtc::CreateBuiltinVideoDecoderFactory(), nullptr /* audio_mixer */,
 			nullptr /* audio_processing */ );
 
@@ -154,6 +154,7 @@ namespace chen {
 	}
 	void crtc_publisher::set_remoter_description(std::string sdp)
 	{
+		NORMAL_EX_LOG("[%s]", sdp.c_str());
 		// Replace message type from "offer" to "answer"
 		std::unique_ptr<webrtc::SessionDescriptionInterface> session_description =
 			webrtc::CreateSessionDescription(webrtc::SdpType::kAnswer, sdp);

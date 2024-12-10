@@ -36,16 +36,16 @@ namespace chen {
 			NORMAL_EX_LOG(" , OnConnecting" );
 			break;
 		case webrtc::DataChannelInterface::DataState::kOpen:
-			NORMAL_EX_LOG("id =  , OnOpen" );
+			NORMAL_EX_LOG("id = %u , OnOpen", dataChannel->id());
 			//this->listener->OnOpen(this);
 			break;
 		case webrtc::DataChannelInterface::DataState::kClosing:
 			//this->listener->OnClosing(this);
-			NORMAL_EX_LOG("id =  , OnClosing" );
+			NORMAL_EX_LOG("id = %u , OnClosing", dataChannel->id());
 			break;
 		case webrtc::DataChannelInterface::DataState::kClosed:
 			//this->listener->OnClose(this);
-			NORMAL_EX_LOG(" , OnClose" );
+			NORMAL_EX_LOG(" id = %u, OnClose", dataChannel->id());
 			//m_transport->close();
 			//m_transport->close_dataconsumer(id);
 			if (dataChannel)
@@ -68,9 +68,9 @@ namespace chen {
 			count = 0;
 		}
 		//std::string s = std::string(buffer.data.data<char>(), buffer.data.size());
-		//printf("DataConsumer -------------- %s -----------------------------------\n", s.c_str());
+		printf("DataConsumer -------------- -----------------------------------\n");
 		//this->listener->OnMessage(this, buffer);
-		//s_input_device.OnMessage(0, buffer);
+		s_input_device.OnMessage(0, buffer);
 	}
 	void cdata_channel::OnBufferedAmountChange(uint64_t sent_data_size)
 	{

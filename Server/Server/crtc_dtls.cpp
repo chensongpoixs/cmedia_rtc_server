@@ -769,7 +769,9 @@ namespace chen {
 			return false;
 		}
 		hashFunction = EVP_sha1();
-		/*switch (this->remoteFingerprint.algorithm)
+		//hashFunction = EVP_sha256();
+		/*hashFunction = EVP_sha1();
+		switch (this->remoteFingerprint.algorithm)
 		{
 		case FingerprintAlgorithm::SHA1:
 			hashFunction = EVP_sha1();
@@ -792,7 +794,7 @@ namespace chen {
 			break;
 
 		default:
-			MS_ABORT("unknown algorithm");
+			WARNING_EX_LOG("unknown algorithm");
 		}*/
 
 		// Compare the remote fingerprint with the value given via signaling.

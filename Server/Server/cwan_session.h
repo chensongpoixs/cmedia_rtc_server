@@ -34,7 +34,7 @@ purpose:	网络数据的收发
 namespace chen {
 
 
-#define P2P (1)
+#define P2P (0)
 
 
 	enum EClientConnectType

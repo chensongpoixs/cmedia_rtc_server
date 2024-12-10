@@ -1285,8 +1285,8 @@ int fffjwt_test_main(int argc, char* argv[])
 int  main(int argc, char* argv[])
 {
 
-	chen::jwt::test_siample_create_token();
-	return 0;
+	//chen::jwt::test_siample_create_token();
+	//return 0;
 	RegisterSignal();
 	const char* config_filename = "media_server.cfg";
 	const char* log_path = "./log";

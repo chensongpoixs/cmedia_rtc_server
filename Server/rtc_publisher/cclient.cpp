@@ -7,7 +7,7 @@ purpose:		log
 ************************************************************************************************/
 #include "cclient.h"
 #include "clog.h"
-
+#include "ccfg.h"
 namespace chen {
 	cclient::~cclient()
 	{

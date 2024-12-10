@@ -233,7 +233,7 @@ function conn()
 	ws.onmessage = function(event)
     {
         
-       console.log(`<- =====>S2C : ${event.data}`);
+      //  console.log(`<- S2C : ${event.data}`);
 
         let msg = JSON.parse(event.data);
         // 
@@ -261,17 +261,12 @@ function conn()
         	// 3. icecandidate
 
         	//	//如果收到的SDP是ｏｆｆｅｒ
-			if(msg.data.hasOwnProperty('offer'))
+			if(msg.data.hasOwnProperty('type') && msg.data.type === 'offer')
 			{
-				createPeerConnection();
-				bindTracks();
-				offer.value = msg.data.offer;
-				//var ppppp.offer = 'offer';
-				//ppppp.sdp = msg.data.offer;
-				var offersdp  = new RTCSessionDescription({type:'offer', sdp: msg.data.offer});
-				// var answerDesc = new RTCSessionDescription({type: 'answer', sdp: answer});
+				offer.value = msg.data.sdp;
+				
 				//进行媒体协商
-				pc.setRemoteDescription(offersdp);
+				pc.setRemoteDescription(new RTCSessionDescription(msg.data));
 				
 				// 创建answer
 				pc.createAnswer()
@@ -291,16 +286,11 @@ function conn()
 			else if (msg.data.hasOwnProperty('type') && msg.data.type === 'candidate')
 			{
 				//如果收到是Candidate信息
-				//var candidate1 = new RTCIceCandidate({
-				//	sdpMLineIndex :msg.data.candidate.sdpMLineIndex,
-				//	candidate: msg.data.candidate.candidate
-				//});
-				//如果收到是Candidate信息
-			 var candidate = new RTCIceCandidate({
-				 sdpMLineIndex :msg.data.label,
-				 candidate:msg.data.candidate
-			 });
-				//console.log('candidate1:', candidate1);
+				var candidate = new RTCIceCandidate({
+					sdpMLineIndex :msg.data.label,
+					candidate: msg.data.candidate
+				});
+				
 				//将远端Candidate信息添加到PeerConnection
 				pc.addIceCandidate(candidate);
 			}
@@ -318,15 +308,15 @@ function conn()
 				// 如果是多人， 每加入一个人都要创建一个新的PeerConnection
 			if (state === 'joined_unbind')
 			{
-			//	createPeerConnection();
-				//bindTracks();
+				createPeerConnection();
+				bindTracks();
 			}
 	//	
 			//状态机变更为 joined_conn
 			state = 'joined_conn';
 		
 			// 开始 '呼叫'对方
-		//	call();
+			call();
 		
 			console.log('receive other_join message , state = ', state);
 
@@ -385,23 +375,13 @@ function conn()
 			 
 			console.log(' ws connect ok !!!');
 			// 创建PeerConnection 并绑定音视频轨
-			//createPeerConnection();
-			//bindTracks();
-			//
-			////设置button状态
-			//btnConn.disabled = true;
-			//btnLeave.disabled = false;
-			//call();
+			createPeerConnection();
+			bindTracks();
 			
-				sendMessage(
-				{
-					msg_id: 202,
-					data:  { 
-								room_name : "chensong",
-								user_name : "chensong"
-						   } 
-				}
-			 );
+			//设置button状态
+			btnConn.disabled = true;
+			btnLeave.disabled = false;
+			call();
         }
         
        
@@ -593,62 +573,8 @@ function getOffer(desc)
 			 );
 }
 
- function onicecandidate  (e) {
-			console.log('ICE candidate', e)
-			if (e.candidate && e.candidate.candidate) 
-			{
-				
-				
-				
-				// 当收集到Candidate后
-		//pc.onicecandidate = (e) => {
-		//	if (e.candidate)
-		//	{
-		//		console.log("candidate" + JSON.stringify(e.candidate.toJSON()));
-		//		
-		//		//将Candidate发送个对端
-		//		sendMessaage(roomid, {
-		//			type : 'candidate',
-		//			label :event.candidate.sdpMLineIndex,
-		//			id : event.candidate.sdpMid,
-		//			candidate : event.candidate.candidate
-		//		});
-		//	}
-		//	else 
-		//	{
-		//		console.log('this is the end candidate !!!');
-		//	}
-		//}
-               sendMessage( { 
-				msg_id: 208,
-					data:  {
-								type : 'candidate',
-					label :e.candidate.sdpMLineIndex,
-					id : e.candidate.sdpMid,
-					candidate : e.candidate.candidate
-						   } 
-					});
-			 
-            }
-        };
 
 
-
- function onsignalingstatechange (state)
-		{
-			 console.log('onsignalingstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
-            console.info('signaling state change:', state)
-        };
-
-  function      oniceconnectionstatechange (state) {
-			 console.log('oniceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
-            console.info('ice connection state change:', state)
-        };
-
-    function     onicegatheringstatechange(state) {
-			 console.log('onicegatheringstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
-            console.info('ice gathering state change:', state)
-        };
 /**
  功能: 创建PeerConnection对象
  
@@ -666,7 +592,7 @@ function createPeerConnection()
 	if (!pc)
 	{
 		//创建PeerConnection对象
-		pc = new RTCPeerConnection(pcConfig);
+		pc = new RTCPeerConnection(null);
 		
 		  console.log(' new rtc sdk core debugger  iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
 		 
@@ -680,10 +606,6 @@ function createPeerConnection()
 					
                     break;
                 case 'connected':
-					console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
-					//console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
-                    //this.emit('@connectionstatechange', 'connected');
-					break;
                 case 'completed':
 					console.log('iceconnectionstatechange ---> [' +  pc.iceConnectionState + '] ^_^ !!!');
                     //this.emit('@connectionstatechange', 'connected');
@@ -708,7 +630,7 @@ function createPeerConnection()
 		 并回调getRemoteStream函数
 		
 		*/
-		//pc.ontrack = getRemoteStream;
+		pc.ontrack = getRemoteStream;
 		 let datachannel = pc.createDataChannel('rtc', null);
                 console.log(`Created datachannel`)
 
@@ -728,11 +650,6 @@ function createPeerConnection()
                   console.log(`Got message  `, e.data)
                    
                 }
-				//Setup peerConnection events
-            pc.onsignalingstatechange = onsignalingstatechange;
-            pc.oniceconnectionstatechange = oniceconnectionstatechange;
-            pc.onicegatheringstatechange = onicegatheringstatechange;
-		pc.onicecandidate = onicecandidate;
 	}
 	else 
 	{
