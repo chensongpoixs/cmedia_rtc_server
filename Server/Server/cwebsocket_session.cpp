@@ -237,11 +237,17 @@ namespace chen {
 
 		if (ec)
 		{
-			//return fail(ec, "write");
-			m_sending_buffer_list.clear();
-			//m_send_buffer_list.clear();
-			_release();
-			return;
+			// TODO@chensong 20241217 临时方安   服务器会判断客户断开
+			if (ec.value() != 995)
+			{
+				//return fail(ec, "write");
+				m_sending_buffer_list.clear();
+				//m_send_buffer_list.clear();
+				_release();
+
+				WARNING_EX_LOG("[ecode = %u]ec = %s", ec.value(), ec.message().c_str());
+				return;
+			}
 		}
 
 		/*if (error || bytes_transferred == 0)
@@ -314,10 +320,12 @@ namespace chen {
 		{
 			boost::system::error_code ec;
 			//m_ws.async_close(  ec);
+			NORMAL_EX_LOG("");
 			boost::beast::websocket::close_reason reason;
 			m_ws.async_close(reason, std::bind( &cwebsocket_session::_handle_close, this, std::placeholders::_1 ) );
 				return;
 		}
+		NORMAL_EX_LOG("");
 		 m_websocket_server_mgr_ptr->post_disconnect(this);;
 	}
 	void cwebsocket_session::_handle_close(boost::system::error_code ec)
